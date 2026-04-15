@@ -2,8 +2,6 @@
 
 ---
 
-
-
 `git`是代码和项目的存储管理工具 可以保存历史版本 
 
 每次提交修改都拥有独立的存档点
@@ -30,8 +28,6 @@ where git
 
 ---
 
-
-
 ## <mark>网站选择</mark>
 
 首选`Github`
@@ -39,8 +35,6 @@ where git
 但是方便起见 打算先用国内的`Gitee`练手
 
 ---
-
-
 
 ## <mark>仓库创建</mark>
 
@@ -78,8 +72,6 @@ where git
   可以先默认选择“main”或“master”分支
 
 ---
-
-
 
 ## <mark>本地文件上传</mark>
 
@@ -140,6 +132,18 @@ git push
 git config --list
 #或者
 git config --global --list
+```
+
+---
+
+## <mark>同步本地和仓库</mark>
+
+```bash
+git fetch origin#获取远程最新状态（安全，不合并本地文件）
+git status#查看本地与远程差异
+git diff#查看具体文件内容差异
+git pull#获取并合并远程更新
+git push#推送本地提交到远程
 ```
 
 ---

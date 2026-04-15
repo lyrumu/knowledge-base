@@ -12,7 +12,7 @@ win键搜索`启用或关闭windows功能`;
 
 (以下是win11家庭版 如果有"虚拟机平台" 也勾选上)
 
-![p1](./images/启用或关闭windows功能.png)
+![p1](./image/启用或关闭windows功能.png)
 
 安装Hyper-V
 
@@ -56,7 +56,7 @@ bash <(curl -sSL https://linuxmirrors.cn/main.sh)
 
 win键打开设置-系统-系统信息:
 
-![p2](./images/系统信息.png)
+![p2](./image/系统信息.png)
 
 如果跟图示一样就选择`AMD64`的docker安装包;(大部分都是这个)
 
@@ -144,7 +144,7 @@ docker compose up -d#启动dify容器
 
 更推荐的则是逐条镜像拉取(按照大小从小到大逐个pull);
 
-![p](./images/dify依赖镜像下载完成.png)
+![p](./image/dify依赖镜像下载完成.png)
 
 全部拉取完成后能在docker-images中看到以上镜像;(版本仅供参考)
 
@@ -164,11 +164,11 @@ docker compose up -d#启动dify容器
 
 左侧栏-模型供应商-选择安装ollama供应商;
 
-![p](./images/dify-ollama供应商.png)
+![p](./image/dify-ollama供应商.png)
 
 安装完成后点击上图右下角-添加模型;
 
-![p](./images/dify连接本地大模型.png)
+![p](./image/dify连接本地大模型.png)
 
 模型名称填写-本地已部署的大模型名称(需完全一样);
 
@@ -187,5 +187,3 @@ docker compose up -d#启动dify容器
 后可再输入`docker ps`;若只输出表头 说明容器都已经关闭;
 
 然后右下角退出docker就好了(`Quit Docker Desktop`);
-
-
