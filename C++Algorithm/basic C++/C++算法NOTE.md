@@ -878,9 +878,10 @@ int main(){
         long long k;
         cin>>x1>>y1>>x2>>y2>>k;
         di[x1][y1]+=k;
-        di[x2+1][y2+1]+=k;
         di[x2+1][y1]-=k;
         di[x1][y2+1]-=k;
+        di[x2+1][y2+1]+=k;
+        
     }
     vector<vector<long long>> re(n+5,vector<long long>(m+5,0));//求一次前缀和，还原差分数组
     for(int i = 1;i<=n;i++){

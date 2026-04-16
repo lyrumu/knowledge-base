@@ -1,3 +1,5 @@
+ ![GitHub last commit](https://img.shields.io/github/last-commit/lyrumu/knowledge-base?label=GitHub%20last%20commit&color=ff69b4&style=flat-square&display_timestamp=committer)
+
 # 个人知识库
 
 一些平时学习过程中整理的笔记和代码，正在持续更新。
