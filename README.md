@@ -1,44 +1,44 @@
  ![GitHub last commit](https://img.shields.io/github/last-commit/lyrumu/knowledge-base?label=GitHub%20last%20commit&color=ff69b4&style=flat-square&display_timestamp=committer)
 
-# 个人知识库
+# # Personal Knowledge Base
 
-一些平时学习过程中整理的笔记和代码，正在持续更新。
+Notes and code snippets I've organized during my learning process, continuously updated.
 
----
+* * *
 
-## 内容
+## Contents
 
-**C++ 算法笔记**
+**C++ Algorithm Notes**
 
-- `C++Algorithm/basic C++/C++算法NOTE.md` — 算法笔记正文
-- `C++Algorithm/basic C++/template/` — 代码模板
+* `C++Algorithm/basic C++/C++算法NOTE.md` — Main algorithm notes
+* `C++Algorithm/basic C++/template/` — Code templates
 
-**Minecraft 数据包笔记**
+**Minecraft Datapack Notes**
 
-- `Minecraft/notes.md` — 主笔记（函数、schedule、标签等）
+* `Minecraft/notes.md` — Main notes (functions, schedule, tags, etc.)
 
-**Python 笔记**
+**Python Notes**
 
-- `Python/Python_Note.md` — Python 主笔记
-- `Python/AIweb调用/` — 基础语法到爬虫、AI 调用的练习代码
+* `Python/Python_Note.md` — Main Python notes
+* `Python/AIweb调用/` — Practice code from basic syntax to web scraping and AI API calls
 
-**工具笔记**
+**Tool Notes**
 
-- `Tools/Git.md` — Git 笔记
-- `Tools/tools.md` — 其他工具记录
-- `Tools/Docker/` — Docker 相关
-- `Tools/Flutter/` — Flutter 入门
+* `Tools/Git.md` — Git notes
+* `Tools/tools.md` — Notes on other tools
+* `Tools/Docker/` — Docker related
+* `Tools/Flutter/` — Flutter basics
 
----
+* * *
 
-## 说明
+## Note
 
-- 笔记大多是我自己看得懂的 level，比较零散
-- 图片文件夹是平时遇到问题时的截图存档
-- 目前基本只能我自己用，别人拿过去可能跑不通
+* Most notes are written at a level that makes sense to me, somewhat scattered
+* The images folder contains screenshots of issues I've encountered along the way
+* Currently, they are basically only usable by me; others might not be able to run the code as-is
 
----
+* * *
 
-## 更新
+## Updates
 
-随缘更新，学到哪记到哪。
+Updated whenever I learn something new — I write down whatever I study.
