@@ -1,6 +1,6 @@
  ![GitHub last commit](https://img.shields.io/github/last-commit/lyrumu/knowledge-base?label=GitHub%20last%20commit&color=ff69b4&style=flat-square&display_timestamp=committer)
 
-# # Personal Knowledge Base
+# Personal Knowledge Base
 
 Notes and code snippets I've organized during my learning process, continuously updated.
 
