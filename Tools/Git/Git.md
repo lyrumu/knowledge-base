@@ -51,10 +51,11 @@ where git
 - 设置模板：
   (1)`readme文件`:
   仓库的**门面和说明书**，按需选择，后期可再添加
-          (2)`issue模板文件`:
-          便于别人给你的仓库提交**bug或功能建议**
-          (3)`pill request模板文件`:
-          当别人想为你**贡献代码**时用这个模板来请求
+  
+  (2)`issue模板文件`:
+  便于别人给你的仓库提交**bug或功能建议**
+  (3)`pull request模板文件`:
+  当别人想为你**贡献代码**时用这个模板来请求
 - 选择模型分支：
   可以先默认选择“main”或“master”分支
 
@@ -143,11 +144,65 @@ git diff#查看具体文件内容差异
 
 > 通常每次 `git commit` 只能有一个提交信息，这个信息会附加到整个提交上，而不是单个文件夹或文件上，以下尝试优化
 
-- 方案1:使用py_scripts
-  脚本本身可以存储在任意地方;
-  使用时先打开对应要git commit的文件根目录,在该根目录下打开
+- 推荐办法:
 
-       终端运行脚本即可 
+每次想要提交前,先`git status`;
+
+查看当前哪些文件需要被提交;
+
+然后依次:
+
+```bash
+git add filename1/
+git commmit -m "该文件的修改内容"
+
+git add filename2/
+git commit -m "该文件修改内容"
+#...
+#最后统一进行git push
+git push
+#这样就能在github上看到对每个文件不同的提交信息了
+```
+
+
+
+---
+
+## <mark>.Gitignore</mark>
+
+> 被gitignore的文件,在本地依然会随着修改而变化,但每次提交不会被上传到github,即只在本地变化;
+
+- 创建`.gitignore`文件:
+
+在根目录右键新建文本文件-将整个文件重命名为`.gitignore`(后缀也要一起删掉!!!)
+
+在文件内写入需要忽略的文件的路径,比如`.obsidian/workspace.json`,这样该文件就会被忽略;
+
+检查:
+
+```bash
+#输入
+ls .gitignore*
+#理想输出类似
+Mode                 LastWriteTime         Length Name
+----                 -------------         ------ ----
+-a----         2026/4/18     13:36            109 .gitignore
+#若输出文件名显示".gitignore.txt" 那是不正确的
+```
+
+- 使用`.gitignore`:
+
+先提交更新后的`.gitignore`文件至github;
+
+然后通过`git status`检查是否有已经被GIT跟踪但是需要ignore的文件;
+
+```textile
+⚠️.gitignore 只能忽略未被跟踪的文件,如果文件已经被 Git 跟踪过,需要先 git rm --cached 再忽略;
+```
+
+所以如果有,通过`git rm --cached config/secret.json`让git忘记这个文件;
+
+之后就可以正常add-commit-push了;
 
 ---
 
@@ -155,7 +210,6 @@ git diff#查看具体文件内容差异
 
 首先进入本地需要同步的文件夹，右键**在终端中打开**；
 (后续操作均需在此环境下进行)
-
 
 ```bash
 git remote -v#查看当前文件夹关联的所有远程仓库
