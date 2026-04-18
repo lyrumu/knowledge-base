@@ -1,0 +1,4 @@
+#Obsidian配置(忽略会频繁变化或体积大的文件)
+.obsidian/workspace.json
+.obsidian/plugins/
+
