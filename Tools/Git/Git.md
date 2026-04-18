@@ -38,7 +38,7 @@ where git
 
 ## <mark>仓库创建</mark>
 
-以下操作在gitee内进行.
+以下操作在github/gitee内进行.
 
 - 初始化仓库：
   (1)选择语言:
@@ -47,27 +47,14 @@ where git
   一般推荐添加，用于告诉git哪些文件不需要管理
   (3)添加开源许可证：
   一般选择`MIT-license`(开源)
-
-        
-
-（以上内容后期应该都是可以再添加的，先不选应该没事）
-
-
-
+  （以上内容后期应该都是可以再添加的，可以先不选）
 - 设置模板：
   (1)`readme文件`:
   仓库的**门面和说明书**，按需选择，后期可再添加
-
-        (2)`issue模板文件`:
-
-        便于别人给你的仓库提交**bug或功能建议**
-
-        (3)`pill request模板文件`:
-
-        当别人想为你**贡献代码**时用这个模板来请求
-
-
-
+          (2)`issue模板文件`:
+          便于别人给你的仓库提交**bug或功能建议**
+          (3)`pill request模板文件`:
+          当别人想为你**贡献代码**时用这个模板来请求
 - 选择模型分支：
   可以先默认选择“main”或“master”分支
 
@@ -82,8 +69,6 @@ where git
 即先本地建立文件 再上传；
 
 不过一般是先创建仓库再clone到本地进行开发；
-
-
 
 注：选择本地已有的文件上传时 新建仓库**不要勾选readme和license**
 
@@ -138,21 +123,39 @@ git config --global --list
 
 ## <mark>同步本地和仓库</mark>
 
+首先进入本地对应文件 在此打开终端:
+
 ```bash
 git fetch origin#获取远程最新状态（安全，不合并本地文件）
 git status#查看本地与远程差异
 git diff#查看具体文件内容差异
-git pull#获取并合并远程更新
-git push#推送本地提交到远程
 ```
+
+`git status`后的几种可能状态:
+
+- `up to date with 'origin/master'`---已同步，无需操作
+- `behind 'origin/master' by X commit`---本地落后，执行`git pull`
+- `ahead of 'origin/master' by X commit`---本地领先，执行`git push`
+
+---
+
+## <mark>GitCommit优化</mark>
+
+> 通常每次 `git commit` 只能有一个提交信息，这个信息会附加到整个提交上，而不是单个文件夹或文件上，以下尝试优化
+
+- 方案1:使用py_scripts
+  脚本本身可以存储在任意地方;
+  使用时先打开对应要git commit的文件根目录,在该根目录下打开
+
+       终端运行脚本即可 
 
 ---
 
 ## <mark>多平台同步</mark>
 
 首先进入本地需要同步的文件夹，右键**在终端中打开**；
-
 (后续操作均需在此环境下进行)
+
 
 ```bash
 git remote -v#查看当前文件夹关联的所有远程仓库
@@ -174,7 +177,7 @@ git push github master
 
 最后再用`git remote -v`检查一下，应该会多出origin之外的仓库；
 
-![多平台同步](./images/同步两个git.png)
+![多平台同步](./image/同步两个git.png)
 
 后续更新时，用以下命令推送到两个仓库：
 
@@ -191,7 +194,7 @@ git push github master
 git status#仅用来检查本地和origin的同步状态
 ```
 
-![git status](./images/git%20status.png)
+![git status](./image/git%20status.png)
 
 （up to date! 就说明本地和origin是正确同步的）；
 
@@ -202,13 +205,13 @@ git log --oneline origin/master#gitee最新提交
 git log --oneline github/master#github最新提交
 ```
 
-![git fetch --all](./images/git%20fetch.png)
+![git fetch --all](./image/git%20fetch.png)
 
-![log HEAD](./images/gitloghead.png)
+![log HEAD](./image/gitloghead.png)
 
-![log origin](./images/gitlogorigin.png)
+![log origin](./image/gitlogorigin.png)
 
-![log github](./images/gitloggithub.png)
+![log github](./image/gitloggithub.png)
 
 检查三个输出内容是否相同即可；
 
@@ -227,7 +230,7 @@ and 我并未记得；
 直接更新了新的本地内容；
 
 于是乎：
-![wrong1](./images/wrong1.png)
+![wrong1](./image/wrong1.png)
 
 在进行`git push`时出现报错；
 
