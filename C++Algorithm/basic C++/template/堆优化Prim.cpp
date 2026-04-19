@@ -2,8 +2,8 @@
 using namespace std;
 #define ll long long
 #define endl '\n'
-//ע�⵽ÿ����Ҫ�ҵ����뵱ǰ������ĵ�
-//��˿����� ���ȶ���+�ڽӱ� �Ż���--->O(m log n)
+//注意每轮需要找到距离当前集合最近的点
+//因此可以使用 堆优化+邻接表 优化--->O(m log n)
 const int N = 200010;
 const ll INF = 4e18;
 vector<pair<int,ll>> g[N];
@@ -14,8 +14,8 @@ int main(){
 	cin.tie(0);
 	int n,m;
 	cin>>n>>m;
-	for(int i = 1;i<=n;i++){//��ʼ�����е�
-		g[i].clear();//����ζ��
+	for(int i = 1;i<=n;i++){//初始化所有点
+		g[i].clear();//清空邻接表
 		dist[i] = INF;
 		vis[i] = false;
 	}
@@ -26,14 +26,14 @@ int main(){
 		g[u].push_back({v,w});
 		g[v].push_back({u,w});
 	}
-	//С���� ÿ�λ�ȡ������Сֵ
+	//小根堆 每次获取距离最小的点
 	priority_queue<pair<ll,int>,vector<pair<ll,int>>,greater<pair<ll,int>>> pq;
 	dist[1] = 0;
 	pq.push({0,1});
 	ll ans = 0;
 	int cnt = 0;
 	while(!pq.empty()){
-		auto [d,u] = pq.top();//��ǰȡ���ľ���Ŀǰ����ĵ�
+		auto [d,u] = pq.top();//当前取出的距离目前集合的点
 		pq.pop();
 		if(vis[u])continue;
 		vis[u] = true;
