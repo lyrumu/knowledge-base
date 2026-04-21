@@ -1,1 +1,7 @@
-{}
+{
+  "attachmentFolderPath": "./image",
+  "newLinkFormat": "relative",
+  "showUnsupportedFiles": true,
+  "newFileLocation": "folder",
+  "spellcheck": false
+}
