@@ -1,0 +1,5 @@
+#include<bits/stdc++.h>
+using namespace std;
+#define ll long long
+#define endl '\n'
+//娉ㄦ剰姣忚疆闇€瑕佹壘鍒拌窛绂诲綋鍓嶉泦鍚堟渶杩戠殑鐐

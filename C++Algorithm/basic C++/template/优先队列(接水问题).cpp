@@ -14,7 +14,7 @@ int main(){
 		cout<<maxw;
 		return 0;
 	}
-	priority_queue<int,vector<int>,greater<int>> q;//–°∂•∂—
+	priority_queue<int,vector<int>,greater<int>> q;//Â∞èÈ°∂Â†Ü
 	for(int i = 0;i<m;i++){
 		q.push(w[i]);
 		if(w[i]>max_value){

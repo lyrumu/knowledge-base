@@ -16,7 +16,7 @@ bool dfs(int x1,int y1,int x2,int y2){
 	for(int i = 0;i<4;i++){
 		int nx = x1+dx[i];
 		int ny = y1+dy[i];
-		if(nx>=0&&nx<n&&ny>=0&&ny<n){//要先判断是否越界!
+		if(nx>=0&&nx<n&&ny>=0&&ny<n){//瑕佸厛鍒ゆ柇鏄惁瓒婄晫!
 			if(maze[nx][ny]=='#')continue;
 			if(vis[nx][ny]==true)continue;
 			if(dfs(nx,ny,x2,y2))return true;

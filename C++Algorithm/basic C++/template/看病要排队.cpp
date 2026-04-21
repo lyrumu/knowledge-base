@@ -3,7 +3,7 @@ using namespace std;
 int main(){
 	int n;
 	while(cin>>n){
-		vector<priority_queue<pair<int,int>>> doctors(11);//¾«Ëè
+		vector<priority_queue<pair<int,int>>> doctors(11);//ç²¾é«“
 		int patient_id = 1;
 		for(int i = 0;i<n;i++){
 			string event;

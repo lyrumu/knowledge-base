@@ -10,7 +10,7 @@ int find(int x,int fa[]){
 }
 bool is(){
 	int cnt = 0;
-	int tmp_fa[N];//Ã¿´ÎÖØ½¨²¢²é¼¯
+	int tmp_fa[N];//æ¯æ¬¡é‡å»ºå¹¶æŸ¥é›†
 	for(int i = 1;i<=n;i++){
 		tmp_fa[i] = i;
 	}
@@ -43,7 +43,7 @@ int main(){
 		edges.push_back({u,v});
 	}
 	for(int i = 0;i<n;i++){
-		//ÏÈÅĞ¶ÏÔÙ²Ù×÷
+		//å…ˆåˆ¤æ–­å†æ“ä½œ
 		bool ans = is();
 		if(ans){
 			cout<<"YES"<<'\n';

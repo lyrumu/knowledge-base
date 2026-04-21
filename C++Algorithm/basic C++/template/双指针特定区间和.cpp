@@ -9,7 +9,7 @@ int main(){
 		cin>>a[i];
 	}
 	ll cursum = 0;ll ans = 0;
-	ll l = 0;//Ë«Ö¸Õë»¬¶¯´°¿Ú
+	ll l = 0;//åŒæŒ‡é’ˆæ»‘åŠ¨çª—å£
 	for(ll r = 0;r<n;r++){
 		cursum += a[r];
 		while(cursum>m&&l<=r){
