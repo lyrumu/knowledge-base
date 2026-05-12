@@ -8,7 +8,7 @@ const int N = 200010;
 const ll INF = 4e18;
 vector<pair<int,ll>> g[N];
 bool vis[N];
-ll dist[N];
+ll dist[N];//每个点到当前树的最短距离
 int main(){
 	ios::sync_with_stdio(false);
 	cin.tie(0);
@@ -30,8 +30,8 @@ int main(){
 	priority_queue<pair<ll,int>,vector<pair<ll,int>>,greater<pair<ll,int>>> pq;
 	dist[1] = 0;
 	pq.push({0,1});
-	ll ans = 0;
-	int cnt = 0;
+	ll ans = 0;//生成树总权值
+	int cnt = 0;//当前连接的边数
 	while(!pq.empty()){
 		auto [d,u] = pq.top();//当前取出的距离目前集合的点
 		pq.pop();
@@ -41,7 +41,7 @@ int main(){
 		cnt++;
 		for(auto[v,w]:g[u]){
 			if(!vis[v]&&w<dist[v]){
-				dist[v] = w;
+				dist[v] = w;//加入一个新的点后 更新一些点的dist值
 				pq.push({dist[v],v});
 			}
 		}
