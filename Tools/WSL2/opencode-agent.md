@@ -306,3 +306,89 @@ https://raw.githubusercontent.com/code-yeongyu/oh-my-openagent/refs/heads/dev/do
 ---
 
 
+# OpenCode 会话记录与目录绑定
+
+## 现象
+
+如果：
+cd 某个子目录  
+opencode
+则当前 session 很可能绑定到：
+- 当前工作目录（cwd）
+- absolute path（绝对路径）
+- workspace path
+
+当你之后：
+- 修改子目录名称
+- 移动目录
+- 更换挂载路径
+会导致：
+- 进入新目录后找不到旧会话
+- 但在上级目录还能看到旧 session
+
+## 推荐开发习惯
+
+### 不要在深层子目录启动 opencode
+
+错误示例：
+```bash
+cd project/backend  
+opencode
+```
+推荐：
+```bash
+cd project_root  
+opencode
+```
+之后：
+
+- agent 操作子目录
+- terminal 自己 cd
+- 内部结构随便改
+
+这样 session 更稳定。
+
+### 先想好项目结构再开发
+
+后期再修改项目结构就会使opencode会话记录与结构绑定失效
+
+## 最佳实践
+
+### 固定 project root
+
+例如：
+my_project/
+尽量：
+- 不改名
+- 不移动
+但内部：
+src/  
+backend/  
+frontend/  
+docs/
+都可以自由修改。
+
+## 如果已经改名导致 session 丢失
+
+### 方法1
+
+改回原目录名。
+session 通常会恢复。
+
+### 方法2
+
+从项目根目录启动：
+```bash
+cd project_root  
+opencode
+```
+不要直接进入改名后的子目录启动。
+
+## 总结
+推荐固定：
+project_root/
+然后永远：
+cd project_root  
+opencode
+
+---
