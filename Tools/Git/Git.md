@@ -212,6 +212,14 @@ git log --oneline github/master#github最新提交
 检查三个输出内容是否相同即可；
 
 ---
+## details
+- GIT REMOTE
+若在github上`rename了仓库名称` 下一次在本地`git add-commit-push`之前记得先检查
+`git remote -v`,应该还是旧仓库的地址.因此推荐先配置`git remote set-url origin YOUR_NEW_URL.git`后再提交代码;
+
+
+---
+
 
 ## <mark>Wrong1</mark>
 
