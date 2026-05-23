@@ -1,9 +1,8 @@
----
 
-Hermes Agent 安装步骤（WSL）
+
+# Hermes-Agent安装步骤
 
 > 文档强调：原生 Windows 不支持，必须在 WSL2 中运行。
-
 ---
 
 一、前置条件
@@ -14,9 +13,10 @@ git --version   # 确认 git 可用
 ---
 
 二、一键安装
+```bash
 curl -fsSL https://raw.githubusercontent.com/NousResearch/hermes-agent/main/scripts/install.sh | bash
+```
 安装器自动完成：
-
 - 检测系统，设置依赖
 - 克隆仓库到 ~/.hermes/hermes-agent/
 - 创建 Python 虚拟环境
@@ -90,7 +90,7 @@ hermes setup    完整配置向导
 
 3. 如果你以后用 gateway（消息平台），文档强调必须配置 allowlist，否则默认全部拒绝：
    
-   # ~/.hermes/.env
+    ~/.hermes/.env
    
    TELEGRAM_ALLOWED_USERS=你的用户ID
 
@@ -132,3 +132,42 @@ hermes setup    完整配置向导
 ---
 
 总结一句话：先 curl ... | bash 装完，然后 hermes model 配 provider，再 hermes 跑起来验证，其他功能等基础对话稳定了再一层层往上加。
+
+
+
+---
+
+# 基础命令
+
+```bash
+    /help              # 查看所有命令列表
+    /title 我的会话    # 给当前会话起名字，方便以后恢复
+    /new               # 开始新会话（工具变更后需要这个才能生效）
+    /retry             # 重新发送上一条消息
+    /undo              # 撤销上一轮对话
+    /resume            # 恢复之前命名的会话
+    /compress          # 手动压缩对话历史（省 token）
+    /stop              # 停止正在运行的进程
+    /model grok-4      # 切换模型（不用退出）
+    /reasoning medium  # 设置推理深度（none/low/medium/high）
+    /clear             # 清屏
+    ⚙️ 配置相关
+    终端操作
+    hermes config               # 查看当前配置
+    hermes config edit          # 用编辑器打开配置文件
+    hermes config set key val   # 设置某个值
+    工具管理
+    hermes tools                # 交互式启用/禁用工具
+    hermes tools list           # 查看所有工具状态
+    技能管理
+    hermes skills list          # 查看已安装技能
+    hermes skills search 关键词  # 搜索技能市场
+    hermes skills install 名称   # 安装技能
+    MCP 服务器
+    hermes mcp add 名称 --command "npx ..."
+    hermes mcp list
+    🔍 诊断
+    hermes doctor         # 健康检查
+    hermes doctor --fix   # 自动修复能修的问题
+    hermes setup          # 交互式配置向导
+```
