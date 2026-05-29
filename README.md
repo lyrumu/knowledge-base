@@ -2,7 +2,7 @@
 
 # Personal Knowledge Base
 
-A living collection of notes, code snippets, and templates from my learning journey — continuously updated as I explore new things.
+A living collection of notes, code snippets, setup docs and resources from my learning journey — continuously updated as I explore new things.
 
 Built with **[Obsidian](https://obsidian.md/)** for a linked, graph-based note-taking experience.
 
@@ -10,10 +10,10 @@ Built with **[Obsidian](https://obsidian.md/)** for a linked, graph-based note-t
 
 ## Contents
 
-- **C++ Algorithm** — Competitive programming algorithm notes, reusable code templates (MST, Trie, Shortest Path), practice problems, and data structures.
-- **Python** — Notes and hands-on practice covering HTTP, APIs, local LLMs (Ollama), web scraping, OOP, and utility scripts for file conversion & fixing.
-- **Minecraft** — Custom datapacks, resource packs (PVP & mod-compatible), player skins, and asset conversion tools (mp3↔ogg, nbt↔midi).
-- **Tools & Environment** — Setup guides and cheatsheets for Git, Docker, WSL2, Flutter, VS Code, plus system automation scripts.
+- **Demo&&Resources** — The small projects that I have learned and some of my own ideas.
+- **Language** — Basic knowledge of programming languages.
+- **Docs** — Record the installation and setup process of some of my development environments or software..
+- **Tools** —Where I will put some small but useful computer tools in the future.
 
 * * *
 
