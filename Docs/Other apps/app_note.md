@@ -30,7 +30,8 @@
 
 ## 注册美区账号
 
-
+参考教程：[[https://www.bilibili.com/video/BV1zHtmzDEVY/?spm_id_from=333.337.search-card.all.click&vd_source=04d755a57294157b6417db0ec31c1460]]
+（我用Google创建了新的美区账号一样可以）
 
 ---
 
@@ -63,6 +64,7 @@
 # ==Ollama==
 
 > 管理本地大模型
+> 目前更喜欢用`LM Studio`
 
 ## 安装Ollama
 
