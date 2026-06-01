@@ -181,8 +181,7 @@ pip install streamlit
 
 # <mark>Problems</mark>
 
-## lingma插件
-
+## lingma插件(其实不建议装)
 
 
 ---
