@@ -183,63 +183,7 @@ pip install streamlit
 
 ## lingma插件
 
-在Pycharm中安装该插件后重启IDE
 
-报错(1):
-
-```powershell
-updateCustomSuggestPrompt error
-java.lang.NullPointerException: Cannot invoke "com.alibabacloud.intellij.cosy.db.DataSourceService.isDatasourceExist()" because "dataSourceService" is null
-    at com.alibabacloud.intellij.cosy.chat.context.DatabaseContextRefProvider.register(DatabaseContextRefProvider.java:97)
-    at com.alibabacloud.intellij.cosy.util.SuggestPromptUtil.updateCustomSuggestPrompt(SuggestPromptUtil.java:192)
-    at com.alibabacloud.intellij.cosy.core.lsp.LanguageClientImpl.lambda$pushCustomCommand$18(LanguageClientImpl.java:515)
-    at com.intellij.util.concurrency.ChildContext$runInChildContext$1.invoke(propagation.kt:167)
-    at com.intellij.util.concurrency.ChildContext$runInChildContext$1.invoke(propagation.kt:167)
-    at com.intellij.util.concurrency.ChildContext.runInChildContext(propagation.kt:173)
-    at com.intellij.util.concurrency.ChildContext.runInChildContext(propagation.kt:167)
-    at com.intellij.util.concurrency.ContextRunnable.lambda$run$0(ContextRunnable.java:26)
-    at com.intellij.concurrency.ThreadContext.resetThreadContext(threadContext.kt:294)
-    at com.intellij.util.concurrency.ContextRunnable.run(ContextRunnable.java:25)
-    at java.desktop/java.awt.event.InvocationEvent.dispatch(InvocationEvent.java:318)
-    at java.desktop/java.awt.EventQueue.dispatchEventImpl(EventQueue.java:781)
-    at java.desktop/java.awt.EventQueue$4.run(EventQueue.java:728)
-    at java.desktop/java.awt.EventQueue$4.run(EventQueue.java:722)
-    at java.base/java.security.AccessController.doPrivileged(AccessController.java:400)
-    at java.base/java.security.ProtectionDomain$JavaSecurityAccessImpl.doIntersectionPrivilege(ProtectionDomain.java:87)
-    at java.desktop/java.awt.EventQueue.dispatchEvent(EventQueue.java:750)
-    at com.intellij.ide.IdeEventQueue.defaultDispatchEvent(IdeEventQueue.kt:664)
-    at com.intellij.ide.IdeEventQueue._dispatchEvent(IdeEventQueue.kt:517)
-    at com.intellij.ide.IdeEventQueue.dispatchEvent$lambda$0$0$0$0(IdeEventQueue.kt:337)
-    at com.intellij.openapi.progress.impl.CoreProgressManager.computePrioritized(CoreProgressManager.java:901)
-    at com.intellij.ide.IdeEventQueue.dispatchEvent$lambda$0$0$0(IdeEventQueue.kt:336)
-    at com.intellij.ide.IdeEventQueueKt.performActivity$lambda$1(IdeEventQueue.kt:1065)
-    at com.intellij.openapi.application.TransactionGuardImpl.performActivity(TransactionGuardImpl.java:109)
-    at com.intellij.ide.IdeEventQueueKt.performActivity(IdeEventQueue.kt:1065)
-    at com.intellij.ide.IdeEventQueue.dispatchEvent$lambda$0(IdeEventQueue.kt:331)
-    at com.intellij.ide.IdeEventQueue.dispatchEvent(IdeEventQueue.kt:371)
-    at java.desktop/java.awt.EventDispatchThread.pumpOneEventForFilters(EventDispatchThread.java:207)
-    at java.desktop/java.awt.EventDispatchThread.pumpEventsForFilter(EventDispatchThread.java:128)
-    at java.desktop/java.awt.EventDispatchThread.pumpEventsForHierarchy(EventDispatchThread.java:117)
-    at java.desktop/java.awt.EventDispatchThread.pumpEvents(EventDispatchThread.java:113)
-    at java.desktop/java.awt.EventDispatchThread.pumpEvents(EventDispatchThread.java:105)
-    at java.desktop/java.awt.EventDispatchThread.run(EventDispatchThread.java:92)
-```
-
-报错(2):
-
-```powershell
-updateCustomSuggestPrompt error
-java.lang.NullPointerException: Cannot invoke "com.alibabacloud.intellij.cosy.db.DataSourceService.isDatasourceExist()" because "dataSourceService" is null
-    at com.alibabacloud.intellij.cosy.chat.context.DatabaseContextRefProvider.register(DatabaseContextRefProvider.java:97)
-    at com.alibabacloud.intellij.cosy.util.SuggestPromptUtil.updateCustomSuggestPrompt(SuggestPromptUtil.java:192)
-    at com.alibabacloud.intellij.cosy.core.lsp.LanguageWebSocketService.refreshCustomCommands(LanguageWebSocketService.java:880)
-    at com.alibabacloud.intellij.cosy.core.Cosy.lambda$asyncActionAfterCosyStart$5(Cosy.java:294)
-    at java.base/java.util.concurrent.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1144)
-    at java.base/java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:642)
-    at java.base/java.lang.Thread.run(Thread.java:1583)updateCustomSuggestPrompt error
-```
-
-官方更新后已解决
 
 ---
 
