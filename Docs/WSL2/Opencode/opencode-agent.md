@@ -238,7 +238,7 @@ opencode
 
 ### AGENTS.md
 
-![](image/opencode-agent/opencode AGENTS.md.png)
+![](image/opencode-agent/opencode-AGENTSmd.png)
 按上图配置AGENTS.md即可;
 不过优先考虑通过改变工程架构来提升agent能力;
 
