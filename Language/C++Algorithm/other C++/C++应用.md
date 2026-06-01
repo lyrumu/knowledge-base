@@ -160,7 +160,7 @@ delete[] mat;//再释放行指针数组
 
 `mat[i][j]=*(*(mat+i)+j)`
 
-![指针数组](./.images/指针数组.png)
+![指针数组](image/C++应用/指针数组.png)
 
 应用场景：
 
@@ -194,7 +194,7 @@ for(int i = 0;i<row;i++){
 delete[] mat;//释放内存
 ```
 
-![指针数组2](./.images/指针数组2.png)
+![指针数组2](image/C++应用/指针数组2.png)
 
 
 

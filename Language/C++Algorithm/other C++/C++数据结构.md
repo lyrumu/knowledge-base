@@ -104,7 +104,7 @@ node *createlist(){//链表创建
 }
 ```
 
-![头结点](./.images/链表头结点图示.png)
+![头结点](image/C++数据结构/链表头结点图示.png)
 
 <mark>尾插入法：</mark>
 

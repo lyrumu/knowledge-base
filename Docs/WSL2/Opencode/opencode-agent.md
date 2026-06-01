@@ -10,7 +10,7 @@
 
 打开WSL运行直接`curl -fsSL https://opencode.ai/install | bash`来安装opencode;
 
-![[../image/WSL内安装opencode.png]]
+![](image/opencode-agent/WSL内安装opencode.png)
 
 如果网络不好,可以临时配置WSL代理端口,然后重新输入:
 `curl -fsSL https://opencode.ai/install | bash`
@@ -134,7 +134,8 @@ sudo apt update
 ### env
 
 优化环境变量,运行下图命令,(可选)
-![[../image/优化环境变量.png]]
+
+![](image/opencode-agent/优化环境变量.png)
 
 在`echo $PATH`测试后 发现我的WSL由于继承windows环境变量后污染严重;
 决定关闭继承;
@@ -237,7 +238,7 @@ opencode
 
 ### AGENTS.md
 
-![[../image/opencode AGENTS.md.png]]
+![](image/opencode-agent/opencode AGENTS.md.png)
 按上图配置AGENTS.md即可;
 不过优先考虑通过改变工程架构来提升agent能力;
 
@@ -392,3 +393,4 @@ cd project_root
 opencode
 
 ---
+

@@ -203,7 +203,7 @@ git push github master
 ```
 
 最后再用`git remote -v`检查一下，应该会多出origin之外的仓库；
-![多平台同步](image/同步两个git.png)
+![多平台同步](image/Git/同步两个git.png)
 后续更新时，用以下命令推送到两个仓库：
 
 ```bash
@@ -219,7 +219,7 @@ git push github master
 git status#仅用来检查本地和origin的同步状态
 ```
 
-![git status](image/git%20status.png)
+![git status](image/Git/git%20status.png)
 （up to date 就说明本地和origin是正确同步的）；
 
 ```bash
@@ -229,13 +229,13 @@ git log --oneline origin/master#gitee最新提交
 git log --oneline github/master#github最新提交
 ```
 
-![git fetch --all](image/git%20fetch.png)
+![git fetch --all](image/Git/git%20fetch.png)
 
-![log HEAD](image/gitloghead.png)
+![log HEAD](image/Git/gitloghead.png)
 
-![log origin](image/gitlogorigin.png)
+![log origin](image/Git/gitlogorigin.png)
 
-![log github](image/gitloggithub.png)
+![log github](image/Git/gitloggithub.png)
 检查三个输出内容是否相同即可；
 
 ---
@@ -256,7 +256,7 @@ git log --oneline github/master#github最新提交
 and 我并未记得；
 直接更新了新的本地内容；
 于是乎：
-![wrong1](image/wrong1.png)
+![wrong1](image/Git/wrong1.png)
 
 在进行`git push`时出现报错；
 处理方法：

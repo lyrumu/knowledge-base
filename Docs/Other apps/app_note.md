@@ -90,7 +90,7 @@
 
 `win+x`-`磁盘管理`-右键`windows(C盘)`;
 
-![](image/windows分盘.png)
+![](image/app_note/windows分盘.png)
 
 点击`压缩卷`,稍作等待,修改要分出去的存储空间大小;
 
