@@ -1,7 +1,9 @@
 {
-  "attachmentFolderPath": "./image",
   "newLinkFormat": "relative",
   "showUnsupportedFiles": true,
   "newFileLocation": "folder",
-  "spellcheck": false
+  "spellcheck": false,
+  "useMarkdownLinks": true,
+  "alwaysUpdateLinks": true,
+  "attachmentFolderPath": "image"
 }
