@@ -25,7 +25,7 @@ def main():
 
     messages = [{"role":"user","content":args.p}]
 
-    while True:
+    while True:# Loop
         # 调用LLM
         chat = client.chat.completions.create(
             model=model,
