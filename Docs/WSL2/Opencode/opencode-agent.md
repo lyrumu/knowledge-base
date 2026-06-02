@@ -199,6 +199,11 @@ wsl --shutdown #先关闭wsl
 wsl --export YOUR_UBUNTU_NAME D:\wsl_backup\ubuntu_snapshot.tar #示例路径
 ```
 
+备份时若出现U盘不支持单次大文件的传输：右键U盘-属性-查看是否为`FAT32`;
+如果是的话，先对U盘内已有文件进行备份，准备格式化;
+右键U盘-格式化-格式一般选择`exFAT`-分配单元文件大小:保持默认即可;
+完成后重新将Ubuntu备份复制进去就行;
+
 ---
 
 # Use
