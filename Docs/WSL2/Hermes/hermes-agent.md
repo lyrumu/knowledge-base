@@ -171,3 +171,7 @@ hermes config set terminal.backend local    终端后端（默认 local，可换
     hermes doctor --fix   # 自动修复能修的问题
     hermes setup          # 交互式配置向导
 ```
+
+## 快捷键
+
+`Alt Enter` 或`Ctrl j`----换行
