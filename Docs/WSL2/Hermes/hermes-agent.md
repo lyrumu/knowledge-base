@@ -175,3 +175,8 @@ hermes config set terminal.backend local    终端后端（默认 local，可换
 ## 快捷键
 
 `Alt Enter` 或`Ctrl j`----换行
+
+## 链接其他平台
+
+`hermes gateway setup` 配置远程平台
+`hermes dashboard`打开网页端配置端口
