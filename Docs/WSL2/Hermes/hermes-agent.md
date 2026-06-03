@@ -29,8 +29,8 @@ curl -fsSL https://raw.githubusercontent.com/NousResearch/hermes-agent/main/scri
 
 三、安装后的文件结构变化
 ~/.hermes/
-├── config.yaml          # 配置（模型、终端、工具等）
-├── .env                 # API 密钥和 secrets
+├── **config.yaml          # 配置（模型、终端、工具等）**
+├── **.env                 # API 密钥和 secrets**
 ├── auth.json            # OAuth 凭据
 ├── SOUL.md              # agent 人格定义
 ├── hermes-agent/        # 代码仓库
@@ -64,7 +64,7 @@ Alibaba Cloud / DashScope    DASHSCOPE_API_KEY
 
 步骤 3：运行首次对话验证
 hermes            # 经典 CLI
-hermes --tui      # 推荐，现代 TUI 界面
+**hermes --tui**      # 推荐，现代 TUI 界面
 步骤 4：验证会话持久化
 hermes --continue    # 恢复最近会话
 hermes -c            # 简写
@@ -74,10 +74,10 @@ hermes -c            # 简写
 五、后期配置建议（按优先级排列）
 第一优先级：基础可用性
 命令    作用
-hermes model    更换/添加 LLM provider 和模型
+**hermes model**    更换/添加 LLM provider 和模型
 hermes tools    配置启用的工具集（terminal、web、skills 等）
 hermes config set terminal.backend local    终端后端（默认 local，可换 docker/ssh/modal 等）
-hermes setup    完整配置向导
+**hermes setup**    完整配置向导
 第二优先级：安全加固（文档强制建议）
 
 1. 设置 .env 文件权限
