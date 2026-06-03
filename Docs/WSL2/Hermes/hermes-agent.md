@@ -88,7 +88,7 @@ hermes config set terminal.backend local    终端后端（默认 local，可换
      mode: manual    # manual | smart | off
      timeout: 60
 
-3. 如果你以后用 gateway（消息平台），文档强调必须配置 allowlist，否则默认全部拒绝：
+3. **如果你以后用 gateway（消息平台），文档强调必须配置 allowlist，否则默认全部拒绝：**
    
     ~/.hermes/.env
    
@@ -101,7 +101,7 @@ hermes config set terminal.backend local    终端后端（默认 local，可换
    - 设置资源限制（CPU/内存/磁盘）
    - API 密钥放 .env 并 chmod 600
    - 不要以 root 运行 gateway
-   - 定期更新：hermes update
+   - **定期更新：hermes update**
      第三优先级：进阶功能
      场景    命令/配置
      接入消息平台    hermes gateway setup（文档建议 CLI 跑通后再搞）
@@ -113,7 +113,7 @@ hermes config set terminal.backend local    终端后端（默认 local，可换
      编辑器集成 (ACP)    pip install -e '.[acp]' → hermes acp，支持 VS Code/Zed/JetBrains
      配置自动压缩    默认已启用，compression.threshold: 0.50，到 50% 上下文时自动压缩
      故障排查工具（文档推荐顺序）
-     hermes doctor              # 诊断一切
+     **hermes doctor              # 诊断一切**
      hermes model               # 重新配置 provider
      hermes setup               # 全量配置向导
      hermes sessions list       # 列出所有会话
