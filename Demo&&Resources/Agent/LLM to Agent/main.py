@@ -151,7 +151,6 @@ def main():
 
     # # print(chat.choices[0].message.content)
     # message=chat.choices[0].message
-    
     # #这里让LLM真正使用工具Read
     # if message.tool_calls:# 如果调用了read就返回文件内容
     #     tool_call = message.tool_calls[0]
