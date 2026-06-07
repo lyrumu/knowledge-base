@@ -2,3 +2,9 @@
 .obsidian/workspace.json
 .obsidian/plugins/
 
+
+
+
+
+# Ignore Smart Environment folder
+.smart-env
