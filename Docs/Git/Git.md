@@ -164,9 +164,8 @@ Mode                 LastWriteTime         Length Name
 - 使用`.gitignore`:
   先提交更新后的`.gitignore`文件至github;
   然后通过`git status`检查是否有已经被GIT跟踪但是需要ignore的文件;
-  ```text
-⚠️.gitignore 只能忽略未被跟踪的文件,如果文件已经被 Git 跟踪过,需要先 git rm --cached 再忽略;
-  ```
+  
+`⚠️.gitignore 只能忽略未被跟踪的文件,如果文件已经被 Git 跟踪过,需要先 git rm --cached 再忽略;`
 
 所以如果有,通过`git rm --cached config/secret.json`让git忽略这个文文件,之后就可以正常add-commit-push了;
   
