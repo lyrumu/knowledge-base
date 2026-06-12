@@ -105,9 +105,10 @@
 ### 关闭最后标签页但不关闭浏览器
 
 - edge
-右键桌面edge图标-属性
-在目标一栏的最后加上` --enable-features=msSpawnNtpOnLastTabClose`
-再次进入edge测试即可
+目前可以直接在浏览器设置里搜索关键词`“标签页”`来手动设置
+~~右键桌面edge图标-属性~~
+~~在目标一栏的最后加上` --enable-features=msSpawnNtpOnLastTabClose`~~
+~~再次进入edge测试即可~~
 - firefox
 在浏览器地址栏输入`about:config`
 搜索`browser.tabs.closeWindowWithLastTab`

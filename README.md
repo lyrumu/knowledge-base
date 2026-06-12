@@ -14,6 +14,7 @@ Built with **[Obsidian](https://obsidian.md/)** for a linked, graph-based note-t
 - **Language** — Basic knowledge of programming languages.
 - **Docs** — Record the installation and setup process of some of my development environments or software..
 - **Tools** —Where I will put some small but useful computer tools in the future.
+- **Raw information** — Raw informations(Includes excellent open-source projects) extracted from the web page through the obsidian plugin.
 
 * * *
 
