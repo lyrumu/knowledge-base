@@ -17,7 +17,7 @@ This guide discusses the Dart and Flutter MCP server.
 
 ## Overview
 
-[#](#overview)
+[#](Dart%20and%20Flutter%20MCP%20server.md#overview)
 
 The [Dart and Flutter MCP server](https://github.com/dart-lang/ai/tree/main/pkgs/dart_mcp_server) exposes Dart and Flutter development tool actions to compatible AI-assistant clients. MCP (model context protocol) is a protocol that enables communication between development tools and AI assistants, allowing the assistants to understand the context of the code and perform actions on behalf of the developer.
 
@@ -41,7 +41,7 @@ This section provides instructions for setting up the Dart and Flutter MCP serve
 
 ### Antigravity
 
-[#](#antigravity)
+[#](Dart%20and%20Flutter%20MCP%20server.md#antigravity)
 
 To configure Google [Antigravity](https://antigravity.google/) to use the Dart and Flutter MCP server, you can either install it from the list of available servers or [connect it as a custom MCP server](https://antigravity.google/docs/mcp#connecting-custom-mcp-servers).
 
@@ -53,7 +53,7 @@ To configure Google [Antigravity](https://antigravity.google/) to use the Dart a
 3. Select **MCP Servers**.
 4. In the upper right of the **Agent** panel, click **Manage MCP Servers**.
 
-From here, you can choose to install the MCP server from [the built-in MCP store](#antigravity-mcp-store-install) or by [configuring it manually](#antigravity-mcp-manual-install).
+From here, you can choose to install the MCP server from [the built-in MCP store](Dart%20and%20Flutter%20MCP%20server.md#antigravity-mcp-store-install) or by [configuring it manually](Dart%20and%20Flutter%20MCP%20server.md#antigravity-mcp-manual-install).
 
 1. In the list of available MCP servers, find or search for **Dart** and click **Install**.
 1. In the upper right of the **Manage MCPs** editor view, click **View raw config**.
@@ -105,7 +105,7 @@ For more information, check out the official Gemini CLI documentation for [setti
 
 [Gemini Code Assist](https://codeassist.google/) 's [Agent mode](https://developers.google.com/gemini-code-assist/docs/use-agentic-chat-pair-programmer) integrates the Gemini CLI to provide a powerful AI agent directly in your IDE. If you haven't set up Gemini Code Assist or its agent mode yet, follow its [Before you begin instructions](https://developers.google.com/gemini-code-assist/docs/use-agentic-chat-pair-programmer#before-you-begin) to get started.
 
-To configure Gemini Code Assist to use the Dart and Flutter MCP server, follow the instructions to [configure the Gemini CLI](#gemini-cli).
+To configure Gemini Code Assist to use the Dart and Flutter MCP server, follow the instructions to [configure the Gemini CLI](Dart%20and%20Flutter%20MCP%20server.md#gemini-cli).
 
 You can verify the MCP server has been configured properly by typing `/mcp` in the chat window in Agent mode.
 
@@ -140,7 +140,7 @@ For more information, see the official VS Code documentation for [enabling MCP s
 
 ### Cursor
 
-[#](#cursor)
+[#](Dart%20and%20Flutter%20MCP%20server.md#cursor)
 
 The easiest way to configure the Dart and Flutter MCP server with Cursor is by clicking the **Add to Cursor** button:
 
@@ -168,7 +168,7 @@ For more information, see the official Cursor documentation for [installing MCP 
 
 ### OpenCode
 
-[#](#opencode)
+[#](Dart%20and%20Flutter%20MCP%20server.md#opencode)
 
 To configure [OpenCode](https://opencode.ai/) to use the Dart and Flutter MCP server, add the `dart-mcp-server` entry to your OpenCode configuration.
 

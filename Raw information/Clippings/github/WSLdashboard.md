@@ -141,7 +141,7 @@ Ensure you have the Rust toolchain (Rust 1.92+ or newer) installed.
 - **Async Runtime**: Tokio for non-blocking system commands and I/O.
 - **Performance Highlights**:
 	- **Responsiveness**: Near-instant startup and real-time WSL status monitoring.
-		- **Efficiency**: Ultra-low resource usage (see [Key Features](#-key-features--usage) for details).
+		- **Efficiency**: Ultra-low resource usage (see [Key Features](WSLdashboard.md#-key-features--usage) for details).
 		- **Portability**: Optimized release build produces a single compact executable.
 
 ## ⭐️ Labor of love

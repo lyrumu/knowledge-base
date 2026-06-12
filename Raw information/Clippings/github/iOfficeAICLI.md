@@ -346,7 +346,7 @@ Exposes all document operations as tools over JSON-RPC — no shell access neede
 
 Get OfficeCLI working with your AI agent in two steps:
 
-1. **Install the binary** -- one command (see [Installation](#installation))
+1. **Install the binary** -- one command (see [Installation](iOfficeAICLI.md#installation))
 2. **Done.** OfficeCLI automatically detects your AI tools (Claude Code, GitHub Copilot, Codex) by checking known config directories and installs its skill file. Your agent can immediately create, read, and modify any Office document.
 **Manual setup (optional)**
 

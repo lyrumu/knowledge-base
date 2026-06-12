@@ -14,7 +14,7 @@ tags:
 
 **why use many token when few do trick**
 
-[Before/After](#before--after) • [Install](#install) • [What You Get](#what-you-get) • [Benchmarks](#benchmarks) • [Full install guide](https://github.com/JuliusBrussee/caveman/blob/main/INSTALL.md)
+[Before/After](JuliusBrusseecaveman%20🪨%20why%20use%20many%20token%20when%20few%20token%20do%20trick%20—%20Claude%20Code%20skill%20that%20cuts%2065%%20of%20tokens%20by%20talking%20like%20caveman.md#before--after) • [Install](JuliusBrusseecaveman%20🪨%20why%20use%20many%20token%20when%20few%20token%20do%20trick%20—%20Claude%20Code%20skill%20that%20cuts%2065%%20of%20tokens%20by%20talking%20like%20caveman.md#install) • [What You Get](JuliusBrusseecaveman%20🪨%20why%20use%20many%20token%20when%20few%20token%20do%20trick%20—%20Claude%20Code%20skill%20that%20cuts%2065%%20of%20tokens%20by%20talking%20like%20caveman.md#what-you-get) • [Benchmarks](JuliusBrusseecaveman%20🪨%20why%20use%20many%20token%20when%20few%20token%20do%20trick%20—%20Claude%20Code%20skill%20that%20cuts%2065%%20of%20tokens%20by%20talking%20like%20caveman.md#benchmarks) • [Full install guide](https://github.com/JuliusBrussee/caveman/blob/main/INSTALL.md)
 
 ---
 

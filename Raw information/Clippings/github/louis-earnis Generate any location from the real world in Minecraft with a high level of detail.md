@@ -23,7 +23,7 @@ This free and open source project is designed to handle large-scale geographic d
 ## ⌨️ Usage
 
 [![](https://github.com/louis-e/arnis/raw/main/assets/git/gui.png)](https://github.com/louis-e/arnis/blob/main/assets/git/gui.png)  
-Download the [latest release](https://github.com/louis-e/arnis/releases/) or [compile](#trophy-open-source) the project on your own.
+Download the [latest release](https://github.com/louis-e/arnis/releases/) or [compile](louis-earnis%20Generate%20any%20location%20from%20the%20real%20world%20in%20Minecraft%20with%20a%20high%20level%20of%20detail.md#trophy-open-source) the project on your own.
 
 Choose your area on the map using the rectangle tool and select your Minecraft world - then simply click on *Start Generation*! Additionally, you can customize various generation settings, such as world scale, spawn point, or building interior generation.
 
