@@ -179,5 +179,6 @@ Alibaba Cloud / DashScope    DASHSCOPE_API_KEY
 
 `Alt Enter` 或`Ctrl j`----换行
 `hermes gateway setup` 配置远程平台
-`hermes dashboard`打开网页端配置端口
+`hermes dashboard`打开网页端配置端口(目前网页端也能对话)
+`hermes --tui sessions browse`以TUI方式选择一个历史对话打开
 ![](image/hermes-agent/file-20260606221444684.png)
