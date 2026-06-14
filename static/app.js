@@ -114,4 +114,9 @@
     if (e.key === 'Escape') { var z = document.querySelector('img.zoomed'); if (z) z.classList.remove('zoomed'); }
   });
 
+  /* ===== Re-run Prism highlighting ===== */
+  if (typeof Prism !== 'undefined') {
+    Prism.highlightAll();
+  }
+
 })();
