@@ -130,8 +130,9 @@ def output_path_for_file(rel: str) -> str:
 
 
 def href_for_file(rel: str) -> str:
-    """将文件相对路径转为 HTML href（不编码，浏览器原生支持 UTF-8）"""
-    return output_path_for_file(rel)
+    """将文件相对路径转为 HTML href（HTML 实体转义 & 等）"""
+    path = output_path_for_file(rel)
+    return path.replace("&", "&amp;")
 
 
 def url_for_file(rel: str) -> str:
@@ -149,8 +150,8 @@ def url_for_dir(rel: str) -> str:
 
 
 def href_for_dir(rel: str) -> str:
-    """将目录相对路径转为 HTML href（不编码）"""
-    return url_for_dir(rel)
+    """将目录相对路径转为 HTML href（HTML 实体转义）"""
+    return url_for_dir(rel).replace("&", "&amp;")
 
 
 def hash_content(content: bytes) -> str:
@@ -961,7 +962,7 @@ def _breadcrumb(file_rel: str) -> str:
     for i, part in enumerate(parts[:-1]):
         # 链接到目录的 index.html
         dir_path = "/".join(parts[:i+1])
-        dir_url = url_for_dir(dir_path)
+        dir_url = href_for_dir(dir_path)
         crumbs.append(f'<a href="{dir_url}">{part}</a>')
     crumbs.append(f'<span>{parts[-1]}</span>')
     return " / ".join(crumbs)
