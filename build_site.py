@@ -34,11 +34,11 @@ SITE_REPO = "knowledge-base"
 IGNORED_DIRS = {
     ".git", ".obsidian", ".smart-env", "node_modules",
     ".venv", "__pycache__", "site", ".github", ".mypy_cache",
-    ".pytest_cache", "dist", "build", ".tox", ".eggs",
+    ".pytest_cache", "dist", "build", ".tox", ".eggs", "static",
 }
 IGNORED_FILES = {
     ".gitignore", ".DS_Store", "Thumbs.db", "desktop.ini",
-    "build_site.py", "requirements.txt",
+    "build_site.py", "requirements.txt", "LICENSE",
 }
 
 # 扩展名 → Prism.js 语言名
@@ -279,8 +279,8 @@ def generate_html_page(content_html, title, file_rel, file_tree_html, current_re
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>{html_escape(title)} — {SITE_TITLE}</title>
   <link rel="stylesheet" href="/{SITE_REPO}/static/style.css">
+  <link rel="stylesheet" href="/{SITE_REPO}/static/prism-theme.css">
   <link rel="stylesheet" href="/{SITE_REPO}/static/prism-line-numbers.css">
-  <style>pre[class*="language-"]{{background:var(--bg-card)!important;border:1px solid var(--border);border-radius:var(--radius)}}</style>
 </head>
 <body>
   <button class="menu-toggle" aria-label="Toggle menu">☰</button>
@@ -476,21 +476,16 @@ def build():
 
     # 首页
     print("📄 生成首页...")
-    index_content = f"""
+    # 尝试用 README.md 作为首页内容
+    readme_path = VAULT_DIR / "README.md"
+    if readme_path.exists():
+        readme_content = readme_path.read_text(encoding="utf-8", errors="replace")
+        index_content = render_markdown_file(readme_content, VAULT_DIR, readme_path)
+        index_content += f'\n<hr>\n<p style="color:var(--text-muted);font-size:13px;margin-top:24px">最后构建: {datetime.now().strftime("%Y-%m-%d %H:%M")} · 共 {sum(stats.values())} 个文件</p>'
+    else:
+        index_content = f"""
 <h1>📚 {SITE_TITLE}</h1>
 <p style="color:var(--text-dim)">由 Obsidian vault 自动生成 · 最后构建: {datetime.now().strftime('%Y-%m-%d %H:%M')}</p>
-<hr>
-<table>
-  <thead><tr><th>类型</th><th>数量</th></tr></thead>
-  <tbody>
-    <tr><td>📝 Markdown</td><td>{stats['md']}</td></tr>
-    <tr><td>💻 代码/配置</td><td>{stats['code']}</td></tr>
-    <tr><td>🖼️ 图片</td><td>{stats['image']}</td></tr>
-    <tr><td>🎵 音频</td><td>{stats['audio']}</td></tr>
-    <tr><td>📦 其他</td><td>{stats['other']}</td></tr>
-    <tr><td><strong>总计</strong></td><td><strong>{sum(stats.values())}</strong></td></tr>
-  </tbody>
-</table>
 <p style="color:var(--text-dim);margin-top:16px">使用左侧边栏浏览所有文件。</p>
 """
     index_html = generate_html_page(index_content, "Home", ".", tree_html, ".")

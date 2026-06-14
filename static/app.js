@@ -18,7 +18,6 @@
         if (overlay) overlay.classList.toggle('open');
       });
     }
-
     if (overlay) {
       overlay.addEventListener('click', function () {
         sidebar.classList.remove('open');
@@ -29,40 +28,45 @@
 
   // ========== Directory Expand/Collapse ==========
   function initTree() {
-    var treeContainer = document.querySelector('.tree-container');
-    if (!treeContainer) return;
+    var tree = document.querySelector('.tree-container');
+    if (!tree) return;
 
-    // Toggle on click the toggle-row or icon
-    treeContainer.addEventListener('click', function (e) {
-      var toggleRow = e.target.closest('.toggle-row');
-      var toggleIcon = e.target.closest('.toggle-icon');
-
-      if (toggleRow || toggleIcon) {
-        e.preventDefault();
-        e.stopPropagation();
-        var li = (toggleRow || toggleIcon).closest('.tree-item');
-        if (li && li.classList.contains('dir')) {
-          li.classList.toggle('open');
-        }
-        return;
+    tree.addEventListener('click', function (e) {
+      var row = e.target.closest('.toggle-row');
+      if (!row) return;
+      e.preventDefault();
+      e.stopPropagation();
+      var li = row.closest('.tree-item');
+      if (li && li.classList.contains('dir')) {
+        li.classList.toggle('open');
       }
     });
 
-    // Mark current page as active
+    // Mark current page as active and open ancestors
     var currentPath = window.location.pathname;
-    var links = treeContainer.querySelectorAll('a');
+    // Strip the site repo prefix to get the relative path
+    var prefix = '/' + (typeof SITE_REPO !== 'undefined' ? SITE_REPO : 'knowledge-base') + '/';
+    var relPath = currentPath.startsWith(prefix) ? currentPath.slice(prefix.length) : currentPath.slice(1);
+
+    var links = tree.querySelectorAll('a[href]');
     for (var i = 0; i < links.length; i++) {
-      if (links[i].getAttribute('href') === currentPath) {
+      var href = links[i].getAttribute('href');
+      // Compare: strip prefix from href too
+      var hrefRel = href.startsWith(prefix) ? href.slice(prefix.length) : href;
+      if (hrefRel === relPath || hrefRel === relPath.replace(/^\//, '')) {
         var li = links[i].closest('.tree-item');
-        if (li) li.classList.add('active');
-        // Open all parent directories
-        var parent = li ? li.parentElement : null;
-        while (parent) {
-          if (parent.classList && parent.classList.contains('tree-item')) {
-            parent.classList.add('open');
+        if (li) {
+          li.classList.add('active');
+          // Open all ancestor tree-items
+          var parent = li.parentElement;
+          while (parent && parent !== tree) {
+            if (parent.classList && parent.classList.contains('tree-item') && parent.classList.contains('dir')) {
+              parent.classList.add('open');
+            }
+            parent = parent.parentElement;
           }
-          parent = parent.parentElement;
         }
+        break;
       }
     }
   }
@@ -71,21 +75,26 @@
   function initSearch() {
     var searchBox = document.querySelector('.search-box');
     if (!searchBox) return;
+    if (typeof Fuse === 'undefined') return;
 
     var treeContainer = document.querySelector('.tree-container');
     var allItems = treeContainer ? treeContainer.querySelectorAll('.tree-item') : [];
 
-    // Build search index from tree items
+    // Save original visibility
+    var origDisplay = [];
+    for (var i = 0; i < allItems.length; i++) {
+      origDisplay.push(allItems[i].style.display);
+    }
+
+    // Build search index
     var searchData = [];
     for (var i = 0; i < allItems.length; i++) {
       var item = allItems[i];
-      var link = item.querySelector('a');
+      var link = item.querySelector(':scope > a, :scope > .toggle-row > a');
       if (!link) continue;
-      searchData.push({
-        el: item,
-        name: link.textContent.trim().toLowerCase(),
-        isDir: item.classList.contains('dir')
-      });
+      // Get the text label (strip emoji prefix)
+      var name = link.textContent.replace(/^[^\w\u4e00-\u9fff]+/, '').trim();
+      searchData.push({ el: item, name: name.toLowerCase(), idx: i });
     }
 
     var fuse = new Fuse(searchData, {
@@ -98,49 +107,60 @@
       var query = this.value.trim();
 
       if (!query) {
-        // Reset: show all, collapse
+        // Reset
         for (var i = 0; i < allItems.length; i++) {
-          allItems[i].style.display = '';
+          allItems[i].style.display = origDisplay[i] || '';
+        }
+        // Close all dirs that weren't originally open
+        for (var i = 0; i < allItems.length; i++) {
+          if (allItems[i].classList.contains('dir') && origDisplay[i] === undefined) {
+            // Don't touch dirs that were already open from initTree
+          }
         }
         return;
       }
 
       var results = fuse.search(query);
-      var matches = new Set();
+      var showSet = new Set();
 
-      // Add matching items and all their ancestors
+      // For each match, show it and all ancestors
       for (var j = 0; j < results.length; j++) {
         var el = results[j].item.el;
-        matches.add(el);
+        showSet.add(el);
 
-        // Also show all descendants
-        var descendants = el.querySelectorAll('.tree-item');
-        for (var d = 0; d < descendants.length; d++) {
-          matches.add(descendants[d]);
-        }
-
-        // Open parent directories
+        // Show all ancestors
         var parent = el.parentElement;
-        while (parent) {
+        while (parent && parent !== treeContainer) {
           if (parent.classList && parent.classList.contains('tree-item')) {
+            showSet.add(parent);
             parent.classList.add('open');
-            matches.add(parent);
           }
           parent = parent.parentElement;
         }
       }
 
-      // Hide/show
+      // For matched dirs, also show their direct children
+      for (var j = 0; j < results.length; j++) {
+        var el = results[j].item.el;
+        if (el.classList.contains('dir')) {
+          var children = el.querySelectorAll(':scope > .tree-children > .tree-item');
+          for (var c = 0; c < children.length; c++) {
+            showSet.add(children[c]);
+          }
+        }
+      }
+
       for (var k = 0; k < allItems.length; k++) {
-        allItems[k].style.display = matches.has(allItems[k]) ? '' : 'none';
+        allItems[k].style.display = showSet.has(allItems[k]) ? '' : 'none';
       }
     });
 
-    // Keyboard shortcut: Ctrl+K or / to focus search
+    // Ctrl+K to focus search
     document.addEventListener('keydown', function (e) {
-      if ((e.ctrlKey && e.key === 'k') || (e.key === '/' && document.activeElement.tagName !== 'INPUT')) {
+      if ((e.ctrlKey && e.key === 'k') || (e.key === '/' && document.activeElement.tagName !== 'INPUT' && document.activeElement.tagName !== 'TEXTAREA')) {
         e.preventDefault();
         searchBox.focus();
+        searchBox.select();
       }
     });
   }
@@ -152,12 +172,10 @@
         e.target.classList.toggle('zoomed');
       }
     });
-
-    // Close zoomed image on Escape
     document.addEventListener('keydown', function (e) {
       if (e.key === 'Escape') {
-        var zoomed = document.querySelector('img.zoomed');
-        if (zoomed) zoomed.classList.remove('zoomed');
+        var z = document.querySelector('img.zoomed');
+        if (z) z.classList.remove('zoomed');
       }
     });
   }
@@ -168,10 +186,5 @@
     initTree();
     initSearch();
     initImageZoom();
-
-    // Re-run Prism if loaded
-    if (typeof Prism !== 'undefined') {
-      Prism.highlightAll();
-    }
   });
 })();
