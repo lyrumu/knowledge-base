@@ -21,14 +21,12 @@
   }
 
   /* ===== Mark current page active & open ancestors ===== */
-  (function () {
-    if (!tree) return;
+  if (tree) {
     var path = location.pathname.replace(/\/+$/, '');
-    var repo = '/knowledge-base';
     var links = tree.querySelectorAll('a[href]');
     for (var i = 0; i < links.length; i++) {
       var href = links[i].getAttribute('href').replace(/\/+$/, '');
-      if (href === path || href === path.replace(repo, '')) {
+      if (href === path || href === path.replace('/knowledge-base', '')) {
         var li = links[i].closest('.tree-item');
         if (li) {
           li.classList.add('active');
@@ -41,21 +39,36 @@
         break;
       }
     }
-  })();
+  }
 
-  /* ===== Search ===== */
+  /* ===== Search — save/restore original state ===== */
   var searchBox = document.querySelector('.search-box');
   if (searchBox && tree) {
     var items = tree.querySelectorAll('.tree-item');
 
+    // Snapshot original state
+    var origState = [];
+    for (var i = 0; i < items.length; i++) {
+      origState.push({
+        display: items[i].style.display,
+        open: items[i].classList.contains('open')
+      });
+    }
+
     searchBox.addEventListener('input', function () {
       var q = this.value.trim().toLowerCase();
+
       if (!q) {
-        for (var i = 0; i < items.length; i++) items[i].style.display = '';
+        // Restore original state
+        for (var i = 0; i < items.length; i++) {
+          items[i].style.display = origState[i].display;
+          if (origState[i].open) items[i].classList.add('open');
+          else items[i].classList.remove('open');
+        }
         return;
       }
 
-      // Find matching items
+      // Find matches
       var show = new Set();
       for (var i = 0; i < items.length; i++) {
         var text = items[i].textContent.toLowerCase();
@@ -70,7 +83,7 @@
             }
             p = p.parentElement;
           }
-          // If it's a dir, show direct children too
+          // If dir, show direct children
           if (items[i].classList.contains('dir')) {
             var ch = items[i].querySelectorAll(':scope > .tree-children > .tree-item');
             for (var c = 0; c < ch.length; c++) show.add(ch[c]);
@@ -83,7 +96,7 @@
       }
     });
 
-    // Ctrl+K to focus
+    // Ctrl+K
     document.addEventListener('keydown', function (e) {
       if ((e.ctrlKey && e.key === 'k') || (e.key === '/' && !/INPUT|TEXTAREA/.test(document.activeElement.tagName))) {
         e.preventDefault();
