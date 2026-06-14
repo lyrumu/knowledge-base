@@ -217,7 +217,23 @@ def render_markdown_file(content, vault_dir, file_path):
         FencedCodeExtension(),
         TableExtension(),
         TocExtension(permalink=True),
-    ])
+        'pymdownx.tilde',          # ~~删除线~~
+        'pymdownx.mark',           # ==高亮==
+        'pymdownx.tasklist',       # - [ ] 任务列表
+        'pymdownx.details',        # 可折叠 details
+        'pymdownx.emoji',          # :emoji:
+        'pymdownx.keys',           # <kbd>键盘按键
+        'pymdownx.smartsymbols',   # 自动替换符号 → 1/2 等
+        'pymdownx.striphtml',      # 移除 HTML 标签（可选）
+    ], extension_configs={
+        'pymdownx.emoji': {
+            'emoji_index': 'twemoji',
+            'emoji_generator': 'https://cdn.jsdelivr.net/gh/twitter/twemoji@14.0.2/assets/svg/',
+        },
+        'pymdownx.tasklist': {
+            'custom_checkbox': True,
+        },
+    })
     html = md.convert(content)
 
     toc = ""
