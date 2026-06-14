@@ -130,10 +130,8 @@ def output_path_for_file(rel: str) -> str:
 
 
 def href_for_file(rel: str) -> str:
-    """将文件相对路径转为 HTML href（URL 编码）"""
-    output = output_path_for_file(rel)
-    parts = Path(output).parts
-    return "/".join(urllib.parse.quote(p) for p in parts)
+    """将文件相对路径转为 HTML href（不编码，浏览器原生支持 UTF-8）"""
+    return output_path_for_file(rel)
 
 
 def url_for_file(rel: str) -> str:
@@ -151,10 +149,8 @@ def url_for_dir(rel: str) -> str:
 
 
 def href_for_dir(rel: str) -> str:
-    """将目录相对路径转为 HTML href（URL 编码）"""
-    raw = url_for_dir(rel)
-    parts = Path(raw).parts
-    return "/".join(urllib.parse.quote(p) for p in parts)
+    """将目录相对路径转为 HTML href（不编码）"""
+    return url_for_dir(rel)
 
 
 def hash_content(content: bytes) -> str:
@@ -1041,7 +1037,7 @@ def build():
                 media_out.parent.mkdir(parents=True, exist_ok=True)
                 shutil.copy2(fnode.path, media_out)
 
-                media_url = "media/" + "/".join(urllib.parse.quote(p) for p in Path(rel).parts)
+                media_url = "media/" + rel
                 rendered = render_image(media_url, fnode.path.name)
                 html = generate_html_page(rendered, fnode.path.name, rel, tree_html, rel)
                 out_path.write_text(html, encoding="utf-8")
@@ -1053,7 +1049,7 @@ def build():
                 media_out.parent.mkdir(parents=True, exist_ok=True)
                 shutil.copy2(fnode.path, media_out)
 
-                media_url = "media/" + "/".join(urllib.parse.quote(p) for p in Path(rel).parts)
+                media_url = "media/" + rel
                 rendered = render_audio(media_url)
                 html = generate_html_page(rendered, fnode.path.name, rel, tree_html, rel)
                 out_path.write_text(html, encoding="utf-8")
