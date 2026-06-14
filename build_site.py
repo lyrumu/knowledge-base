@@ -41,7 +41,7 @@ except ImportError:
 
 VAULT_DIR = Path(os.environ.get("VAULT_DIR", ".")).resolve()
 OUTPUT_DIR = Path(os.environ.get("OUTPUT_DIR", "site")).resolve()
-SITE_TITLE = "Knowledge Base"
+SITE_TITLE = "lyrumu's site"
 
 # 忽略的目录
 IGNORED_DIRS = {
