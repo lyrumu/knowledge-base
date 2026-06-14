@@ -1,7 +1,36 @@
-#Obsidian配置(忽略会频繁变化或体积大的文件)
+# Obsidian 配置（忽略会频繁变化或体积大的文件）
 .obsidian/workspace.json
 .obsidian/plugins/
+.obsidian/themes/
 
-
-# Ignore Smart Environment folder
+# Smart Environment
 .smart-env
+
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.pyd
+*.pyo
+.venv/
+venv/
+env/
+*.egg-info/
+dist/
+build/
+*.whl
+
+# Node.js
+node_modules/
+package-lock.json
+yarn.lock
+
+# OS
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# IDE
+.vscode/
+.idea/
+*.iml
