@@ -42,6 +42,7 @@ except ImportError:
 VAULT_DIR = Path(os.environ.get("VAULT_DIR", ".")).resolve()
 OUTPUT_DIR = Path(os.environ.get("OUTPUT_DIR", "site")).resolve()
 SITE_TITLE = "lyrumu's site"
+SITE_REPO = "knowledge-base"  # GitHub Pages 子路径
 
 # 忽略的目录
 IGNORED_DIRS = {
@@ -130,9 +131,8 @@ def output_path_for_file(rel: str) -> str:
 
 
 def href_for_file(rel: str) -> str:
-    """将文件相对路径转为 HTML href（HTML 实体转义 & 等）"""
-    path = output_path_for_file(rel)
-    return path.replace("&", "&amp;")
+    """将文件相对路径转为 HTML href（绝对路径）"""
+    return "/" + SITE_REPO + "/" + output_path_for_file(rel)
 
 
 def url_for_file(rel: str) -> str:
@@ -150,8 +150,8 @@ def url_for_dir(rel: str) -> str:
 
 
 def href_for_dir(rel: str) -> str:
-    """将目录相对路径转为 HTML href（HTML 实体转义）"""
-    return url_for_dir(rel).replace("&", "&amp;")
+    """将目录相对路径转为 HTML href（绝对路径）"""
+    return "/" + SITE_REPO + "/" + url_for_dir(rel)
 
 
 def hash_content(content: bytes) -> str:
@@ -1038,7 +1038,7 @@ def build():
                 media_out.parent.mkdir(parents=True, exist_ok=True)
                 shutil.copy2(fnode.path, media_out)
 
-                media_url = "media/" + rel
+                media_url = "/" + SITE_REPO + "/media/" + rel
                 rendered = render_image(media_url, fnode.path.name)
                 html = generate_html_page(rendered, fnode.path.name, rel, tree_html, rel)
                 out_path.write_text(html, encoding="utf-8")
@@ -1050,7 +1050,7 @@ def build():
                 media_out.parent.mkdir(parents=True, exist_ok=True)
                 shutil.copy2(fnode.path, media_out)
 
-                media_url = "media/" + rel
+                media_url = "/" + SITE_REPO + "/media/" + rel
                 rendered = render_audio(media_url)
                 html = generate_html_page(rendered, fnode.path.name, rel, tree_html, rel)
                 out_path.write_text(html, encoding="utf-8")
@@ -1076,7 +1076,7 @@ def build():
                 # 其他文件 → 下载链接
                 file_size = fnode.path.stat().st_size
                 size_str = format_size(file_size)
-                encoded = urllib.parse.quote(rel)
+                encoded = "/" + SITE_REPO + "/" + urllib.parse.quote(rel)
                 icon = get_file_icon(ext)
                 rendered = f'''<div class="download-card" href="{encoded}">
   <span class="icon">{icon}</span>
