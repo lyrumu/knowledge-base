@@ -34,3 +34,6 @@ desktop.ini
 .vscode/
 .idea/
 *.iml
+
+# 构建输出
+site/
