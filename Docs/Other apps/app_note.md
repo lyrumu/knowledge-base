@@ -61,12 +61,11 @@
 
 ---
 
-# ==Ollama==
+# ==Ollama&LMstudio==
 
 > 管理本地大模型
-> 目前更喜欢用`LM Studio`
 
-## 安装Ollama
+## Ollama
 
 [Download Ollama on Windows](https://ollama.com/download/windows)
 
@@ -77,6 +76,9 @@
 不开梯子下载会很慢,暂时没有梯子可以选择复制上面链接后,
 
 进入minecraft启动器PCL2进行多线程下载;
+
+## LMstudio
+
 
 ---
 
@@ -113,5 +115,14 @@
 在浏览器地址栏输入`about:config`
 搜索`browser.tabs.closeWindowWithLastTab`
 改为`false`即可
+
+## 网络
+
+### VMware+WSL+Clash
+Windows系统在这三者共存的情况下 可能会出现WLAN驱动问题
+如果右下角网络选项突然消失 尝试:
+- 重启
+- Win+R输入`ncpa.cpl` 查看WLAN驱动是否被系统关闭 重新开启即可
+
 
 ---
