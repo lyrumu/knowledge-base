@@ -5,5 +5,9 @@
   "spellcheck": false,
   "useMarkdownLinks": true,
   "alwaysUpdateLinks": true,
-  "attachmentFolderPath": "image"
+  "attachmentFolderPath": "image",
+  "userIgnoreFilters": [
+    "site/",
+    "static/"
+  ]
 }
