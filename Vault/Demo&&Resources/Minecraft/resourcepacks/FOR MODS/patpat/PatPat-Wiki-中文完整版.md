@@ -8,22 +8,22 @@
 
 ## 目录
 
-1. [入门：关于自定义动画](#1-入门关于自定义动画)
-2. [创建动画纹理](#2-创建动画纹理)
-3. [创建动画配置](#3-创建动画配置)
-   - [3.1 主选项](#31-主选项)
-   - [3.2 "animation" 对象](#32-animation-对象)
-   - [3.3 "frame" 对象](#33-frame-对象)
-   - [3.4 "sound" 对象](#34-sound-对象)
-   - [3.5 "entity" 对象](#35-entity-对象)
-   - [3.6 "from" 对象](#36-from-对象)
-   - [3.7 创建你自己的动画配置](#37-创建你自己的动画配置)
-4. [添加动画音效](#4-添加动画音效)
-   - [4.1 从 MP3 转换为 OGG](#41-从-mp3-转换为-ogg)
-   - [4.2 注册音效](#42-注册音效)
-5. [模板资源包](#5-模板资源包)
-6. [成品资源包](#6-成品资源包)
-7. [附录：完整示例配置文件](#7-附录完整示例配置文件)
+1. [入门：关于自定义动画](PatPat-Wiki-中文完整版.md#1-入门关于自定义动画)
+2. [创建动画纹理](PatPat-Wiki-中文完整版.md#2-创建动画纹理)
+3. [创建动画配置](PatPat-Wiki-中文完整版.md#3-创建动画配置)
+   - [3.1 主选项](PatPat-Wiki-中文完整版.md#31-主选项)
+   - [3.2 "animation" 对象](PatPat-Wiki-中文完整版.md#32-animation-对象)
+   - [3.3 "frame" 对象](PatPat-Wiki-中文完整版.md#33-frame-对象)
+   - [3.4 "sound" 对象](PatPat-Wiki-中文完整版.md#34-sound-对象)
+   - [3.5 "entity" 对象](PatPat-Wiki-中文完整版.md#35-entity-对象)
+   - [3.6 "from" 对象](PatPat-Wiki-中文完整版.md#36-from-对象)
+   - [3.7 创建你自己的动画配置](PatPat-Wiki-中文完整版.md#37-创建你自己的动画配置)
+4. [添加动画音效](PatPat-Wiki-中文完整版.md#4-添加动画音效)
+   - [4.1 从 MP3 转换为 OGG](PatPat-Wiki-中文完整版.md#41-从-mp3-转换为-ogg)
+   - [4.2 注册音效](PatPat-Wiki-中文完整版.md#42-注册音效)
+5. [模板资源包](PatPat-Wiki-中文完整版.md#5-模板资源包)
+6. [成品资源包](PatPat-Wiki-中文完整版.md#6-成品资源包)
+7. [附录：完整示例配置文件](PatPat-Wiki-中文完整版.md#7-附录完整示例配置文件)
 
 ---
 
@@ -41,7 +41,7 @@ PatPat 模组的自定义动画可以通过原版资源包机制创建。你的�
 
 我们试试为 PatPat 模组创建一个自定义动画资源包。
 
-> 建议先下载[模板资源包](#5-模板资源包)开始，但这并非必需。
+> 建议先下载[模板资源包](PatPat-Wiki-中文完整版.md#5-模板资源包)开始，但这并非必需。
 
 ---
 
@@ -127,7 +127,7 @@ PatPat 模组提供了一个[示例配置](https://github.com/LopyMine/PatPat/bl
 
 #### `animation` ![必需](https://raw.githubusercontent.com/LopyMine/PatPat/master/img/wiki/required.png)
 
-> 始于：`1.0.0` | 详见 [3.2 "animation" 对象](#32-animation-对象)
+> 始于：`1.0.0` | 详见 [3.2 "animation" 对象](PatPat-Wiki-中文完整版.md#32-animation-对象)
 
 包含动画设置，如持续时间、音效等。
 
@@ -146,7 +146,7 @@ PatPat 模组提供了一个[示例配置](https://github.com/LopyMine/PatPat/bl
 
 #### `entities` ![必需](https://raw.githubusercontent.com/LopyMine/PatPat/master/img/wiki/required.png)
 
-> 始于：`1.0.0` | 详见 [3.5 "entity" 对象](#35-entity-对象)
+> 始于：`1.0.0` | 详见 [3.5 "entity" 对象](PatPat-Wiki-中文完整版.md#35-entity-对象)
 
 包含此动画将生效的实体列表。可以设置为 `"all"` 来选择所有实体。
 
@@ -174,7 +174,7 @@ PatPat 模组提供了一个[示例配置](https://github.com/LopyMine/PatPat/bl
 
 #### `frame` ![必需](https://raw.githubusercontent.com/LopyMine/PatPat/master/img/wiki/required.png)
 
-> 始于：`1.0.0` | 详见 [3.3 "frame" 对象](#33-frame-对象)
+> 始于：`1.0.0` | 详见 [3.3 "frame" 对象](PatPat-Wiki-中文完整版.md#33-frame-对象)
 
 包含帧设置，如总帧数、偏移量、缩放等。
 
@@ -182,7 +182,7 @@ PatPat 模组提供了一个[示例配置](https://github.com/LopyMine/PatPat/bl
 
 #### `sound` ![可选](https://raw.githubusercontent.com/LopyMine/PatPat/master/img/wiki/optional.png)
 
-> 始于：`1.0.0` | 详见 [3.4 "sound" 对象](#34-sound-对象)
+> 始于：`1.0.0` | 详见 [3.4 "sound" 对象](PatPat-Wiki-中文完整版.md#34-sound-对象)
 
 指定动画播放时伴随的音效，以及可选的音高和音量范围。
 
@@ -306,7 +306,7 @@ PatPat 模组提供了一个[示例配置](https://github.com/LopyMine/PatPat/bl
 
 #### `from` ![可选](https://raw.githubusercontent.com/LopyMine/PatPat/master/img/wiki/optional.png)
 
-> 始于：`1.0.0` | 详见 [3.6 "from" 对象](#36-from-对象)
+> 始于：`1.0.0` | 详见 [3.6 "from" 对象](PatPat-Wiki-中文完整版.md#36-from-对象)
 
 指定谁可以触发此动画。例如，有两个玩家，但动画只应在其中一人抚摸狗时触发，就可以在此配置。
 
