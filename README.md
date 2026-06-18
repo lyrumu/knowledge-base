@@ -9,6 +9,7 @@ Built with **[Obsidian](https://obsidian.md/)** for a linked, graph-based note-t
 * * *
 
 ## Contents
+>All of the main contents are in the `/Vault` file;
 
 - **Demo&&Resources** — The small projects that I have learned and some of my own ideas.
 - **Language** — Basic knowledge of programming languages.
@@ -16,6 +17,7 @@ Built with **[Obsidian](https://obsidian.md/)** for a linked, graph-based note-t
 - **Tools** —Where I will put some small but useful computer tools in the future.
 - **Raw information** — Raw informations(Includes excellent open-source projects) extracted from the web page through the obsidian plugin.
 
+As for `/Raw information`,it includes webpage information extracted through the plugin called `Obsidian web Clipper`.
 * * *
 
 ## How This Repo Works
