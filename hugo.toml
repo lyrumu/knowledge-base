@@ -1,0 +1,109 @@
+# =============================================================================
+# lyrumu's site — Hugo configuration
+# Theme: Blowfish
+# =============================================================================
+
+baseURL = 'https://example.com/'
+languageCode = 'zh-cn'
+defaultContentLanguage = 'zh-cn'
+title = "lyrumu's site"
+
+# -----------------------------------------------------------------------------
+# 主题与构建
+# -----------------------------------------------------------------------------
+theme = 'blowfish'
+
+# 输出为相对路径，方便 Cloudflare Pages / 任意子路径托管
+relativeURLs = true
+
+# 中文不需要 ASCII 化 URL
+disablePathToLower = true
+enableRobotsTXT = true
+
+# 站点参数
+[params]
+  defaultAppearance = 'dark'         # dark / light / auto
+  autoSwitchAppearance = true
+  enableSearch = true
+  enableCodeCopy = true
+  enableImageLazyLoad = true
+  enableBreadcrumbs = true
+  enableFlexSearch = true
+
+  # 封面式首页配置
+  [params.homepage]
+    layout = 'hero'                  # 使用 Hero 封面布局
+    backgroundImage = ''
+    showRecent = true
+    count = 6
+
+  # 封面卡片配置
+  [params.cover]
+    linkFullImages = true
+    hiddenInList = false
+
+# -----------------------------------------------------------------------------
+# 多语言 / 菜单
+# -----------------------------------------------------------------------------
+[[menu.main]]
+  name = '首页'
+  url = '/'
+  weight = 10
+
+[[menu.main]]
+  name = 'Vault'
+  url = '/vault/'
+  weight = 20
+
+[[menu.main]]
+  name = '关于'
+  url = '/about/'
+  weight = 30
+
+# -----------------------------------------------------------------------------
+# 模块（section）— 可扩展的核心机制
+# -----------------------------------------------------------------------------
+# Hugo 的 section = 顶级 content/<name>/ 目录。
+# Vault 作为只读源，通过 mount 挂载到 content/vault。
+# 新模块：直接新增 content/<name>/_index.md + 文件即可。
+
+# -----------------------------------------------------------------------------
+# 主题参数覆写
+# -----------------------------------------------------------------------------
+[outputs]
+  home = ['HTML', 'RSS', 'JSON']
+  section = ['HTML', 'RSS']
+  taxonomy = ['HTML', 'RSS']
+  term = ['HTML']
+
+# -----------------------------------------------------------------------------
+# 标记与渲染
+# -----------------------------------------------------------------------------
+[markup]
+  defaultMarkdownHandler = 'goldmark'
+  [markup.goldmark]
+    [markup.goldmark.extensions]
+      definitionList = true
+      footnote = true
+      linkify = true
+      strikethrough = true
+      table = true
+      taskList = true
+      typographer = true
+  [markup.highlight]
+    noClasses = false
+    codeFences = true
+    guessSyntax = true
+    lineNos = true
+    style = 'github-dark'
+  [markup.tableOfContents]
+    startLevel = 2
+    endLevel = 4
+
+# -----------------------------------------------------------------------------
+# 分面（标签 / 主题）
+# -----------------------------------------------------------------------------
+[taxonomies]
+  category = 'categories'
+  tag = 'tags'
+  topic = 'topics'
