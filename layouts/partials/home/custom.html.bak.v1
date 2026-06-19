@@ -1,0 +1,116 @@
+{{/*
+  Cover-page custom layout
+  ----------------------------------------------------------------
+  渲染 / （封面页） 的内容：标题 + 可选头像/背景 + 入口按钮 + 社交链接。
+  数据来源：data/cover.yaml
+  改 cover 的视觉，只动 data/cover.yaml 即可，不用碰本文件。
+  ----------------------------------------------------------------
+*/}}
+{{ $cfg := index hugo.Data "cover" "cover" }}
+{{ $cfg = default (dict
+  "title" "lyrumu"
+  "subtitle" ""
+  "avatar" ""
+  "background" ""
+  "entrance" (dict "label" "进入" "href" "/start/")
+  "social" (slice)
+  "decorations" (slice)
+  "palette" (dict
+    "background_from" "#0d1117"
+    "background_to"   "#161b22"
+    "title_color"     "#e6edf3"
+    "subtitle_color"  "#9ba3b4"
+    "button_border"   "#e6edf3"
+    "button_text"     "#e6edf3"
+    "button_hover_bg" "#e6edf3"
+    "button_hover_fg" "#0d1117"
+    "social_icon_color" "#9ba3b4"
+    "social_icon_hover" "#e6edf3"
+  )
+) $cfg }}
+
+{{ $pal := $cfg.palette }}
+{{ $ent := $cfg.entrance }}
+{{ $social := $cfg.social }}
+
+<div class="cover-page"
+     style="background: linear-gradient(135deg, {{ $pal.background_from }} 0%, {{ $pal.background_to }} 100%);">
+
+  {{ with $cfg.background }}
+  <div class="cover-bg" style="background-image: url('{{ . | relURL }}');"></div>
+  {{ end }}
+
+  {{/* 极光装饰层（aurora） */}}
+  <div class="cover-aurora" aria-hidden="true">
+    <div class="aurora-blob aurora-blob-1"></div>
+    <div class="aurora-blob aurora-blob-2"></div>
+    <div class="aurora-blob aurora-blob-3"></div>
+  </div>
+
+  {{/* 噪点叠加（grain） */}}
+  <div class="cover-grain" aria-hidden="true"></div>
+
+  <main class="cover-content">
+    {{ with $cfg.avatar }}
+    <img class="cover-avatar" src="{{ . | relURL }}" alt="avatar" />
+    {{ end }}
+
+    <h1 class="cover-title" style="color: {{ $pal.title_color }};">{{ $cfg.title }}</h1>
+
+    {{ with $cfg.subtitle }}
+    <p class="cover-subtitle" style="color: {{ $pal.subtitle_color }};">{{ . }}</p>
+    {{ end }}
+
+    <a href="{{ $ent.href | relURL }}"
+       class="cover-button"
+       style="color: {{ $pal.button_text }}; border-color: {{ $pal.button_border }};"
+       onmouseover="this.style.background='{{ $pal.button_hover_bg }}';this.style.color='{{ $pal.button_hover_fg }}';"
+       onmouseout="this.style.background='transparent';this.style.color='{{ $pal.button_text }}';">
+      {{ $ent.label }} →
+    </a>
+
+    {{ with $social }}
+    <nav class="cover-social" aria-label="Social links">
+      {{ range . }}
+      <a href="{{ .url | safeURL }}"
+         class="cover-social-link"
+         style="color: {{ $pal.social_icon_color }};"
+         onmouseover="this.style.color='{{ $pal.social_icon_hover }}';"
+         onmouseout="this.style.color='{{ $pal.social_icon_color }}';"
+         {{ with .title }}title="{{ . }}" aria-label="{{ . }}"{{ end }}
+         target="_blank" rel="noopener noreferrer">
+        {{ partial "cover/icon.html" (dict "name" .icon "size" 22) }}
+      </a>
+      {{ end }}
+    </nav>
+    {{ end }}
+
+    {{ with $cfg.decorations }}
+    <div class="cover-decorations">
+      {{ range . }}{{ partial "home/cover-decoration.html" . }}{{ end }}
+    </div>
+    {{ end }}
+  </main>
+</div>
+
+<script>
+  // 极光视差 + 鼠标反应（封面页内联脚本，零依赖）
+  (function () {
+    const aurora = document.querySelector('.cover-aurora');
+    if (!aurora) return;
+    if (!window.matchMedia('(hover: hover) and (pointer: fine)').matches) return;
+
+    let tx = 0, ty = 0, cx = 0, cy = 0;
+    const ease = 0.05;
+    document.addEventListener('mousemove', (e) => {
+      tx = (e.clientX / window.innerWidth - 0.5) * 30;
+      ty = (e.clientY / window.innerHeight - 0.5) * 30;
+    });
+    (function tick() {
+      cx += (tx - cx) * ease;
+      cy += (ty - cy) * ease;
+      aurora.style.transform = `translate(${cx}px, ${cy}px)`;
+      requestAnimationFrame(tick);
+    })();
+  })();
+</script>
