@@ -1,0 +1,22 @@
+# Root EditorConfig
+
+root = true
+
+[*]
+charset = utf-8
+indent_style = space
+indent_size = 2
+end_of_line = lf
+insert_final_newline = true
+trim_trailing_whitespace = true
+
+[*.yaml]
+# 禁用 YAML 文件的自动格式化和补全
+indent_size = 2
+insert_final_newline = false
+trim_trailing_whitespace = false
+
+[data/*.yaml]
+indent_size = 2
+insert_final_newline = false
+trim_trailing_whitespace = false

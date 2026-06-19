@@ -1,84 +1,186 @@
 # =============================================================================
 # lyrumu's site — Hugo configuration
-# Theme: Blowfish
+# Theme: Blowfish · 部署 Cloudflare Pages
+#
+# 模块说明：
+#   - 封面（/）         → 无顶栏，只显示标题 + 入口按钮
+#   - 大厅（/start/）   → 真正进入后的第一页，有顶栏
+#   - 4 个模块：notes / life / works / about
+#   - 加新模块 = hugo.toml 加 menu + content/<slug>/_index.md
 # =============================================================================
 
 baseURL = 'https://example.com/'
-languageCode = 'zh-cn'
 defaultContentLanguage = 'zh-cn'
 title = "lyrumu's site"
 
-# -----------------------------------------------------------------------------
+# =============================================================================
+# 多语言
+# =============================================================================
+[languages.zh-cn]
+  label = '简体中文'
+  weight = 1
+  locale = 'zh-CN'
+  contentDir = 'content'
+  title = "lyrumu's site"
+
+  [languages.zh-cn.params]
+    displayName = '简体中文'
+    isoCode = 'zh-cn'
+    rtl = false
+    dateFormat = '2006-01-02'
+    logo = ''
+    description = '一份持续生长的个人作品与知识集'
+
+    [languages.zh-cn.params.author]
+      name = 'lyrumu'
+      email = ''
+      image = ''
+      headline = '代码 / 笔记 / 折腾'
+      bio = '一个把 Obsidian 仓库当花园打理的人。'
+      links = [
+        { github = 'https://github.com/' },
+        { email = 'mailto:' },
+      ]
+
+# =============================================================================
 # 主题与构建
-# -----------------------------------------------------------------------------
+# =============================================================================
 theme = 'blowfish'
 
-# 输出为相对路径，方便 Cloudflare Pages / 任意子路径托管
 relativeURLs = true
-
-# 中文不需要 ASCII 化 URL
 disablePathToLower = true
 enableRobotsTXT = true
 
+hasCJKLanguage = true
+summaryLength = 30
+enableEmoji = true
+
+# =============================================================================
 # 站点参数
+# =============================================================================
 [params]
-  defaultAppearance = 'dark'         # dark / light / auto
+  colorScheme = 'blowfish'
+  defaultAppearance = 'dark'
   autoSwitchAppearance = true
   enableSearch = true
   enableCodeCopy = true
   enableImageLazyLoad = true
   enableBreadcrumbs = true
-  enableFlexSearch = true
+  enableStructuredBreadcrumbs = true
+  highlightCurrentMenuArea = true
+  smartTOC = true
 
-  # 封面式首页配置
+  # 哪些 section 会出现在"最近更新" / 侧栏 quick links
+  mainSections = ['notes', 'life', 'works', 'about']
+
+  defaultBackgroundImage = ''
+  defaultFeaturedImage = ''
+
+  # =====================================================================
+  # 首页（封面）布局：使用 custom 布局，渲染在
+  #   layouts/partials/home/custom.html
+  # 数据驱动：data/cover.yaml
+  # =====================================================================
   [params.homepage]
-    layout = 'hero'                  # 使用 Hero 封面布局
-    backgroundImage = ''
-    showRecent = true
-    count = 6
+    layout = 'custom'                  # background / hero / page / card / custom
+    showRecent = false
+    showQuickLinks = false
+    showSummary = false
+    cardViewSimple = false
+    disableSpecialFirstPost = true
+    mainSections = ['notes', 'works', 'life']
 
-  # 封面卡片配置
+  # /start/ 大厅页的"最近文章"行为（被 [params.homepage] 影响，但独立可控）
+  [params.list]
+    showHero = false
+    showSummary = true
+    showBreadcrumbs = true
+    showTableOfContents = false
+    showCards = true
+    cardView = true
+    groupByYear = false
+    orderByWeight = true
+
+  [params.article]
+    showHero = true
+    heroStyle = 'background'
+    showDate = true
+    showDateUpdated = false
+    showAuthor = true
+    showBreadcrumbs = true
+    showDraftLabel = true
+    showTableOfContents = true
+    showReadingTime = true
+    showWordCount = false
+    showRelatedContent = true
+    relatedContentLimit = 6
+    showZenMode = true
+    sharingLinks = ['github', 'twitter', 'email']
+
+  [params.term]
+    showHero = false
+    showBreadcrumbs = true
+    showTableOfContents = false
+    cardView = true
+
+  [params.taxonomy]
+    showTermCount = true
+    showHero = false
+    showBreadcrumbs = true
+    showTableOfContents = false
+    cardView = false
+
+  [params.footer]
+    showMenu = true
+    showCopyright = true
+    showThemeAttribution = true
+    showAppearanceSwitcher = true
+    showScrollToTop = true
+
+  [params.header]
+    layout = 'fixed'                  # basic / fixed / fixed-fill / fixed-gradient / fixed-fill-blur
+
   [params.cover]
     linkFullImages = true
     hiddenInList = false
 
-# -----------------------------------------------------------------------------
-# 多语言 / 菜单
-# -----------------------------------------------------------------------------
+# =============================================================================
+# 顶部分类导航
+# 加模块 = 在这里加一项 + content/<slug>/_index.md
+# 顺序：按 weight 从小到大
+# =============================================================================
 [[menu.main]]
-  name = '首页'
-  url = '/'
+  name = '学习笔记'
+  url = '/notes/'
   weight = 10
 
 [[menu.main]]
-  name = 'Vault'
-  url = '/vault/'
+  name = '作品'
+  url = '/works/'
   weight = 20
 
 [[menu.main]]
-  name = '关于'
-  url = '/about/'
+  name = '生活'
+  url = '/life/'
   weight = 30
 
-# -----------------------------------------------------------------------------
-# 模块（section）— 可扩展的核心机制
-# -----------------------------------------------------------------------------
-# Hugo 的 section = 顶级 content/<name>/ 目录。
-# Vault 作为只读源，通过 mount 挂载到 content/vault。
-# 新模块：直接新增 content/<name>/_index.md + 文件即可。
+[[menu.main]]
+  name = '关于我'
+  url = '/about/'
+  weight = 40
 
-# -----------------------------------------------------------------------------
-# 主题参数覆写
-# -----------------------------------------------------------------------------
+# =============================================================================
+# 输出格式
+# =============================================================================
 [outputs]
   home = ['HTML', 'RSS', 'JSON']
   section = ['HTML', 'RSS']
   taxonomy = ['HTML', 'RSS']
   term = ['HTML']
 
-# -----------------------------------------------------------------------------
+# =============================================================================
 # 标记与渲染
-# -----------------------------------------------------------------------------
+# =============================================================================
 [markup]
   defaultMarkdownHandler = 'goldmark'
   [markup.goldmark]
@@ -90,20 +192,27 @@ enableRobotsTXT = true
       table = true
       taskList = true
       typographer = true
+  [markup.goldmark.renderer]
+    unsafe = true
   [markup.highlight]
     noClasses = false
     codeFences = true
     guessSyntax = true
     lineNos = true
+    lineNumbersInTable = false
     style = 'github-dark'
   [markup.tableOfContents]
     startLevel = 2
     endLevel = 4
 
-# -----------------------------------------------------------------------------
-# 分面（标签 / 主题）
-# -----------------------------------------------------------------------------
+# =============================================================================
+# 分面（标签 / 主题 / 分类 / 系列）
+# =============================================================================
 [taxonomies]
   category = 'categories'
   tag = 'tags'
   topic = 'topics'
+  series = 'series'
+
+# 抑制已知无害的日志
+ignoreLogs = ["warning-goldmark-raw-html"]

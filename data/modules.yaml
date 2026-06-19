@@ -1,0 +1,33 @@
+# =============================================================================
+# 站点模块清单（大厅页 /start/ 的 {{< modules-grid >}} 渲染源）
+# 想加 / 删 / 调模块：同步改 hugo.toml 的 [[menu.main]] 与本文件
+# icon 字段：Lucide icon 名字（layouts/partials/cover/icon.html 里维护的 case）
+# =============================================================================
+modules:
+  - id: notes
+    name: "学习笔记"
+    title: "Notes · code snippets / resources"
+    icon: "book-open"
+    description: "Some notes based on Obsidian"
+    href: "/notes/"
+
+  - id: works
+    name: "作品"
+    title: "Works · 项目集"
+    icon: "hammer"
+    description: "Some vibe coding projects for practice and some ideas"
+    href: "/works/"
+
+  - id: life
+    name: "生活"
+    title: "hi,can we make a friend?"
+    icon: "leaf"
+    description: "somewhere for the Existentialists"
+    href: "/life/"
+
+  - id: about
+    name: "关于我"
+    title: "About me"
+    icon: "user-round"
+    description: "Maybe im leaking my privacy(hahaha)"
+    href: "/about/"

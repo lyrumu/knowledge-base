@@ -1,0 +1,81 @@
+{{/*
+  Shortcode: file-tree
+  --------------------------------------------------------------
+  把 /static/<root> 下的真实目录渲染为可折叠的文件树
+  用法（在 markdown 顶部）:
+    {{< file-tree root="notes-assets/demo/aipython" >}}
+
+  行为：
+    · 文件夹 = <details><summary>📁 名称</summary>递归</details>
+    · 文件   = <a download>› 名称</a> 链到 /notes-assets/...
+    · 排序：文件夹在前，文件在后，按字典序
+    · 黑名单：.venv / __pycache__ / node_modules / .git / .idea / .DS_Store
+*/}}
+
+{{ $root := .Get "root" }}
+{{/*
+  Hugo readDir 走的是相对 Hugo project 根的路径，所以传 "static/notes-assets/..."
+  URL 段：用 static/ 前缀，自动会被 Hugo 当作静态资源服务
+*/}}
+{{ $absRoot := printf "static/%s" $root }}
+{{ $urlRoot := printf "/%s" $root }}
+
+{{/*
+  黑名单列表：define 块看不到外层变量，所以每次递归要把 skip 带进去。
+*/}}
+{{ $skip := slice ".venv" "__pycache__" "node_modules" ".git" ".idea" ".DS_Store" ".pytest_cache" "dist" "build" "node_modules" ".mypy_cache" "__MACOSX" "Thumbs.db" }}
+
+{{ define "file-tree-walk" }}
+  {{ $path  := .path }}
+  {{ $rel   := .rel }}
+  {{ $depth := .depth }}
+  {{ $skip  := .skip }}
+
+  {{ $entries := (readDir $path | default (slice)) }}
+
+  {{ $dirs := slice }}
+  {{ $files := slice }}
+  {{ range $entries }}
+    {{ if .IsDir }}
+      {{ if not (in $skip .Name) }}
+        {{ $dirs = $dirs | append . }}
+      {{ end }}
+    {{ else }}
+      {{ if not (in $skip .Name) }}
+        {{ $files = $files | append . }}
+      {{ end }}
+    {{ end }}
+  {{ end }}
+
+  {{ range $dirs }}
+    {{ $childPath := printf "%s/%s" $path .Name }}
+    {{ $childRel  := printf "%s/%s" $rel  .Name }}
+    <details class="file-tree-dir" {{ if le $depth 1 }}open{{ end }}>
+      <summary>
+        <span class="file-tree-chevron" aria-hidden="true">▸</span>
+        <span class="file-tree-name">📁 {{ .Name }}</span>
+      </summary>
+      <div class="file-tree-children">
+        {{ template "file-tree-walk" (dict "path" $childPath "rel" $childRel "depth" (add $depth 1) "skip" $skip) }}
+      </div>
+    </details>
+  {{ end }}
+
+  {{ range $files }}
+    <a class="file-tree-file" href="{{ printf "%s/%s" $rel .Name | safeURL }}" download>
+      <span class="file-tree-mark" aria-hidden="true">›</span>
+      <span class="file-tree-name">{{ .Name }}</span>
+    </a>
+  {{ end }}
+{{ end }}
+
+<div class="file-tree not-prose" data-root="{{ $root }}">
+  {{ $testRead := readDir $absRoot | default (slice) }}
+  {{ if gt (len $testRead) 0 }}
+    {{ template "file-tree-walk" (dict "path" $absRoot "rel" $urlRoot "depth" 0 "skip" $skip) }}
+  {{ else }}
+    <p class="file-tree-empty">
+      找不到目录或目录为空：<code>{{ $absRoot }}</code>。请确认 <code>/static/{{ $root }}/</code> 是否存在。
+    </p>
+  {{ end }}
+</div>

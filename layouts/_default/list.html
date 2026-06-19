@@ -1,0 +1,115 @@
+{{/*
+  _default/list.html — Claude 风覆写版
+  ----------------------------------------------------------------
+  适用：Blowfish 中所有 section 的 _index.md（/start/, /notes/, /works/, /life/, /about/ ...）
+  替换掉默认 blowfish list.html 的"大黑标题 + 元信息条"，
+  改为我们的"小封面"模式（page-hero） + 下方正文 + 文章列表。
+  ----------------------------------------------------------------
+*/}}
+
+{{ define "main" }}
+  {{ .Scratch.Set "scope" "list" }}
+
+  {{/* Page Hero（封面风格的小头部） */}}
+  {{ partial "cover/page-hero.html" (dict
+    "kicker"   .Params.kicker
+    "subtitle" .Params.subtitle
+    "eyebrow"  .Params.eyebrow
+    "title"    .Title
+  ) }}
+
+  {{/* 面包屑（仅多级时显示） */}}
+  {{ if gt (len .Ancestors) 1 }}
+  <nav class="not-prose text-sm text-neutral-500 dark:text-neutral-400 mb-6 print:hidden" aria-label="breadcrumb">
+    <ol class="flex flex-wrap items-center gap-1">
+      {{ template "list-crumb" (dict "p1" . "p2" .) }}
+    </ol>
+  </nav>
+  {{ end }}
+
+  {{/* 描述 / Markdown 正文（如 _index.md 中写的） */}}
+  {{ if .Content }}
+  <section class="prose dark:prose-invert max-w-none mb-12">
+    {{ .Content }}
+  </section>
+  {{ end }}
+
+  {{/* 子页面列表（卡片 / 简单列表） */}}
+  {{ if gt (len .Pages) 0 }}
+    {{ $cardView := .Params.cardView | default (site.Params.list.cardView | default true) }}
+    {{ $groupByYear := .Params.groupByYear | default (site.Params.list.groupByYear | default false) }}
+    {{ $orderByWeight := .Params.orderByWeight | default (site.Params.list.orderByWeight | default true) }}
+    {{ $groupByYear := and (not $orderByWeight) $groupByYear }}
+
+    {{ if not $cardView }}
+      <section class="space-y-5 w-full">
+        {{ if not $orderByWeight }}
+          {{ range (.Paginate (.Pages.GroupByDate "2006")).PageGroups }}
+            {{ if $groupByYear }}
+              <h2 class="not-prose mt-10 mb-3 text-xl font-semibold text-neutral-700 dark:text-neutral-300">
+                {{ .Key }}
+              </h2>
+            {{ end }}
+            {{ range .Pages }}
+              {{ partial "article-link/simple.html" . }}
+            {{ end }}
+          {{ end }}
+        {{ else }}
+          {{ range (.Paginate (.Pages.ByWeight)).Pages }}
+            {{ partial "article-link/simple.html" . }}
+          {{ end }}
+        {{ end }}
+      </section>
+    {{ else }}
+      {{ if $groupByYear }}
+        {{ range (.Paginate (.Pages.GroupByDate "2006")).PageGroups }}
+          <h2 class="not-prose mt-10 mb-3 text-xl font-semibold text-neutral-700 dark:text-neutral-300">
+            {{ .Key }}
+          </h2>
+          <section class="not-prose w-full grid gap-4 sm:grid-cols-2 md:grid-cols-3">
+            {{ range .Pages }}
+              {{ partial "article-link/card.html" . }}
+            {{ end }}
+          </section>
+        {{ end }}
+      {{ else }}
+        <section class="not-prose w-full grid gap-4 sm:grid-cols-2 md:grid-cols-3">
+          {{ if not $orderByWeight }}
+            {{ range (.Paginate (.Pages.GroupByDate "2006")).PageGroups }}
+              {{ range .Pages }}
+                {{ partial "article-link/card.html" . }}
+              {{ end }}
+            {{ end }}
+          {{ else }}
+            {{ range (.Paginate (.Pages.ByWeight)).Pages }}
+              {{ partial "article-link/card.html" . }}
+            {{ end }}
+          {{ end }}
+        </section>
+      {{ end }}
+    {{ end }}
+
+    {{ partial "pagination.html" . }}
+  {{ else }}
+    {{ if not .Content }}
+    <section class="not-prose prose dark:prose-invert max-w-none">
+      <p class="py-8 border-t border-neutral-200 dark:border-neutral-700 italic text-neutral-500">
+        （这里还没有内容 — 你可以在 <code>content/{{ .Section }}/</code> 下新建 <code>.md</code> 文件开始）
+      </p>
+    </section>
+    {{ end }}
+  {{ end }}
+{{ end }}
+
+{{ define "list-crumb" }}
+  {{ if .p1.Parent }}
+    {{ template "list-crumb" (dict "p1" .p1.Parent "p2" .p2 ) }}
+  {{ else if not .p1.IsHome }}
+    {{ template "list-crumb" (dict "p1" .p1.Site.Home "p2" .p2 ) }}
+  {{ end }}
+  <li class="{{ if or (eq .p1 .p2) (.p1.IsHome) }}hidden{{ else }}inline{{ end }}">
+    <a class="hover:underline decoration-neutral-300 dark:underline-neutral-600" href="{{ .p1.RelPermalink }}"
+      >{{ if .p1.Title }}{{ .p1.Title }}{{ else }}{{ .p1.Section }}{{ end }}</a
+    ><span class="px-1 opacity-50">/</span>
+  </li>
+{{ end }}

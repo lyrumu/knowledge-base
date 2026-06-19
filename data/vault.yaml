@@ -1,0 +1,54 @@
+# =============================================================================
+# Vault 模块的索引数据 — 学习笔记（/notes/）入口页
+# 大厅页（/start/）由 data/modules.yaml 渲染
+# 数据来源：/Vault 目录结构
+# icon 字段：Lucide icon 名字（layouts/partials/cover/icon.html）
+# =============================================================================
+sections:
+  - id: docs
+    name: "Docs"
+    title: "环境配置 · 工具使用"
+    icon: "notebook"
+    description: "Docker / Git / VSCode / WSL2 / Flutter / 其他工具的折腾记录"
+    href: "/notes/docs/"
+    tags: [docker, git, wsl, vscode, flutter]
+    sample:
+      - "WSL2 + Hyper-V + Ubuntu 一键安装"
+      - "Docker Desktop 部署 Dify + 本地大模型"
+      - "Git 常用命令 / 多账号配置"
+
+  - id: language
+    name: "Language"
+    title: "开发语言 · 算法笔记"
+    icon: "brain"
+    description: "C++ 算法 / Python 语法 / ACM 模板"
+    href: "/notes/language/"
+    tags: [cpp, python, algorithm]
+    sample:
+      - "C++ 算法笔记（DP / 图论 / 字符串）"
+      - "C++ 算法模板集（50+ 代码块）"
+      - "Pycharm 使用指南"
+
+  - id: demo
+    name: "Demo && Resources"
+    title: "AI 入门 · Minecraft · Agent"
+    icon: "gamepad-2"
+    description: "AI 学院练习 / Minecraft 数据包 / 资源包 / 材质 / Agent"
+    href: "/notes/demo/"
+    tags: [ai, minecraft, agent, crawler]
+    sample:
+      - "AI Python 入门练习（40+ 脚本）"
+      - "Minecraft 数据包 / 资源包 笔记"
+      - "PatPat 资源包 wiki 全集"
+
+  - id: tools
+    name: "Tools"
+    title: "日常脚本"
+    icon: "wrench"
+    description: "Windows / Ubuntu / VSCode / Python 工具脚本"
+    href: "/notes/tools/"
+    tags: [windows, ubuntu, vscode, script]
+    sample:
+      - "Windows 自动关机脚本"
+      - "VSCode C++ 环境一键配置"
+      - "Python 文件转换 / 修复工具"

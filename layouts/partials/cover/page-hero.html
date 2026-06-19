@@ -1,0 +1,86 @@
+{{/*
+  Partial: cover/page-hero
+  ----------------------------------------------------------------
+  内页"小封面"：复刻 cover-page 的视觉语言（衬线 + kicker + ✦ 分隔）
+  调用方式（在 .md / list.html / single.html 里都行）:
+    {{ partial "cover/page-hero.html" (dict
+        "kicker"   "学习笔记 · MODULE 01"
+        "subtitle" "一句话简介…"
+        "eyebrow"  "罗马式时间戳 / 自定义"
+        "title"    "页面标题"
+        "mark"     "✦"
+        "align"    "center"   ;  或 "left"
+      ) }}
+
+  数据驱动：当前页 frontmatter 可写 kicker / subtitle / eyebrow。
+  优先级：参数 > frontmatter > 默认值
+*/}}
+
+{{ $kicker := "" }}
+{{ with .kicker   }}{{ $kicker = . }}{{ end }}
+{{ with $.Page.Params.kicker }}{{ $kicker = default $kicker . }}{{ end }}
+
+{{ $subtitle := "" }}
+{{ with .subtitle }}{{ $subtitle = . }}{{ end }}
+{{ with $.Page.Params.subtitle }}{{ $subtitle = default $subtitle . }}{{ end }}
+
+{{ $eyebrow := "" }}
+{{ with .eyebrow  }}{{ $eyebrow = . }}{{ end }}
+{{ with $.Page.Params.eyebrow }}{{ $eyebrow = default $eyebrow . }}{{ end }}
+
+{{ $title := "" }}
+{{ with .title    }}{{ $title = . }}{{ end }}
+{{ if not $title }}{{ $title = $.Page.Title }}{{ end }}
+
+{{ $mark := "✦" }}
+{{ with .mark     }}{{ $mark = . }}{{ end }}
+
+{{ $align := "center" }}
+{{ with .align    }}{{ $align = . }}{{ end }}
+
+<div class="page-hero not-prose align-{{ $align }}">
+
+  {{ if $eyebrow }}
+  <div class="page-eyebrow reveal">
+    <span class="page-eyebrow-rule"></span>
+    <span class="page-eyebrow-text">{{ $eyebrow | safeHTML }}</span>
+    <span class="page-eyebrow-rule"></span>
+  </div>
+  {{ else }}
+  <div class="page-eyebrow reveal">
+    <span class="page-eyebrow-rule"></span>
+    <span class="page-eyebrow-text">{{ now.Format "MMVI · MMXXVI" }}</span>
+    <span class="page-eyebrow-rule"></span>
+  </div>
+  {{ end }}
+
+  {{ with $kicker }}
+  <p class="page-kicker" data-splitting>{{ . }}</p>
+  {{ end }}
+
+  <h1 class="page-title" data-splitting>{{ $title }}</h1>
+
+  {{ with $subtitle }}
+  <p class="page-subtitle">{{ . }}</p>
+  {{ end }}
+
+  <div class="page-divider" aria-hidden="true">
+    <span class="page-divider-rule"></span>
+    <span class="page-divider-mark">{{ $mark }}</span>
+    <span class="page-divider-rule"></span>
+  </div>
+
+</div>
+
+<script>
+  (function () {
+    var hero = document.querySelector('.page-hero:not(.is-ready)');
+    if (!hero) return;
+    requestAnimationFrame(function () {
+      if (window.Splitting) {
+        Splitting({ target: hero.querySelectorAll('[data-splitting]') });
+      }
+      hero.classList.add('is-ready');
+    });
+  })();
+</script>

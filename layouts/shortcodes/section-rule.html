@@ -1,0 +1,8 @@
+{{/*
+  Shortcode: section-rule
+  --------------------------------------------------------------
+  段间分隔小符号：左边线 + ✦ + 右边线
+  用法: {{< section-rule >}}  或  {{< section-rule mark="✦" >}}
+*/}}
+{{ $mark := .Get "mark" | default "✦" }}
+<div class="section-rule not-prose" aria-hidden="true">{{ $mark }}</div>

@@ -1,0 +1,30 @@
+{{/*
+  Shortcode: page-hero
+  --------------------------------------------------------------
+  内页"小封面"：复刻 cover-page 的视觉语言（衬线 + kicker + ✦ 分隔）
+  用法（在 _index.md 或 single.md 顶部）:
+    {{< page-hero kicker="学习笔记 · MODULE 01" subtitle="一句话简介…" >}}
+
+  参数：
+    kicker   = 顶部衬线大写小标（必填）
+    subtitle = 副标题（衬线斜体 / 可选）
+    eyebrow  = 顶部"罗马式时间戳"行（可空，默认 = 当前月份罗马数字）
+    title    = 标题（默认用当前页 Title）
+    mark     = 分隔符标记（默认 ✦）
+    align    = center / left（默认 center）
+
+  数据驱动（可选）：当前页 frontmatter 可写
+    kicker / subtitle / eyebrow
+  短代码参数优先级 > frontmatter
+
+  实现：复用 layouts/partials/cover/page-hero.html
+*/}}
+
+{{ partial "cover/page-hero.html" (dict
+  "kicker"   (.Get "kicker")
+  "subtitle" (.Get "subtitle")
+  "eyebrow"  (.Get "eyebrow")
+  "title"    (.Get "title")
+  "mark"     (.Get "mark")
+  "align"    (.Get "align")
+) }}

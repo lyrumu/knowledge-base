@@ -1,0 +1,1660 @@
+/* =============================================================================
+   lyrumu's site — 自定义 CSS v2
+   风格：Claude-inspired · 衬线 · 暖白 · 古典分隔符 · 缓慢淡入
+   ============================================================================= */
+
+/* =============================================================================
+   0. CSS 变量 (light + dark)
+   ============================================================================= */
+
+/* 本地字体（fontsource variable） */
+@font-face {
+  font-family: "Fraunces";
+  font-style: normal;
+  font-weight: 100 900;
+  font-display: swap;
+  src: url("/fonts/fraunces-latin-wght-normal.woff2") format("woff2-variations");
+}
+@font-face {
+  font-family: "Fraunces";
+  font-style: italic;
+  font-weight: 100 900;
+  font-display: swap;
+  src: url("/fonts/fraunces-latin-wght-italic.woff2") format("woff2-variations");
+}
+@font-face {
+  font-family: "Newsreader";
+  font-style: normal;
+  font-weight: 100 900;
+  font-display: swap;
+  src: url("/fonts/newsreader-latin-wght-normal.woff2") format("woff2-variations");
+}
+@font-face {
+  font-family: "Newsreader";
+  font-style: italic;
+  font-weight: 100 900;
+  font-display: swap;
+  src: url("/fonts/newsreader-latin-wght-italic.woff2") format("woff2-variations");
+}
+@font-face {
+  font-family: "Inter";
+  font-style: normal;
+  font-weight: 100 900;
+  font-display: swap;
+  src: url("/fonts/inter-latin-wght-normal.woff2") format("woff2-variations");
+}
+
+:root {
+  /* 衬线 */
+  --font-serif-display: "Fraunces", "Newsreader", "Cormorant Garamond",
+                        "Source Han Serif SC", "Songti SC", "Noto Serif SC",
+                        Georgia, serif;
+  --font-serif-body:    "Newsreader", "Fraunces", "Source Han Serif SC",
+                        "Songti SC", "Noto Serif SC", Georgia, serif;
+
+  /* 无衬线 */
+  --font-sans: "Inter", "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei",
+               ui-sans-serif, system-ui, -apple-system, sans-serif;
+
+  /* 等宽 */
+  --font-mono: "JetBrains Mono", "Fira Code", ui-monospace, "Cascadia Code",
+               "Source Code Pro", Menlo, Monaco, Consolas, monospace;
+
+  /* 颜色 - light */
+  --bg-base: #FAF9F5;
+  --bg-deep: #F1EFE9;
+  --fg-base: #1F1E1D;
+  --fg-mute: #6B6962;
+  --fg-soft: #8A8880;
+  --line:    #C9C7BF;
+  --accent:  #D97757;
+  --selection-bg: rgba(217, 119, 87, 0.18);
+}
+
+/* dark mode 反相（Claude 风：近黑 + 米黄文字） */
+html.dark {
+  --bg-base: #141413;
+  --bg-deep: #0F0E0D;
+  --fg-base: #FAF9F5;
+  --fg-mute: #B0AEA6;
+  --fg-soft: #807D77;
+  --line:    #2A2926;
+  --accent:  #E08769;
+  --selection-bg: rgba(224, 135, 105, 0.25);
+}
+
+html {
+  font-feature-settings: "ss01", "cv11", "calt", "kern", "liga";
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-rendering: optimizeLegibility;
+}
+
+body, .prose {
+  font-family: var(--font-sans);
+  letter-spacing: -0.005em;
+}
+
+code, pre, kbd, samp {
+  font-family: var(--font-mono);
+  font-feature-settings: "calt" 0;
+}
+
+::selection {
+  background: var(--selection-bg);
+  color: inherit;
+}
+
+/* =============================================================================
+   1. 封面页：隐藏顶栏 + 全屏 + 顶栏间距清零
+   ============================================================================= */
+body:has(.cover-page) .fixed.inset-x-0.z-100 {
+  display: none !important;
+}
+body:has(.cover-page) .min-h-\[148px\] {
+  display: none !important;
+}
+body:has(.cover-page) main#main-content {
+  padding-top: 0 !important;
+}
+body:has(.cover-page) > div.relative.flex.flex-col.grow {
+  min-height: 0 !important;
+}
+body:has(.cover-page) main#main-content > article {
+  max-width: none !important;
+  padding: 0 !important;
+  margin: 0 !important;
+}
+
+/* =============================================================================
+   2. 封面页：背景 + 噪点
+   ============================================================================= */
+.cover-page {
+  position: relative;
+  /* 强制撑满整个视窗宽度（不受父 article/main 容器 max-width 限制）*/
+  width: 100vw;
+  margin-left: calc(50% - 50vw);
+  min-height: 100vh;
+  min-height: 100dvh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  background: linear-gradient(180deg,
+                              var(--pal-bg-from, var(--bg-base)) 0%,
+                              var(--pal-bg-to,   var(--bg-deep)) 100%);
+  overflow: hidden;
+  isolation: isolate;
+  padding: 6vh 4vw;
+}
+
+/* 噪点叠加（极轻 ~3%） */
+.cover-grain {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  pointer-events: none;
+  opacity: 0.035;
+  mix-blend-mode: multiply;
+  background-image: url("data:image/svg+xml;utf8,<svg viewBox='0 0 240 240' xmlns='http://www.w3.org/2000/svg'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2' stitchTiles='stitch'/></filter><rect width='100%25' height='100%25' filter='url(%23n)'/></svg>");
+  background-size: 240px 240px;
+}
+html.dark .cover-grain {
+  opacity: 0.06;
+  mix-blend-mode: screen;
+}
+
+/* =============================================================================
+   3. 封面页：顶部 eyebrow（细线 + 时间戳）
+   ============================================================================= */
+.cover-eyebrow {
+  position: absolute;
+  top: clamp(1.5rem, 4vh, 3rem);
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  align-items: center;
+  gap: 1.25rem;
+  z-index: 5;
+  font-family: var(--font-serif-display);
+  font-size: 0.7rem;
+  font-weight: 500;
+  letter-spacing: 0.32em;
+  color: var(--pal-kicker, var(--fg-soft));
+  text-transform: uppercase;
+}
+.cover-eyebrow-rule {
+  display: block;
+  width: 4rem;
+  height: 1px;
+  background: var(--pal-line, var(--line));
+  opacity: 0.7;
+}
+.cover-eyebrow-text {
+  font-feature-settings: "smcp";
+  font-style: italic;
+}
+
+/* =============================================================================
+   4. 封面页：内容容器（垂直居中）
+   ============================================================================= */
+.cover-content {
+  position: relative;
+  z-index: 5;
+  width: 100%;
+  max-width: 56rem;
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+/* =============================================================================
+   5. 封面页：kicker (顶部小字 / 衬线大写)
+   ============================================================================= */
+.cover-kicker {
+  font-family: var(--font-serif-display);
+  font-size: 0.78rem;
+  font-weight: 500;
+  letter-spacing: 0.42em;
+  text-transform: uppercase;
+  color: var(--pal-kicker, var(--fg-soft));
+  margin: 0 0 1.5rem;
+  font-feature-settings: "smcp" on;
+}
+
+/* =============================================================================
+   6. 封面页：avatar (可选)
+   ============================================================================= */
+.cover-avatar {
+  width: 5.5rem;
+  height: 5.5rem;
+  border-radius: 9999px;
+  object-fit: cover;
+  margin: 0 auto 1.75rem;
+  border: 1px solid var(--pal-line, var(--line));
+  filter: grayscale(10%) contrast(1.02);
+  opacity: 0;
+  animation: cover-fade 1.6s cubic-bezier(0.22, 0.61, 0.36, 1) 0.2s forwards;
+}
+
+/* =============================================================================
+   7. 封面页：主标题 (大号衬线)
+   ============================================================================= */
+.cover-title {
+  font-family: var(--font-serif-display);
+  font-size: clamp(3.5rem, 13vw, 8.5rem);
+  font-weight: 400;
+  font-style: normal;
+  letter-spacing: -0.045em;
+  line-height: 1.05;
+  margin: 0;
+  color: var(--pal-title, var(--fg-base));
+  /* 用字体光学尺寸 + 古典 kerning */
+  font-variation-settings: "opsz" 144, "SOFT" 50;
+}
+
+/* Splitting.js 注入的字符容器 — 不裁剪，让 translateY 入场完整可见 */
+.cover-title .word,
+.cover-kicker .word {
+  display: inline-block;
+  vertical-align: bottom;
+}
+.cover-title .char,
+.cover-kicker .char {
+  display: inline-block;
+  will-change: transform, opacity;
+  opacity: 0;
+  transform: translateY(0.6em);
+  transition: transform 1s cubic-bezier(0.22, 0.61, 0.36, 1),
+              opacity 0.9s cubic-bezier(0.22, 0.61, 0.36, 1);
+  transition-delay: calc(var(--char-index, 0) * 35ms + 300ms);
+}
+
+.cover-page.is-ready .cover-title .char,
+.cover-page.is-ready .cover-kicker .char {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+/* 没 Splitting.js 加载时降级 */
+.cover-title:not([data-splitting]),
+.cover-kicker:not([data-splitting]) {
+  opacity: 0;
+  animation: cover-fade 1.4s cubic-bezier(0.22, 0.61, 0.36, 1) 0.4s forwards;
+}
+
+/* =============================================================================
+   8. 封面页：epigraph (题词 / 衬线斜体)
+   ============================================================================= */
+.cover-epigraph {
+  font-family: var(--font-serif-body);
+  font-style: italic;
+  font-weight: 300;
+  font-size: clamp(1rem, 1.8vw, 1.2rem);
+  color: var(--pal-epi, var(--fg-soft));
+  margin: 1.75rem auto 0;
+  max-width: 36rem;
+  line-height: 1.55;
+  opacity: 0;
+  animation: cover-fade 1.4s cubic-bezier(0.22, 0.61, 0.36, 1) 0.7s forwards;
+}
+
+/* =============================================================================
+   9. 封面页：subtitle (副标题)
+   ============================================================================= */
+.cover-subtitle {
+  font-family: var(--font-serif-body);
+  font-size: clamp(0.95rem, 1.6vw, 1.15rem);
+  font-weight: 400;
+  letter-spacing: 0.02em;
+  margin: 1rem auto 0;
+  color: var(--pal-sub, var(--fg-mute));
+  max-width: 32rem;
+  opacity: 0;
+  animation: cover-fade 1.4s cubic-bezier(0.22, 0.61, 0.36, 1) 0.85s forwards;
+}
+
+/* =============================================================================
+   10. 封面页：古典分隔符
+   ============================================================================= */
+.cover-divider {
+  display: flex;
+  align-items: center;
+  gap: 1.25rem;
+  margin: 2.5rem auto 2.5rem;
+  width: clamp(14rem, 22vw, 22rem);
+  opacity: 0;
+  animation: cover-fade 1.2s cubic-bezier(0.22, 0.61, 0.36, 1) 1.05s forwards;
+}
+.cover-divider-rule {
+  flex: 1;
+  height: 1px;
+  background: var(--pal-line, var(--line));
+}
+.cover-divider-mark {
+  font-family: var(--font-serif-display);
+  font-size: 0.95rem;
+  color: var(--pal-accent, var(--accent));
+  line-height: 1;
+  transform: translateY(-1px);
+}
+
+/* =============================================================================
+   11. 封面页：按钮 (复古带边框)
+   ============================================================================= */
+.cover-button {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 1rem 2.25rem;
+  border: 1.5px solid var(--pal-btn-bd, var(--fg-base));
+  border-radius: 9999px;
+  font-family: var(--font-serif-display);
+  font-size: 0.92rem;
+  font-weight: 500;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  text-decoration: none !important;
+  color: var(--pal-btn-fg, var(--fg-base));
+  background: transparent;
+  cursor: pointer;
+  position: relative;
+  overflow: hidden;
+  transition: color 0.45s cubic-bezier(0.22, 0.61, 0.36, 1),
+              border-color 0.45s cubic-bezier(0.22, 0.61, 0.36, 1);
+  opacity: 0;
+  animation: cover-fade 1.4s cubic-bezier(0.22, 0.61, 0.36, 1) 1.2s forwards;
+}
+
+.cover-button::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: var(--pal-btn-hbg, var(--fg-base));
+  transform: translateY(101%);
+  transition: transform 0.55s cubic-bezier(0.65, 0, 0.35, 1);
+  z-index: -1;
+}
+
+.cover-button:hover {
+  color: var(--pal-btn-hfg, var(--bg-base));
+}
+.cover-button:hover::before {
+  transform: translateY(0);
+}
+.cover-button:hover .cover-button-arrow {
+  transform: translateX(4px);
+}
+.cover-button-arrow {
+  display: inline-block;
+  transition: transform 0.45s cubic-bezier(0.22, 0.61, 0.36, 1);
+  font-family: var(--font-serif-display);
+}
+
+/* =============================================================================
+   12. 封面页：社交链接 (横向排列，文字 + 图标)
+   ============================================================================= */
+.cover-social {
+  margin-top: 2.5rem;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.75rem;
+  flex-wrap: wrap;
+  justify-content: center;
+  opacity: 0;
+  animation: cover-fade 1.4s cubic-bezier(0.22, 0.61, 0.36, 1) 1.45s forwards;
+}
+
+.cover-social-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.45rem 0.95rem;
+  border-radius: 9999px;
+  border: 1px solid transparent;
+  font-family: var(--font-serif-display);
+  font-size: 0.82rem;
+  font-weight: 500;
+  letter-spacing: 0.06em;
+  color: var(--pal-social, var(--fg-mute));
+  text-decoration: none !important;
+  transition: color 0.35s, border-color 0.35s, background 0.35s;
+}
+.cover-social-link:hover {
+  color: var(--pal-social-h, var(--fg-base));
+  border-color: var(--pal-line, var(--line));
+}
+.cover-social-sep {
+  opacity: 0.4;
+  font-weight: 300;
+}
+
+/* =============================================================================
+   13. 封面页：底部脚注
+   ============================================================================= */
+.cover-footnote {
+  position: absolute;
+  bottom: clamp(1.5rem, 4vh, 3rem);
+  left: 50%;
+  transform: translateX(-50%);
+  font-family: var(--font-serif-display);
+  font-style: italic;
+  font-size: 0.75rem;
+  font-weight: 400;
+  color: var(--pal-kicker, var(--fg-soft));
+  letter-spacing: 0.1em;
+  z-index: 5;
+}
+
+/* =============================================================================
+   14. 通用淡入动画
+   ============================================================================= */
+@keyframes cover-fade {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
+
+/* 通用 .reveal 类（其它页面用） */
+.reveal {
+  opacity: 1;
+}
+@supports (animation-timeline: view()) {
+  .reveal {
+    animation: reveal-fade 1s cubic-bezier(0.22, 0.61, 0.36, 1) both;
+    animation-timeline: view();
+    animation-range: entry 0% cover 25%;
+  }
+}
+@keyframes reveal-fade {
+  from { opacity: 0; transform: translateY(24px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+/* =============================================================================
+   15. 模块卡 (Claude 风：单列 · 横向布局 · 居中容器)
+   ============================================================================= */
+.modules-grid-stack {
+  max-width: 44rem;
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.module-card {
+  position: relative;
+  display: grid;
+  grid-template-columns: auto 1fr auto;
+  align-items: center;
+  gap: 1.25rem;
+  border-radius: 0.5rem;
+  padding: 1.25rem 1.5rem;
+  text-decoration: none !important;
+  background: transparent;
+  border: 1px solid var(--line);
+  transition: border-color 0.5s cubic-bezier(0.22, 0.61, 0.36, 1),
+              transform 0.5s cubic-bezier(0.22, 0.61, 0.36, 1),
+              background 0.5s;
+  overflow: hidden;
+  isolation: isolate;
+}
+
+html.dark .module-card {
+  background: rgba(255, 255, 255, 0.015);
+}
+
+.module-card::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(90deg,
+    color-mix(in srgb, var(--accent) 6%, transparent) 0%,
+    transparent 50%);
+  opacity: 0;
+  transition: opacity 0.6s cubic-bezier(0.22, 0.61, 0.36, 1);
+  pointer-events: none;
+  z-index: -1;
+}
+.module-card:hover::before { opacity: 1; }
+
+.module-card:hover {
+  border-color: var(--fg-base);
+  transform: translateY(-2px);
+}
+html.dark .module-card:hover {
+  background: rgba(255, 255, 255, 0.04);
+}
+
+.module-card-head {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 0.4rem;
+  grid-column: 1;
+}
+.module-card-icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 2.5rem;
+  height: 2.5rem;
+  color: var(--fg-base);
+  transition: color 0.4s, transform 0.4s cubic-bezier(0.22, 0.61, 0.36, 1);
+}
+.module-card-icon svg {
+  display: block;
+}
+.module-card:hover .module-card-icon {
+  color: var(--accent);
+  transform: rotate(-6deg);
+}
+
+.module-card-meta {
+  font-family: var(--font-serif-display);
+  font-size: 0.65rem;
+  font-weight: 500;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--fg-soft);
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+}
+.module-card-num {
+  font-style: italic;
+  color: var(--accent);
+  font-feature-settings: "smcp";
+}
+.module-card-divider {
+  opacity: 0.4;
+}
+.module-card-path {
+  font-family: var(--font-mono);
+  font-size: 0.6rem;
+  letter-spacing: 0.05em;
+  color: var(--fg-soft);
+  text-transform: lowercase;
+}
+
+.module-card-body {
+  grid-column: 2;
+  min-width: 0;
+}
+.module-card-name {
+  font-family: var(--font-serif-display);
+  font-size: 1.4rem;
+  font-weight: 500;
+  letter-spacing: -0.02em;
+  color: var(--fg-base);
+  font-variation-settings: "opsz" 60;
+  line-height: 1.15;
+}
+.module-card-title {
+  font-family: var(--font-mono);
+  font-size: 0.65rem;
+  font-weight: 400;
+  text-transform: uppercase;
+  letter-spacing: 0.18em;
+  color: var(--fg-soft);
+  margin-top: 0.25rem;
+}
+.module-card-desc {
+  font-family: var(--font-serif-body);
+  font-size: 0.88rem;
+  line-height: 1.55;
+  color: var(--fg-mute);
+  margin-top: 0.4rem;
+  font-style: italic;
+}
+
+.module-card-cta {
+  grid-column: 3;
+  font-family: var(--font-serif-display);
+  font-size: 0.7rem;
+  font-weight: 500;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--fg-mute);
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  transition: gap 0.3s cubic-bezier(0.22, 0.61, 0.36, 1),
+              color 0.3s;
+  white-space: nowrap;
+}
+.module-card:hover .module-card-cta {
+  gap: 0.8rem;
+  color: var(--accent);
+}
+.module-card-arrow {
+  display: inline-flex;
+  align-items: center;
+  transition: transform 0.4s cubic-bezier(0.22, 0.61, 0.36, 1);
+}
+.module-card:hover .module-card-arrow {
+  transform: translateX(3px);
+}
+
+@media (max-width: 640px) {
+  .module-card {
+    grid-template-columns: auto 1fr;
+    grid-template-rows: auto auto;
+    gap: 0.85rem;
+  }
+  .module-card-head { grid-row: 1; }
+  .module-card-body { grid-row: 1; grid-column: 2; }
+  .module-card-cta {
+    grid-row: 2;
+    grid-column: 1 / -1;
+    padding-top: 0.75rem;
+    border-top: 1px solid color-mix(in srgb, var(--line) 60%, transparent);
+    justify-content: flex-end;
+  }
+}
+
+/* =============================================================================
+   16. Vault 子分类卡（单列 · 居中 · 与 module-card 同语言）
+   ============================================================================= */
+.vault-sections-stack {
+  max-width: 44rem;
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.vault-section-card {
+  display: flex;
+  flex-direction: column;
+  border-radius: 0.5rem;
+  padding: 1.5rem 1.5rem;
+  text-decoration: none !important;
+  background: transparent;
+  border: 1px solid var(--line);
+  transition: border-color 0.4s, background 0.4s, transform 0.4s;
+  position: relative;
+  isolation: isolate;
+}
+html.dark .vault-section-card {
+  background: rgba(255, 255, 255, 0.015);
+}
+.vault-section-card:hover {
+  border-color: var(--fg-base);
+  transform: translateY(-2px);
+}
+html.dark .vault-section-card:hover {
+  background: rgba(255, 255, 255, 0.04);
+}
+
+.vault-section-head {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  margin-bottom: 0.85rem;
+}
+.vault-section-icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 2rem;
+  height: 2rem;
+  color: var(--fg-base);
+  line-height: 1;
+  transition: transform 0.4s cubic-bezier(0.22, 0.61, 0.36, 1),
+              color 0.3s;
+  flex-shrink: 0;
+}
+.vault-section-card:hover .vault-section-icon {
+  transform: rotate(-6deg);
+  color: var(--accent);
+}
+.vault-section-icon svg {
+  display: block;
+}
+.vault-section-path {
+  font-family: var(--font-mono);
+  font-size: 0.65rem;
+  letter-spacing: 0.05em;
+  color: var(--fg-soft);
+  text-transform: lowercase;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.vault-section-name {
+  font-family: var(--font-serif-display);
+  font-size: 1.4rem;
+  font-weight: 500;
+  letter-spacing: -0.015em;
+  color: var(--fg-base);
+  font-variation-settings: "opsz" 60;
+  line-height: 1.2;
+}
+.vault-section-title {
+  font-family: var(--font-mono);
+  font-size: 0.65rem;
+  text-transform: uppercase;
+  letter-spacing: 0.18em;
+  color: var(--fg-soft);
+  margin-top: 0.3rem;
+}
+
+.vault-section-desc {
+  font-family: var(--font-serif-body);
+  font-size: 0.95rem;
+  font-style: italic;
+  color: var(--fg-mute);
+  line-height: 1.6;
+  margin: 0.75rem 0 0;
+}
+
+.vault-section-sample {
+  list-style: none;
+  padding: 0;
+  margin: 0.85rem 0 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+  font-family: var(--font-serif-body);
+  font-size: 0.88rem;
+  color: var(--fg-mute);
+}
+.vault-section-sample-item {
+  display: flex;
+  gap: 0.5rem;
+  align-items: baseline;
+}
+.vault-section-sample-mark {
+  display: inline-flex;
+  align-items: center;
+  color: var(--accent);
+  font-family: var(--font-serif-display);
+  flex-shrink: 0;
+}
+.vault-section-sample-mark svg {
+  display: block;
+}
+
+.vault-section-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.4rem;
+  margin-top: 1rem;
+  padding-top: 0.85rem;
+  border-top: 1px solid color-mix(in srgb, var(--line) 60%, transparent);
+}
+.vault-section-tag {
+  font-family: var(--font-mono);
+  font-size: 0.65rem;
+  padding: 0.15rem 0.55rem;
+  border-radius: 9999px;
+  border: 1px solid var(--line);
+  color: var(--fg-soft);
+  background: transparent;
+  letter-spacing: 0.04em;
+  transition: border-color 0.3s, color 0.3s;
+}
+.vault-section-card:hover .vault-section-tag {
+  border-color: color-mix(in srgb, var(--fg-soft) 40%, transparent);
+}
+
+/* =============================================================================
+   17. 长文章页：衬线正文 (prose)
+   ============================================================================= */
+.prose {
+  font-family: var(--font-serif-body);
+  font-size: 1.05rem;
+  line-height: 1.78;
+  color: var(--fg-base);
+}
+.prose h1, .prose h2, .prose h3, .prose h4 {
+  font-family: var(--font-serif-display);
+  font-weight: 500;
+  letter-spacing: -0.02em;
+  color: var(--fg-base);
+  font-variation-settings: "opsz" 80;
+}
+.prose h2 { font-size: 1.85rem; margin-top: 2.5rem; }
+.prose h3 { font-size: 1.35rem; margin-top: 2rem; }
+.prose blockquote {
+  border-left: 2px solid var(--accent);
+  padding: 0.25rem 0 0.25rem 1.25rem;
+  font-style: italic;
+  font-family: var(--font-serif-body);
+  color: var(--fg-mute);
+  margin: 1.5rem 0;
+}
+.prose a {
+  color: var(--accent);
+  text-decoration: underline;
+  text-decoration-thickness: 1px;
+  text-underline-offset: 3px;
+  text-decoration-color: color-mix(in srgb, var(--accent) 50%, transparent);
+  transition: text-decoration-color 0.25s;
+}
+.prose a:hover {
+  text-decoration-color: var(--accent);
+}
+.prose code {
+  font-size: 0.88em;
+  background: color-mix(in srgb, var(--line) 60%, transparent);
+  padding: 0.1em 0.35em;
+  border-radius: 0.25rem;
+}
+.prose pre {
+  border: 1px solid var(--line);
+  border-radius: 0.5rem;
+  padding: 1.25rem;
+  background: var(--bg-deep);
+}
+.prose hr {
+  border: 0;
+  text-align: center;
+  margin: 2.5rem auto;
+}
+.prose hr::before {
+  content: "✦";
+  color: var(--accent);
+  font-size: 1rem;
+  letter-spacing: 0.5em;
+}
+
+/* =============================================================================
+   18. 旧 Aurora / 装饰保留但默认隐藏（如果用户想换回用）
+   ============================================================================= */
+.cover-aurora, .cover-bg { display: none !important; }
+
+/* =============================================================================
+   19. 封面花边（无缝拼接 + 横向滚动）+ 四角花朵
+   ============================================================================= */
+/* 上下黑色花边 — 固定高度 56px（等比缩放原图 800×253）
+   → 单 tile = 177×56px；动画 -177px 一周期无缝循环 */
+.cover-flower-strip {
+  position: absolute;
+  left: 0;
+  right: 0;
+  height: 56px;
+  z-index: 2;
+  pointer-events: none;
+  background-image: url("/image/上下填充黑色花.png");
+  background-repeat: repeat-x;
+  background-size: 177px 56px;
+  background-position: 0 50%;
+  opacity: 0;
+  animation:
+    flower-flow 38s linear infinite,
+    cover-fade 1.4s cubic-bezier(0.22, 0.61, 0.36, 1) 0.2s forwards;
+}
+.cover-flower-strip-top    { top: 0; }
+.cover-flower-strip-bottom { bottom: 0; transform: scaleY(-1); }
+
+/* 横向滚动关键帧 */
+@keyframes flower-flow {
+  from { background-position-x: 0; }
+  to   { background-position-x: -177px; }
+}
+
+/* 背景花朵（仅四角 · 避开上下花边和中央文字） */
+.cover-flowers {
+  position: absolute;
+  inset: 0;
+  z-index: 2;
+  pointer-events: none;
+  overflow: hidden;
+}
+.cover-flower-pos {
+  position: absolute;
+  transform: translate(-50%, -50%) rotate(var(--rot, -14deg));
+  pointer-events: none;
+  filter: drop-shadow(0 4px 12px rgba(0, 0, 0, 0.06));
+  opacity: 0;
+  animation: cover-fade 1.6s cubic-bezier(0.22, 0.61, 0.36, 1) forwards;
+}
+.cover-flower-pos img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  display: block;
+}
+
+@media (max-width: 720px) {
+  .cover-flower-strip {
+    height: 44px;
+    background-size: 139px 44px;
+  }
+  .cover-flower-pos { opacity: 0.55 !important; }
+  @keyframes flower-flow {
+    from { background-position-x: 0; }
+    to   { background-position-x: -139px; }
+  }
+}
+
+/* =============================================================================
+   20. Splitting.js 注入的样式（内联避免 ORB 拦截 splitting.css）
+   ============================================================================= */
+.splitting .word,
+.splitting .char {
+  display: inline-block;
+}
+
+/* =============================================================================
+   21. 内页 hero（cover-page 的"缩小版"）
+   用法:  layouts/shortcodes/page-hero.html
+   ============================================================================= */
+.page-hero {
+  position: relative;
+  text-align: center;
+  padding: clamp(2rem, 5vh, 4rem) 0 clamp(1.25rem, 3vh, 2.5rem);
+  margin: 0 auto clamp(2rem, 4vh, 3.5rem);
+  max-width: 56rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  border-bottom: 1px solid transparent;
+}
+.page-hero.align-left {
+  text-align: left;
+  align-items: flex-start;
+}
+
+.page-eyebrow {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  font-family: var(--font-serif-display);
+  font-size: 0.65rem;
+  font-weight: 500;
+  letter-spacing: 0.3em;
+  text-transform: uppercase;
+  color: var(--fg-soft);
+  margin-bottom: 1.25rem;
+}
+.page-eyebrow-rule {
+  display: block;
+  width: 3rem;
+  height: 1px;
+  background: var(--line);
+  opacity: 0.7;
+}
+.page-eyebrow-text {
+  font-feature-settings: "smcp";
+  font-style: italic;
+}
+
+.page-kicker {
+  font-family: var(--font-serif-display);
+  font-size: 0.72rem;
+  font-weight: 500;
+  letter-spacing: 0.4em;
+  text-transform: uppercase;
+  color: var(--fg-soft);
+  margin: 0 0 1rem;
+  font-feature-settings: "smcp" on;
+}
+
+.page-title {
+  font-family: var(--font-serif-display);
+  font-size: clamp(2.25rem, 6vw, 3.75rem);
+  font-weight: 400;
+  letter-spacing: -0.03em;
+  line-height: 1.08;
+  margin: 0;
+  color: var(--fg-base);
+  font-variation-settings: "opsz" 144, "SOFT" 50;
+}
+
+.page-subtitle {
+  font-family: var(--font-serif-body);
+  font-style: italic;
+  font-size: clamp(0.95rem, 1.5vw, 1.1rem);
+  font-weight: 300;
+  color: var(--fg-mute);
+  margin: 1.25rem auto 0;
+  max-width: 36rem;
+  line-height: 1.55;
+}
+
+/* 复用 cover 字符级入场（cover-title 已经定义了 .word/.char 规则） */
+.page-title .word,
+.page-kicker .word { display: inline-block; vertical-align: bottom; }
+.page-title .char,
+.page-kicker .char {
+  display: inline-block;
+  will-change: transform, opacity;
+  opacity: 0;
+  transform: translateY(0.6em);
+  transition: transform 0.9s cubic-bezier(0.22, 0.61, 0.36, 1),
+              opacity 0.8s cubic-bezier(0.22, 0.61, 0.36, 1);
+  transition-delay: calc(var(--char-index, 0) * 30ms + 200ms);
+}
+.page-hero.is-ready .page-title .char,
+.page-hero.is-ready .page-kicker .char {
+  opacity: 1;
+  transform: translateY(0);
+}
+.page-title:not([data-splitting]),
+.page-kicker:not([data-splitting]) {
+  opacity: 0;
+  animation: cover-fade 1.2s cubic-bezier(0.22, 0.61, 0.36, 1) 0.3s forwards;
+}
+
+.page-divider {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  margin: 1.5rem auto 0;
+  width: clamp(10rem, 18vw, 16rem);
+}
+.page-divider-rule {
+  flex: 1;
+  height: 1px;
+  background: var(--line);
+}
+.page-divider-mark {
+  font-family: var(--font-serif-display);
+  font-size: 0.85rem;
+  color: var(--accent);
+  line-height: 1;
+  transform: translateY(-1px);
+}
+
+/* =============================================================================
+   22. 面包屑 · 顶部小字衬线 (与封面 eyebrow 同源)
+   ============================================================================= */
+nav[aria-label="breadcrumb"] ol,
+.breadcrumbs ol,
+header ol {
+  font-family: var(--font-serif-display);
+  font-size: 0.7rem;
+  font-weight: 500;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--fg-soft);
+}
+.breadcrumbs a, header ol a {
+  color: var(--fg-soft);
+  text-decoration: none;
+  transition: color 0.3s;
+}
+.breadcrumbs a:hover, header ol a:hover {
+  color: var(--fg-base);
+}
+header ol .text-primary-500 {
+  color: var(--accent) !important;
+  opacity: 0.7;
+}
+
+/* =============================================================================
+   23. 文章列表卡（覆盖 blowfish 默认 article-link--card / --simple）
+   ============================================================================= */
+.article-link--card,
+.article-link--related {
+  border: 1px solid var(--line) !important;
+  border-radius: 0.5rem !important;
+  background: transparent !important;
+  transition: border-color 0.4s cubic-bezier(0.22, 0.61, 0.36, 1),
+              transform 0.4s cubic-bezier(0.22, 0.61, 0.36, 1),
+              background 0.4s;
+  overflow: hidden;
+}
+html.dark .article-link--card,
+html.dark .article-link--related {
+  background: rgba(255, 255, 255, 0.015) !important;
+}
+.article-link--card:hover,
+.article-link--related:hover {
+  border-color: var(--fg-base) !important;
+  transform: translateY(-2px);
+}
+html.dark .article-link--card:hover,
+html.dark .article-link--related:hover {
+  background: rgba(255, 255, 255, 0.04) !important;
+}
+.article-link--card h2,
+.article-link--related h2 {
+  font-family: var(--font-serif-display) !important;
+  font-weight: 500 !important;
+  font-size: 1.2rem !important;
+  letter-spacing: -0.015em !important;
+  color: var(--fg-base) !important;
+  font-variation-settings: "opsz" 60;
+  line-height: 1.3;
+}
+.article-link--card .text-neutral-500,
+.article-link--related .text-neutral-500,
+.article-link--card .text-neutral-400,
+.article-link--related .text-neutral-400 {
+  font-family: var(--font-serif-display);
+  font-size: 0.7rem;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+}
+.article-link__summary {
+  font-family: var(--font-serif-body) !important;
+  font-size: 0.95rem !important;
+  font-style: italic !important;
+  color: var(--fg-mute) !important;
+  line-height: 1.55 !important;
+}
+
+/* 简单列表卡（左图右文） */
+.article-link--simple {
+  border: 1px solid var(--line);
+  border-radius: 0.5rem;
+  background: transparent;
+  transition: border-color 0.4s, transform 0.4s, background 0.4s;
+}
+html.dark .article-link--simple {
+  background: rgba(255, 255, 255, 0.015);
+}
+.article-link--simple:hover {
+  border-color: var(--fg-base);
+  transform: translateY(-2px);
+}
+html.dark .article-link--simple:hover {
+  background: rgba(255, 255, 255, 0.04);
+}
+.article-link--simple h2 {
+  font-family: var(--font-serif-display) !important;
+  font-weight: 500 !important;
+  letter-spacing: -0.015em !important;
+  color: var(--fg-base) !important;
+  font-variation-settings: "opsz" 60;
+}
+
+/* =============================================================================
+   24. Hero (single / list 页面的封面条) — 与封面同语言
+   ============================================================================= */
+.single_hero_background + #single_header,
+.prose > header,
+header#single_header {
+  font-family: var(--font-serif-display);
+}
+header#single_header h1,
+.prose > header h1 {
+  font-family: var(--font-serif-display);
+  font-weight: 400;
+  letter-spacing: -0.025em;
+  font-size: clamp(2rem, 5vw, 3.25rem) !important;
+  line-height: 1.1;
+  font-variation-settings: "opsz" 144, "SOFT" 50;
+}
+.prose > header h1 {
+  margin-top: 0;
+}
+header#single_header .mt-1,
+header#single_header .text-base {
+  font-family: var(--font-serif-display);
+  font-size: 0.72rem;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--fg-soft) !important;
+}
+
+/* =============================================================================
+   25. 长文章 prose 覆写（与封面 prose 段同语言）
+   ============================================================================= */
+.prose {
+  font-family: var(--font-serif-body);
+  font-size: 1.05rem;
+  line-height: 1.8;
+  color: var(--fg-base);
+}
+.prose h1, .prose h2, .prose h3, .prose h4, .prose h5 {
+  font-family: var(--font-serif-display);
+  font-weight: 500;
+  letter-spacing: -0.02em;
+  color: var(--fg-base);
+  font-variation-settings: "opsz" 80;
+}
+.prose h2 {
+  font-size: 1.85rem;
+  margin-top: 2.5rem;
+  padding-top: 0.5rem;
+  border-top: 1px solid var(--line);
+}
+.prose h2:first-child { border-top: 0; padding-top: 0; }
+.prose h3 {
+  font-size: 1.35rem;
+  margin-top: 2rem;
+}
+.prose h4 { font-size: 1.1rem; margin-top: 1.5rem; }
+.prose p { margin: 1rem 0; }
+.prose blockquote {
+  border-left: 2px solid var(--accent);
+  padding: 0.25rem 0 0.25rem 1.25rem;
+  font-style: italic;
+  font-family: var(--font-serif-body);
+  color: var(--fg-mute);
+  margin: 1.5rem 0;
+  background: color-mix(in srgb, var(--accent) 5%, transparent);
+  border-radius: 0 0.25rem 0.25rem 0;
+}
+.prose a {
+  color: var(--accent);
+  text-decoration: underline;
+  text-decoration-thickness: 1px;
+  text-underline-offset: 3px;
+  text-decoration-color: color-mix(in srgb, var(--accent) 50%, transparent);
+  transition: text-decoration-color 0.25s, color 0.25s;
+}
+.prose a:hover {
+  text-decoration-color: var(--accent);
+  color: var(--accent);
+}
+.prose code {
+  font-size: 0.88em;
+  background: color-mix(in srgb, var(--line) 60%, transparent);
+  padding: 0.1em 0.35em;
+  border-radius: 0.25rem;
+  color: var(--fg-base);
+  font-weight: 500;
+}
+.prose pre {
+  border: 1px solid var(--line);
+  border-radius: 0.5rem;
+  padding: 1.1rem 0;
+  background: var(--bg-deep);
+  font-size: 0.85rem;
+  line-height: 1.65;
+  font-variant-numeric: tabular-nums;
+  overflow-x: auto;
+  margin: 1.5rem 0;
+}
+.prose pre code {
+  background: transparent;
+  padding: 0;
+  color: inherit;
+}
+
+/* chroma 渲染的代码块：去掉所有嵌套层级，让"一个框"就完事 */
+.prose .highlight-wrapper,
+.prose .highlight,
+.prose pre.chroma {
+  background: transparent;
+  border: 0;
+  margin: 0;
+  padding: 0;
+}
+.prose .highlight-wrapper {
+  border: 1px solid var(--line);
+  border-radius: 0.5rem;
+  background: var(--bg-deep);
+  padding: 1.1rem 0;
+  margin: 1.5rem 0;
+  overflow: hidden;
+}
+.prose pre.chroma {
+  padding: 0 1.25rem;
+  font-variant-numeric: tabular-nums;
+}
+.prose pre.chroma code {
+  display: block;
+  background: transparent;
+  counter-reset: chroma-line;
+}
+.prose pre.chroma .line {
+  display: block;
+  position: relative;
+  padding-left: 3rem;
+}
+.prose pre.chroma .line:hover {
+  background: color-mix(in srgb, var(--accent) 4%, transparent);
+}
+/* 行号：紧贴代码左边、用 CSS counter 自增生成 */
+.prose pre.chroma .ln {
+  display: inline-block;
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 2.4rem;
+  padding-right: 0.5rem;
+  text-align: right;
+  font-family: var(--font-mono);
+  font-size: 0.78em;
+  color: color-mix(in srgb, var(--fg-soft) 70%, transparent);
+  user-select: none;
+  border-right: 1px solid color-mix(in srgb, var(--line) 60%, transparent);
+  counter-increment: chroma-line;
+}
+.prose pre.chroma .ln::before {
+  content: counter(chroma-line);
+}
+.prose pre.chroma .cl {
+  display: inline;
+}
+.prose hr {
+  border: 0;
+  text-align: center;
+  margin: 2.5rem auto;
+  height: auto;
+}
+.prose hr::before {
+  content: "✦";
+  color: var(--accent);
+  font-size: 1rem;
+  letter-spacing: 0.5em;
+  padding-left: 0.5em;
+}
+.prose table {
+  border: 1px solid var(--line);
+  border-radius: 0.5rem;
+  overflow: hidden;
+  border-collapse: separate;
+  border-spacing: 0;
+}
+.prose table th {
+  background: color-mix(in srgb, var(--line) 40%, transparent);
+  font-family: var(--font-serif-display);
+  font-weight: 500;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  font-size: 0.78rem;
+  padding: 0.65rem 0.85rem;
+  border-bottom: 1px solid var(--line);
+}
+.prose table td {
+  padding: 0.65rem 0.85rem;
+  border-top: 1px solid color-mix(in srgb, var(--line) 50%, transparent);
+  font-family: var(--font-serif-body);
+}
+.prose ul li::marker { color: var(--accent); }
+.prose ol li::marker {
+  color: var(--fg-soft);
+  font-family: var(--font-serif-display);
+  font-style: italic;
+}
+.prose img {
+  border-radius: 0.5rem;
+  border: 1px solid var(--line);
+}
+.prose kbd {
+  font-family: var(--font-mono);
+  font-size: 0.82em;
+  background: var(--bg-deep);
+  border: 1px solid var(--line);
+  border-bottom-width: 2px;
+  border-radius: 0.3rem;
+  padding: 0.1em 0.45em;
+  color: var(--fg-base);
+}
+.prose mark {
+  background: color-mix(in srgb, var(--accent) 25%, transparent);
+  color: inherit;
+  padding: 0.05em 0.2em;
+  border-radius: 0.15rem;
+}
+.prose details {
+  border: 1px solid var(--line);
+  border-radius: 0.5rem;
+  padding: 0.75rem 1rem;
+  margin: 1rem 0;
+  background: transparent;
+}
+.prose details summary {
+  font-family: var(--font-serif-display);
+  cursor: pointer;
+  font-style: italic;
+  color: var(--fg-base);
+}
+
+/* =============================================================================
+   26. Footer / Scroll-to-top / Pagination / 杂项 (Claude 风)
+   ============================================================================= */
+#site-footer {
+  font-family: var(--font-serif-display);
+  border-top: 1px solid var(--line);
+  margin-top: 4rem;
+}
+#site-footer p,
+#site-footer a,
+#site-footer nav {
+  font-family: var(--font-serif-display);
+  font-size: 0.78rem;
+  letter-spacing: 0.08em;
+  color: var(--fg-soft);
+}
+#site-footer a:hover {
+  color: var(--fg-base);
+}
+
+/* 顶栏主菜单 */
+.main-menu a,
+.main-menu span {
+  font-family: var(--font-serif-display);
+  font-size: 0.85rem;
+  letter-spacing: 0.06em;
+  font-weight: 500;
+}
+.main-menu a:hover,
+.main-menu a.active {
+  color: var(--accent) !important;
+}
+
+/* Scroll-to-top */
+.scroll-to-top {
+  background: var(--fg-base) !important;
+  color: var(--bg-base) !important;
+  border-radius: 9999px !important;
+  opacity: 0.85 !important;
+}
+.scroll-to-top:hover {
+  opacity: 1 !important;
+}
+
+/* 分页 */
+.pagination a,
+.pagination span {
+  font-family: var(--font-serif-display);
+  border: 1px solid var(--line) !important;
+  border-radius: 0.4rem !important;
+  background: transparent !important;
+  color: var(--fg-base) !important;
+}
+.pagination a:hover {
+  border-color: var(--fg-base) !important;
+}
+
+/* 相关文章标题 */
+.related-articles h2,
+.article-pagination h2 {
+  font-family: var(--font-serif-display);
+  font-weight: 500;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  font-size: 0.85rem !important;
+  color: var(--fg-soft) !important;
+}
+
+/* TOC */
+.toc a,
+#TableOfContents a {
+  font-family: var(--font-serif-display);
+  font-size: 0.82rem;
+  color: var(--fg-mute);
+  text-decoration: none;
+  border-left: 1px solid transparent;
+  padding-left: 0.6rem;
+  transition: color 0.25s, border-color 0.25s;
+}
+.toc a:hover,
+#TableOfContents a:hover,
+.toc a.active,
+#TableOfContents a.active {
+  color: var(--fg-base);
+  border-left-color: var(--accent);
+}
+
+/* 顶栏 fixed layout 与正文间距：避免被遮 */
+body:not(:has(.cover-page)) main#main-content {
+  padding-top: 0;
+}
+body:not(:has(.cover-page)) article {
+  padding-top: 1.5rem;
+}
+
+/* =============================================================================
+   27. 通用工具类 / 响应式微调
+   ============================================================================= */
+
+/* 封面主题切换按钮（右上角 · 独立于 header） */
+.cover-theme-toggle {
+  position: absolute;
+  /* 避开顶部黑色花边（56px / 移动端 44px），再留一点呼吸距离 */
+  top: clamp(4.75rem, 7vh, 5.5rem);
+  right: clamp(1.25rem, 3vw, 2.25rem);
+  z-index: 50;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 2.5rem;
+  height: 2.5rem;
+  border-radius: 9999px;
+  border: 1px solid var(--pal-line, var(--line));
+  background: color-mix(in srgb, var(--pal-btn-fg, var(--fg-base)) 5%, transparent);
+  color: var(--pal-kicker, var(--fg-mute));
+  cursor: pointer;
+  transition: color 0.3s, border-color 0.3s, background 0.3s, transform 0.3s;
+  backdrop-filter: blur(4px);
+}
+.cover-theme-toggle:hover {
+  color: var(--pal-title, var(--fg-base));
+  border-color: var(--pal-btn-fg, var(--fg-base));
+  transform: rotate(15deg);
+}
+.cover-theme-toggle-icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  line-height: 1;
+}
+
+/* =============================================================================
+   28. 封面调色：跟随全局明暗主题同步切换
+   ----------------------------------------------------------------
+   封面原本通过 inline `--pal-*` 写死浅色配色，
+   这里在 dark 模式下覆写一份深色版，保证：
+     1. 顶栏切了 dark → 封面也立刻变深
+     2. 封面自己点切换 → 与全局保持一致
+   ============================================================================= */
+html.dark .cover-page {
+  --pal-bg-from: #141413;
+  --pal-bg-to:   #0F0E0D;
+  --pal-title:   #FAF9F5;
+  --pal-sub:     #B0AEA6;
+  --pal-kicker:  #807D77;
+  --pal-line:    #2A2926;
+  --pal-epi:     #807D77;
+  --pal-btn-bd:  #FAF9F5;
+  --pal-btn-fg:  #FAF9F5;
+  --pal-btn-hbg: #FAF9F5;
+  --pal-btn-hfg: #141413;
+  --pal-social:  #B0AEA6;
+  --pal-social-h:#FAF9F5;
+  --pal-accent:  #E08769;
+}
+/* dark 下噪点叠加从 multiply 改 screen + 提高不透明度（继承自 §2） */
+@media (max-width: 720px) {
+  .page-eyebrow-rule { width: 1.5rem; }
+  .page-hero { padding-top: 1.5rem; padding-bottom: 1rem; }
+  .page-title { font-size: clamp(2rem, 9vw, 2.75rem); }
+  .page-divider { width: 10rem; }
+}
+
+/* 段间分隔小符号（用于 markdown 短行间分隔） */
+.section-rule {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 1rem;
+  margin: 2.5rem 0;
+  font-family: var(--font-serif-display);
+  color: var(--accent);
+  font-size: 0.85rem;
+  letter-spacing: 0.5em;
+}
+.section-rule::before,
+.section-rule::after {
+  content: "";
+  flex: 1;
+  height: 1px;
+  background: var(--line);
+  opacity: 0.6;
+}
+
+/* =============================================================================
+   29. 文件树短代码（file-tree.html）
+   用在 AIpython / Tools 等"展示一堆脚本"的页面
+   ============================================================================= */
+.file-tree {
+  border: 1px solid var(--line);
+  border-radius: 0.5rem;
+  padding: 1rem 1.25rem;
+  background: transparent;
+  font-family: var(--font-mono);
+  font-size: 0.88rem;
+  line-height: 1.7;
+  margin: 1.5rem 0;
+  max-width: 56rem;
+}
+.file-tree-children {
+  margin-left: 1.25rem;
+  padding-left: 0.85rem;
+  border-left: 1px dashed color-mix(in srgb, var(--line) 60%, transparent);
+  margin-top: 0.25rem;
+}
+.file-tree-dir > summary {
+  list-style: none;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  padding: 0.15rem 0;
+  font-family: var(--font-serif-display);
+  font-weight: 500;
+  letter-spacing: 0.02em;
+  color: var(--fg-base);
+  user-select: none;
+  transition: color 0.2s;
+}
+.file-tree-dir > summary::-webkit-details-marker { display: none; }
+.file-tree-dir > summary:hover { color: var(--accent); }
+.file-tree-chevron {
+  display: inline-block;
+  width: 0.85em;
+  font-size: 0.85em;
+  color: var(--fg-soft);
+  transition: transform 0.25s cubic-bezier(0.22, 0.61, 0.36, 1);
+}
+.file-tree-dir[open] > summary .file-tree-chevron {
+  transform: rotate(90deg);
+  color: var(--accent);
+}
+.file-tree-name {
+  font-family: var(--font-mono);
+  font-size: 0.88rem;
+}
+.file-tree-file {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  padding: 0.15rem 0;
+  text-decoration: none;
+  color: var(--fg-mute);
+  transition: color 0.2s, padding-left 0.2s;
+}
+.file-tree-file:hover {
+  color: var(--accent);
+  padding-left: 0.35rem;
+}
+.file-tree-mark {
+  color: var(--accent);
+  font-family: var(--font-serif-display);
+  font-size: 0.95rem;
+}
+.file-tree-empty {
+  color: var(--fg-mute);
+  font-style: italic;
+}

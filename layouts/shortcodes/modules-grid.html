@@ -1,0 +1,47 @@
+{{/*
+  Shortcode: modules-grid
+  ----------------------------------------------------------------
+  渲染 data/modules.yaml 的模块列表为 Claude 风卡片（单列 · 居中）
+  用法: {{< modules-grid >}}
+  数据源: data/modules.yaml -> hugo.Data.modules.modules
+  ----------------------------------------------------------------
+*/}}
+{{ $modules := hugo.Data.modules.modules }}
+{{ if $modules }}
+<div class="modules-grid not-prose my-10">
+  <div class="modules-grid-stack">
+    {{ range $i, $m := $modules }}
+    <a href="{{ $m.href }}"
+       class="module-card reveal"
+       style="animation-delay: {{ mul $i 0.08 }}s;">
+
+      <div class="module-card-head">
+        <span class="module-card-icon">
+          {{ partial "cover/icon.html" (dict "name" $m.icon "size" 22) }}
+        </span>
+        <span class="module-card-meta">
+          <span class="module-card-num">{{ printf "%02d" (add $i 1) }}</span>
+          <span class="module-card-divider" aria-hidden="true">·</span>
+          <span class="module-card-path">{{ $m.href }}</span>
+        </span>
+      </div>
+
+      <div class="module-card-body">
+        <div class="module-card-name">{{ $m.name }}</div>
+        <div class="module-card-title">{{ $m.title }}</div>
+        <p class="module-card-desc">{{ $m.description }}</p>
+      </div>
+
+      <div class="module-card-cta">
+        <span>进入</span>
+        <span class="module-card-arrow" aria-hidden="true">
+          {{ partial "cover/icon.html" (dict "name" "arrow-right" "size" 16) }}
+        </span>
+      </div>
+    </a>
+    {{ end }}
+  </div>
+</div>
+{{ else }}
+<p class="text-neutral-500 italic">（暂无模块，请在 <code>data/modules.yaml</code> 中添加）</p>
+{{ end }}

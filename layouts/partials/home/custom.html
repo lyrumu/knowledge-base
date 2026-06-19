@@ -1,0 +1,199 @@
+{{/*
+  Cover-page custom layout — v2 (Claude-inspired)
+  ----------------------------------------------------------------
+  设计语言：极简 · 衬线 · 暖白 · 古典分隔符 · 缓慢淡入
+  数据来源：data/cover.yaml
+  ----------------------------------------------------------------
+*/}}
+{{ $cfg := index hugo.Data "cover" "cover" }}
+{{ $cfg = default (dict
+  "title" "lyrumu"
+  "subtitle" ""
+  "kicker" ""
+  "epigraph" ""
+  "avatar" ""
+  "background" ""
+  "entrance" (dict "label" "进入" "href" "/start/")
+  "social" (slice)
+  "decorations" (slice)
+  "palette" (dict
+    "background_from" "#FAF9F5"
+    "background_to"   "#F1EFE9"
+    "title_color"     "#1F1E1D"
+    "subtitle_color"  "#6B6962"
+    "kicker_color"    "#999995"
+    "line_color"      "#C9C7BF"
+    "epigraph_color"  "#8A8880"
+    "button_border"   "#1F1E1D"
+    "button_text"     "#1F1E1D"
+    "button_hover_bg" "#1F1E1D"
+    "button_hover_fg" "#FAF9F5"
+    "social_color"    "#6B6962"
+    "social_hover"    "#1F1E1D"
+    "accent"          "#D97757"
+  )
+) $cfg }}
+
+{{ $pal := $cfg.palette }}
+{{ $ent := $cfg.entrance }}
+{{ $social := $cfg.social }}
+
+{{/*
+  调色板：用 <style> 块写而不是 inline `style=""`
+  原因：CSS specificity — inline 属性 (1,0,0,0) 比 `html.dark .cover-page` (0,2,0) 高，
+  会盖掉暗色覆写，导致封面"叠"在主题切换之上。
+  <style> 块里的 `.cover-page` 只有 (0,1,0)，暗色覆写可以稳定赢。
+*/}}
+<style class="cover-palette">
+  .cover-page {
+    --pal-bg-from: {{ $pal.background_from }};
+    --pal-bg-to:   {{ $pal.background_to }};
+    --pal-title:   {{ $pal.title_color }};
+    --pal-sub:     {{ $pal.subtitle_color }};
+    --pal-kicker:  {{ $pal.kicker_color }};
+    --pal-line:    {{ $pal.line_color }};
+    --pal-epi:     {{ $pal.epigraph_color }};
+    --pal-btn-bd:  {{ $pal.button_border }};
+    --pal-btn-fg:  {{ $pal.button_text }};
+    --pal-btn-hbg: {{ $pal.button_hover_bg }};
+    --pal-btn-hfg: {{ $pal.button_hover_fg }};
+    --pal-social:  {{ $pal.social_color }};
+    --pal-social-h:{{ $pal.social_hover }};
+    --pal-accent:  {{ $pal.accent }};
+  }
+</style>
+
+<div class="cover-page">
+
+  {{/* 主题切换按钮（封面专用 · 右上角 · 避开顶部黑色花边） */}}
+  <button
+    id="appearance-switcher-cover"
+    aria-label="Dark mode switcher"
+    type="button"
+    class="cover-theme-toggle"
+    title="切换明暗主题">
+    <span class="cover-theme-toggle-icon dark:hidden">
+      {{ partial "cover/icon.html" (dict "name" "moon" "size" 18) }}
+    </span>
+    <span class="cover-theme-toggle-icon hidden dark:flex">
+      {{ partial "cover/icon.html" (dict "name" "sun" "size" 18) }}
+    </span>
+  </button>
+
+  {{/* 噪点叠加 */}}
+  <div class="cover-grain" aria-hidden="true"></div>
+
+  {{/* 顶部 / 底部 黑色花边（无缝拼接 + 横向滚动） */}}
+  <div class="cover-flower-strip cover-flower-strip-top" aria-hidden="true"></div>
+  <div class="cover-flower-strip cover-flower-strip-bottom" aria-hidden="true"></div>
+
+  {{/* 背景花朵（黑 + 黄 · 4 朵 · 角度统一 · 分两组摆放） */}}
+  {{ $imgs := slice "黑色花.png" "黄色花.png" }}
+  <div class="cover-flowers" aria-hidden="true">
+    {{ range $i, $p := slice
+      (dict "x" 90 "y" 70 "s" 400 "o" 0.32 "r" -18 "i" 0)
+      (dict "x" 13 "y" 20 "s" 250 "o" 0.80 "r"  18 "i" 1)
+    }}
+      <div class="cover-flower-pos" style="
+        left: {{ .x }}%;
+        top: {{ .y }}%;
+        width: {{ .s }}px;
+        height: {{ .s }}px;
+        opacity: {{ .o }};
+        --rot: {{ .r }}deg;
+        animation-delay: {{ mul $i 0.18 }}s;
+      ">
+        <img src="/image/{{ index $imgs .i }}" alt="" loading="lazy">
+      </div>
+    {{ end }}
+  </div>
+
+  {{/* 顶部细线 + 罗马式时间戳 */}}
+  <div class="cover-eyebrow reveal">
+    <span class="cover-eyebrow-rule"></span>
+    <span class="cover-eyebrow-text">{{ now.Format "MMVI · MMXXVI" }}</span>
+    <span class="cover-eyebrow-rule"></span>
+  </div>
+
+  <main class="cover-content">
+    {{ with $cfg.kicker }}
+    <p class="cover-kicker" data-splitting>{{ . }}</p>
+    {{ else }}
+    <p class="cover-kicker">PRO TEMPLUM</p>
+    {{ end }}
+
+    {{ with $cfg.avatar }}
+    <img class="cover-avatar" src="{{ . | relURL }}" alt="" />
+    {{ end }}
+
+    <h1 class="cover-title" data-splitting>{{ $cfg.title }}</h1>
+
+    {{ with $cfg.epigraph }}
+    <p class="cover-epigraph">{{ . }}</p>
+    {{ end }}
+
+    {{ with $cfg.subtitle }}
+    <p class="cover-subtitle">{{ . }}</p>
+    {{ end }}
+
+    {{/* 古典装饰分隔符 */}}
+    <div class="cover-divider" aria-hidden="true">
+      <span class="cover-divider-rule"></span>
+      <span class="cover-divider-mark">✦</span>
+      <span class="cover-divider-rule"></span>
+    </div>
+
+    <a href="{{ $ent.href | relURL }}" class="cover-button">
+      <span class="cover-button-label">{{ $ent.label }}</span>
+      <span class="cover-button-arrow" aria-hidden="true">→</span>
+    </a>
+
+    {{ with $social }}
+    <nav class="cover-social" aria-label="Social links">
+      {{ range . }}
+      <a href="{{ .url | safeURL }}"
+         class="cover-social-link"
+         {{ with .title }}title="{{ . }}" aria-label="{{ . }}"{{ end }}
+         target="_blank" rel="noopener noreferrer">
+        {{ with .name }}<span class="cover-social-name">{{ . }}</span>{{ end }}
+        {{ if and .name .url }}<span class="cover-social-sep" aria-hidden="true">·</span>{{ end }}
+        {{ partial "cover/icon.html" (dict "name" .icon "size" 16) }}
+      </a>
+      {{ end }}
+    </nav>
+    {{ end }}
+  </main>
+</div>
+
+<script>
+  // Splitting.js 启动后再打上 .is-ready 类，启用逐字入场动画
+  document.addEventListener('DOMContentLoaded', function () {
+    requestAnimationFrame(function () {
+      if (window.Splitting) {
+        Splitting({ target: '[data-splitting]' });
+      }
+      document.querySelector('.cover-page')?.classList.add('is-ready');
+    });
+  });
+
+  // 封面主题切换：转发到顶栏的 appearance-switcher（沿用同一份持久化逻辑）
+  // 之所以不直接绑自己的 listener：blowfish appearance.js 里读
+  // localStorage、updateLogo、updateMermaidTheme 都只挂在那个按钮上，
+  // 转发 .click() 能 100% 复用同一套状态。
+  (function () {
+    var coverBtn = document.getElementById('appearance-switcher-cover');
+    if (!coverBtn) return;
+    coverBtn.addEventListener('click', function () {
+      var main = document.getElementById('appearance-switcher');
+      if (main) main.click();
+      else {
+        // 兜底：万一某天顶栏按钮没了，自己手动切
+        document.documentElement.classList.toggle('dark');
+        try {
+          localStorage.setItem('appearance',
+            document.documentElement.classList.contains('dark') ? 'dark' : 'light');
+        } catch (e) {}
+      }
+    });
+  })();
+</script>
