@@ -9,7 +9,7 @@
 #   - 加新模块 = hugo.toml 加 menu + content/<slug>/_index.md
 # =============================================================================
 
-baseURL = 'https://example.com/'
+baseURL = 'https://knowledge-base-85b.pages.dev/'
 defaultContentLanguage = 'zh-cn'
 title = "lyrumu's site"
 
