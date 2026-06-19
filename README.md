@@ -33,3 +33,19 @@ These notes are written primarily for my own reference. They may be terse, assum
 ## License
 
 [MIT](LICENSE)
+
+---
+
+## Website
+
+This repo also powers my personal website built with **[Hugo](https://gohugo.io/)** + **[Blowfish](https://blowfish.page/)** theme, deployed on **Cloudflare Pages**.
+
+**Live site:** [knowledge-base-85b.pages.dev](https://knowledge-base-85b.pages.dev)
+
+### Content Pipeline
+
+```
+Write in Obsidian → scripts/vault-to-hugo.ps1 → git push → Cloudflare auto-deploy
+```
+
+The vault content is synced into Hugo leaf bundles, keeping the original Vault directory structure reflected in the site URLs. See [DEPLOY.md](DEPLOY.md) for the full workflow.
