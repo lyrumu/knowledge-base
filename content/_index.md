@@ -1,5 +1,5 @@
 ---
-title: "lyrumu's site"
+title: "lyrumu's page"
 description: ""
 layout: "background"
 showHero: false

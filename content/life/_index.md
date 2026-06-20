@@ -1,7 +1,7 @@
 ---
 title: "生活"
 kicker: "LIFE · MODULE 03"
-subtitle: "你好"
+subtitle: "hi"
 description: "哈咯哈咯"
 layout: "page"
 showHero: false
@@ -9,12 +9,6 @@ showBreadcrumbs: false
 showTableOfContents: false
 ---
 
-{{< section-rule >}}
-
-> 还没想好喵
-
----
-
-## 占位说明
-
-每篇 markdown 标题是日期或主题，下面随便写就好。
+> 暂时分为以下几栏目
+> 图片
+> 想放一些喜欢的音乐专辑 后续在网页中点击即可播放 
