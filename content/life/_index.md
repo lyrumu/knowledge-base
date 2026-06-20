@@ -1,6 +1,6 @@
 ---
-title: "生活"
-kicker: "LIFE · MODULE 03"
+title: "日常"
+kicker: "DAILY · MODULE 03"
 subtitle: "hi"
 description: "哈咯哈咯"
 layout: "page"
@@ -9,6 +9,10 @@ showBreadcrumbs: true
 showTableOfContents: true
 ---
 
-> 暂时分为以下几栏目
-> 图片
-> 想放一些喜欢的音乐专辑 后续在网页中点击即可播放 
+> 不然活着有啥意义
+
+{{< life-grid >}}
+
+{{< section-rule >}}
+
+---

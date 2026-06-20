@@ -1,6 +1,6 @@
 ---
-title: "关于我"
-kicker: "ABOUT · MODULE 04"
+title: "联系我"
+kicker: "CONTACT · MODULE 04"
 subtitle: "Some info about me"
 description: ""
 layout: "page"

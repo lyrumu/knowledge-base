@@ -1,0 +1,37 @@
+# =============================================================================
+# life 模块的索引数据 — 生活（/life/）入口页
+# 数据驱动：layouts/shortcodes/life-grid.html 渲染
+# 想加 / 删 / 调子模块：只改本文件即可
+#   - id     : 子模块 url slug（如 music → /life/music/）
+#   - name   : 卡片标题
+#   - title  : 卡片副标题（衬线大写小标）
+#   - icon   : Lucide icon 名字（layouts/partials/cover/icon.html）
+#   - desc   : 卡片描述（衬线斜体）
+#   - href   : 跳转链接（推荐 /life/<id>/）
+#   - cover  : 封面图 / SVG / emoji（左侧"大字"位）
+#   - cover_style : cover 的展示形式 — image（图片）/ svg（内联 svg）/ emoji（字符）
+#   - tags   : 底部小 tag 列表（可选）
+#   - draft  : true 则标注为"准备中"，渲染时显示 coming-soon 文案（可选）
+# =============================================================================
+submodules:
+  - id: music
+    name: "音乐"
+    title: "Music · Favorite Tracks"
+    icon: "music"
+    desc: "那些陪伴过我的旋律，挑出来分享给你。"
+    href: "/life/music/"
+    cover: "/image/musicheart.png"
+    cover_style: "image"
+    tags: [playlist, lofi, classic]
+
+  # 未来在这里继续添加（图片 / 读书 / 旅行 ...）
+  # - id: photos
+  #   name: "图片"
+  #   title: "Photos · Lens & Memory"
+  #   icon: "image"
+  #   desc: "快门留下的碎片。"
+  #   href: "/life/photos/"
+  #   cover: "🌸"
+  #   cover_style: "emoji"
+  #   tags: [photography]
+  #   draft: true

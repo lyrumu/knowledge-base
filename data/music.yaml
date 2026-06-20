@@ -1,0 +1,32 @@
+# =============================================================================
+# Music 子页的歌单数据 — /life/music/
+# 渲染源:  layouts/shortcodes/music-list.html + layouts/partials/music-player.html
+# 想加 / 删 / 调：改本文件即可，页面无需动
+#
+# 字段说明：
+#   - title    : 歌名
+#   - artist   : 歌手（可空）
+#   - album    : 专辑（可空）
+#   - cover    : 封面图 url（推荐放到 /image/life/music/<slug>.jpg）
+#   - src      : 音频 url（推荐放到 /life/music/<slug>.mp3）
+#   - duration : 时长（mm:ss），可空（前端会等 audio 加载后自动补上）
+#   - mood     : 心情标签（可空）
+#   - note     : 一句话小记（可空）
+# =============================================================================
+tracks:
+  - title: "Departures ~あなたにおくるアイの歌~"
+    artist: "ryo&&EGOIST"
+    album: ""
+    cover: "/image/cover-Departures.jpg"          # ← 占位封面；换成你真实的 /image/life/music/xxx.jpg
+    src:   "/life/music/Departures.wav"                           # ← 把 mp3 放进 static/life/music/ 后填入路径，如 /life/music/xxx.mp3
+    duration: "4:15"
+    mood: "Melancholy"
+
+
+  - title: "黑色幽默"
+    artist: "Jay Chou"
+    album: "Jay"
+    cover: "/image/cover-Blackhumor.png"     
+    src:   "/life/music/Blackhumor.mp3"
+    duration: "4:43"
+    mood: ""

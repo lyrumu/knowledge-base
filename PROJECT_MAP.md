@@ -1,6 +1,6 @@
 # 项目地图 — 个人网站 `f:\Notes\`
 
-> 最后更新：2026-06-19 · Hugo v0.163.2 · Blowfish v2
+> 最后更新：2026-06-20 · Hugo v0.163.2 · Blowfish v2
 
 ---
 
@@ -21,6 +21,9 @@
 | 改内页"小封面"的文案 | 对应 `content/xxx/_index.md` 的 frontmatter `kicker / subtitle` |
 | 换 /start/ 大厅的模块卡 | [`data/modules.yaml`](file:///f:/Notes/data/modules.yaml)（加/删条目改 `items` 数组） |
 | 换 /notes/ 的分类卡 | [`data/vault.yaml`](file:///f:/Notes/data/vault.yaml) |
+| 换 /life/ 的子模块卡 | [`data/life.yaml`](file:///f:/Notes/data/life.yaml)（加图片 / 读书 / 旅行…都改这里） |
+| 换 /life/music/ 的歌单 | [`data/music.yaml`](file:///f:/Notes/data/music.yaml)（加一首填一个 `- title/artist/cover/src/...` 条目） |
+| 换 /life/music/ 的封面/SVG 动画 | [`assets/css/custom.css §32`](file:///f:/Notes/assets/css/custom.css) 的 `.life-sub-cover-*` 规则 |
 | 加一个 Lucide icon | [`layouts/partials/cover/icon.html`](file:///f:/Notes/layouts/partials/cover/icon.html) 加 `else if` 分支 |
 | 改顶栏的菜单项 | [`hugo.toml`](file:///f:/Notes/hugo.toml) 的 `[[menu.main]]` 段 |
 | 加一篇新文章 | 见下方 §4 |
@@ -75,13 +78,17 @@ f:\Notes\
 │   │   ├── demo/                   # Demo 分类（含 minecraft, aipython）
 │   │   └── tools/                  # 工具脚本页面
 │   ├── works/_index.md             # /works/ 作品
-│   ├── life/_index.md              # /life/ 生活
+│   ├── life/                       # /life/ 生活（可扩展子模块网格）
+│   │   ├── _index.md               # 子模块入口（life-grid 短代码）
+│   │   └── music/_index.md         # /life/music/ 子页
 │   └── about/_index.md             # /about/ 关于
 │
 ├── data/                           # ★ 数据驱动（改这里就能改 UI）
 │   ├── cover.yaml                  # 封面所有内容 + 调色
 │   ├── modules.yaml                # 大厅的模块卡
-│   └── vault.yaml                  # /notes/ 的 vault 分类卡
+│   ├── vault.yaml                  # /notes/ 的 vault 分类卡
+│   ├── life.yaml                   # /life/ 子模块清单（music / 图片 / 读书…）
+│   └── music.yaml                  # /life/music/ 歌单
 │
 ├── layouts/                        # ★ 自定义模板（覆写主题）
 │   ├── _default/list.html          # section 主页 → page-hero 模式
@@ -92,11 +99,14 @@ f:\Notes\
 │   │   ├── header/components/
 │   │   │   ├── desktop-menu.html   # 加 GitHub 按钮
 │   │   │   └── mobile-menu.html    # 加 GitHub 按钮
-│   │   └── extend-head.html        # 第三方库（Splitting.js）
+│   │   ├── extend-head.html        # 第三方库（Splitting.js）
+│   │   └── music-player.html       # 粘性音乐播放器（被 music-list 自动注入）
 │   └── shortcodes/
 │       ├── page-hero.html          # {{< page-hero >}} 短代码
 │       ├── modules-grid.html       # 大厅模块网格
 │       ├── vault-sections.html     # /notes/ 分类网格
+│       ├── life-grid.html          # /life/ 子模块网格
+│       ├── music-list.html         # /life/music/ 歌曲列表
 │       ├── file-tree.html          # 可折叠文件树
 │       └── section-rule.html       # ✦ 分隔符
 │
@@ -105,7 +115,10 @@ f:\Notes\
 │
 ├── static/                         # 静态资源
 │   ├── fonts/                      # 字体文件（本地化）
-│   ├── image/                      # 装饰 PNG（花边 / 花朵）
+│   ├── image/                      # 装饰 PNG（花边 / 花朵 / musicheart）
+│   │   └── life/music/             # /life/music/ 封面（用户自行放入）
+│   ├── life/music/                 # /life/music/ 音频文件（用户自行放入）
+│   ├── js/music-player.js          # 音乐播放器逻辑
 │   └── notes-assets/               # 可下载资源（aipython, minecraft, tools）
 │
 ├── themes/blowfish/                # 主题本体（一般不改）
@@ -148,6 +161,24 @@ f:\Notes\
 | 元素 | 数据源 | 模板 |
 |------|--------|------|
 | 分类卡列表 | [`data/vault.yaml`](file:///f:/Notes/data/vault.yaml) | [`layouts/shortcodes/vault-sections.html`](file:///f:/Notes/layouts/shortcodes/vault-sections.html) |
+
+### /life/ 子模块网格
+
+| 元素 | 数据源 | 模板 |
+|------|--------|------|
+| 子模块卡列表（music / 图片 / 读书…） | [`data/life.yaml`](file:///f:/Notes/data/life.yaml) | [`layouts/shortcodes/life-grid.html`](file:///f:/Notes/layouts/shortcodes/life-grid.html) |
+| 封面 hover 动画（PNG 旋转 / SVG 呼吸 / emoji 翻转） | — | `custom.css §32` 的 `.life-sub-cover-*` |
+| 加新子模块 | 在 `data/life.yaml` 加一条 + 在 `content/life/<id>/_index.md` 建子页 | — |
+
+### /life/music/ 歌曲列表 + 粘性播放器
+
+| 元素 | 数据源 | 模板 |
+|------|--------|------|
+| 歌曲列表 | [`data/music.yaml`](file:///f:/Notes/data/music.yaml) | [`layouts/shortcodes/music-list.html`](file:///f:/Notes/layouts/shortcodes/music-list.html) |
+| 粘性播放器 HTML | — | [`layouts/partials/music-player.html`](file:///f:/Notes/layouts/partials/music-player.html) |
+| 播放器逻辑（点击切歌 / 进度跳转 / 记忆位置 / 键盘） | — | [`static/js/music-player.js`](file:///f:/Notes/static/js/music-player.js) |
+| 列表样式 + 播放器样式 | — | `custom.css §33` 的 `.music-item` / `.music-player` |
+| 资源存放约定 | `static/life/music/<slug>.mp3` + `static/image/life/music/<slug>.jpg` | — |
 
 ### 顶栏
 
@@ -198,3 +229,26 @@ f:\Notes\
 ### 改页面的 section layout
 
 所有 section 主页（/start/ /notes/ /works/ /life/ /about/）都走 [`layouts/_default/list.html`](file:///f:/Notes/layouts/_default/list.md)。每个页面的 `_index.md` 可以设自己的 `kicker` / `subtitle`。
+
+### 加 life 子模块（如「图片」）
+
+1. 在 [`data/life.yaml`](file:///f:/Notes/data/life.yaml) 复制 music 条目往下加一段，改 `id / name / cover / href` 等
+2. 新建 `content/life/<id>/_index.md`，正文按需写（套 page-hero / section-rule 即可）
+3. 若新子页要自己的"列表 + 播放器"风格，按 `life/music/` 模式再写一个 shortcode + yaml 即可
+
+### 加一首音乐
+
+1. mp3 放进 `static/life/music/<slug>.mp3`（**注意：用英文 / 数字命名，不要有空格和中文**）
+2. 封面放进 `static/image/life/music/<slug>.jpg`
+3. 在 [`data/music.yaml`](file:///f:/Notes/data/music.yaml) 加一段：
+   ```yaml
+   - title: "歌名"
+     artist: "歌手"
+     album: "专辑"
+     cover: "/image/life/music/<slug>.jpg"
+     src:   "/life/music/<slug>.mp3"
+     duration: "4:12"
+     mood: "lofi"
+     note: "一句话小记"
+   ```
+4. `hugo server` 刷新就能看到

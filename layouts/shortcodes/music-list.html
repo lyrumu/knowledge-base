@@ -1,0 +1,56 @@
+{{/*
+  Shortcode: music-list
+  ----------------------------------------------------------------
+  渲染 data/music.yaml 的 tracks 列表为歌曲条目
+  点击每条会触发全局 music-player（layouts/partials/music-player.html）播放
+  用法: {{< music-list >}}
+  数据源: data/music.yaml -> hugo.Data.music.tracks
+  ----------------------------------------------------------------
+*/}}
+{{ $tracks := hugo.Data.music.tracks }}
+<div class="music-list not-prose my-10">
+  {{ if $tracks }}
+    {{ range $i, $t := $tracks }}
+    {{ $isDisabled := not $t.src }}
+    <div class="music-item reveal{{ if $isDisabled }} is-disabled{{ end }}"
+         data-index="{{ $i }}"
+         data-src="{{ $t.src }}"
+         data-cover="{{ $t.cover }}"
+         data-title="{{ $t.title }}"
+         data-artist="{{ $t.artist }}"
+         data-album="{{ $t.album }}"
+         data-duration="{{ $t.duration }}"
+         style="animation-delay: {{ mul $i 0.06 }}s;">
+
+      <div class="music-item-cover">
+        <img src="{{ $t.cover }}" alt="{{ $t.title }}" loading="lazy"
+             onerror="this.style.opacity='0.15'" />
+        <span class="music-item-play-overlay" aria-hidden="true">
+          {{ partial "cover/icon.html" (dict "name" "play" "size" 18) }}
+        </span>
+      </div>
+
+      <div class="music-item-info">
+        <div class="music-item-title">{{ $t.title }}</div>
+        <div class="music-item-artist">{{ $t.artist }}{{ with $t.note }}<span style="color:var(--fg-soft);font-style:normal;font-family:var(--font-serif-body);font-size:.75rem;margin-left:.4rem">— {{ . }}</span>{{ end }}</div>
+        {{ with $t.album }}
+        <div class="music-item-album">{{ . }}</div>
+        {{ end }}
+      </div>
+
+      <span class="music-item-duration" data-duration="{{ $t.duration }}">{{ $t.duration }}</span>
+      <span class="music-item-eq" aria-hidden="true">
+        <span></span><span></span><span></span>
+      </span>
+    </div>
+    {{ end }}
+  {{ else }}
+    <div class="music-empty">
+      <strong>歌单还是空的</strong>
+      在 <code>data/music.yaml</code> 里加上你的第一首歌吧。
+    </div>
+  {{ end }}
+</div>
+
+{{/* 只要页面上调用过 music-list，就注入粘性播放器 */}}
+{{ partial "music-player.html" . }}

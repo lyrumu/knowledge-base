@@ -19,15 +19,15 @@ modules:
     href: "/works/"
 
   - id: life
-    name: "生活"
+    name: "日常"
     title: "hi,can we make a friend?"
     icon: "leaf"
     description: "somewhere for the Existentialists"
     href: "/life/"
 
   - id: about
-    name: "关于我"
-    title: "About me"
+    name: "联系我"
+    title: "Contact me"
     icon: "user-round"
     description: ""
     href: "/about/"

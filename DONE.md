@@ -4,6 +4,83 @@
 
 ---
 
+## 2026-06-20 · life 模块扩展 — 音乐子页 + 可扩展子模块架构
+
+### 决策（与用户确认）
+
+| 项 | 决定 |
+|---|---|
+| 音乐资源形式 | 上传到 `static/life/music/`，用纯 HTML5 `<audio>` |
+| life 是否可扩展 | 是，按子模块网格来做（图片 / 读书 / 旅行…） |
+| music 页面结构 | 两层：`life/_index.md` 子模块入口 + `life/music/_index.md` 子页 |
+| 封面类型 | 用户提供 `musicheart.png` / `.svg`（手绘耳机+心形+音符） |
+| 歌曲列表交互 | 动态 lyric 风格：列表只点一次，底部粘性播放器统一控制 |
+
+### 数据驱动架构
+
+- 新建 [data/life.yaml](file:///f:/Notes/data/life.yaml) — life 子模块清单（music 已配好；加图片/读书只改这里）
+- 新建 [data/music.yaml](file:///f:/Notes/data/music.yaml) — 歌单（title / artist / album / cover / src / duration / mood / note）
+- 约定资源路径：封面 `/image/life/music/<slug>.jpg`、音频 `/life/music/<slug>.mp3`
+
+### 短代码 & partial
+
+- 新建 [layouts/shortcodes/life-grid.html](file:///f:/Notes/layouts/shortcodes/life-grid.html) — 渲染子模块网格（沿用 `modules-grid` 风格：左封面 / 中 body / 右 CTA）
+- 新建 [layouts/shortcodes/music-list.html](file:///f:/Notes/layouts/shortcodes/music-list.html) — 渲染歌曲列表 + 自动注入播放器
+- 新建 [layouts/partials/music-player.html](file:///f:/Notes/layouts/partials/music-player.html) — 底部粘性播放器 HTML
+- 新建 [static/js/music-player.js](file:///f:/Notes/static/js/music-player.js) — 播放器逻辑
+
+### 播放器功能（无第三方依赖）
+
+- 点击 `.music-item` → 切换曲目并自动播放
+- 上一首 / 下一首 / 播放-暂停 / 关闭
+- 进度条拖动跳转；实时显示 current / duration
+- 自动播放下一首（列表循环）；当前曲目高亮 + EQ 跳条动画
+- 播放时封面慢转 14s/圈（CSS 动画）；暂停时停转
+- localStorage 记忆播放位置（刷新后继续）
+- 键盘快捷键：`Space` 播放/暂停、`Shift+←/→` 上下首
+- `src` 为空的示例条目自动变灰不响应（`is-disabled` 状态）
+
+### 页面 & 动画
+
+- [content/life/_index.md](file:///f:/Notes/content/life/_index.md) — 改用 `{{< life-grid >}}`
+- 新建 [content/life/music/_index.md](file:///f:/Notes/content/life/music/_index.md) — 音乐子页
+- 卡片 hover 动画：图片旋转 -6° + 缩放 1.08 + 上浮 -2px（沿用 module-card 基础动效语言）
+- SVG 类型默认带 6s 缓慢呼吸动画（不依赖 hover，永远在动）
+- emoji 类型 hover 时旋转 -10° 缩放 1.12
+- 播放器：玻璃质感（`backdrop-filter: blur`）、accent 色进度条渐变、hover 时进度 thumb 浮现
+
+### 样式 & 图标
+
+- [assets/css/custom.css §32](file:///f:/Notes/assets/css/custom.css#L1694-L1900) — life 子模块卡样式
+- [assets/css/custom.css §33](file:///f:/Notes/assets/css/custom.css#L1900-L2360) — music 列表 + 粘性播放器
+- [layouts/partials/cover/icon.html](file:///f:/Notes/layouts/partials/cover/icon.html) 新增 icon：`music`、`image`、`play`、`pause`、`skip-back`、`skip-forward`、`volume-2`、`volume-x`、`shuffle`、`repeat`、`x`
+
+### 关键文件清单（本次）
+
+| 类型 | 路径 |
+|---|---|
+| 新增 | `data/life.yaml`、`data/music.yaml` |
+| 新增 | `layouts/shortcodes/life-grid.html`、`layouts/shortcodes/music-list.html` |
+| 新增 | `layouts/partials/music-player.html`、`static/js/music-player.js` |
+| 新增 | `content/life/music/_index.md` |
+| 调整 | `content/life/_index.md`（改用 life-grid） |
+| 大改 | `assets/css/custom.css`（§32 / §33 新增，约 690 行） |
+| 大改 | `layouts/partials/cover/icon.html`（新增 11 个 icon 分支） |
+
+### 用户下一步操作
+
+1. 把 mp3 放进 `static/life/music/`，封面放进 `static/image/life/music/`
+2. 在 `data/music.yaml` 把示例条目替换成真实歌曲（参考注释里的字段格式）
+3. `hugo server` 本地预览
+
+### 后续
+
+- /life/ 第二个子模块（图片 / 读书 / 旅行…）
+- /works/ 子模块网格化（套用 life-grid 模式）
+- 全站深色封面标题里 musicheart 装饰
+
+---
+
 ## 2026-06-19 · UI 整体同步 + 封面/顶栏修复
 
 ### 同步封面风格到后续页面

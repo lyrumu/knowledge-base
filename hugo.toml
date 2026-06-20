@@ -169,12 +169,12 @@ enableEmoji = true
   weight = 20
 
 [[menu.main]]
-  name = '生活'
+  name = '日常'
   url = '/life/'
   weight = 30
 
 [[menu.main]]
-  name = '关于我'
+  name = '联系我'
   url = '/about/'
   weight = 40
 
