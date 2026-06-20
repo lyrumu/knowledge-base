@@ -18,7 +18,7 @@ tracks:
     artist: "ryo&&EGOIST"
     album: ""
     cover: "/image/cover-Departures.jpg"          # ← 占位封面；换成你真实的 /image/life/music/xxx.jpg
-    src:   "/life/music/Departures.wav"                           # ← 把 mp3 放进 static/life/music/ 后填入路径，如 /life/music/xxx.mp3
+    src:   "/life/music/Departures.mp3"                           # ← 把 mp3 放进 static/life/music/ 后填入路径，如 /life/music/xxx.mp3
     duration: "4:15"
     mood: "Melancholy"
 
