@@ -11,7 +11,7 @@
 
 baseURL = 'https://knowledge-base-85b.pages.dev/'
 defaultContentLanguage = 'zh-cn'
-title = "lyrumu's site"
+title = "lyrumu's page"
 
 # =============================================================================
 # 多语言
@@ -21,7 +21,7 @@ title = "lyrumu's site"
   weight = 1
   locale = 'zh-CN'
   contentDir = 'content'
-  title = "lyrumu's site"
+  title = "lyrumu's page"
 
   [languages.zh-cn.params]
     displayName = '简体中文'
@@ -29,14 +29,22 @@ title = "lyrumu's site"
     rtl = false
     dateFormat = '2006-01-02'
     logo = ''
-    description = '一份持续生长的个人作品与知识集'
+    description = ''
 
     [languages.zh-cn.params.author]
       name = 'lyrumu'
       email = ''
-      image = ''
-      headline = '代码 / 笔记 / 折腾'
-      bio = '一个把 Obsidian 仓库当花园打理的人。'
+
+      # 作者头像图片，会在页面的作者信息区域显示（如文章页作者栏、关于页面等）
+      # 图片路径写法：
+      # 本地图片支持两种存放方式，二选一即可：
+      # 1. 放入 assets/images/ 目录，引用时写相对根目录的路径，例如 'images/avatar.jpg'
+      # 2. 放入 static/ 目录，引用时写完整的相对根路径，例如放在 static/images/ 则写 '/images/avatar.jpg'
+      # 2. 外部图片：直接填写完整的 CDN/在线图片 URL，例如 'https://example.com/avatar.jpg'
+      image = '/image/melody.png'
+      
+      headline = 'Recordings'
+      bio = ''
       links = [
         { github = 'https://github.com/' },
         { email = 'mailto:' },
@@ -59,7 +67,7 @@ enableEmoji = true
 # 站点参数
 # =============================================================================
 [params]
-  colorScheme = 'blowfish'
+  colorScheme = 'princess' #初始为blowfish
   defaultAppearance = 'dark'
   autoSwitchAppearance = true
   enableSearch = true
@@ -150,8 +158,9 @@ enableEmoji = true
 # 顺序：按 weight 从小到大
 # =============================================================================
 [[menu.main]]
-  name = '学习笔记'
+  name = '文档'
   url = '/notes/'
+  # weight 参数用于控制导航菜单的排序顺序，数值越小越靠前显示
   weight = 10
 
 [[menu.main]]
