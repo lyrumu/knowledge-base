@@ -5,17 +5,17 @@
 # =============================================================================
 modules:
   - id: notes
-    name: "学习笔记"
+    name: "文档"
     title: "Notes · code snippets / resources"
     icon: "book-open"
-    description: "Some notes based on Obsidian"
+    description: "Some docs based on Obsidian"
     href: "/notes/"
 
   - id: works
-    name: "作品"
-    title: "Works · 项目集"
+    name: "相关"
+    title: "Related Projects"
     icon: "hammer"
-    description: "Some vibe coding projects for practice and some ideas"
+    description: "The simple projects I have practiced"
     href: "/works/"
 
   - id: life
@@ -29,5 +29,5 @@ modules:
     name: "关于我"
     title: "About me"
     icon: "user-round"
-    description: "Maybe im leaking my privacy(hahaha)"
+    description: ""
     href: "/about/"
