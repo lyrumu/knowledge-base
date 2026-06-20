@@ -931,6 +931,26 @@ html.dark .vault-section-card:hover {
   }
 }
 
+/* 暗色模式：花边反转（黑→白） */
+html.dark .cover-flower-strip {
+  filter: brightness(0) invert(1);
+  opacity: 0.4;
+}
+
+/* 暗色模式：四角黑花反转 */
+html.dark .cover-flower-black {
+  filter: brightness(0) invert(1);
+}
+
+/* 黄花：默认（明主题）压低饱和度，暗主题恢复明亮 */
+.cover-flower-yellow {
+  filter: brightness(0.35);
+}
+html.dark .cover-flower-yellow {
+  filter: none;
+  opacity: 1;
+}
+
 /* =============================================================================
    20. Splitting.js 注入的样式（内联避免 ORB 拦截 splitting.css）
    ============================================================================= */
@@ -1540,8 +1560,8 @@ body:not(:has(.cover-page)) article {
      2. 封面自己点切换 → 与全局保持一致
    ============================================================================= */
 html.dark .cover-page {
-  --pal-bg-from: #141413;
-  --pal-bg-to:   #0F0E0D;
+  --pal-bg-from: #2D212D;
+  --pal-bg-to:   #151015;
   --pal-title:   #FAF9F5;
   --pal-sub:     #B0AEA6;
   --pal-kicker:  #807D77;

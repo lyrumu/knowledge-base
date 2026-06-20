@@ -91,7 +91,7 @@
   {{ $imgs := slice "黑色花.png" "黄色花.png" }}
   <div class="cover-flowers" aria-hidden="true">
     {{ range $i, $p := slice
-      (dict "x" 90 "y" 70 "s" 400 "o" 0.32 "r" -18 "i" 0)
+      (dict "x" 92 "y" 74 "s" 325 "o" 0.32 "r" -18 "i" 0)
       (dict "x" 13 "y" 20 "s" 250 "o" 0.80 "r"  18 "i" 1)
     }}
       <div class="cover-flower-pos" style="
@@ -103,7 +103,7 @@
         --rot: {{ .r }}deg;
         animation-delay: {{ mul $i 0.18 }}s;
       ">
-        <img src="/image/{{ index $imgs .i }}" alt="" loading="lazy">
+        <img src="/image/{{ index $imgs .i }}" alt="" loading="lazy"{{ if eq .i 0 }} class="cover-flower-black"{{ else }} class="cover-flower-yellow"{{ end }}>
       </div>
     {{ end }}
   </div>
