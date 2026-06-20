@@ -41,8 +41,8 @@ title = "lyrumu's page"
       # 1. 放入 assets/images/ 目录，引用时写相对根目录的路径，例如 'images/avatar.jpg'
       # 2. 放入 static/ 目录，引用时写完整的相对根路径，例如放在 static/images/ 则写 '/images/avatar.jpg'
       # 2. 外部图片：直接填写完整的 CDN/在线图片 URL，例如 'https://example.com/avatar.jpg'
-      image = '/image/melody.png'
-      
+      image = 'images/melody.png'
+
       headline = 'Recordings'
       bio = ''
       links = [
