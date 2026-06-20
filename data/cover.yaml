@@ -44,8 +44,8 @@ cover:
       url: "https://github.com/lyrumu"
       icon: "github"
       title: "@lyrumu"
-    - name: "Email"
-      url: "mailto:llyrumu@gmail.com"
+    - name: "Google Email"
+      url: "https://mail.google.com/mail/?view=cm&fs=1&to=llyrumu@gmail.com"
       icon: "mail"
       title: "llyrumu@gmail.com"
 

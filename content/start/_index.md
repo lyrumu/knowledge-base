@@ -3,8 +3,8 @@ title: "Welcome"
 subtitle: "Here is the index section"
 description: "" 
 layout: "page"
-showHero: false
-showBreadcrumbs: false
+showHero: true
+showBreadcrumbs: true
 showTableOfContents: true
 ---
 

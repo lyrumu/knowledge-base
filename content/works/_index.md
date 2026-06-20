@@ -1,12 +1,12 @@
 ---
-title: "作品"
+title: "相关"
 kicker: "WORKS · MODULE 02"
 subtitle: ""
 description: "demo"
 layout: "page"
-showHero: false
-showBreadcrumbs: false
-showTableOfContents: false
+showHero: true
+showBreadcrumbs: true
+showTableOfContents: true
 ---
 
 {{< section-rule >}}

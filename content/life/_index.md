@@ -4,9 +4,9 @@ kicker: "LIFE · MODULE 03"
 subtitle: "hi"
 description: "哈咯哈咯"
 layout: "page"
-showHero: false
-showBreadcrumbs: false
-showTableOfContents: false
+showHero: true
+showBreadcrumbs: true
+showTableOfContents: true
 ---
 
 > 暂时分为以下几栏目

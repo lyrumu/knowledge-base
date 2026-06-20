@@ -2,10 +2,10 @@
 title: "lyrumu's page"
 description: ""
 layout: "background"
-showHero: false
-showBreadcrumbs: false
-showTableOfContents: false
-showComments: false
+showHero: true
+showBreadcrumbs: true
+showTableOfContents: true
+showComments: true
 ---
 
 <!--

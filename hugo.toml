@@ -126,14 +126,14 @@ enableEmoji = true
     sharingLinks = ['github', 'twitter', 'email']
 
   [params.term]
-    showHero = false
+    showHero = true
     showBreadcrumbs = true
     showTableOfContents = false
     cardView = true
 
   [params.taxonomy]
     showTermCount = true
-    showHero = false
+    showHero = true
     showBreadcrumbs = true
     showTableOfContents = false
     cardView = false
@@ -164,7 +164,7 @@ enableEmoji = true
   weight = 10
 
 [[menu.main]]
-  name = '作品'
+  name = '相关'
   url = '/works/'
   weight = 20
 
