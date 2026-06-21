@@ -1,0 +1,109 @@
+{{/*
+  Shortcode: projects-list
+  ----------------------------------------------------------------
+  渲染 data/projects.yaml 的项目列表
+  视觉特点：双列 grid 卡片 + 3D 倾斜（VanillaTilt.js）+ hover 揭示
+  用法: {{< projects-list >}}
+  数据源: data/projects.yaml -> hugo.Data.projects.projects
+  ----------------------------------------------------------------
+*/}}
+{{ $projects := hugo.Data.projects.projects }}
+<div class="projects-list not-prose my-10">
+  {{ if $projects }}
+    <div class="projects-grid">
+      {{ range $i, $p := $projects }}
+      {{ $isDraft := eq ($p.status | default "live") "draft" }}
+      {{ $isFeatured := eq ($p.featured | default false) true }}
+      {{/*
+        项目卡片结构（v2 修复）：
+
+        历史 bug：整个卡片是一个 <a href="$p.href">，"在线""源码"两个按钮
+        只是 <span> 装饰 → 点哪个按钮都跳到 href。
+
+        重构：移除外层 <a>，整张卡不可点，只有底部两个按钮各自跳对应地址。
+        HTML 不允许 <a> 嵌套 <a>，所以必须用这种"信息卡 + 独立按钮"模式。
+      */}}
+      <article class="project-card{{ if $isFeatured }} is-featured{{ end }}{{ if $isDraft }} is-draft{{ end }}"
+               data-tilt
+               data-tilt-max="5"
+               data-tilt-glare
+               data-tilt-max-glare="0.12"
+               data-tilt-speed="600"
+               data-tilt-scale="1.012">
+
+        {{/* 封面：默认走 /image/works/projects/<slug>.png */}}
+        <div class="project-card-cover"
+             data-aos="fade-up"
+             data-aos-delay="{{ mul $i 80 }}">
+          {{ if $p.cover }}
+            <img src="{{ $p.cover }}" alt="{{ $p.name }}" loading="lazy"
+                 onerror="this.style.opacity='0.18'" />
+          {{ else }}
+            <span class="project-card-cover-fallback" aria-hidden="true">
+              {{ partial "cover/icon.html" (dict "name" "code-2" "size" 36) }}
+            </span>
+          {{ end }}
+
+          {{ if $isFeatured }}
+            <span class="project-card-flag">FEATURED</span>
+          {{ end }}
+        </div>
+
+        {{/* 文字区 */}}
+        <div class="project-card-body"
+             data-aos="fade-up"
+             data-aos-delay="{{ mul (add $i 1) 80 }}">
+          <div class="project-card-head">
+            {{ with $p.date }}<span class="project-card-date">{{ . }}</span>{{ end }}
+            {{ if $p.repo }}
+              <span class="project-card-source" aria-label="源码">
+                {{ partial "cover/icon.html" (dict "name" "github" "size" 14) }}
+              </span>
+            {{ end }}
+          </div>
+
+          <h3 class="project-card-name">{{ $p.name }}</h3>
+          <div class="project-card-title">{{ $p.title }}</div>
+          <p class="project-card-desc">{{ $p.desc }}</p>
+
+          {{ with $p.tags }}
+          <div class="project-card-tags">
+            {{ range . }}
+              <span class="project-card-tag">#{{ . }}</span>
+            {{ end }}
+          </div>
+          {{ end }}
+
+          <div class="project-card-actions">
+            {{ if $p.href }}
+              <a class="project-card-btn"
+                 href="{{ $p.href }}" target="_blank" rel="noopener noreferrer">
+                <span>在线</span>
+                <span class="project-card-btn-arrow" aria-hidden="true">
+                  {{ partial "cover/icon.html" (dict "name" "external-link" "size" 14) }}
+                </span>
+              </a>
+            {{ end }}
+            {{ if $p.repo }}
+              <a class="project-card-btn is-secondary"
+                 href="{{ $p.repo }}" target="_blank" rel="noopener noreferrer">
+                <span>源码</span>
+                <span class="project-card-btn-arrow" aria-hidden="true">
+                  {{ partial "cover/icon.html" (dict "name" "github" "size" 14) }}
+                </span>
+              </a>
+            {{ end }}
+          </div>
+        </div>
+      </article>
+      {{ end }}
+    </div>
+  {{ else }}
+    <div class="projects-empty">
+      <strong>还没有项目</strong>
+      在 <code>data/projects.yaml</code> 里加上你的第一个作品吧。
+    </div>
+  {{ end }}
+</div>
+
+{{/* VanillaTilt 初始化在 layouts/partials/extend-head.html 统一管理 */}}

@@ -78,9 +78,26 @@ html.dark {
   --fg-base: #FAF9F5;
   --fg-mute: #B0AEA6;
   --fg-soft: #807D77;
-  --line:    #2A2926;
+  /* Claude 官方 surface：#30302E，比 #2A2926 亮一档，卡片边框对比度刚好 */
+  --line:    #30302E;
   --accent:  #E08769;
   --selection-bg: rgba(224, 135, 105, 0.25);
+
+  /* ---------------------------------------------------------------------------
+     覆写 princess 主题的底层 RGB 三元组，让 blowfish 所有 bg-neutral-* utility
+     在暗主题下自动从"公主紫"切到 Claude 暖深。
+     不动 blowfish 的 utility class、不动 body、不动特异性 → 不破坏任何页面渲染。
+
+     princess.css 原值（紫调）：
+       --color-neutral-800: 45, 33, 45   (#2D212D 深紫，body/header/卡片背景)
+       --color-neutral-900: 21, 16, 21   (#151015 最深紫，mobile menu/遮罩)
+
+     改为 Claude 暖深：
+       --color-neutral-800: 20, 20, 19   (#141413 bg-base)
+       --color-neutral-900: 15, 14, 13   (#0F0E0D bg-deep)
+     --------------------------------------------------------------------------- */
+  --color-neutral-800: 20, 20, 19;
+  --color-neutral-900: 15, 14, 13;
 }
 
 html {
@@ -501,7 +518,7 @@ html.dark .cover-grain {
 }
 
 html.dark .module-card {
-  background: rgba(255, 255, 255, 0.015);
+  background: rgba(255, 255, 255, 0.03);
 }
 
 .module-card::before {
@@ -523,7 +540,7 @@ html.dark .module-card {
   transform: translateY(-2px);
 }
 html.dark .module-card:hover {
-  background: rgba(255, 255, 255, 0.04);
+  background: rgba(255, 255, 255, 0.06);
 }
 
 .module-card-head {
@@ -677,14 +694,14 @@ html.dark .module-card:hover {
   isolation: isolate;
 }
 html.dark .vault-section-card {
-  background: rgba(255, 255, 255, 0.015);
+  background: rgba(255, 255, 255, 0.03);
 }
 .vault-section-card:hover {
   border-color: var(--fg-base);
   transform: translateY(-2px);
 }
 html.dark .vault-section-card:hover {
-  background: rgba(255, 255, 255, 0.04);
+  background: rgba(255, 255, 255, 0.06);
 }
 
 .vault-section-head {
@@ -1121,7 +1138,7 @@ header ol .text-primary-500 {
 }
 html.dark .article-link--card,
 html.dark .article-link--related {
-  background: rgba(255, 255, 255, 0.015) !important;
+  background: rgba(255, 255, 255, 0.03) !important;
 }
 .article-link--card:hover,
 .article-link--related:hover {
@@ -1130,7 +1147,7 @@ html.dark .article-link--related {
 }
 html.dark .article-link--card:hover,
 html.dark .article-link--related:hover {
-  background: rgba(255, 255, 255, 0.04) !important;
+  background: rgba(255, 255, 255, 0.06) !important;
 }
 .article-link--card h2,
 .article-link--related h2 {
@@ -1167,14 +1184,14 @@ html.dark .article-link--related:hover {
   transition: border-color 0.4s, transform 0.4s, background 0.4s;
 }
 html.dark .article-link--simple {
-  background: rgba(255, 255, 255, 0.015);
+  background: rgba(255, 255, 255, 0.03);
 }
 .article-link--simple:hover {
   border-color: var(--fg-base);
   transform: translateY(-2px);
 }
 html.dark .article-link--simple:hover {
-  background: rgba(255, 255, 255, 0.04);
+  background: rgba(255, 255, 255, 0.06);
 }
 .article-link--simple h2 {
   font-family: var(--font-serif-display) !important;
@@ -1552,29 +1569,16 @@ body:not(:has(.cover-page)) article {
 }
 
 /* =============================================================================
-   28. 封面调色：跟随全局明暗主题同步切换
+   28. 封面调色（已废弃，由 cover.html 的 var() 派生接管）
    ----------------------------------------------------------------
-   封面原本通过 inline `--pal-*` 写死浅色配色，
-   这里在 dark 模式下覆写一份深色版，保证：
-     1. 顶栏切了 dark → 封面也立刻变深
-     2. 封面自己点切换 → 与全局保持一致
+   旧逻辑：这里写一份 --pal-* 的暗色覆写，问题是和后续页面调色板各管各的，
+   改一处不能带另一处，封面和后续页面会脱节。
+
+   新逻辑（v3）：
+   - cover.html 的 <style> 块里 --pal-* 全部用 var(--bg-base / --line / --accent) 派生
+   - 暗主题下 --bg-base / --line / --accent 由 :root → html.dark 的级联自动切换
+   - 改一个全局变量，封面 + 后续页面 + blowfish utility 全部一起变
    ============================================================================= */
-html.dark .cover-page {
-  --pal-bg-from: #2D212D;
-  --pal-bg-to:   #151015;
-  --pal-title:   #FAF9F5;
-  --pal-sub:     #B0AEA6;
-  --pal-kicker:  #807D77;
-  --pal-line:    #2A2926;
-  --pal-epi:     #807D77;
-  --pal-btn-bd:  #FAF9F5;
-  --pal-btn-fg:  #FAF9F5;
-  --pal-btn-hbg: #FAF9F5;
-  --pal-btn-hfg: #141413;
-  --pal-social:  #B0AEA6;
-  --pal-social-h:#FAF9F5;
-  --pal-accent:  #E08769;
-}
 /* dark 下噪点叠加从 multiply 改 screen + 提高不透明度（继承自 §2） */
 @media (max-width: 720px) {
   .page-eyebrow-rule { width: 1.5rem; }
@@ -1711,7 +1715,7 @@ html.dark .cover-page {
   isolation: isolate;
 }
 html.dark .life-sub-card {
-  background: rgba(255, 255, 255, 0.015);
+  background: rgba(255, 255, 255, 0.03);
 }
 
 /* 悬停渐变光（与 module-card 风格一致） */
@@ -1733,7 +1737,7 @@ html.dark .life-sub-card {
   transform: translateY(-2px);
 }
 html.dark .life-sub-card:hover {
-  background: rgba(255, 255, 255, 0.04);
+  background: rgba(255, 255, 255, 0.06);
 }
 
 /* 准备中子模块（draft=true） */
@@ -2016,14 +2020,14 @@ html.dark .life-sub-cover {
   isolation: isolate;
 }
 html.dark .music-item {
-  background: rgba(255, 255, 255, 0.015);
+  background: rgba(255, 255, 255, 0.03);
 }
 .music-item:hover {
   border-color: var(--fg-base);
   transform: translateY(-1px);
 }
 html.dark .music-item:hover {
-  background: rgba(255, 255, 255, 0.04);
+  background: rgba(255, 255, 255, 0.06);
 }
 .music-item.is-disabled {
   cursor: not-allowed;
@@ -2035,7 +2039,7 @@ html.dark .music-item:hover {
   background: transparent;
 }
 html.dark .music-item.is-disabled:hover {
-  background: rgba(255, 255, 255, 0.015);
+  background: rgba(255, 255, 255, 0.03);
 }
 .music-item.is-current {
   border-color: color-mix(in srgb, var(--accent) 70%, var(--line));
@@ -2388,4 +2392,866 @@ html.dark .music-player {
 /* 播放器激活时给 body 一点底部 padding，避免内容被遮挡 */
 body:has(.music-player.is-visible) {
   padding-bottom: 5rem;
+}
+
+/* =============================================================================
+   34. works 子页 (/works/) — 入口子模块网格
+   =============================================================================
+   与 §32 .life-sub-card 共享视觉规范（同样的单列横向布局 + 同一套动效）
+   策略：完全复制 §32 规则到 .works-sub-*，便于独立调整
+   数据驱动：data/works.yaml → layouts/shortcodes/works-grid.html
+   ============================================================================= */
+
+.works-grid-stack {
+  max-width: 44rem;
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.works-sub-card {
+  position: relative;
+  display: grid;
+  grid-template-columns: auto 1fr auto;
+  align-items: center;
+  gap: 1.5rem;
+  border-radius: 0.5rem;
+  padding: 1.25rem 1.5rem;
+  text-decoration: none !important;
+  background: transparent;
+  border: 1px solid var(--line);
+  transition: border-color 0.5s cubic-bezier(0.22, 0.61, 0.36, 1),
+              transform 0.5s cubic-bezier(0.22, 0.61, 0.36, 1),
+              background 0.5s;
+  overflow: hidden;
+  isolation: isolate;
+}
+html.dark .works-sub-card {
+  background: rgba(255, 255, 255, 0.03);
+}
+
+/* 悬停渐变光 */
+.works-sub-card::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(90deg,
+    color-mix(in srgb, var(--accent) 6%, transparent) 0%,
+    transparent 50%);
+  opacity: 0;
+  transition: opacity 0.6s cubic-bezier(0.22, 0.61, 0.36, 1);
+  pointer-events: none;
+  z-index: -1;
+}
+.works-sub-card:hover::before { opacity: 1; }
+.works-sub-card:hover {
+  border-color: var(--fg-base);
+  transform: translateY(-2px);
+}
+html.dark .works-sub-card:hover {
+  background: rgba(255, 255, 255, 0.06);
+}
+
+/* 准备中子模块 */
+.works-sub-card.is-draft {
+  cursor: not-allowed;
+  opacity: 0.62;
+  filter: grayscale(20%);
+}
+.works-sub-card.is-draft:hover {
+  transform: none;
+  border-color: var(--line);
+}
+.works-sub-card.is-draft::before { display: none; }
+
+/* ---------- 左侧封面（封面图 / 内联 SVG / emoji 通用） ---------- */
+.works-sub-cover {
+  position: relative;
+  width: 5.5rem;
+  height: 5.5rem;
+  flex-shrink: 0;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 0.65rem;
+  border: 1px solid var(--line);
+  background: color-mix(in srgb, var(--bg-deep) 70%, transparent);
+  overflow: hidden;
+  transition: transform 0.6s cubic-bezier(0.22, 0.61, 0.36, 1),
+              border-color 0.5s,
+              box-shadow 0.5s;
+}
+html.dark .works-sub-cover {
+  background: color-mix(in srgb, var(--fg-base) 4%, transparent);
+}
+
+/* 图片类型 */
+.works-sub-cover-img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+  transition: transform 0.7s cubic-bezier(0.22, 0.61, 0.36, 1),
+              filter 0.5s;
+  filter: saturate(0.92);
+}
+.works-sub-card:hover .works-sub-cover {
+  border-color: color-mix(in srgb, var(--accent) 50%, var(--line));
+  box-shadow: 0 4px 18px color-mix(in srgb, var(--accent) 12%, transparent);
+}
+.works-sub-card:hover .works-sub-cover-img {
+  transform: rotate(-6deg) scale(1.08);
+  filter: saturate(1.05);
+}
+
+/* SVG 类型：默认缓慢呼吸 */
+.works-sub-cover-svg {
+  width: 70%;
+  height: 70%;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  animation: works-cover-breathe 6s ease-in-out infinite;
+}
+.works-sub-cover-svg svg {
+  width: 100%;
+  height: 100%;
+  display: block;
+}
+.works-sub-card:hover .works-sub-cover-svg {
+  animation-play-state: paused;
+  transform: rotate(-8deg) scale(1.12);
+  transition: transform 0.7s cubic-bezier(0.22, 0.61, 0.36, 1);
+}
+@keyframes works-cover-breathe {
+  0%, 100% { transform: translateY(0) scale(1); }
+  50%      { transform: translateY(-3px) scale(1.03); }
+}
+
+/* emoji 类型 */
+.works-sub-cover-emoji {
+  font-family: var(--font-serif-display);
+  font-size: 2.4rem;
+  line-height: 1;
+  transition: transform 0.6s cubic-bezier(0.22, 0.61, 0.36, 1);
+}
+.works-sub-card:hover .works-sub-cover-emoji {
+  transform: rotate(-10deg) scale(1.12);
+}
+
+/* ---------- 中间内容区 ---------- */
+.works-sub-body {
+  grid-column: 2;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+}
+.works-sub-head {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-family: var(--font-serif-display);
+  font-size: 0.65rem;
+  font-weight: 500;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--fg-soft);
+}
+.works-sub-icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--fg-base);
+  transition: color 0.4s, transform 0.5s cubic-bezier(0.22, 0.61, 0.36, 1);
+}
+.works-sub-card:hover .works-sub-icon {
+  color: var(--accent);
+  transform: rotate(-8deg);
+}
+.works-sub-num {
+  font-style: italic;
+  color: var(--accent);
+  font-feature-settings: "smcp";
+}
+.works-sub-name {
+  font-family: var(--font-serif-display);
+  font-size: 1.4rem;
+  font-weight: 500;
+  letter-spacing: -0.02em;
+  color: var(--fg-base);
+  font-variation-settings: "opsz" 60;
+  line-height: 1.15;
+  margin-top: 0.1rem;
+}
+.works-sub-title {
+  font-family: var(--font-mono);
+  font-size: 0.65rem;
+  font-weight: 400;
+  text-transform: uppercase;
+  letter-spacing: 0.18em;
+  color: var(--fg-soft);
+}
+.works-sub-desc {
+  font-family: var(--font-serif-body);
+  font-size: 0.92rem;
+  font-style: italic;
+  line-height: 1.55;
+  color: var(--fg-mute);
+  margin: 0.3rem 0 0;
+}
+.works-sub-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.35rem;
+  margin-top: 0.7rem;
+}
+.works-sub-tag {
+  font-family: var(--font-mono);
+  font-size: 0.62rem;
+  padding: 0.1rem 0.5rem;
+  border-radius: 9999px;
+  border: 1px solid color-mix(in srgb, var(--line) 70%, transparent);
+  color: var(--fg-soft);
+  background: transparent;
+  letter-spacing: 0.04em;
+  transition: border-color 0.3s, color 0.3s;
+}
+.works-sub-card:hover .works-sub-tag {
+  border-color: color-mix(in srgb, var(--fg-soft) 35%, transparent);
+}
+.works-sub-draft-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.3rem;
+  margin-top: 0.5rem;
+  padding: 0.15rem 0.55rem;
+  border-radius: 9999px;
+  border: 1px dashed var(--line);
+  font-family: var(--font-serif-display);
+  font-size: 0.65rem;
+  font-style: italic;
+  color: var(--fg-soft);
+  letter-spacing: 0.05em;
+  width: max-content;
+}
+
+/* ---------- 右侧 CTA ---------- */
+.works-sub-cta {
+  grid-column: 3;
+  font-family: var(--font-serif-display);
+  font-size: 0.7rem;
+  font-weight: 500;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--fg-mute);
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  white-space: nowrap;
+  transition: gap 0.3s cubic-bezier(0.22, 0.61, 0.36, 1),
+              color 0.3s;
+}
+.works-sub-card:hover .works-sub-cta {
+  gap: 0.8rem;
+  color: var(--accent);
+}
+.works-sub-arrow {
+  display: inline-flex;
+  align-items: center;
+  transition: transform 0.4s cubic-bezier(0.22, 0.61, 0.36, 1);
+}
+.works-sub-card:hover .works-sub-arrow {
+  transform: translateX(3px);
+}
+
+/* ---------- 移动端 ---------- */
+@media (max-width: 640px) {
+  .works-sub-card {
+    grid-template-columns: auto 1fr;
+    grid-template-rows: auto auto;
+    gap: 0.85rem 1rem;
+    padding: 1rem 1.1rem;
+  }
+  .works-sub-cover {
+    grid-row: 1;
+    grid-column: 1;
+    width: 4.25rem;
+    height: 4.25rem;
+  }
+  .works-sub-body {
+    grid-row: 1;
+    grid-column: 2;
+  }
+  .works-sub-cta {
+    grid-row: 2;
+    grid-column: 1 / -1;
+    padding-top: 0.75rem;
+    border-top: 1px solid color-mix(in srgb, var(--line) 60%, transparent);
+    justify-content: flex-end;
+  }
+}
+
+/* =============================================================================
+   35. works/projects — 项目卡片网格（双列 + 3D 倾斜 + hover 揭示）
+   =============================================================================
+   - 桌面端：双列 grid，移动端单列
+   - 3D 倾斜：VanillaTilt.js 处理，CSS 只负责 perspective 和反光层
+   - hover 揭示：tags + actions 默认折叠，hover 时展开
+   - 封面缩放 + 边框描边
+   数据驱动：data/projects.yaml → layouts/shortcodes/projects-list.html
+   ============================================================================= */
+
+.projects-list { max-width: 64rem; margin: 0 auto; }
+
+.projects-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 1.25rem;
+  /* 3D 透视容器 —— 移到父元素，避免和 VanillaTilt 的 transform 冲突 */
+  perspective: 1000px;
+}
+@media (max-width: 720px) {
+  .projects-grid { grid-template-columns: 1fr; }
+}
+
+.project-card {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  border: 1px solid var(--line);
+  border-radius: 0.75rem;
+  background: transparent;
+  overflow: hidden;
+  text-decoration: none !important;
+  /* 保留 3D 渲染上下文；transform 完全交给 VanillaTilt 接管 */
+  transform-style: preserve-3d;
+  transition: border-color 0.5s cubic-bezier(0.22, 0.61, 0.36, 1),
+              background 0.5s;
+  isolation: isolate;
+  will-change: transform;
+}
+html.dark .project-card {
+  background: rgba(255, 255, 255, 0.03);
+}
+
+/* 鼠标反光层（VanillaTilt 会写入 --glare-x / --glare-y）
+   v2 修复：加 mix-blend-mode: multiply 让反光只影响"下层"（封面/背景），
+   不洗"上层"的按钮文字（即使 z-index 没赢透，也能保证文字清晰） */
+.project-card::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(
+    circle at var(--glare-x, 50%) var(--glare-y, 50%),
+    rgba(255, 255, 255, 0.18) 0%,
+    transparent 60%
+  );
+  opacity: 0;
+  transition: opacity 0.4s;
+  pointer-events: none;
+  z-index: 1;
+  mix-blend-mode: multiply;
+}
+.project-card:hover::after { opacity: 1; }
+html.dark .project-card::after {
+  background: radial-gradient(
+    circle at var(--glare-x, 50%) var(--glare-y, 50%),
+    rgba(255, 255, 255, 0.08) 0%,
+    transparent 60%
+  );
+}
+
+.project-card:hover {
+  border-color: color-mix(in srgb, var(--accent) 50%, var(--line));
+}
+
+.project-card-link {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  text-decoration: none !important;
+  color: inherit;
+  position: relative;
+  z-index: 2;
+}
+
+/* 封面 */
+.project-card-cover {
+  position: relative;
+  aspect-ratio: 16 / 9;
+  background: color-mix(in srgb, var(--bg-deep) 70%, transparent);
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+html.dark .project-card-cover {
+  background: color-mix(in srgb, var(--fg-base) 4%, transparent);
+}
+.project-card-cover img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+  filter: saturate(0.95);
+  transition: transform 0.6s cubic-bezier(0.22, 0.61, 0.36, 1),
+              filter 0.4s;
+}
+.project-card:hover .project-card-cover img {
+  transform: scale(1.05);
+  filter: saturate(1.05);
+}
+.project-card-cover-fallback {
+  color: var(--fg-mute);
+  display: inline-flex;
+}
+
+/* featured 角标 */
+.project-card-flag {
+  position: absolute;
+  top: 0.6rem;
+  left: 0.6rem;
+  font-family: var(--font-mono);
+  font-size: 0.55rem;
+  font-weight: 500;
+  letter-spacing: 0.18em;
+  padding: 0.18rem 0.55rem;
+  border-radius: 9999px;
+  background: var(--accent);
+  color: var(--bg-base);
+  z-index: 3;
+}
+
+/* 文字区 */
+.project-card-body {
+  padding: 1.1rem 1.25rem 1.2rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+  flex: 1;
+}
+.project-card-head {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-family: var(--font-mono);
+  font-size: 0.62rem;
+  text-transform: uppercase;
+  letter-spacing: 0.18em;
+  color: var(--fg-soft);
+  margin-bottom: 0.1rem;
+}
+.project-card-date { font-feature-settings: "tnum"; }
+.project-card-source {
+  display: inline-flex;
+  align-items: center;
+  color: var(--fg-mute);
+  transition: color 0.3s;
+}
+.project-card:hover .project-card-source { color: var(--accent); }
+
+.project-card-name {
+  font-family: var(--font-serif-display);
+  font-size: 1.2rem;
+  font-weight: 500;
+  letter-spacing: -0.01em;
+  color: var(--fg-base);
+  margin: 0;
+  font-variation-settings: "opsz" 60;
+  line-height: 1.2;
+}
+.project-card-title {
+  font-family: var(--font-mono);
+  font-size: 0.62rem;
+  text-transform: uppercase;
+  letter-spacing: 0.18em;
+  color: var(--fg-soft);
+}
+.project-card-desc {
+  font-family: var(--font-serif-body);
+  font-size: 0.9rem;
+  font-style: italic;
+  line-height: 1.55;
+  color: var(--fg-mute);
+  margin: 0.2rem 0 0;
+}
+
+/* tags — 默认折叠，hover 时展开 */
+.project-card-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.3rem;
+  max-height: 0;
+  opacity: 0;
+  overflow: hidden;
+  margin-top: 0;
+  transition: max-height 0.4s cubic-bezier(0.22, 0.61, 0.36, 1),
+              opacity 0.3s 0.1s,
+              margin-top 0.3s;
+}
+.project-card:hover .project-card-tags,
+.project-card:focus-within .project-card-tags {
+  max-height: 4rem;
+  opacity: 1;
+  margin-top: 0.6rem;
+}
+.project-card-tag {
+  font-family: var(--font-mono);
+  font-size: 0.6rem;
+  padding: 0.08rem 0.5rem;
+  border-radius: 9999px;
+  border: 1px solid color-mix(in srgb, var(--line) 70%, transparent);
+  color: var(--fg-soft);
+  letter-spacing: 0.04em;
+}
+
+/* 动作按钮 — 默认折叠，hover 时展开 */
+.project-card-actions {
+  display: flex;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+  max-height: 0;
+  opacity: 0;
+  overflow: hidden;
+  margin-top: 0;
+  transition: max-height 0.4s cubic-bezier(0.22, 0.61, 0.36, 1),
+              opacity 0.3s 0.15s,
+              margin-top 0.3s;
+}
+.project-card:hover .project-card-actions,
+.project-card:focus-within .project-card-actions {
+  max-height: 3rem;
+  opacity: 1;
+  margin-top: 0.9rem;
+}
+/* v2 修复（重构为 <a>）：覆盖 :link / :visited / :hover / :active 全状态
+   避免浏览器默认 <a> 蓝色 + 下划线盖掉我们设的颜色 */
+.project-card-btn,
+.project-card-btn:link,
+.project-card-btn:visited {
+  /* 必须比 .project-card::after 反光层（z-index: 1）更高，
+     否则 hover 反光层 opacity 1 时会蒙在按钮上、文字被冲淡 */
+  position: relative;
+  z-index: 2;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  font-family: var(--font-serif-display);
+  font-size: 0.68rem;
+  font-weight: 500;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  padding: 0.35rem 0.7rem;
+  border-radius: 9999px;
+  /* v3 关键修复：米白 #FAF9F5 在 accent #D97757 上对比度只有 3.08:1，
+     勉强够 AA Large 但小字看不清。
+     改成 color-mix(accent 70%, fg-base 30%) = #A15C46，对比度 4.64:1 ✓ AA 通过 */
+  background: color-mix(in srgb, var(--accent) 70%, var(--fg-base));
+  color: var(--bg-base);
+  text-decoration: none;
+  transition: background 0.3s, transform 0.3s;
+}
+/* v3 关键修复：hover 时进一步加深 background（60% accent + 40% fg-base = #9A5A38），
+   对比度 5.5:1 ✓ AA / AAA Large 都通过，文字始终清晰。
+   视觉反馈：背景更深 + transform 上浮，配合源码按钮的"低调"风格。 */
+.project-card-btn:hover,
+.project-card-btn:focus,
+.project-card-btn:active {
+  background: color-mix(in srgb, var(--accent) 60%, var(--fg-base));
+  color: var(--bg-base);
+  transform: translateY(-1px);
+  text-decoration: none;
+}
+.project-card-btn.is-secondary,
+.project-card-btn.is-secondary:link,
+.project-card-btn.is-secondary:visited {
+  background: transparent;
+  color: var(--fg-base);
+  border: 1px solid var(--line);
+}
+.project-card-btn.is-secondary:hover,
+.project-card-btn.is-secondary:focus,
+.project-card-btn.is-secondary:active {
+  background: color-mix(in srgb, var(--fg-base) 6%, transparent);
+  color: var(--fg-base);
+  text-decoration: none;
+}
+.project-card-btn-arrow {
+  display: inline-flex;
+  align-items: center;
+  transition: transform 0.3s;
+}
+.project-card-btn:hover .project-card-btn-arrow {
+  transform: translate(2px, -2px);
+}
+
+/* 草稿态 */
+.project-card.is-draft {
+  opacity: 0.6;
+  filter: grayscale(20%);
+  pointer-events: none;
+}
+
+/* 移动端禁用 3D 倾斜，hover 揭示改为常显 */
+@media (max-width: 720px) {
+  .project-card,
+  .project-card:hover { transform: none !important; }
+  .project-card-tags,
+  .project-card-actions {
+    max-height: 5rem;
+    opacity: 1;
+    margin-top: 0.6rem;
+  }
+}
+
+/* 空态 */
+.projects-empty {
+  text-align: center;
+  padding: 3rem 1.5rem;
+  border: 1px dashed var(--line);
+  border-radius: 0.5rem;
+  font-family: var(--font-serif-body);
+  font-style: italic;
+  color: var(--fg-mute);
+}
+.projects-empty strong {
+  font-family: var(--font-serif-display);
+  font-style: normal;
+  font-weight: 500;
+  color: var(--fg-base);
+  display: block;
+  margin-bottom: 0.4rem;
+  font-size: 1.05rem;
+  letter-spacing: 0.02em;
+}
+
+/* =============================================================================
+   36. works/resources — 资源卡片瀑布流
+   =============================================================================
+   - CSS columns 实现瀑布流（不同高度卡片自然错落）
+   - 封面 + 格式徽章 + 元信息（size/date）+ tags + 下载按钮
+   - 悬停时封面缩放 + 边框变 accent
+   数据驱动：data/resources.yaml → layouts/shortcodes/resources-list.html
+   ============================================================================= */
+
+.resources-list { max-width: 64rem; margin: 0 auto; }
+
+.resources-masonry {
+  column-count: 2;
+  column-gap: 1.25rem;
+}
+@media (max-width: 720px) {
+  .resources-masonry { column-count: 1; }
+}
+
+.resource-card {
+  break-inside: avoid;
+  margin-bottom: 1.25rem;
+  display: block;
+  border: 1px solid var(--line);
+  border-radius: 0.65rem;
+  overflow: hidden;
+  background: transparent;
+  text-decoration: none !important;
+  color: inherit;
+  transition: border-color 0.5s cubic-bezier(0.22, 0.61, 0.36, 1),
+              transform 0.5s cubic-bezier(0.22, 0.61, 0.36, 1),
+              background 0.5s;
+  isolation: isolate;
+}
+html.dark .resource-card {
+  background: rgba(255, 255, 255, 0.03);
+}
+.resource-card:hover {
+  border-color: color-mix(in srgb, var(--accent) 45%, var(--line));
+  transform: translateY(-2px);
+}
+html.dark .resource-card:hover {
+  background: rgba(255, 255, 255, 0.06);
+}
+
+.resource-card-link {
+  display: block;
+  text-decoration: none !important;
+  color: inherit;
+  padding: 0;
+}
+
+.resource-card-cover {
+  position: relative;
+  aspect-ratio: 16 / 10;
+  background: color-mix(in srgb, var(--bg-deep) 70%, transparent);
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+html.dark .resource-card-cover {
+  background: color-mix(in srgb, var(--fg-base) 4%, transparent);
+}
+.resource-card-cover img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+  filter: saturate(0.92);
+  transition: transform 0.6s cubic-bezier(0.22, 0.61, 0.36, 1),
+              filter 0.4s;
+}
+.resource-card:hover .resource-card-cover img {
+  transform: scale(1.05);
+  filter: saturate(1.05);
+}
+.resource-card-cover-fallback {
+  color: var(--fg-mute);
+  display: inline-flex;
+}
+
+/* 右上角格式徽章 */
+.resource-card-format {
+  position: absolute;
+  top: 0.55rem;
+  right: 0.55rem;
+  font-family: var(--font-mono);
+  font-size: 0.6rem;
+  font-weight: 500;
+  letter-spacing: 0.15em;
+  padding: 0.15rem 0.55rem;
+  border-radius: 9999px;
+  background: color-mix(in srgb, var(--bg-base) 80%, transparent);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  color: var(--fg-base);
+  border: 1px solid var(--line);
+}
+
+.resource-card-body {
+  padding: 1rem 1.1rem 1.1rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+}
+
+.resource-card-name {
+  font-family: var(--font-serif-display);
+  font-size: 1.1rem;
+  font-weight: 500;
+  letter-spacing: -0.01em;
+  color: var(--fg-base);
+  margin: 0;
+  font-variation-settings: "opsz" 60;
+  line-height: 1.2;
+}
+.resource-card-title {
+  font-family: var(--font-mono);
+  font-size: 0.6rem;
+  text-transform: uppercase;
+  letter-spacing: 0.18em;
+  color: var(--fg-soft);
+}
+.resource-card-desc {
+  font-family: var(--font-serif-body);
+  font-size: 0.88rem;
+  font-style: italic;
+  line-height: 1.55;
+  color: var(--fg-mute);
+  margin: 0.2rem 0 0;
+}
+
+.resource-card-meta {
+  display: flex;
+  align-items: center;
+  gap: 0.7rem;
+  margin-top: 0.5rem;
+  font-family: var(--font-mono);
+  font-size: 0.65rem;
+  color: var(--fg-soft);
+  font-variant-numeric: tabular-nums;
+}
+.resource-card-meta > * + * {
+  padding-left: 0.7rem;
+  border-left: 1px solid color-mix(in srgb, var(--line) 70%, transparent);
+}
+
+.resource-card-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.3rem;
+  margin-top: 0.5rem;
+}
+.resource-card-tag {
+  font-family: var(--font-mono);
+  font-size: 0.6rem;
+  padding: 0.08rem 0.5rem;
+  border-radius: 9999px;
+  border: 1px solid color-mix(in srgb, var(--line) 70%, transparent);
+  color: var(--fg-soft);
+  letter-spacing: 0.04em;
+}
+
+.resource-card-cta {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  margin-top: 0.85rem;
+  align-self: flex-start;
+  font-family: var(--font-serif-display);
+  font-size: 0.7rem;
+  font-weight: 500;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--accent);
+  transition: gap 0.3s;
+}
+.resource-card:hover .resource-card-cta { gap: 0.6rem; }
+.resource-card-arrow {
+  display: inline-flex;
+  align-items: center;
+  transition: transform 0.4s;
+}
+.resource-card:hover .resource-card-arrow {
+  transform: translateY(2px);
+}
+
+.resource-card-source {
+  margin-top: 0.7rem;
+  padding-top: 0.6rem;
+  border-top: 1px solid color-mix(in srgb, var(--line) 60%, transparent);
+  font-family: var(--font-serif-body);
+  font-size: 0.72rem;
+  font-style: italic;
+  color: var(--fg-mute);
+  word-break: break-all;
+  line-height: 1.5;
+}
+.resource-card-source a {
+  color: var(--fg-soft);
+  text-decoration: underline;
+  text-decoration-color: color-mix(in srgb, var(--line) 80%, transparent);
+  text-underline-offset: 2px;
+  transition: color 0.3s;
+}
+.resource-card-source a:hover { color: var(--accent); }
+
+/* 空态 */
+.resources-empty {
+  text-align: center;
+  padding: 3rem 1.5rem;
+  border: 1px dashed var(--line);
+  border-radius: 0.5rem;
+  font-family: var(--font-serif-body);
+  font-style: italic;
+  color: var(--fg-mute);
+}
+.resources-empty strong {
+  font-family: var(--font-serif-display);
+  font-style: normal;
+  font-weight: 500;
+  color: var(--fg-base);
+  display: block;
+  margin-bottom: 0.4rem;
+  font-size: 1.05rem;
+  letter-spacing: 0.02em;
 }

@@ -1,6 +1,6 @@
 # 项目地图 — 个人网站 `f:\Notes\`
 
-> 最后更新：2026-06-20 · Hugo v0.163.2 · Blowfish v2
+> 最后更新：2026-06-21 · 暗主题调色板统一 + Claude 暖深重构 · Hugo v0.163.2 · Blowfish v2
 
 ---
 
@@ -16,7 +16,7 @@
 | 我想…… | 改这个文件 |
 |---------|-----------|
 | 改封面的标题 / subtitle / 按钮文案 | [`data/cover.yaml`](file:///f:/Notes/data/cover.yaml) |
-| 改封面的颜色（明/暗两套） | [`data/cover.yaml`](file:///f:/Notes/data/cover.yaml) 的 `palette.light` / `palette.dark` |
+| 改封面的颜色 | [`assets/css/custom.css`](file:///f:/Notes/assets/css/custom.css) 顶部 `:root` / `html.dark` 的 `--bg-base / --line / --accent`（v3：封面 `--pal-*` 已派生自全局变量，统一改一处即可） |
 | 改封面的字距 / 大小 / 花边位置 | [`assets/css/custom.css §28`](file:///f:/Notes/assets/css/custom.css) |
 | 改内页"小封面"的文案 | 对应 `content/xxx/_index.md` 的 frontmatter `kicker / subtitle` |
 | 换 /start/ 大厅的模块卡 | [`data/modules.yaml`](file:///f:/Notes/data/modules.yaml)（加/删条目改 `items` 数组） |
@@ -24,37 +24,23 @@
 | 换 /life/ 的子模块卡 | [`data/life.yaml`](file:///f:/Notes/data/life.yaml)（加图片 / 读书 / 旅行…都改这里） |
 | 换 /life/music/ 的歌单 | [`data/music.yaml`](file:///f:/Notes/data/music.yaml)（加一首填一个 `- title/artist/cover/src/...` 条目） |
 | 换 /life/music/ 的封面/SVG 动画 | [`assets/css/custom.css §32`](file:///f:/Notes/assets/css/custom.css) 的 `.life-sub-cover-*` 规则 |
+| 换 /works/ 的子模块卡 | [`data/works.yaml`](file:///f:/Notes/data/works.yaml)（projects / resources / tools…） |
+| 换 /works/projects/ 的项目卡 | [`data/projects.yaml`](file:///f:/Notes/data/projects.yaml)（加一条填 `- name/title/desc/cover/href/repo/tags/date/featured`） |
+| 换 /works/resources/ 的资源卡 | [`data/resources.yaml`](file:///f:/Notes/data/resources.yaml)（加一条填 `- name/title/desc/cover/file/format/size/tags/date/source`） |
+| 改 /works/projects/ 的 3D 倾斜角度 | [`assets/css/custom.css §35`](file:///f:/Notes/assets/css/custom.css) 的 `.project-card` 或 shortcode 里的 `data-tilt-*` |
 | 加一个 Lucide icon | [`layouts/partials/cover/icon.html`](file:///f:/Notes/layouts/partials/cover/icon.html) 加 `else if` 分支 |
 | 改顶栏的菜单项 | [`hugo.toml`](file:///f:/Notes/hugo.toml) 的 `[[menu.main]]` 段 |
 | 加一篇新文章 | 见下方 §4 |
 | 写 CSS（字体 / 颜色 / 间距） | [`assets/css/custom.css`](file:///f:/Notes/assets/css/custom.css) |
 | 改文章内容样式 | `assets/css/custom.css` 搜索 `§ prose` 段 |
-| 改"亮色" / "暗色" 主题的 CSS | `assets/css/custom.css` 顶部 `:root`（亮）和 `html.dark`（暗） |
+| 改"亮色" / "暗色" 主题的 CSS | `assets/css/custom.css` 顶部 `:root`（亮）和 `html.dark`（暗）— **v3 后是唯一调色数据源**，改一处全局生效（封面 + 卡片 + blowfish utility 全部跟着变） |
 | 部署 / 更新站点 | 见 [`DEPLOY.md`](file:///f:/Notes/DEPLOY.md) |
 
 ---
 
-## 3. 项目心智模型
 
-```
-你在 Obsidian 里写 `# 标题\n内容`（Vault/）
-        │
-        ▼
-  vault-to-hugo.ps1（自动发现 .md，创建 Hugo leaf bundle）
-        │
-        ▼
-  Hugo（渲染模板 + 数据 + CSS → 完整 HTML 站）
-        │
-        ▼
-  你 `git push`
-        │
-        ▼
-  Cloudflare Pages（自动构建 + 部署）
-```
 
----
-
-## 4. 文件结构总览
+## 3. 文件结构总览
 
 ```
 f:\Notes\
@@ -77,7 +63,11 @@ f:\Notes\
 │   │   ├── language/               # Language 分类（含 cpp, python）
 │   │   ├── demo/                   # Demo 分类（含 minecraft, aipython）
 │   │   └── tools/                  # 工具脚本页面
-│   ├── works/_index.md             # /works/ 作品
+│   ├── works/                      # /works/ 相关（作品 / 资源 / 工具）
+│   │   ├── _index.md               # 入口（works-grid 短代码）
+│   │   ├── projects/_index.md      # 项目子页（projects-list 短代码 + 3D 倾斜）
+│   │   ├── resources/_index.md     # 资源子页（resources-list 短代码 + 瀑布流）
+│   │   └── tools/_index.md         # 工具子页（占位 + 计划收录）
 │   ├── life/                       # /life/ 生活（可扩展子模块网格）
 │   │   ├── _index.md               # 子模块入口（life-grid 短代码）
 │   │   └── music/_index.md         # /life/music/ 子页
@@ -88,7 +78,10 @@ f:\Notes\
 │   ├── modules.yaml                # 大厅的模块卡
 │   ├── vault.yaml                  # /notes/ 的 vault 分类卡
 │   ├── life.yaml                   # /life/ 子模块清单（music / 图片 / 读书…）
-│   └── music.yaml                  # /life/music/ 歌单
+│   ├── music.yaml                  # /life/music/ 歌单
+│   ├── works.yaml                  # /works/ 子模块清单（projects / resources / tools…）
+│   ├── projects.yaml               # /works/projects/ 项目清单
+│   └── resources.yaml              # /works/resources/ 资源清单
 │
 ├── layouts/                        # ★ 自定义模板（覆写主题）
 │   ├── _default/list.html          # section 主页 → page-hero 模式
@@ -99,7 +92,7 @@ f:\Notes\
 │   │   ├── header/components/
 │   │   │   ├── desktop-menu.html   # 加 GitHub 按钮
 │   │   │   └── mobile-menu.html    # 加 GitHub 按钮
-│   │   ├── extend-head.html        # 第三方库（Splitting.js）
+│   │   ├── extend-head.html        # 第三方库（Splitting.js + AOS.js + VanillaTilt.js）
 │   │   └── music-player.html       # 粘性音乐播放器（被 music-list 自动注入）
 │   └── shortcodes/
 │       ├── page-hero.html          # {{< page-hero >}} 短代码
@@ -107,6 +100,9 @@ f:\Notes\
 │       ├── vault-sections.html     # /notes/ 分类网格
 │       ├── life-grid.html          # /life/ 子模块网格
 │       ├── music-list.html         # /life/music/ 歌曲列表
+│       ├── works-grid.html         # /works/ 子模块网格
+│       ├── projects-list.html      # /works/projects/ 项目列表（3D 倾斜）
+│       ├── resources-list.html     # /works/resources/ 资源列表（瀑布流）
 │       ├── file-tree.html          # 可折叠文件树
 │       └── section-rule.html       # ✦ 分隔符
 │
@@ -116,8 +112,12 @@ f:\Notes\
 ├── static/                         # 静态资源
 │   ├── fonts/                      # 字体文件（本地化）
 │   ├── image/                      # 装饰 PNG（花边 / 花朵 / musicheart）
-│   │   └── life/music/             # /life/music/ 封面（用户自行放入）
+│   │   ├── life/music/             # /life/music/ 封面（用户自行放入）
+│   │   └── works/                  # /works/ 子模块封面
+│   │       ├── projects/           # /works/projects/ 项目封面（用户自行放入）
+│   │       └── resources/          # /works/resources/ 资源封面（用户自行放入）
 │   ├── life/music/                 # /life/music/ 音频文件（用户自行放入）
+│   ├── works-resources/            # /works/resources/ 下载文件（用户自行放入）
 │   ├── js/music-player.js          # 音乐播放器逻辑
 │   └── notes-assets/               # 可下载资源（aipython, minecraft, tools）
 │
@@ -129,7 +129,7 @@ f:\Notes\
 
 ---
 
-## 5. 部件对应速查
+## 4. 部件对应速查
 
 ### 封面（`/_index.md`）
 
@@ -187,9 +187,47 @@ f:\Notes\
 | 菜单项 | `hugo.toml` → `[[menu.main]]` | 主题默认 |
 | GitHub 按钮 | `data/cover.yaml` → `repo_url` | [`desktop-menu.html`](file:///f:/Notes/layouts/partials/header/components/desktop-menu.html) / [mobile-menu.html](file:///f:/Notes/layouts/partials/header/components/mobile-menu.html) |
 
+### /works/ 子模块网格
+
+| 元素 | 数据源 | 模板 |
+|------|--------|------|
+| 子模块卡列表（projects / resources / tools…） | [`data/works.yaml`](file:///f:/Notes/data/works.yaml) | [`layouts/shortcodes/works-grid.html`](file:///f:/Notes/layouts/shortcodes/works-grid.html) |
+| icon | `works.yaml` → `icon` | 走 `cover/icon.html` 解释为 Lucide SVG |
+| 加新子模块 | 在 `data/works.yaml` 加一条 + 在 `content/works/<id>/_index.md` 建子页 | — |
+
+### /works/projects/ 项目列表
+
+| 元素 | 数据源 | 模板 |
+|------|--------|------|
+| 项目卡列表 | [`data/projects.yaml`](file:///f:/Notes/data/projects.yaml) | [`layouts/shortcodes/projects-list.html`](file:///f:/Notes/layouts/shortcodes/projects-list.html) |
+| 3D 倾斜 + 鼠标反光 | shortcode 里的 `data-tilt*` 属性（VanillaTilt.js） | [`assets/css/custom.css §35`](file:///f:/Notes/assets/css/custom.css) 的 `.project-card` + `.project-card::after`（含 `mix-blend-mode: multiply` 防反光洗文字）|
+| hover 揭示（tags + actions） | — | `custom.css §35` 的 `.project-card:hover .project-card-tags` 等 |
+| 项目按钮（在线 / 源码） | `href` / `repo` 字段 | `custom.css §35` 的 `.project-card-btn`（**v3 修复后是独立 `<a>`**，各自跳对应地址；默认 + hover 对比度均 ≥ AA 4.5:1）|
+| 入场淡入 | `data-aos="fade-up"`（应用到 `.project-card-cover` + `.project-card-body`，避开外层 VanillaTilt 的 transform 冲突） | [extend-head.html](file:///f:/Notes/layouts/partials/extend-head.html)（AOS.js） |
+| 资源存放约定 | `static/image/works/projects/<slug>.png` | — |
+
+### /works/resources/ 资源列表
+
+| 元素 | 数据源 | 模板 |
+|------|--------|------|
+| 资源卡列表 | [`data/resources.yaml`](file:///f:/Notes/data/resources.yaml) | [`layouts/shortcodes/resources-list.html`](file:///f:/Notes/layouts/shortcodes/resources-list.html) |
+| 瀑布流（CSS columns） | — | [`assets/css/custom.css §36`](file:///f:/Notes/assets/css/custom.css) 的 `.resources-masonry` |
+| 格式徽章 / 元信息 / 下载按钮 | `resources.yaml` → `format / size / date / file` | `custom.css §36` 的 `.resource-card-*` |
+| 入场淡入 | `data-aos="fade-up"`（应用到 `.resource-card`） | extend-head.html（AOS.js） |
+| 资源存放约定 | `static/works-resources/<file>` + `static/image/works/resources/<slug>.png` | — |
+
+### 第三方动画库（works 用）
+
+| 库 | 版本 | 用途 | 初始化 |
+|---|---|---|---|
+| AOS.js + aos.css | 2.3.4 | 滚动入场淡入 | `extend-head.html` 的 `window.load` 回调里 `AOS.init()`，prefers-reduced-motion 时自动禁用 |
+| VanillaTilt.js | 1.8.1 | 项目卡 3D 鼠标倾斜 | `extend-head.html` 的 `window.load` 回调里，IntersectionObserver 延迟挂载 |
+| AOS 与 VanillaTilt 冲突规避 | — | AOS 应用于卡片内部子元素，VanillaTilt 管外层 transform | — |
+| AOS `transition` 接管 hover 修复 | — | `aos:in` 后 1s 清除 inline transition | extend-head.html |
+
 ---
 
-## 6. 调试 / 部署
+## 5. 调试 / 部署
 
 | 事项 | 说明 |
 |------|------|
@@ -201,7 +239,7 @@ f:\Notes\
 
 ---
 
-## 7. 常见修改路径
+## 6. 常见修改路径
 
 ### 换字体
 
@@ -209,11 +247,40 @@ f:\Notes\
 2. [`assets/css/custom.css §3`](file:///f:/Notes/assets/css/custom.css) 的 `@font-face` 块里加一行
 3. 想改正文就改 `--font-sans`，想改标题就改 `--font-serif`
 
-### 换颜色主题
+### 换颜色主题（v3 统一调色板）
 
-1. 亮色：改 `assets/css/custom.css` 的 `:root { --color-xxx: … }`
-2. 暗色：改同一文件的 `html.dark { --color-xxx: … }`
-3. 封面调色：改 `data/cover.yaml` 的 `palette.light` / `palette.dark`
+**所有颜色（封面 + 卡片 + blowfish utility）都通过 `:root` / `html.dark` 两个变量块驱动**，改一处即可全局生效。
+
+1. 亮色：改 [`assets/css/custom.css`](file:///f:/Notes/assets/css/custom.css) 顶部 `:root` 的 7 个核心变量：
+   - `--bg-base`（页面背景）/ `--bg-deep`（更深容器）/ `--line`（边框）
+   - `--fg-base`（正文文字）/ `--fg-mute`（次要文字）/ `--fg-soft`（弱文字）
+   - `--accent`（强调色 / 链接 / 按钮）
+2. 暗色：改同一文件 `html.dark` 块的同名变量（暗色值）
+3. ~~封面调色~~：**不需要单独改**，`data/cover.yaml` 的 `palette` 字段保留作占位，实际渲染以 `var()` 派生为准
+
+**派生链路**（自动生效，不用动）：
+
+```
+:root { --bg-base: #FAF9F5 }  ──→  封面背景 --pal-bg-from: var(--bg-base)
+html.dark { --bg-base: #141413 }  ──→  卡片边框 border: 1px solid var(--line)
+                                       blowfish bg-neutral-800 → rgb(20,20,19)
+                                       全部一起变
+```
+
+**例外**（如果想完全脱离 princess）：
+- `hugo.toml` 里 `colorScheme = 'blowfish'`（中性灰）→ 但亮主题所有 `text-primary-500` 等 utility 会变蓝
+- `hugo.toml` 里 `colorScheme = 'congo'` / `'slate'` 等其他方案 → 各自风格不同，自行尝试
+
+**调按钮颜色避坑指南**（projects 卡上的 `.project-card-btn` 是反面教材）：
+
+| 陷阱 | 原因 | 修复 |
+|---|---|---|
+| 米白 `#FAF9F5` 在纯 accent `#D97757` 上看不清 | 对比度仅 3.08:1（差 AA 4.5:1）| background 用 `color-mix(accent 70%, fg-base 30%)` → 对比度 4.64:1 |
+| hover 用 `color-mix(accent 80%, fg-base 20%)` | 对比度 4.06:1 仍差一点 AA | hover 用 `color-mix(accent 60%, fg-base 40%)` → 对比度 5.36:1 |
+| 想"按钮变亮"让 hover 更显眼 | **方向反了**——亮化让对比度更低，文字更看不清 | 让 background **更深**而非更亮 |
+| 浏览器默认 `<a>` 蓝色文字盖掉设的 color | `<a>` 特异性 (0,1,0)，默认浏览器样式 specificity 同级但位置优先 | 加 `:link/:visited` 状态选择器提高到 (0,2,0) |
+| 浏览器默认 `<a>` 下划线 | user-agent stylesheet 默认 | 加 `text-decoration: none`（覆盖 hover/focus/active） |
+| 重构把外层 `<a>` 移除后 z-index 保护丢了 | `.project-card-link` 旧版有 `z-index: 2`，外层移除后反光层蒙住按钮 | 按钮加 `position: relative; z-index: 2;` + 反光层加 `mix-blend-mode: multiply;`（双保险）|
 
 ### 加 Lucide icon
 
@@ -252,3 +319,88 @@ f:\Notes\
      note: "一句话小记"
    ```
 4. `hugo server` 刷新就能看到
+
+---
+
+## 7. “相关”模块添加内容操作指南
+
+> 本节是「加新内容」的完整 SOP。日常参考够用；更长的示例 / 排错细节看上面的 §2 §4 §6。
+
+### 添加新项目（/works/projects/）
+
+1. **准备封面图**：放图到 `static/image/works/projects/<slug>.png`（推荐 16:9 比例）
+2. **编辑 yaml**：在 [data/projects.yaml](file:///f:/Notes/data/projects.yaml) 加一条：
+
+   ```yaml
+   - name: "项目名"
+     title: "English Subtitle"
+     desc: "衬线斜体描述，1-2 行"
+     cover: "/image/works/projects/<slug>.png"
+     href: "https://demo.example.com"   # 可空（在线 demo）
+     repo: "https://github.com/..."     # 可空（源码）
+     tags: [tag1, tag2]                  # 技术栈标签
+     date: "2025-11"                     # YYYY-MM
+     featured: true                      # 加 FEATURED 角标（可选）
+   ```
+
+3. **保存后** `hugo server` 刷新即可
+
+### 添加新资源（/works/resources/）
+
+1. **准备资源文件**：放到 `static/works-resources/<file>.zip`（mp3 / PDF / 字体包…任意格式）
+2. **准备封面图**：放到 `static/image/works/resources/<slug>.png`（推荐 16:10）
+3. **编辑 yaml**：在 [data/resources.yaml](file:///f:/Notes/data/resources.yaml) 加一条：
+
+   ```yaml
+   - name: "资源名"
+     title: "English Subtitle"
+     desc: "衬线斜体描述"
+     cover: "/image/works/resources/<slug>.png"
+     file: "/works-resources/<file>.zip"   # 也可以是外链 https://...
+     format: "ZIP"                          # 右上角徽章文本
+     size: "12 MB"                          # 文件大小（手动写）
+     tags: [fonts, typography]
+     date: "2025-11"
+     source: "https://original.com"         # 可选，原始来源/致谢
+   ```
+
+4. **保存后** `hugo server` 刷新即可
+
+### 添加新子模块（如 /works/designs/）
+
+1. 在 [data/works.yaml](file:///f:/Notes/data/works.yaml) 加一条：
+
+   ```yaml
+   - id: designs
+     name: "设计"
+     title: "Designs · Posters & UI"
+     icon: "palette"                        # Lucide icon 名
+     desc: "偶尔做的小海报和 UI mockup。"
+     href: "/works/designs/"
+     cover: "🎨"                            # emoji / image 路径 / inline svg
+     cover_style: "emoji"                   # emoji / image / svg
+     tags: [design]
+   ```
+
+2. 新建 `content/works/designs/_index.md`（参考 [content/works/projects/_index.md](file:///f:/Notes/content/works/projects/_index.md) 或 [content/works/resources/_index.md](file:///f:/Notes/content/works/resources/_index.md)）
+3. 如果新子页有特定列表（如 designs 的画廊），参考 `music-list` / `projects-list` / `resources-list` 的模式写 shortcode + 数据文件
+4. **不需要改菜单**：`hugo.toml` 的 `[[menu.main]]` 已经包含 `/works/`，新子页通过 `/works/` 入口可达
+
+### 微调视觉
+
+| 想调什么 | 改哪里 |
+|---|---|
+| 3D 倾斜角度 / 反光 / 缩放 | [layouts/shortcodes/projects-list.html](file:///f:/Notes/layouts/shortcodes/projects-list.html) 里的 `data-tilt-*` 属性 |
+| AOS 入场动画时长 / 触发距离 | [layouts/partials/extend-head.html](file:///f:/Notes/layouts/partials/extend-head.html) 的 `AOS.init({...})` |
+| 卡片整体间距 / 圆角 / 边框 | [assets/css/custom.css §35](file:///f:/Notes/assets/css/custom.css) (projects) / [§36](file:///f:/Notes/assets/css/custom.css) (resources) |
+| 瀑布流列数 | `custom.css §36` 的 `.resources-masonry { column-count: ... }` |
+| 加新 Lucide icon | [layouts/partials/cover/icon.html](file:///f:/Notes/layouts/partials/cover/icon.html) 加 `else if` 分支 |
+
+### 通用注意事项
+
+- **资源命名**：用英文 / 数字（不要空格、中文、特殊字符）—— 避免 URL 编码问题
+- **文件大小**：手动写明，不会自动算
+- **date 格式**：`YYYY-MM`（如 `2026-05`）
+- **空数据**：`resources` / `projects` 为空时短代码会显示空态文案（"还没有项目" / "资源还在路上"），不会报错
+- **图片加载失败**：shortcode 用 `onerror` 兜底（封面图变淡显示），但建议还是补上正确路径
+- **a11y**：用户开启 `prefers-reduced-motion` 时 AOS 自动禁用，但 3D 倾斜仍是 hover 触发（用户主动操作，合理）

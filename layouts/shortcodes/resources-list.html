@@ -1,0 +1,81 @@
+{{/*
+  Shortcode: resources-list
+  ----------------------------------------------------------------
+  渲染 data/resources.yaml 的资源列表
+  视觉特点：CSS columns 瀑布流 + 卡片式下载入口
+  用法: {{< resources-list >}}
+  数据源: data/resources.yaml -> hugo.Data.resources.resources
+  ----------------------------------------------------------------
+*/}}
+{{ $resources := hugo.Data.resources.resources }}
+<div class="resources-list not-prose my-10">
+  {{ if $resources }}
+    <div class="resources-masonry">
+      {{ range $i, $r := $resources }}
+      <article class="resource-card"
+               data-aos="fade-up"
+               data-aos-delay="{{ mul $i 60 }}">
+
+        <a class="resource-card-link" href="{{ $r.file }}"
+           {{ if or (strings.HasPrefix $r.file "http://") (strings.HasPrefix $r.file "https://") }}
+             target="_blank" rel="noopener"
+           {{ end }}
+           download>
+
+          {{/* 封面：默认走 /image/works/resources/<slug>.png */}}
+          <div class="resource-card-cover">
+            {{ if $r.cover }}
+              <img src="{{ $r.cover }}" alt="{{ $r.name }}" loading="lazy"
+                   onerror="this.style.opacity='0.18'" />
+            {{ else }}
+              <span class="resource-card-cover-fallback" aria-hidden="true">
+                {{ partial "cover/icon.html" (dict "name" "package" "size" 36) }}
+              </span>
+            {{ end }}
+
+            <span class="resource-card-format">{{ $r.format | default "FILE" }}</span>
+          </div>
+
+          <div class="resource-card-body">
+            <h3 class="resource-card-name">{{ $r.name }}</h3>
+            <div class="resource-card-title">{{ $r.title }}</div>
+            <p class="resource-card-desc">{{ $r.desc }}</p>
+
+            <div class="resource-card-meta">
+              {{ with $r.size }}<span class="resource-card-size">{{ . }}</span>{{ end }}
+              {{ with $r.date }}<span class="resource-card-date">{{ . }}</span>{{ end }}
+            </div>
+
+            {{ with $r.tags }}
+            <div class="resource-card-tags">
+              {{ range . }}
+                <span class="resource-card-tag">#{{ . }}</span>
+              {{ end }}
+            </div>
+            {{ end }}
+
+            <div class="resource-card-cta">
+              <span>下载</span>
+              <span class="resource-card-arrow" aria-hidden="true">
+                {{ partial "cover/icon.html" (dict "name" "download" "size" 14) }}
+              </span>
+            </div>
+
+            {{ with $r.source }}
+            <div class="resource-card-source">
+              <span>来源 · </span>
+              <a href="{{ . }}" target="_blank" rel="noopener">{{ . }}</a>
+            </div>
+            {{ end }}
+          </div>
+        </a>
+      </article>
+      {{ end }}
+    </div>
+  {{ else }}
+    <div class="resources-empty">
+      <strong>资源还在路上</strong>
+      暂时还没有可下载的内容，敬请期待。
+    </div>
+  {{ end }}
+</div>

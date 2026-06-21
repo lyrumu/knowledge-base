@@ -43,23 +43,27 @@
   原因：CSS specificity — inline 属性 (1,0,0,0) 比 `html.dark .cover-page` (0,2,0) 高，
   会盖掉暗色覆写，导致封面"叠"在主题切换之上。
   <style> 块里的 `.cover-page` 只有 (0,1,0)，暗色覆写可以稳定赢。
+
+  v3 改动：--pal-* 不再写死颜色值，全部派生自全局变量（--bg-base / --line / --accent 等）。
+  这样改一个全局变量，封面 + 后续页面 + blowfish utility 全部跟着变，保持一致。
+  data/cover.yaml 里的 palette 字段保留（兼容旧配置），但实际渲染以 var() 为准。
 */}}
 <style class="cover-palette">
   .cover-page {
-    --pal-bg-from: {{ $pal.background_from }};
-    --pal-bg-to:   {{ $pal.background_to }};
-    --pal-title:   {{ $pal.title_color }};
-    --pal-sub:     {{ $pal.subtitle_color }};
-    --pal-kicker:  {{ $pal.kicker_color }};
-    --pal-line:    {{ $pal.line_color }};
-    --pal-epi:     {{ $pal.epigraph_color }};
-    --pal-btn-bd:  {{ $pal.button_border }};
-    --pal-btn-fg:  {{ $pal.button_text }};
-    --pal-btn-hbg: {{ $pal.button_hover_bg }};
-    --pal-btn-hfg: {{ $pal.button_hover_fg }};
-    --pal-social:  {{ $pal.social_color }};
-    --pal-social-h:{{ $pal.social_hover }};
-    --pal-accent:  {{ $pal.accent }};
+    --pal-bg-from: var(--bg-base);
+    --pal-bg-to:   var(--bg-deep);
+    --pal-title:   var(--fg-base);
+    --pal-sub:     var(--fg-mute);
+    --pal-kicker:  var(--fg-soft);
+    --pal-line:    var(--line);
+    --pal-epi:     var(--fg-soft);
+    --pal-btn-bd:  var(--fg-base);
+    --pal-btn-fg:  var(--fg-base);
+    --pal-btn-hbg: var(--fg-base);
+    --pal-btn-hfg: var(--bg-base);
+    --pal-social:  var(--fg-mute);
+    --pal-social-h:var(--fg-base);
+    --pal-accent:  var(--accent);
   }
 </style>
 

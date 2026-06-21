@@ -5,8 +5,7 @@
 <p align="center">
   <a href="https://lyrumu.top"><img src="https://img.shields.io/badge/Website-lyrumu.top-ff69b4?style=flat-square" alt="Website" /></a>
   <a href="https://github.com/lyrumu/knowledge-base"><img src="https://img.shields.io/github/last-commit/lyrumu/knowledge-base?label=last%20commit&color=ff69b4&style=flat-square&display_timestamp=committer" alt="Last Commit" /></a>
-  <a href="https://github.com/lyrumu"><img src="https://img.shields.io/badge/GitHub-lyrumu-181717?style=flat-square&logo=github" alt="GitHub" /></a>
-  <a href="https://mail.google.com/mail/?view=cm&fs=1&to=llyrumu@gmail.com"><img src="https://img.shields.io/badge/Email-llyrumu@gmail.com-EA4335?style=flat-square&logo=gmail" alt="Email" /></a>
+
 </p>
 
 <p align="center">

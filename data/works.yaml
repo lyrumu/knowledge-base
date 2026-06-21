@@ -1,0 +1,57 @@
+# =============================================================================
+# works 模块的索引数据 — 相关（/works/）入口页
+# 数据驱动：layouts/shortcodes/works-grid.html 渲染
+# 想加 / 删 / 调子模块：只改本文件即可
+#   - id          : 子模块 url slug（如 projects → /works/projects/）
+#   - name        : 卡片标题
+#   - title       : 卡片副标题（衬线大写小标）
+#   - icon        : Lucide icon 名字（layouts/partials/cover/icon.html）
+#   - desc        : 卡片描述（衬线斜体）
+#   - href        : 跳转链接（推荐 /works/<id>/）
+#   - cover       : 封面图 / SVG / emoji（左侧"大字"位）
+#   - cover_style : cover 的展示形式 — image / svg / emoji
+#   - tags        : 底部小 tag 列表（可选）
+#   - draft       : true 则标注为"准备中"
+# =============================================================================
+submodules:
+  - id: projects
+    name: "项目"
+    title: "Projects · Vibe Coding"
+    icon: "code-2"
+    desc: "vibe coding、demo"
+    href: "/works/projects/"
+    cover: "🛠"
+    cover_style: "emoji"
+    tags: [demos, agents, experiments]
+
+  - id: resources
+    name: "资源"
+    title: "Resources · Downloadables"
+    icon: "package"
+    desc: "Maybe something useful that you can donwload"
+    href: "/works/resources/"
+    cover: "📦"
+    cover_style: "emoji"
+    tags: [downloads, free-use]
+
+  - id: tools
+    name: "工具"
+    title: "Tools · Skills & Scripts"
+    icon: "wrench"
+    desc: ""
+    href: "/works/tools/"
+    cover: "🧰"
+    cover_style: "emoji"
+    tags: [scripts, skills]
+    draft: true
+
+  # 未来扩展示例（先注释）
+  # - id: designs
+  #   name: "设计"
+  #   title: "Designs · Posters & UI"
+  #   icon: "palette"
+  #   desc: "偶尔做的小海报和 UI mockup。"
+  #   href: "/works/designs/"
+  #   cover: "🎨"
+  #   cover_style: "emoji"
+  #   tags: [design]

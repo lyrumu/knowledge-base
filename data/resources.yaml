@@ -1,0 +1,30 @@
+# =============================================================================
+# works/resources — 资源清单（/works/resources/）
+# 数据驱动：layouts/shortcodes/resources-list.html 渲染
+# 字段说明：
+#   - name     : 资源名（卡片标题）
+#   - title    : 英文副标题
+#   - desc     : 衬线斜体描述
+#   - cover    : 封面图 URL（建议 /image/works/resources/<slug>.png）
+#   - file     : 下载路径（站点内 /static/... 或外链 URL）
+#   - format   : 文件格式字符串（PDF / ZIP / SVG / FONT … 显示在右上角徽章）
+#   - size     : 文件大小（字符串原样显示，如 "12 MB"）
+#   - tags     : 分类标签
+#   - date     : 上传年月
+#   - source   : 原始来源 / 致谢（可选，文字链）
+# =============================================================================
+resources:
+  - name: "Minecraft"
+    title: "it's an open world"
+    desc: "some resources about minecraft"
+    cover: "/image/works/resources/minecraft.png"
+    file: "/works/resources/files/minecraft.zip"
+    format: "ZIP"
+    size: ""
+    tags: [minecraft, resources]
+    date: "2026-05"
+
+
+# svg
+
+  

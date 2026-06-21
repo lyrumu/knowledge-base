@@ -23,7 +23,15 @@ showTableOfContents: true
 
 ---
 
-## 技术栈
+## Contact Me
+
+- **GitHub**：[https://github.com/lyrumu](https://github.com/lyrumu)
+- **Google Mail**：`llyrumu@gmail.com` [→ 写邮件](https://mail.google.com/mail/?view=cm&fs=1&to=llyrumu@gmail.com)
+- **QQ Mail**：`xkjdq_2025@qq.com` [→ 写邮件](https://mail.qq.com/cgi-bin/write?to=xkjdq_2025@qq.com)
+
+---
+
+## Technology Stack
 
 <div style="display:flex;flex-wrap:wrap;gap:0.5rem;margin:1rem 0">
   <span style="display:inline-flex;align-items:center;gap:0.375rem;padding:0.25rem 0.75rem;border-radius:9999px;font-size:0.875rem;font-weight:500;background:#e0f2fe;color:#0369a1">{{< icon "git" >}} Git</span>
@@ -38,20 +46,13 @@ showTableOfContents: true
 
 ---
 
-## GitHub 贡献
+## GitHub Contribution
+
 
 <img
   src="https://ghchart.rshah.org/lyrumu"
   alt="lyrumu's GitHub contribution chart"
   class="w-full my-4 rounded-lg"
 />
-
----
-
-## 联系方式
-
-- **GitHub**：[https://github.com/lyrumu](https://github.com/lyrumu)
-- **Google Mail**：`llyrumu@gmail.com` [→ 写邮件](https://mail.google.com/mail/?view=cm&fs=1&to=llyrumu@gmail.com)
-- **QQ Mail**：`xkjdq_2025@qq.com` [→ 写邮件](https://mail.qq.com/cgi-bin/write?to=xkjdq_2025@qq.com)
 
 ---

@@ -1,0 +1,71 @@
+{{/*
+  Shortcode: works-grid
+  ----------------------------------------------------------------
+  渲染 data/works.yaml 的子模块列表为 Claude 风卡片
+  与 life-grid 同款单列横向布局，复用 .works-sub-* 样式族
+  用法: {{< works-grid >}}
+  数据源: data/works.yaml -> hugo.Data.works.submodules
+  ----------------------------------------------------------------
+*/}}
+{{ $subs := hugo.Data.works.submodules }}
+{{ if $subs }}
+<div class="works-grid not-prose my-10">
+  <div class="works-grid-stack">
+    {{ range $i, $s := $subs }}
+    {{ $isDraft := eq ($s.draft | default false) true }}
+    <a href="{{ if $isDraft }}#{{ else }}{{ $s.href }}{{ end }}"
+       class="works-sub-card reveal{{ if $isDraft }} is-draft{{ end }}"
+       style="animation-delay: {{ mul $i 0.08 }}s;"
+       {{ if $isDraft }}aria-disabled="true" data-draft="true"{{ end }}>
+
+      <div class="works-sub-cover">
+        {{ $style := $s.cover_style | default "image" }}
+        {{ if eq $style "emoji" }}
+          <span class="works-sub-cover-emoji" aria-hidden="true">{{ $s.cover }}</span>
+        {{ else if eq $style "svg" }}
+          <span class="works-sub-cover-svg" aria-hidden="true">{{ $s.cover | safeHTML }}</span>
+        {{ else }}
+          {{/* default: image。src 可以是 /image/xxx.png 或 /svg/xxx.svg */}}
+          <img class="works-sub-cover-img" src="{{ $s.cover }}" alt="{{ $s.name }}" loading="lazy" />
+        {{ end }}
+      </div>
+
+      <div class="works-sub-body">
+        <div class="works-sub-head">
+          <span class="works-sub-icon">
+            {{ partial "cover/icon.html" (dict "name" $s.icon "size" 18) }}
+          </span>
+          <span class="works-sub-num">{{ printf "%02d" (add $i 1) }}</span>
+        </div>
+        <div class="works-sub-name">{{ $s.name }}</div>
+        <div class="works-sub-title">{{ $s.title }}</div>
+        <p class="works-sub-desc">{{ $s.desc }}</p>
+
+        {{ with $s.tags }}
+        <div class="works-sub-tags">
+          {{ range . }}
+          <span class="works-sub-tag">#{{ . }}</span>
+          {{ end }}
+        </div>
+        {{ end }}
+
+        {{ if $isDraft }}
+        <span class="works-sub-draft-badge">准备中 · Coming Soon</span>
+        {{ end }}
+      </div>
+
+      <div class="works-sub-cta">
+        <span>{{ if $isDraft }}敬请期待{{ else }}进入{{ end }}</span>
+        {{ if not $isDraft }}
+        <span class="works-sub-arrow" aria-hidden="true">
+          {{ partial "cover/icon.html" (dict "name" "arrow-right" "size" 16) }}
+        </span>
+        {{ end }}
+      </div>
+    </a>
+    {{ end }}
+  </div>
+</div>
+{{ else }}
+<p class="text-neutral-500 italic">（暂无相关子模块，请在 <code>data/works.yaml</code> 中添加）</p>
+{{ end }}

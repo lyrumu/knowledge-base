@@ -1,0 +1,28 @@
+# =============================================================================
+# works/projects — 项目清单（/works/projects/）
+# 数据驱动：layouts/shortcodes/projects-list.html 渲染
+# 字段说明：
+#   - name     : 项目名（卡片标题）
+#   - title    : 英文副标题
+#   - desc     : 衬线斜体描述（一两行）
+#   - cover    : 封面图 URL（建议 /image/works/projects/<slug>.png 或外链）
+#   - href     : 在线 demo / 部署地址（可空，置空时按钮自动隐藏）
+#   - repo     : 源码仓库链接（可空）
+#   - tags     : 技术栈 / 类型标签
+#   - date     : 起始年月（可选，如 2025-11）
+#   - status   : live / draft / archived（默认 live）
+#   - featured : true 时在卡片左上角显示"亮点"小角标（可选）
+# =============================================================================
+projects:
+  - name: "线性代数计算器"
+    title: "Linear Algebra Calculator"
+    desc: "非常简单的线性代数计算静态网站"
+    cover: "/image/linear-algebra-cover.png"
+    href: "https://lyrumu.github.io/linear_algebra_calculator/"
+    repo: "https://github.com/lyrumu/linear_algebra_calculator"
+    tags: [linear-algebra,static website,algorithm]
+    date: "2026-01"
+    status: archived
+    featured: true
+
+  

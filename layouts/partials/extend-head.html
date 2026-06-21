@@ -4,7 +4,72 @@
   Blowfish 的官方扩展点：在 <head> 末尾插入内容。
   - 字体：本地化到 static/fonts/*(避免 Google Fonts CDN 不稳)
   - Splitting.js：jsDelivr CDN（字符级动画分割）
+  - AOS.js + aos.css：滚动入场淡入（projects / resources 列表用到 data-aos 属性）
+  - VanillaTilt.js：3D 鼠标倾斜（projects 卡片用 data-tilt 属性）
   --------------------------------------------------------------------------
 */}}
 
+{{/* AOS 样式表（必须，否则 aos.js 无视觉效果） */}}
+<link rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/aos@2.3.4/dist/aos.css"
+      crossorigin="anonymous"
+      referrerpolicy="no-referrer" />
+
 <script src="https://cdn.jsdelivr.net/npm/splitting@1.0.6/dist/splitting.min.js" defer></script>
+<script src="https://cdn.jsdelivr.net/npm/aos@2.3.4/dist/aos.js" defer></script>
+<script src="https://cdn.jsdelivr.net/npm/vanilla-tilt@1.8.1/dist/vanilla-tilt.min.js" defer></script>
+
+{{/*
+  统一管理动画库的初始化：
+  - 全部包装在 window.load 里，确保所有 defer CDN 脚本加载完成
+  - AOS.init()：检测 prefers-reduced-motion
+  - VanillaTilt.init()：用 IntersectionObserver 延迟初始化，节省性能
+*/}}
+<script>
+window.addEventListener("load", function () {
+  // ---------- AOS ----------
+  if (typeof AOS !== "undefined") {
+    var reduce = window.matchMedia &&
+                window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    AOS.init({
+      duration: 900,
+      easing: "ease-out-cubic",
+      once: true,
+      offset: 80,
+      disable: reduce
+    });
+
+    /*
+      AOS 会在 [data-aos] 元素上注入 inline transition: ...;
+      动画完成后 inline style 不会自动清理，会覆盖 .resource-card 自身的
+      transition（如 hover 时 transform 上浮 0.5s → 被接管成 0.9s，hover 变迟钝）。
+      修法：动画结束后清掉 inline transition，让原本 CSS 的 transition 接管。
+    */
+    document.addEventListener("aos:in", function (e) {
+      var el = e.target;
+      // duration 略大于 AOS duration（900ms），确保动画完成
+      setTimeout(function () { el.style.transition = ""; }, 1000);
+    });
+  }
+
+  // ---------- VanillaTilt ----------
+  if (typeof VanillaTilt !== "undefined") {
+    var cards = document.querySelectorAll(".project-card[data-tilt]");
+    if (cards.length) {
+      if ("IntersectionObserver" in window) {
+        var io = new IntersectionObserver(function (entries) {
+          entries.forEach(function (e) {
+            if (e.isIntersecting) {
+              VanillaTilt.init(e.target);
+              io.unobserve(e.target);
+            }
+          });
+        }, { rootMargin: "120px" });
+        cards.forEach(function (c) { io.observe(c); });
+      } else {
+        cards.forEach(function (c) { VanillaTilt.init(c); });
+      }
+    }
+  }
+});
+</script>
