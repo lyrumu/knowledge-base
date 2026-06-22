@@ -192,6 +192,8 @@ f:\Notes\
 | 元素 | 数据源 | 模板 |
 |------|--------|------|
 | 子模块卡列表（projects / resources / tools…） | [`data/works.yaml`](file:///f:/Notes/data/works.yaml) | [`layouts/shortcodes/works-grid.html`](file:///f:/Notes/layouts/shortcodes/works-grid.html) |
+| 视觉 | **与 /start/ 模块卡 1:1 一致**（完全复用 §15 `.module-card` 样式） | — |
+| 独有元素 | `works-sub-tags`（标签列表）/ `works-sub-draft-badge`（准备中徽章） | `custom.css §34` |
 | icon | `works.yaml` → `icon` | 走 `cover/icon.html` 解释为 Lucide SVG |
 | 加新子模块 | 在 `data/works.yaml` 加一条 + 在 `content/works/<id>/_index.md` 建子页 | — |
 
@@ -377,8 +379,6 @@ html.dark { --bg-base: #141413 }  ──→  卡片边框 border: 1px solid var(
      icon: "palette"                        # Lucide icon 名
      desc: "偶尔做的小海报和 UI mockup。"
      href: "/works/designs/"
-     cover: "🎨"                            # emoji / image 路径 / inline svg
-     cover_style: "emoji"                   # emoji / image / svg
      tags: [design]
    ```
 

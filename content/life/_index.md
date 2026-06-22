@@ -9,7 +9,7 @@ showBreadcrumbs: true
 showTableOfContents: true
 ---
 
-> 不然活着有啥意义
+> 不然活着干啥
 
 {{< life-grid >}}
 

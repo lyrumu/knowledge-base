@@ -31,7 +31,7 @@ showTableOfContents: true
 
 ---
 
-## Technology Stack
+## Technical stack
 
 <div style="display:flex;flex-wrap:wrap;gap:0.5rem;margin:1rem 0">
   <span style="display:inline-flex;align-items:center;gap:0.375rem;padding:0.25rem 0.75rem;border-radius:9999px;font-size:0.875rem;font-weight:500;background:#e0f2fe;color:#0369a1">{{< icon "git" >}} Git</span>

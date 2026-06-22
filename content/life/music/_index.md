@@ -9,10 +9,8 @@ showBreadcrumbs: true
 showTableOfContents: true
 ---
 ❤最近常听
-
-(音质很可以)
-
 {{< music-list >}}
+(不定期更新)
 {{< section-rule >}}
 
 ---

@@ -11,7 +11,6 @@ showTableOfContents: true
 
 > 🧰 准备中
 > 尚未开发
-> 想催更或提建议，欢迎 [联系我](/about/)。
 
 {{< section-rule >}}
 

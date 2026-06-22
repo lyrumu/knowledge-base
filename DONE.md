@@ -4,6 +4,20 @@
 
 ---
 
+## 2026-06-21 · works 视觉统一 — 与 /start/ 模块卡 1:1 一致
+
+### 改动
+
+- [layouts/shortcodes/works-grid.html](file:///f:/Notes/layouts/shortcodes/works-grid.html) — 渲染结构改为与 `modules-grid` 完全相同（用 `.module-card` 同一套类名），元素同时挂 `.works-sub-card` 副类
+- [assets/css/custom.css §34](file:///f:/Notes/assets/css/custom.css) — 删掉冗余的 ~240 行 CSS，只保留 works 独有的 `.works-sub-tags` / `.works-sub-tag` / `.works-sub-draft-badge` / `.is-draft` 覆盖
+- [data/works.yaml](file:///f:/Notes/data/works.yaml) — 删 `cover` / `cover_style` 字段（已不渲染）
+
+### 教训
+
+- **改 yaml 时先 Read 确认 user 手改过没**：第一次删 cover 字段时**误覆盖了 user 改过的 desc**（resources `"Maybe something useful that you can donwload"`、tools 空串），后续恢复了。涉及 user 改过的字段时必须先读再改。
+
+---
+
 ## 2026-06-21 · projects 卡片链接重构 + 按钮对比度修复
 
 ### 问题 1：在线/源码按钮都跳到同一个 URL

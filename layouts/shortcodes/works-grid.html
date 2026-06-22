@@ -2,7 +2,8 @@
   Shortcode: works-grid
   ----------------------------------------------------------------
   渲染 data/works.yaml 的子模块列表为 Claude 风卡片
-  与 life-grid 同款单列横向布局，复用 .works-sub-* 样式族
+  视觉与 /start/ 的 module-card 1:1 一致：完全复用 .module-card 类
+  想与 module-card 区分样式时，给元素加 .works-sub-card 副类即可
   用法: {{< works-grid >}}
   数据源: data/works.yaml -> hugo.Data.works.submodules
   ----------------------------------------------------------------
@@ -14,50 +15,36 @@
     {{ range $i, $s := $subs }}
     {{ $isDraft := eq ($s.draft | default false) true }}
     <a href="{{ if $isDraft }}#{{ else }}{{ $s.href }}{{ end }}"
-       class="works-sub-card reveal{{ if $isDraft }} is-draft{{ end }}"
-       style="animation-delay: {{ mul $i 0.08 }}s;"
+       class="module-card works-sub-card{{ if $isDraft }} is-draft{{ end }}"
        {{ if $isDraft }}aria-disabled="true" data-draft="true"{{ end }}>
 
-      <div class="works-sub-cover">
-        {{ $style := $s.cover_style | default "image" }}
-        {{ if eq $style "emoji" }}
-          <span class="works-sub-cover-emoji" aria-hidden="true">{{ $s.cover }}</span>
-        {{ else if eq $style "svg" }}
-          <span class="works-sub-cover-svg" aria-hidden="true">{{ $s.cover | safeHTML }}</span>
-        {{ else }}
-          {{/* default: image。src 可以是 /image/xxx.png 或 /svg/xxx.svg */}}
-          <img class="works-sub-cover-img" src="{{ $s.cover }}" alt="{{ $s.name }}" loading="lazy" />
-        {{ end }}
+      <div class="module-card-head">
+        <span class="module-card-icon">
+          {{ partial "cover/icon.html" (dict "name" $s.icon "size" 22) }}
+        </span>
+        <span class="module-card-meta">
+          <span class="module-card-num">{{ printf "%02d" (add $i 1) }}</span>
+          <span class="module-card-divider" aria-hidden="true">·</span>
+          <span class="module-card-path">{{ $s.href }}</span>
+        </span>
       </div>
 
-      <div class="works-sub-body">
-        <div class="works-sub-head">
-          <span class="works-sub-icon">
-            {{ partial "cover/icon.html" (dict "name" $s.icon "size" 18) }}
-          </span>
-          <span class="works-sub-num">{{ printf "%02d" (add $i 1) }}</span>
-        </div>
-        <div class="works-sub-name">{{ $s.name }}</div>
-        <div class="works-sub-title">{{ $s.title }}</div>
-        <p class="works-sub-desc">{{ $s.desc }}</p>
-
+      <div class="module-card-body">
+        <div class="module-card-name">{{ $s.name }}</div>
+        <div class="module-card-title">{{ $s.title }}</div>
+        <p class="module-card-desc">{{ $s.desc }}</p>
         {{ with $s.tags }}
         <div class="works-sub-tags">
-          {{ range . }}
-          <span class="works-sub-tag">#{{ . }}</span>
-          {{ end }}
+          {{ range . }}<span class="works-sub-tag">#{{ . }}</span>{{ end }}
         </div>
         {{ end }}
-
-        {{ if $isDraft }}
-        <span class="works-sub-draft-badge">准备中 · Coming Soon</span>
-        {{ end }}
+        {{ if $isDraft }}<span class="works-sub-draft-badge">准备中 · Coming Soon</span>{{ end }}
       </div>
 
-      <div class="works-sub-cta">
+      <div class="module-card-cta">
         <span>{{ if $isDraft }}敬请期待{{ else }}进入{{ end }}</span>
         {{ if not $isDraft }}
-        <span class="works-sub-arrow" aria-hidden="true">
+        <span class="module-card-arrow" aria-hidden="true">
           {{ partial "cover/icon.html" (dict "name" "arrow-right" "size" 16) }}
         </span>
         {{ end }}

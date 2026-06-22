@@ -2,26 +2,25 @@
 # works 模块的索引数据 — 相关（/works/）入口页
 # 数据驱动：layouts/shortcodes/works-grid.html 渲染
 # 想加 / 删 / 调子模块：只改本文件即可
-#   - id          : 子模块 url slug（如 projects → /works/projects/）
-#   - name        : 卡片标题
-#   - title       : 卡片副标题（衬线大写小标）
-#   - icon        : Lucide icon 名字（layouts/partials/cover/icon.html）
-#   - desc        : 卡片描述（衬线斜体）
-#   - href        : 跳转链接（推荐 /works/<id>/）
-#   - cover       : 封面图 / SVG / emoji（左侧"大字"位）
-#   - cover_style : cover 的展示形式 — image / svg / emoji
-#   - tags        : 底部小 tag 列表（可选）
-#   - draft       : true 则标注为"准备中"
+#   - id     : 子模块 url slug（如 projects → /works/projects/）
+#   - name   : 卡片标题
+#   - title  : 卡片副标题（衬线大写小标）
+#   - icon   : Lucide icon 名字（layouts/partials/cover/icon.html）
+#   - desc   : 卡片描述（衬线斜体）
+#   - href   : 跳转链接（推荐 /works/<id>/）
+#   - tags   : 底部小 tag 列表（可选）
+#   - draft  : true 则标注为"准备中"
+#
+# 注意：2026-06-21 视觉统一后，works 卡片与 /start/ 模块卡 1:1 一致
+#       不再使用封面（cover / cover_style 字段已删除）
 # =============================================================================
 submodules:
   - id: projects
     name: "项目"
     title: "Projects · Vibe Coding"
-    icon: "code-2"
+    icon: "code-1"
     desc: "vibe coding、demo"
     href: "/works/projects/"
-    cover: "🛠"
-    cover_style: "emoji"
     tags: [demos, agents, experiments]
 
   - id: resources
@@ -30,9 +29,8 @@ submodules:
     icon: "package"
     desc: "Maybe something useful that you can donwload"
     href: "/works/resources/"
-    cover: "📦"
-    cover_style: "emoji"
     tags: [downloads, free-use]
+    draft: true #里面其实预留了一个minecraft 但是应该先标注为"准备中"
 
   - id: tools
     name: "工具"
@@ -40,8 +38,6 @@ submodules:
     icon: "wrench"
     desc: ""
     href: "/works/tools/"
-    cover: "🧰"
-    cover_style: "emoji"
     tags: [scripts, skills]
     draft: true
 
@@ -52,6 +48,4 @@ submodules:
   #   icon: "palette"
   #   desc: "偶尔做的小海报和 UI mockup。"
   #   href: "/works/designs/"
-  #   cover: "🎨"
-  #   cover_style: "emoji"
   #   tags: [design]
