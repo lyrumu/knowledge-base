@@ -1,5 +1,5 @@
 ---
-title: "文档"
+title: "DOCS"
 kicker: "NOTES · MODULE 01"
 subtitle: ""
 description: ""
@@ -14,4 +14,4 @@ showTableOfContents: true
 
 {{< section-rule >}}
 
-> ⏳ 内容整理中，敬请期待。
+> ⏳ Under construction...

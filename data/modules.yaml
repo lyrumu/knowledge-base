@@ -5,28 +5,28 @@
 # =============================================================================
 modules:
   - id: notes
-    name: "文档"
+    name: "DOCS"
     title: "Notes · code snippets / resources"
     icon: "book-open"
     description: "Some docs based on Obsidian"
     href: "/notes/"
 
   - id: works
-    name: "相关"
+    name: "WORKS"
     title: "Related Projects"
     icon: "hammer"
     description: "The simple projects I have practiced"
     href: "/works/"
 
   - id: life
-    name: "日常"
+    name: "DAILY"
     title: "hi,can we make a friend?"
     icon: "leaf"
     description: "somewhere for the Existentialists"
     href: "/life/"
 
   - id: about
-    name: "联系我"
+    name: "ABOUT ME"
     title: "Contact me"
     icon: "user-round"
     description: ""

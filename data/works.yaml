@@ -16,7 +16,7 @@
 # =============================================================================
 submodules:
   - id: projects
-    name: "项目"
+    name: "PROJECTS"
     title: "Projects · Vibe Coding"
     icon: "code-1"
     desc: "vibe coding、demo"
@@ -24,7 +24,7 @@ submodules:
     tags: [demos, agents, experiments]
 
   - id: resources
-    name: "资源"
+    name: "RESOURCES"
     title: "Resources · Downloadables"
     icon: "package"
     desc: "Maybe something useful that you can donwload"
@@ -33,7 +33,7 @@ submodules:
     draft: true #里面其实预留了一个minecraft 但是应该先标注为"准备中"
 
   - id: tools
-    name: "工具"
+    name: "TOOLS"
     title: "Tools · Skills & Scripts"
     icon: "wrench"
     desc: ""

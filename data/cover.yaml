@@ -34,7 +34,7 @@ cover:
   # --- 入口按钮 -----------------------------------------------------------
   entrance:
     label: "Have a look?"
-    href: "/start/"
+    href: "/start/" #希望之后入口改为/about/
 
   # --- 社交链接（封面底部"显眼位置"） -----------------------------------
   # 加新链接 = 加一项即可。可用 icon 见 layouts/partials/cover/icon.html

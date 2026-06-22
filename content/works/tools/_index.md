@@ -1,5 +1,5 @@
 ---
-title: "工具"
+title: "TOOLS"
 kicker: "WORKS · TOOLS"
 subtitle: ""
 description: ""
@@ -9,8 +9,7 @@ showBreadcrumbs: true
 showTableOfContents: true
 ---
 
-> 🧰 准备中
-> 尚未开发
+> 🧰 Under construction...
 
 {{< section-rule >}}
 

@@ -1,6 +1,6 @@
 ---
-title: "联系我"
-kicker: "CONTACT · MODULE 04"
+title: "ABOUT ME"
+kicker: "ABOUT ME · MODULE 04"
 subtitle: "Some info about me"
 description: ""
 layout: "page"
@@ -20,6 +20,8 @@ showTableOfContents: true
   <p style="color:#666;margin:0.25rem 0 0">Student · Developer</p>
   <p style="color:#999;font-size:0.875rem;margin:0">Hangzhou, Zhejiang, China</p>
 </div>
+
+<!-- ===== 引导 ===== -->
 
 ---
 

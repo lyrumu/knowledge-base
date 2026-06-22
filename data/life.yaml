@@ -15,10 +15,10 @@
 # =============================================================================
 submodules:
   - id: music
-    name: "音乐"
+    name: "MUSIC"
     title: "Music · Favorite Tracks"
     icon: "music"
-    desc: "那些陪伴过我的旋律，挑出来分享给你。"
+    desc: "so keep your ears and brain healthy"
     href: "/life/music/"
     cover: "/image/musicheart.png"
     cover_style: "image"

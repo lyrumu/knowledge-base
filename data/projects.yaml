@@ -14,9 +14,9 @@
 #   - featured : true 时在卡片左上角显示"亮点"小角标（可选）
 # =============================================================================
 projects:
-  - name: "线性代数计算器"
+  - name: "LINEAR ALGEBRA CALCULATOR"
     title: "Linear Algebra Calculator"
-    desc: "非常简单的线性代数计算静态网站"
+    desc: "A Very simple linear algebra calculation for static website"
     cover: "/image/linear-algebra-cover.png"
     href: "https://lyrumu.github.io/linear_algebra_calculator/"
     repo: "https://github.com/lyrumu/linear_algebra_calculator"

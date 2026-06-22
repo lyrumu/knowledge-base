@@ -1,15 +1,15 @@
 ---
-title: "日常"
+title: "DAILY"
 kicker: "DAILY · MODULE 03"
 subtitle: "hi"
-description: "哈咯哈咯"
+description: ""
 layout: "page"
 showHero: true
 showBreadcrumbs: true
 showTableOfContents: true
 ---
 
-> 不然活着干啥
+> Otherwise,what's the point of being alive?
 
 {{< life-grid >}}
 

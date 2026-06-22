@@ -1,5 +1,5 @@
 ---
-title: "资源"
+title: "REOURCES"
 kicker: "WORKS · RESOURCES"
 subtitle: " Maybe something useful that you can download"
 description: ""
@@ -8,7 +8,7 @@ showHero: true
 showBreadcrumbs: true
 showTableOfContents: true
 ---
-> 记录自用的一些资源
+> Some resources that I use daily
 
 {{< resources-list >}}
 
