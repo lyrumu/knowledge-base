@@ -1,0 +1,141 @@
+{{/*
+  About 页面联系方式 — iOS 风格毛玻璃图标卡
+
+  抽成 partial 的原因：
+  - markdown 里 <a> 标签之间只要有空行，Goldmark 就会把它们当段落拆开，
+    用 <p> 包裹 → 破坏 flex 布局（图标按钮变成块级段落竖排）
+  - 通过 partial 渲染 = 纯 HTML 路径，不经过 markdown 解析器
+
+  邮箱用 base64 防爬虫：HTML 源码中只有 base64，明文邮箱由页面 JS 解码后写入 mailto 链接。
+  base64 不是真正的加密，仅作最低成本的反爬。
+
+  调用方式（在 layouts/shortcodes/about-contact.html 里）：
+    {{ partial "about-contact.html" . }}
+*/}}
+
+{{- /*
+  内联 SVG 图标（不通过 {{< icon >}} 短代码，避免 shortcode 模板里再嵌短代码的循环解析问题）
+  用 resources.Get + safeHTML 直接输出 SVG 节点
+*/ -}}
+{{- $github := resources.Get "icons/github.svg" -}}
+{{- $gmail  := resources.Get "icons/gmail.svg" -}}
+{{- $qq     := resources.Get "icons/qq.svg" -}}
+
+<div class="about-contact">
+  <p class="about-contact-label">Find me on</p>
+
+  <div class="about-contact-glass" role="list">
+    <a class="about-contact-btn about-contact-btn--github"
+       href="https://github.com/lyrumu"
+       target="_blank" rel="noopener noreferrer"
+       role="listitem" aria-label="GitHub: github.com/lyrumu">
+      <span class="about-contact-icon">{{ $github.Content | safeHTML }}</span>
+    </a>
+
+    <a class="about-contact-btn about-contact-btn--gmail about-contact-btn--email"
+       href="#"
+       data-contact-b64="bGx5cnVtdUBnbWFpbC5jb20="
+       data-contact-platform="gmail"
+       role="listitem" aria-label="Gmail: llyrumu@gmail.com">
+      <span class="about-contact-icon">{{ $gmail.Content | safeHTML }}</span>
+    </a>
+
+    <a class="about-contact-btn about-contact-btn--qq about-contact-btn--email"
+       href="#"
+       data-contact-b64="eGtqZHFfMjAyNUBxcS5jb20="
+       data-contact-platform="qq"
+       role="listitem" aria-label="QQ Mail: xkjdq_2025@qq.com">
+      <span class="about-contact-icon">{{ $qq.Content | safeHTML }}</span>
+    </a>
+  </div>
+
+  <noscript>
+    <p class="about-contact-fallback">
+      GitHub: <a href="https://github.com/lyrumu" target="_blank" rel="noopener noreferrer">github.com/lyrumu</a>
+      &nbsp;·&nbsp;
+      Gmail: <a href="https://mail.google.com/mail/?view=cm&fs=1&to=llyrumu@gmail.com" target="_blank" rel="noopener noreferrer">写信</a>
+      &nbsp;·&nbsp;
+      QQ Mail: <code>xkjdq_2025@qq.com</code>
+      （<a href="https://mail.qq.com" target="_blank" rel="noopener noreferrer">去 QQ 邮箱</a>，登录后粘到收件人栏）
+    </p>
+  </noscript>
+</div>
+
+{{/*
+  剪贴板反馈 Toast（QQ Mail 用）：
+  顶部居中的 iOS 风毛玻璃 pill，3 秒后自动消失。
+  - data-default-text：通用提示（"邮箱已复制"）
+  - data-success-text：复制成功时的提示（"已复制 x@qq.com"）
+  - showToast(el, text) 函数由下面的脚本调用
+*/}}
+<div class="copy-toast" id="copy-toast" role="status" aria-live="polite">
+  <svg class="copy-toast-icon" viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg>
+  <span class="copy-toast-text">已复制</span>
+</div>
+
+{{/*
+  邮箱 base64 解码脚本：
+  页面加载后扫描 [data-contact-b64] 的 <a>，根据 data-contact-platform
+  跳到对应邮箱服务的"网页写信页"，新标签页打开。
+  - Gmail：https://mail.google.com/mail/?view=cm&fs=1&to=<email>（支持 URL 预填收件人）
+  - QQ Mail：QQ 已下线 cgi-bin/write?to= 接口（2024+），改为跳到主页
+    https://mail.qq.com + 点击瞬间把邮箱写进剪贴板 + 顶部 Toast 提示，
+    用户在收件人栏 Cmd/Ctrl+V 即可
+
+  atob 在所有现代浏览器都支持；失败时降级到 # 链接。
+*/}}
+<script>
+(function () {
+  var toast = document.getElementById('copy-toast');
+  var toastText = toast ? toast.querySelector('.copy-toast-text') : null;
+  var toastTimer = null;
+
+  function showToast(text) {
+    if (!toast || !toastText) return;
+    toastText.textContent = text;
+    toast.classList.add('is-visible');
+    if (toastTimer) clearTimeout(toastTimer);
+    toastTimer = setTimeout(function () {
+      toast.classList.remove('is-visible');
+    }, 2400);
+  }
+
+  var links = document.querySelectorAll('a[data-contact-b64]');
+  links.forEach(function (el) {
+    try {
+      var decoded = atob(el.getAttribute('data-contact-b64'));
+      var platform = el.getAttribute('data-contact-platform');
+      var href = '#';
+      if (platform === 'gmail') {
+        // Gmail 支持 URL 预填收件人，直接拼 compose URL
+        href = 'https://mail.google.com/mail/?view=cm&fs=1&to=' + encodeURIComponent(decoded);
+      } else if (platform === 'qq') {
+        // QQ Mail 已下线 cgi-bin/write?to= 接口，跳主页让用户登录后点"写信"
+        href = 'https://mail.qq.com';
+        // 点击瞬间把邮箱写进剪贴板 + 顶部 Toast 提示
+        el.addEventListener('click', function () {
+          if (navigator.clipboard && navigator.clipboard.writeText) {
+            navigator.clipboard.writeText(decoded).then(function () {
+              showToast('已复制 ' + decoded + '（去 QQ 邮箱粘到收件人栏）');
+            }, function () {
+              showToast('请手动复制：' + decoded);
+            });
+          } else {
+            /* 旧浏览器或非 https 环境无 clipboard API → 提示用户手动复制 */
+            showToast('请手动复制：' + decoded);
+          }
+        });
+      }
+      el.setAttribute('href', href);
+      el.setAttribute('target', '_blank');
+      el.setAttribute('rel', 'noopener noreferrer');
+      // title 属性给非 Gmail 邮箱做悬停提示（QQ 用户经常要把邮箱贴到收件人栏）
+      if (platform !== 'gmail') {
+        el.setAttribute('title', '点击复制邮箱并打开 QQ 邮箱');
+      }
+    } catch (e) {
+      /* atob 失败时保持 # 链接 */
+    }
+  });
+})();
+</script>

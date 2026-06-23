@@ -1,0 +1,8 @@
+{{/*
+  About 页面联系方式 — shortcode 壳
+  真正实现放在 layouts/partials/about-contact.html：
+  - partial 是纯 Go template，可以安全地嵌 resources.Get / safeHTML
+  - shortcode 模板里再嵌短代码会让 Go template 解析器报错
+  - 通过 shortcode 暴露给 markdown，可以用统一的短代码语法调用
+*/}}
+{{ partial "about-contact.html" . }}

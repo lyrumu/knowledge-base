@@ -1,6 +1,6 @@
 # 项目地图 — 个人网站 `f:\Notes\`
 
-> 最后更新：2026-06-21 · 暗主题调色板统一 + Claude 暖深重构 · Hugo v0.163.2 · Blowfish v2
+> 最后更新：2026-06-23 · About 联系方式改成 iOS 液态玻璃图标卡 · Hugo v0.163.2 · Blowfish v2
 
 ---
 
@@ -29,6 +29,8 @@
 | 换 /works/resources/ 的资源卡 | [`data/resources.yaml`](file:///f:/Notes/data/resources.yaml)（加一条填 `- name/title/desc/cover/file/format/size/tags/date/source`） |
 | 改 /works/projects/ 的 3D 倾斜角度 | [`assets/css/custom.css §35`](file:///f:/Notes/assets/css/custom.css) 的 `.project-card` 或 shortcode 里的 `data-tilt-*` |
 | 加一个 Lucide icon | [`layouts/partials/cover/icon.html`](file:///f:/Notes/layouts/partials/cover/icon.html) 加 `else if` 分支 |
+| 改 /about/ 联系方式图标 / 邮箱 | [`content/about/_index.md`](file:///f:/Notes/content/about/_index.md) + [`layouts/partials/about-contact.html`](file:///f:/Notes/layouts/partials/about-contact.html)（base64 邮箱解码 + Toast） |
+| 改 /about/ 图标玻璃效果 | [`assets/css/custom.css §38`](file:///f:/Notes/assets/css/custom.css#L3182-L3486)（`.about-contact-glass` / `.about-contact-btn` / `.copy-toast`） |
 | 改顶栏的菜单项 | [`hugo.toml`](file:///f:/Notes/hugo.toml) 的 `[[menu.main]]` 段 |
 | 加一篇新文章 | 见下方 §4 |
 | 写 CSS（字体 / 颜色 / 间距） | [`assets/css/custom.css`](file:///f:/Notes/assets/css/custom.css) |
@@ -48,8 +50,10 @@ f:\Notes\
 ├── DEPLOY.md                       # 部署与维护指南
 ├── PROJECT_MAP.md                  # ← 你正在看（本地保留）
 │
-├── assets/css/
-│   └── custom.css                  # ★ 所有自定义 CSS（27 大节，颜色 / 字体 / 卡片 / prose …）
+├── assets/
+│   ├── css/
+│   │   └── custom.css              # ★ 所有自定义 CSS（27 大节，颜色 / 字体 / 卡片 / prose …）
+│   └── icons/                      # Simple Icons 品牌色 SVG（github/gmail/qq 等联系方式图标）
 │
 ├── archetypes/
 │   └── default.md                  # `hugo new` 模板
@@ -71,7 +75,7 @@ f:\Notes\
 │   ├── life/                       # /life/ 生活（可扩展子模块网格）
 │   │   ├── _index.md               # 子模块入口（life-grid 短代码）
 │   │   └── music/_index.md         # /life/music/ 子页
-│   └── about/_index.md             # /about/ 关于
+│   └── about/_index.md             # /about/ 关于（avatar + 液态玻璃联系方式 + 技术栈 + GitHub 热力图）
 │
 ├── data/                           # ★ 数据驱动（改这里就能改 UI）
 │   ├── cover.yaml                  # 封面所有内容 + 调色
@@ -93,7 +97,8 @@ f:\Notes\
 │   │   │   ├── desktop-menu.html   # 加 GitHub 按钮
 │   │   │   └── mobile-menu.html    # 加 GitHub 按钮
 │   │   ├── extend-head.html        # 第三方库（Splitting.js + AOS.js + VanillaTilt.js）
-│   │   └── music-player.html       # 粘性音乐播放器（被 music-list 自动注入）
+│   │   ├── music-player.html       # 粘性音乐播放器（被 music-list 自动注入）
+│   │   └── about-contact.html      # /about/ 联系方式图标卡 partial（被 about-contact shortcode 调）
 │   └── shortcodes/
 │       ├── page-hero.html          # {{< page-hero >}} 短代码
 │       ├── modules-grid.html       # 大厅模块网格
@@ -104,6 +109,7 @@ f:\Notes\
 │       ├── projects-list.html      # /works/projects/ 项目列表（3D 倾斜）
 │       ├── resources-list.html     # /works/resources/ 资源列表（瀑布流）
 │       ├── file-tree.html          # 可折叠文件树
+│       ├── about-contact.html      # /about/ 联系方式图标卡（壳）
 │       └── section-rule.html       # ✦ 分隔符
 │
 ├── scripts/                        # ★ 运维脚本
@@ -122,6 +128,9 @@ f:\Notes\
 │   └── notes-assets/               # 可下载资源（aipython, minecraft, tools）
 │
 ├── themes/blowfish/                # 主题本体（一般不改）
+│                                # ⚠️ 唯一例外：layouts/_default/baseof.html
+│                                # 加了 is-cover-page 类（[lyrumu 改造] 注释标记）
+│                                # 升级主题时若被覆盖，按注释重新加这一段
 │
 ├── DONE.md                         # 开发日志（本地保留）
 └── .trae/rules/个人网站开发规则.md   # 项目宪法
@@ -179,6 +188,32 @@ f:\Notes\
 | 播放器逻辑（点击切歌 / 进度跳转 / 记忆位置 / 键盘） | — | [`static/js/music-player.js`](file:///f:/Notes/static/js/music-player.js) |
 | 列表样式 + 播放器样式 | — | `custom.css §33` 的 `.music-item` / `.music-player` |
 | 资源存放约定 | `static/life/music/<slug>.mp3` + `static/image/life/music/<slug>.jpg` | — |
+
+### /about/ 联系方式图标卡（iOS 液态玻璃）
+
+| 元素 | 数据源 | 模板 |
+|------|--------|------|
+| 头像 + 个人信息 + 联系方式的整体排版 | [`content/about/_index.md`](file:///f:/Notes/content/about/_index.md) | markdown（`.about-profile` 容器 + `{{< about-contact >}}` 短代码） |
+| 联系方式短代码壳 | — | [`layouts/shortcodes/about-contact.html`](file:///f:/Notes/layouts/shortcodes/about-contact.html)（仅调 partial） |
+| 联系方式 partial：3 个图标按钮 + base64 邮箱 + Toast + 解码 JS | 邮箱 base64 直接硬编码在 partial 里 | [`layouts/partials/about-contact.html`](file:///f:/Notes/layouts/partials/about-contact.html) |
+| 邮箱按钮图标（GitHub / Gmail / QQ） | — | [`assets/icons/github.svg`](file:///f:/Notes/assets/icons/github.svg) / [gmail.svg](file:///f:/Notes/assets/icons/gmail.svg) / [qq.svg](file:///f:/Notes/assets/icons/qq.svg)（Simple Icons 品牌色填充） |
+| 液态玻璃效果 + 应用图标按钮 + 顶部 Toast | — | [`assets/css/custom.css §38`](file:///f:/Notes/assets/css/custom.css#L3182-L3486) |
+
+**点击行为**：
+
+| 按钮 | 跳转目标 | 额外动作 |
+|------|---------|---------|
+| GitHub | `https://github.com/lyrumu` | 新标签页打开 |
+| Gmail | `https://mail.google.com/mail/?view=cm&fs=1&to=llyrumu@gmail.com`（URL 预填收件人） | 新标签页打开 |
+| QQ Mail | `https://mail.qq.com`（QQ 已下线 cgi-bin/write 接口） | 新标签页打开 + 邮箱写入剪贴板 + 顶部 Toast 提示 |
+
+**邮箱 base64 防爬**：HTML 中只有 `data-contact-b64="bGx5cnVtdUBnbWFpbC5jb20="`，JS 用 `atob` 解码后写入 `href`。无 JS 时降级到 `<noscript>` 块明文邮箱 + 跳转链接。
+
+**加新联系方式**（如 Twitter / Bilibili）：
+
+1. 从 `https://cdn.simpleicons.org/<name>` 下载 SVG → [`assets/icons/`](file:///f:/Notes/assets/icons/)
+2. [`layouts/partials/about-contact.html`](file:///f:/Notes/layouts/partials/about-contact.html) 复制一个 `<a>` 块，改类名 + `href` + 调 `{{< icon >}}`
+3. 邮箱类按钮还需要加 `data-contact-b64` + `data-contact-platform`，并在 JS 里加平台 URL 拼装分支
 
 ### 顶栏
 

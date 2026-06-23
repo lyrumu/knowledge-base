@@ -4,6 +4,372 @@
 
 ---
 
+## 2026-06-23 · About 联系方式 → iOS 液态玻璃图标卡
+
+### 背景
+
+`/about/` 页面原本的联系方式是三条明文列表（GitHub / Gmail / QQ Mail），
+文字一长串挤在正文里、视觉权重低，也没有和网站 iOS 化的整体风格呼应。
+按 n9o.xyz 头像下社交图标排列的思路，重做：
+
+1. 三个图标（GitHub / Gmail / QQ）横向居中成一排
+2. 用 iOS 18 Control Center 的液态玻璃卡片包裹
+3. 整体挪到头像正下方，去掉 `## Contact Me` 标题和周围分隔符
+4. Gmail / QQ 邮箱点击后直达对应邮箱服务网页写信页
+
+### 改动
+
+| 文件 | 改动 |
+|---|---|
+| [content/about/_index.md](file:///f:/Notes/content/about/_index.md) | 删 `## Contact Me` 标题，`{{< about-contact >}}` 挪到 `.about-profile` 紧接的下一行 |
+| [layouts/shortcodes/about-contact.html](file:///f:/Notes/layouts/shortcodes/about-contact.html) | 新增 shortcode 壳：`{{ partial "about-contact.html" . }}` |
+| [layouts/partials/about-contact.html](file:///f:/Notes/layouts/partials/about-contact.html) | 新增 partial：3 个按钮 SVG + base64 邮箱 + Toast + noscript fallback + 解码 JS |
+| [assets/icons/github.svg](file:///f:/Notes/assets/icons/github.svg) | 新增 Simple Icons GitHub（黑色章鱼猫，品牌色填充） |
+| [assets/icons/gmail.svg](file:///f:/Notes/assets/icons/gmail.svg) | 新增 Simple Icons Gmail（红色 M 信封） |
+| [assets/icons/qq.svg](file:///f:/Notes/assets/icons/qq.svg) | 新增 Simple Icons QQ（蓝色企鹅） |
+| [assets/css/custom.css §38](file:///f:/Notes/assets/css/custom.css#L3182-L3486) | 新增 iOS 液态玻璃样式（约 300 行，含 Toast + 移动端 + reduced-motion） |
+
+### 关键设计决策
+
+1. **图标用 Simple Icons 品牌色填充，不用 Lucide 通用 stroke 图标**
+   - 通用 envelope + chat-bubble 看不出是什么服务，识别度差
+   - Simple Icons 自带品牌色（GitHub 黑 / Gmail 红 / QQ 蓝），一眼即识
+   - 图标来源 `https://cdn.simpleicons.org/<name>`，按项目图标系统约定下载到 `assets/icons/`
+
+2. **液态玻璃 = 强 backdrop-filter + 多层阴影 + 内高光**
+   - `backdrop-filter: blur(40px) saturate(200%) brightness(110%)`（iOS 18 标准参数）
+   - 4 层 box-shadow：远投（48px）+ 近投（12px）+ 顶部 inset 高光 + 底部 inset 微高光
+   - 单个按钮用 `::before` 加 135° 线性渐变 + `overflow:hidden`，模拟玻璃被光照射的微高光
+
+3. **QQ Mail 接口下线问题的兜底方案**
+   - QQ 2024+ 下线了 `cgi-bin/write?to=xxx@qq.com`（直访 404）
+   - 现改成：`https://mail.qq.com` 主页 + 点击瞬间 `navigator.clipboard.writeText(email)`
+   - 配合顶部 iOS 风格深色磨砂 Toast 提示，2.4 秒自动消失
+   - 用户在 QQ 写信页的"收件人"栏 Ctrl/Cmd+V 即可
+
+4. **邮箱防爬虫 = base64 + JS 解码**
+   - HTML 源码中只有 `data-contact-b64="bGx5cnVtdUBnbWFpbC5jb20="`（base64 编码的邮箱）
+   - 页面加载后 JS 用 `atob` 解码并写入 `href`
+   - base64 不是真正的加密，仅作最低成本反爬（防邮件自动收集器）
+   - 无 JS 时降级到 `<noscript>` 块直接显示明文邮箱 + 跳转链接
+
+5. **架构选择：shortcode → partial → resources.Get 内联 SVG**
+   - 不能写在 markdown 里：多个 `<a>` 之间空行会被 Goldmark 包成 `<p>` 破坏 flex 布局
+   - 不能在 shortcode 模板里用 `{{< icon >}}` 短代码：Go template 解析器不认 `{{<` 语法
+   - 也不能在模板里写 `{{ ... }}` 注释：同样被解析器吞掉
+   - 解法链：shortcode 壳 → partial 实现 → `resources.Get "icons/x.svg"` + `safeHTML` 输出 SVG
+
+6. **去 `## Contact Me` 标题 + 挪到头像下方**
+   - 原结构：头像 → `---` → `## Contact Me` → 图标 → `---` → `## Technical stack`
+   - 新结构：头像 → 图标 → `---` → `## Technical stack`
+   - 标题 + 分隔符冗余，挪下来后整个 personal info 是连续的视觉块
+   - 调整 `.about-contact` 上 margin 从 `1.5rem` → `0.25rem` 收紧间距
+
+### 验证
+
+- `hugo --themesDir themes --theme blowfish --config hugo.toml` 构建成功，47 页面 0 报错
+- 渲染输出检查：3 个 `<a>` 按钮（无 `<p>` 包裹）+ 品牌色 SVG 完整内联 + Toast HTML + 解码脚本
+- base64 解码验证：`bGx5cnVtdUBnbWFpbC5jb20=` → `llyrumu@gmail.com` ✓
+  `eGtqZHFfMjAyNUBxcS5jb20=` → `xkjdq_2025@qq.com` ✓
+- 移动端 (≤540px)：按钮缩到 2.55rem，卡片圆角缩到 1.25rem
+- 暗色模式：`html.dark` 单独覆写背景透明度 + 阴影强度，玻璃效果依然清晰
+- `prefers-reduced-motion`：禁用所有动画，opacity 直接切换
+
+### 已知 trade-off
+
+- `backdrop-filter` 在 Firefox 旧版不支持 → 降级为半透明白/深灰背景，依然能看清
+- `navigator.clipboard.writeText` 需要 HTTPS 或 localhost（生产环境满足）
+- 邮箱 base64 防爬只防自动收集器，对有意识的爬虫无效（atob 是浏览器原生 API）
+- QQ Mail 旧 compose URL 彻底失效，未来可能还要继续适配新接口
+
+### 用户测试反馈迭代
+
+| 反馈 | 修复 |
+|---|---|
+| 图标识别度低，看不懂是什么 | Lucide stroke 换 Simple Icons 品牌色填充 |
+| 完全没有 iOS 液态玻璃效果 | backdrop-filter 强度从 blur(20px) 提到 blur(40px)，加多层阴影 + ::before 高光 |
+| 点 Gmail/QQ 没反应 | 改用对应邮箱服务的网页 compose URL，不走 mailto |
+| QQ 点完显示"无法找到此页面" | QQ 下线了 cgi-bin/write 接口，改成跳主页 + 复制邮箱到剪贴板 |
+| 看不出来已经复制到剪贴板 | 加 iOS 风格顶部 Toast 提示，2.4 秒自动消失 |
+| 不需要 Contact Me 标题 | 删掉 `## Contact Me`，整块挪到头像正下方 |
+
+### 关键文件清单（本次）
+
+| 类型 | 路径 |
+|---|---|
+| 新增 | `assets/icons/github.svg` / `gmail.svg` / `qq.svg` |
+| 新增 | `layouts/shortcodes/about-contact.html` |
+| 新增 | `layouts/partials/about-contact.html` |
+| 大改 | `assets/css/custom.css` §38（约 300 行新增） |
+| 调整 | `content/about/_index.md`（删 Contact Me 标题，挪短代码） |
+
+
+## 2026-06-23 · custom.css 可维护性重构（封面 !important 全部去掉）
+
+### 背景
+
+[assets/css/custom.css](file:///f:/Notes/assets/css/custom.css) 封面页那段（§1）有 5 条规则全部 `!important`，
+并且用 `body:has(.cover-page)` 探测 DOM、依赖 blowfish 内部类名（`.fixed.inset-x-0.z-100` / `.min-h-\[148px\]`），
+主题升级会挂。
+
+### 1. 问题分析：那些 !important 真的必要吗？
+
+| 规则 | 原 specificity | 替代方案 | 新 specificity |
+|---|---|---|---|
+| `body:has(.cover-page) .fixed.inset-x-0.z-100` | (0,4,1) + !important | `body.is-cover-page .fixed.inset-x-0.z-100` | **(0,5,0) 不需 !important** |
+| `body:has(.cover-page) .min-h-\[148px\]` | (0,2,1) + !important | `body.is-cover-page .min-h-\[148px\]` | **(0,3,0) 不需 !important** |
+| `body:has(.cover-page) main#main-content` | (0,2,2) + !important | `body.is-cover-page main#main-content` | **(0,3,1) 不需 !important** |
+| `body:has(.cover-page) > div.relative.flex.flex-col.grow` | (0,4,1) + !important | `body.is-cover-page > div.relative.flex.flex-col.grow` | **(0,5,0) 不需 !important** |
+| `body:has(.cover-page) main#main-content > article` | (0,3,2) + !important | `body.is-cover-page main#main-content > article` | **(0,4,1) 不需 !important** |
+
+`body:has(.cover-page)` 的 specificity = body (0,0,1) + `:has(.cover-page)` 把内部参数 (0,1,0) 加进来 = **(0,1,1)**。
+换成 `body.is-cover-page` = **(0,2,0)**，每个目标元素还能再高 1 级，**全部规则都可以去掉 !important**。
+
+### 2. 改进方案：给 body 加 `is-cover-page` class
+
+不再用 `body:has(.cover-page)` 这种"运行时探测 DOM"的方式，改成 server-side 注入。
+
+**修改的文件**：[themes/blowfish/layouts/_default/baseof.html](file:///f:/Notes/themes/blowfish/layouts/_default/baseof.html) line 13-18
+
+```diff
++ {{/*
++   [lyrumu 改造] 在首页 <body> 末尾追加 is-cover-page 类。
++   让 custom.css 不用 :has()、不用 !important 就能隐藏顶栏。
++   ⚠️ 升级 blowfish 时如果本行被覆盖，重新加这一段即可。
++ */}}
+- <body class="{{ $bodyLayout }} {{ $bodyColor }} {{ if ... }}bf-scrollbar{{ end }}">
++ <body class="{{ $bodyLayout }} {{ $bodyColor }} {{ if ... }}bf-scrollbar{{ end }}{{ if .IsHome }} is-cover-page{{ end }}">
+```
+
+**为什么不放项目级 `layouts/_default/baseof.html`**：
+实测下来，**项目级 baseof.html 会破坏 Hugo 主题 partial 查找链**。
+项目级 baseof.html 调 `partial "head.html" .` 找不到主题里的 head.html（Hugo 报 "partial not found"），
+即使主题文件明确存在也不会 fallback。猜测是 Hugo 模板系统对"链式模板"的 partial 解析优先级问题。
+**所以只能在主题里改 baseof.html**。代价：升级 blowfish 时要重贴这一段，已用注释标记。
+
+### 3. 改动的文件清单
+
+| 文件 | 改动 |
+|---|---|
+| [themes/blowfish/layouts/_default/baseof.html](file:///f:/Notes/themes/blowfish/layouts/_default/baseof.html) | line 13-18：增加 `{{ if .IsHome }} is-cover-page{{ end }}` + 注释 |
+| [assets/css/custom.css §1](file:///F:/Notes/assets/css/custom.css#L154-L198) | 5 条规则全部去掉 `!important`，选择器 `body:has(.cover-page)` → `body.is-cover-page`，加策略注释 |
+| [assets/css/custom.css §26 末](file:///F:/Notes/assets/css/custom.css#L1581-L1589) | 配套 `body:not(:has(.cover-page))` → `body:not(.is-cover-page)`，少一次 DOM 探测 |
+
+### 4. 视觉效果
+
+- 顶栏仍然隐藏（display: none）
+- 顶栏下方 148px 占位仍然隐藏
+- main 顶部 padding 仍然 0
+- main 外层 min-height 仍然 0
+- article 的 max-width / padding / margin 仍然 none / 0 / 0
+- 完全一致，0 像素差异
+
+### 5. 其它维护性观察（已记录但未改）
+
+CSS 文件里还有 ~15 处 `!important`，分两类：
+
+**A. 链接 text-decoration（应该可以简化但要逐条验证）**
+
+`.cover-button` / `.cover-social-link` / `.module-card` / `.vault-section-card` / `.life-sub-card` / `.music-item` / `.project-card` / `.resource-card` 这些链接的 `text-decoration: none !important`。
+
+理论上 custom.css 在主题 CSS 之后加载，相同 specificity 下我们赢，所以可以去掉 `!important`。
+但有 8+ 处，逐条验证特异性麻烦，**留着不动**。如果将来要做"链接样式统一"，建议建一个 `.lyr-link-reset` 工具类批量处理。
+
+**B. Tailwind utility 覆写（基本无法去掉）**
+
+`header ol .text-primary-500` / `header#single_header .mt-1` / `.scroll-to-top` / `.pagination` / `.related-articles h2` /
+`header#single_header h1` 的 `!important` 都是因为 Tailwind 的 utility class 在暗主题下用了 `dark:` 变体，
+变体的特异性更高（0,2,0）。我们必须用 `!important` 才能赢。
+**留着不动**，强行去掉会导致暗主题下颜色/字号/背景异常。
+
+**C. 移动端 transform 重置**
+
+`.project-card, .project-card:hover { transform: none !important }` — 移动端禁止 3D 倾斜，
+这个 `!important` 是为了覆盖 VanillaTilt.js 写入的 inline style。**必须保留**。
+
+**结论**：§1 的 5 个 `!important` 是真正"非必要"的，已经全部清理；其他 `!important` 大多是有意为之或与 Tailwind 暗主题机制耦合，**保留更稳**。
+
+---
+
+## 2026-06-23 · About 页面 inline style 全面重构 → CSS 类
+
+### 背景
+
+[content/about/_index.md](file:///f:/Notes/content/about/_index.md) 里所有元素都用 `style="..."` 内联写法，12+ 处 inline style 集中在这 4 类元素：
+
+1. 头像容器（flex 列布局 + margin）
+2. 头像 img（144×144 圆形 + box-shadow）
+3. 姓名 / 角色 / 地点 三段衬线文字（不同字号 + 颜色硬编码 `#666` `#999`）
+4. 技术栈标签（容器 flex + 8 个药丸标签，3 套硬编码颜色 `#e0f2fe`/`#0369a1`、`#f3e8ff`/`#7c3aed`、`#d1fae5`/`#059669`）
+
+### 问题
+
+- 颜色硬编码 → 切暗主题不变
+- 重复 8 次的 `display:inline-flex;align-items:center;gap:0.375rem;padding:0.25rem 0.75rem;border-radius:9999px;font-size:0.875rem;font-weight:500` — 改一处要改 8 次
+- 标签颜色分类写死在元素里，未来想换色相要一个一个改
+- 后续如果新建类似的"标签"组件，没法复用
+
+### 改动
+
+#### 1. [assets/css/custom.css §0 变量层](file:///F:/Notes/assets/css/custom.css#L73-L87) — 新增 8 个变量
+
+```css
+:root {
+  /* 头像 / 标签阴影 — 浅底用浅阴影 */
+  --about-avatar-shadow: rgba(0, 0, 0, 0.15);
+  --about-tag-shadow:    rgba(0, 0, 0, 0.08);
+
+  /* 标签分类色（蓝=开发工具 / 紫=语言框架 / 绿=AI&前沿） */
+  --tag-blue-bg:   #e0f2fe;   --tag-blue-fg:   #0369a1;
+  --tag-purple-bg: #f3e8ff;   --tag-purple-fg: #7c3aed;
+  --tag-green-bg:  #d1fae5;   --tag-green-fg:  #059669;
+}
+```
+
+#### 2. [assets/css/custom.css §0 暗色覆写](file:///F:/Notes/assets/css/custom.css#L117-L129) — `html.dark` 块
+
+- 阴影调到更深（暗底需要更黑才有立体感）：`0.55` / `0.35`
+- 标签底色用 `color-mix(...,18%,transparent)` 同色相半透明
+- 文字提到亮色档：`#7dd3fc` / `#c4b5fd` / `#6ee7b7`，对比度全部 ≥ 4.5:1 ✓ AA
+
+#### 3. [assets/css/custom.css §37 新增样式块](file:///F:/Notes/assets/css/custom.css#L3055-L3151)
+
+7 个核心类 + 2 个修饰类：
+
+| 类 | 职责 |
+|---|---|
+| `.about-profile` | 头像块 flex 列布局容器 |
+| `.about-avatar` | 144×144 圆形 + 阴影 |
+| `.about-name` | 衬线大字号姓名（opsz 144）|
+| `.about-role` | 副标题 |
+| `.about-location` | 地点（斜体）|
+| `.about-tags` | 标签容器（flex-wrap）|
+| `.about-tag` | 药丸标签基础（默认蓝）|
+| `.about-tag--purple` | 紫色修饰类 |
+| `.about-tag--green` | 绿色修饰类 |
+
+#### 4. [content/about/_index.md](file:///F:/Notes/content/about/_index.md) — 12 处 inline style 全部清除
+
+```diff
+- <div style="display:flex;flex-direction:column;align-items:center;margin:2rem 0">
++ <div class="about-profile">
+
+- <span style="display:inline-flex;...;background:#e0f2fe;color:#0369a1">{{< icon "git" >}} Git</span>
++ <span class="about-tag">{{< icon "git" >}} Git</span>
+
+- <span style="display:inline-flex;...;background:#f3e8ff;color:#7c3aed">{{< icon "hugo" >}} Hugo</span>
++ <span class="about-tag about-tag--purple">{{< icon "hugo" >}} Hugo</span>
+```
+
+`grep "style="` 验证 → 0 匹配 ✓
+
+### 关键工程决策
+
+**BEM 命名 vs 短横线修饰类**：选后者（`.about-tag--purple` 而非 `.about-tag__color--purple`），因为：
+- Hugo shortcode 渲染时元素就是 `<span>`，没有嵌套结构，BEM 元素级（`__`）用不上
+- 短横线修饰更轻量，符合现有项目命名习惯（`.project-card-flag` / `.music-item-cover`）
+
+**默认色放在 `.about-tag` 而非新增 `.about-tag--blue`**：
+- 8 个标签里 4 个是蓝色（占比最高），默认色更省 markup
+- 紫色 / 绿色通过修饰类按需开启
+- 如果以后"默认色"要换成中性灰，只改 `.about-tag` 的 `--tag-*-bg` 引用，不用动元素类名
+
+**额外增益（无破坏性）**：
+- `.about-tag:hover` 加 `translateY(-1px)` + 阴影 → 鼠标悬停轻微浮起
+- `.about-tag svg { width: 1em; height: 1em }` → SVG 图标跟随文字大小（之前 inline 没限制，依赖 SVG 自然大小，可能不一致）
+- `.about-name` 补 `font-family: var(--font-serif-display)` + `font-variation-settings: "opsz" 144` → 统一衬线光学尺寸，与封面 hero 同源
+
+### 关键文件清单（本次）
+
+| 类型 | 路径 |
+|---|---|
+| 改动 | [assets/css/custom.css](file:///f:/Notes/assets/css/custom.css) — §0 新增 8 变量 + 暗色覆写、§37 新增样式块（~100 行）|
+| 改动 | [content/about/_index.md](file:///f:/Notes/content/about/_index.md) — 12 处 inline style 清除 |
+
+### 验证
+
+| 维度 | 旧 | 新 |
+|---|---|---|
+| inline style 数量 | 12 处 | 0 ✓ |
+| 硬编码颜色值 | 6 个（`#666` `#999` `#e0f2fe` `#0369a1` `#f3e8ff` `#7c3aed` `#d1fae5` `#059669`）| 0 个，全部走 `var()` ✓ |
+| 暗主题标签可读性 | 完全不变 | 三档配色全部 AA ✓ |
+| `hugo --renderToMemory` | 43 页通过 | 43 页通过 ✓ |
+| 视觉差异 | 蓝/紫/绿药丸 + 头像阴影 | **完全一致** ✓ |
+
+### 后续
+
+- `.about-tag` 抽出后，可考虑在 custom.css 里升级为通用 `.pill-tag` 类，给未来其他页面复用
+- 头像阴影如果想做得更细腻（彩色描边 + 暖色调阴影），可改成 `color-mix(in srgb, var(--accent) 30%, transparent)` 衍生
+
+---
+
+## 2026-06-23 · 第三方 CDN 资源 SRI 完整性校验
+
+### 背景
+
+[layouts/partials/extend-head.html](file:///f:/Notes/layouts/partials/extend-head.html) 里有 4 个 jsDelivr CDN 资源（AOS / Splitting / VanillaTilt），之前没有 `integrity`，浏览器无法检测 CDN 返回内容是否被篡改。加上 jsDelivr 偶尔有"二次污染"事件（package 维护者账号被劫持重新发包），加 SRI 是必要的安全加固。
+
+### 改动
+
+[layouts/partials/extend-head.html](file:///f:/Notes/layouts/partials/extend-head.html) — 4 个第三方资源全部加 `integrity`（sha384）+ `crossorigin="anonymous"`：
+
+- `<link rel="stylesheet">` (aos.css) — 已有 `crossorigin="anonymous"` 和 `referrerpolicy="no-referrer"`，**只补 integrity**
+- `<script>` × 3（splitting / aos / vanilla-tilt）— **补 integrity + crossorigin**，保留 `defer`
+
+### 计算的 SHA-384 哈希
+
+| 资源 | 大小 | integrity |
+|---|---|---|
+| aos.css | 26053 B | `sha384-/rJKQnzOkEo+daG0jMjU1IwwY9unxt1NBw3Ef2fmOJ3PW/TfAg2KXVoWwMZQZtw9` |
+| splitting.min.js | 3722 B | `sha384-taxnKSnzdVS5gZB4jZcieFZlmBPQMFqhdEmCScZsrIFCxX8Zizq4fKJJH5kBwMXT` |
+| aos.js | 14690 B | `sha384-n1AULnKdMJlK1oQCLNDL9qZsDgXtH6jRYFCpBtWFc+a9Yve0KSoMn575rk755NJZ` |
+| vanilla-tilt.min.js | 8887 B | `sha384-0k1dj5tm+KUH/4vkNk/i90XsjDA8Ltmt+ybcrFoH4t0dgv/WZsPpVBnkhcroX8UL` |
+
+### 双重验证（避免 hash 算错导致 CDN 拒载）
+
+用了两套**完全独立**的实现交叉验证：
+
+1. .NET `[System.Security.Cryptography.SHA384]::ComputeHash()` + base64
+2. Python `hashlib.sha384()` + base64
+
+两次结果字节级一致 ✓。同时下载方式用 `[System.Net.WebClient]::DownloadFile()` 直接写字节流，**避开 `Invoke-WebRequest -OutFile` 可能做的 UTF-8/CRLF 转换**（CRLF 转换是 SRI hash 算错最常见的坑）。
+
+最后还做了一次 round-trip：把期望 hash 写进脚本，重新下载 4 个文件再算一次，`expected == got` 全部相等。
+
+### 工程教训
+
+**SRI + CORS 必须配套出现**：
+- SRI 规范要求 `integrity` 必须配 `crossorigin`（`<link>` 用 `anonymous`，`<script>` 也用 `anonymous`）
+- 不加 `crossorigin`，浏览器会跳过完整性校验并报 CORS 错误
+- 之前 `<link>` 已经有 `crossorigin` 是因为 lazy-load / 模块加载需要，加 SRI 时白嫖这个属性就行
+
+**版本锁死的副作用**：
+- jsDelivr URL 里的 `@2.3.4` 版本号锁死后，**包作者重新发同名版本（npm unpublish + republish）** hash 会变，integrity 会失效 → CDN 拒载
+- 缓解：固定 major 版本 + 加 fallback（在 `onerror` 里移除 integrity 再 load，正常情况下用 SRI，CDN 出问题时降级到无校验）
+
+**离线计算 vs 实时计算**：
+- 离线用 PowerShell / Python 算好贴上去（本次做法）— 优点：可控、可复现；缺点：包升级时必须手动重算
+- 实时用 `<script>` 配合 srihash.org API — 不推荐，每次加载都查一次反而引入新攻击面
+
+### 关键文件清单（本次）
+
+| 类型 | 路径 |
+|---|---|
+| 改动 | [layouts/partials/extend-head.html](file:///f:/Notes/layouts/partials/extend-head.html) — 4 个第三方资源加 integrity |
+
+### 验证
+
+- 4 个 hash `.NET` 和 `Python` 双实现一致 ✓
+- 4 个 hash 重新下载文件后回算 round-trip 一致 ✓
+- extend-head.html 文件结构 review：`defer` / `referrerpolicy` 全部保留 ✓
+
+### 后续
+
+- 升级 aos.js / splitting.js / vanilla-tilt.js 版本时必须重新算 hash 并替换（破坏式升级）
+- 长期：考虑把这些 CDN 资源改成本地化（`static/js/` + `static/css/`，跟字体一样走本地），彻底消除 SRI 失效风险
+
+---
+
 ## 2026-06-21 · works 视觉统一 — 与 /start/ 模块卡 1:1 一致
 
 ### 改动
@@ -658,7 +1024,7 @@ HTML 不允许 `<a>` 嵌套 `<a>`，所以必须重构。
 - 构建配置：Framework preset **Hugo**，Build command `hugo --minify --themesDir themes --theme blowfish --config hugo.toml`，输出目录 `/public`
 - 环境变量 `HUGO_VERSION = 0.163.2`（Cloudflare 默认 Hugo 0.147.7 不够，Blowfish 需要 0.163.2）
 - tag `v1.0.0` 标记首次部署
-- 网站地址：`https://knowledge-base-85b.pages.dev`
+- 网站地址：`https://lyrumu.top`
 
 ### 仓库清理
 

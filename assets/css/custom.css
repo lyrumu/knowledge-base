@@ -69,6 +69,21 @@
   --line:    #C9C7BF;
   --accent:  #D97757;
   --selection-bg: rgba(217, 119, 87, 0.18);
+
+  /* ---- About 页面专用变量 ----
+     头像阴影：浅底用浅阴影；暗底需要更深阴影才看得见。
+     技术栈标签色：按"开发工具/语言/AI"三类分色。
+     浅色用低饱和浅底，文字用深色；暗色用半透明深底，文字用亮色，保持可读。 */
+  --about-avatar-shadow: rgba(0, 0, 0, 0.15);
+  --about-tag-shadow:    rgba(0, 0, 0, 0.08);
+
+  /* 标签分类（蓝 = 开发工具 / 紫 = 语言与框架 / 绿 = AI & 前沿） */
+  --tag-blue-bg:   #e0f2fe;
+  --tag-blue-fg:   #0369a1;
+  --tag-purple-bg: #f3e8ff;
+  --tag-purple-fg: #7c3aed;
+  --tag-green-bg:  #d1fae5;
+  --tag-green-fg:  #059669;
 }
 
 /* dark mode 反相（Claude 风：近黑 + 米黄文字） */
@@ -98,6 +113,20 @@ html.dark {
      --------------------------------------------------------------------------- */
   --color-neutral-800: 20, 20, 19;
   --color-neutral-900: 15, 14, 13;
+
+  /* About 页面专用变量 — 暗色覆写
+     头像阴影：暗底上需要更黑才能看出"立体感"。
+     标签分类色：底色降到 ~18% 不透明度的同色相深色，
+     文字提亮到色相更浅一档的亮色（天蓝/淡紫/薄荷绿），保证对比度。 */
+  --about-avatar-shadow: rgba(0, 0, 0, 0.55);
+  --about-tag-shadow:    rgba(0, 0, 0, 0.35);
+
+  --tag-blue-bg:   color-mix(in srgb, #0ea5e9 18%, transparent);
+  --tag-blue-fg:   #7dd3fc;
+  --tag-purple-bg: color-mix(in srgb, #8b5cf6 18%, transparent);
+  --tag-purple-fg: #c4b5fd;
+  --tag-green-bg:  color-mix(in srgb, #10b981 18%, transparent);
+  --tag-green-fg:  #6ee7b7;
 }
 
 html {
@@ -124,23 +153,49 @@ code, pre, kbd, samp {
 
 /* =============================================================================
    1. 封面页：隐藏顶栏 + 全屏 + 顶栏间距清零
+
+   策略（v3）：
+   之前用 `body:has(.cover-page)` 探测 DOM 决定"是否是封面页"。
+   两个明显问题：
+     - 依赖 .cover-page 元素必须在 DOM 里，主题改个类名/换布局就会挂
+     - specificity 只到 (0,4,1)，5 条规则全部 !important 才能赢主题的 utility
+
+   改为 `body.is-cover-page`：
+     - class 由 `themes/blowfish/layouts/_default/baseof.html` 在首页 server-side 注入
+     - specificity 起步 (0,5,0)，5 条规则全部可以去掉 !important
+     - 主题升级改了 header/main 的类名，custom.css 不用动（只影响主题 baseof.html）
+
+   同步规则：
+     - 想改"什么是首页" → 改主题 baseof.html 的 .IsHome 条件
+     - 想改"封面态"长什么样 → 改本节的 body.is-cover-page 块
+     - 升级 blowfish 时如果 baseof.html 被还原，按 [lyrumu 改造] 注释重新加 is-cover-page 段
    ============================================================================= */
-body:has(.cover-page) .fixed.inset-x-0.z-100 {
-  display: none !important;
+
+/* 1.1 隐藏 blowfish 顶栏（fixed inset-x-0 z-100 是 header 的 Tailwind 类） */
+body.is-cover-page .fixed.inset-x-0.z-100 {
+  display: none;
 }
-body:has(.cover-page) .min-h-\[148px\] {
-  display: none !important;
+
+/* 1.2 隐藏顶栏下方的占位 div（blowfish 给 header 留了 148px 高度） */
+body.is-cover-page .min-h-\[148px\] {
+  display: none;
 }
-body:has(.cover-page) main#main-content {
-  padding-top: 0 !important;
+
+/* 1.3 取消 main 顶部 padding（顶栏被隐藏后这段空隙是多余的） */
+body.is-cover-page main#main-content {
+  padding-top: 0;
 }
-body:has(.cover-page) > div.relative.flex.flex-col.grow {
-  min-height: 0 !important;
+
+/* 1.4 取消 main 外层容器的 min-height（让封面可以全屏撑开） */
+body.is-cover-page > div.relative.flex.flex-col.grow {
+  min-height: 0;
 }
-body:has(.cover-page) main#main-content > article {
-  max-width: none !important;
-  padding: 0 !important;
-  margin: 0 !important;
+
+/* 1.5 取消 article 自身的宽度/边距限制（让 .cover-page 撑满 100vw） */
+body.is-cover-page main#main-content > article {
+  max-width: none;
+  padding: 0;
+  margin: 0;
 }
 
 /* =============================================================================
@@ -1524,11 +1579,14 @@ header#single_header .text-base {
   border-left-color: var(--accent);
 }
 
-/* 顶栏 fixed layout 与正文间距：避免被遮 */
-body:not(:has(.cover-page)) main#main-content {
+/* 顶栏 fixed layout 与正文间距：避免被遮
+   用 body:not(.is-cover-page) 替代 body:not(:has(.cover-page))：
+   - 少一次 DOM 探测，浏览器渲染更快
+   - 与 §1 保持同一种"封面态"判定方式 */
+body:not(.is-cover-page) main#main-content {
   padding-top: 0;
 }
-body:not(:has(.cover-page)) article {
+body:not(.is-cover-page) article {
   padding-top: 1.5rem;
 }
 
@@ -3022,4 +3080,410 @@ html.dark .resource-card-cover {
   margin-bottom: 0.4rem;
   font-size: 1.05rem;
   letter-spacing: 0.02em;
+}
+
+/* =============================================================================
+   37. About 页面（重构自 inline style → class）
+   ----------------------------------------------------------------------------
+   原始 _index.md 里全是 style="..." 内联写法：
+     - 头像容器 flex 列布局
+     - 头像 144×144 圆形 + 阴影
+     - 姓名 / 角色 / 地点三段衬线文字
+     - 技术栈标签容器 + 8 个药丸标签（三色分类）
+   全部抽到本节，色值走 §0 定义的 --tag-*-bg / --tag-*-fg，
+   暗色模式由 html.dark 的覆写自动接管。
+   ============================================================================= */
+
+/* ----- 头像 + 个人信息块 ----- */
+.about-profile {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin: 2rem 0;
+}
+
+.about-avatar {
+  width: 144px;
+  height: 144px;
+  border-radius: 50%;
+  box-shadow: 0 4px 12px var(--about-avatar-shadow);
+  margin-bottom: 1rem;
+  object-fit: cover;
+  display: block;
+}
+
+.about-name {
+  font-family: var(--font-serif-display);
+  font-size: 2rem;
+  font-weight: 700;
+  font-variation-settings: "opsz" 144;
+  letter-spacing: -0.02em;
+  margin: 0;
+  color: var(--fg-base);
+}
+
+.about-role {
+  margin: 0.25rem 0 0;
+  color: var(--fg-mute);
+  font-family: var(--font-serif-body);
+}
+
+.about-location {
+  margin: 0;
+  color: var(--fg-soft);
+  font-size: 0.875rem;
+  font-family: var(--font-serif-body);
+  font-style: italic;
+}
+
+/* ----- 技术栈标签 ----- */
+.about-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  margin: 1rem 0;
+}
+
+/* 药丸标签基础样式：圆角 / 居中 / 字号 / 默认配色（兜底） */
+.about-tag {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.375rem;
+  padding: 0.25rem 0.75rem;
+  border-radius: 9999px;
+  font-size: 0.875rem;
+  font-weight: 500;
+  font-family: var(--font-serif-body);
+  line-height: 1.2;
+  background: var(--tag-blue-bg);
+  color: var(--tag-blue-fg);
+  border: 1px solid transparent;
+  transition: transform 0.2s cubic-bezier(0.22, 0.61, 0.36, 1),
+              box-shadow 0.2s;
+}
+/* 让内嵌的 SVG 图标大小跟随文字，避免撑大药丸 */
+.about-tag svg {
+  width: 1em;
+  height: 1em;
+  display: block;
+  flex-shrink: 0;
+}
+
+/* 悬停：轻微上浮 + 阴影，呼吸感 */
+.about-tag:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 2px 6px var(--about-tag-shadow);
+}
+
+/* 分类色：基础类 .about-tag 已默认蓝色，下面三个修饰类按需切换 */
+.about-tag--purple { background: var(--tag-purple-bg); color: var(--tag-purple-fg); }
+.about-tag--green  { background: var(--tag-green-bg);  color: var(--tag-green-fg);  }
+
+/* =============================================================================
+   38. About 页面 - iOS 液态玻璃联系方式 (iOS 18 liquid glass · Simple Icons)
+
+   设计要点（参考 iOS 18 Control Center / n9o.xyz 头像下排版）：
+   - 整体是一个毛玻璃卡片（backdrop-filter blur + saturate），不是单独的图标
+   - 卡片大圆角（24px ≈ iOS 控件） + 顶部 1px 高光描边（立体感）
+   - 单个图标按钮 = iOS 应用图标：圆角方（squircle） + 内部 icon 居中
+   - 图标本身用 Lucide 风格的细线条（stroke-width: 1.75），与下方 Simple Icons
+     风格的实心技术栈标签形成"硬标签 vs 软图标"的层次区分
+   - 品牌色只施加在 svg 本体（currentColor），按钮本体保持中性玻璃色
+   - 邮箱走 base64 + JS 解码，HTML 源码中无明文邮箱（防爬虫）
+   ============================================================================= */
+
+.about-contact {
+  margin: 0.25rem 0 2.5rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.85rem;
+  /* 入场：从下方 12px 浮入并淡入 */
+  opacity: 0;
+  transform: translateY(8px);
+  animation: about-contact-rise 0.9s cubic-bezier(0.22, 0.61, 0.36, 1) 0.15s forwards;
+}
+@keyframes about-contact-rise {
+  to { opacity: 1; transform: translateY(0); }
+}
+
+/* 小标题 "Find me on" */
+.about-contact-label {
+  font-family: var(--font-serif-display);
+  font-size: 0.7rem;
+  font-weight: 500;
+  letter-spacing: 0.32em;
+  text-transform: uppercase;
+  color: var(--fg-soft);
+  font-style: italic;
+  margin: 0;
+  font-feature-settings: "smcp" on;
+}
+
+/* 液态玻璃卡片容器（iOS 18 Control Center 风格：blur + saturate + brightness） */
+.about-contact-glass {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.6rem;
+  padding: 0.55rem 0.8rem;
+  border-radius: 1.5rem;
+  background: rgba(255, 255, 255, 0.42);
+  backdrop-filter: blur(40px) saturate(200%) brightness(110%);
+  -webkit-backdrop-filter: blur(40px) saturate(200%) brightness(110%);
+  border: 1px solid rgba(255, 255, 255, 0.55);
+  box-shadow:
+    0 16px 48px rgba(0, 0, 0, 0.10),
+    0 4px 12px rgba(0, 0, 0, 0.06),
+    inset 0 1px 0 rgba(255, 255, 255, 0.7),
+    inset 0 -1px 0 rgba(255, 255, 255, 0.18);
+  transition: box-shadow 0.5s cubic-bezier(0.22, 0.61, 0.36, 1),
+              border-color 0.4s;
+}
+html.dark .about-contact-glass {
+  background: rgba(40, 40, 39, 0.45);
+  border-color: rgba(255, 255, 255, 0.14);
+  box-shadow:
+    0 16px 48px rgba(0, 0, 0, 0.55),
+    0 4px 12px rgba(0, 0, 0, 0.35),
+    inset 0 1px 0 rgba(255, 255, 255, 0.12),
+    inset 0 -1px 0 rgba(255, 255, 255, 0.04);
+}
+
+/* 单个图标按钮 = iOS 应用图标（squircle）+ 内部 ::before 玻璃高光 */
+.about-contact-btn {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 2.9rem;
+  height: 2.9rem;
+  border-radius: 0.9rem;
+  text-decoration: none !important;
+  color: var(--fg-base);
+  background: rgba(255, 255, 255, 0.55);
+  border: 1px solid rgba(255, 255, 255, 0.6);
+  overflow: hidden;
+  isolation: isolate;
+  box-shadow:
+    0 6px 18px rgba(0, 0, 0, 0.08),
+    0 1px 3px rgba(0, 0, 0, 0.05),
+    inset 0 1px 0 rgba(255, 255, 255, 0.8);
+  transition:
+    transform 0.35s cubic-bezier(0.22, 0.61, 0.36, 1),
+    box-shadow 0.35s,
+    background 0.35s,
+    border-color 0.35s;
+}
+html.dark .about-contact-btn {
+  background: rgba(255, 255, 255, 0.08);
+  border-color: rgba(255, 255, 255, 0.14);
+  box-shadow:
+    0 6px 18px rgba(0, 0, 0, 0.4),
+    0 1px 3px rgba(0, 0, 0, 0.3),
+    inset 0 1px 0 rgba(255, 255, 255, 0.15);
+}
+
+/* 玻璃高光层：从左上到右下的微弱渐变，模拟被光照射的反光 */
+.about-contact-btn::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  background: linear-gradient(
+    135deg,
+    rgba(255, 255, 255, 0.35) 0%,
+    rgba(255, 255, 255, 0.0) 45%,
+    rgba(255, 255, 255, 0.0) 55%,
+    rgba(255, 255, 255, 0.06) 100%
+  );
+  pointer-events: none;
+  z-index: 0;
+  transition: opacity 0.35s;
+}
+html.dark .about-contact-btn::before {
+  background: linear-gradient(
+    135deg,
+    rgba(255, 255, 255, 0.12) 0%,
+    rgba(255, 255, 255, 0.0) 45%,
+    rgba(255, 255, 255, 0.0) 55%,
+    rgba(255, 255, 255, 0.02) 100%
+  );
+}
+
+/* SVG 图标本体：Simple Icons 自带品牌色填充，不再需要 color override */
+.about-contact-btn svg {
+  width: 1.35rem;
+  height: 1.35rem;
+  display: block;
+  flex-shrink: 0;
+  position: relative;
+  z-index: 1;
+  transition: transform 0.35s cubic-bezier(0.22, 0.61, 0.36, 1);
+}
+
+/* hover：上浮 + 微缩放 + 高亮背景 + accent 描边（iOS 按钮触感） */
+.about-contact-btn:hover {
+  transform: translateY(-2px) scale(1.06);
+  background: rgba(255, 255, 255, 0.7);
+  border-color: color-mix(in srgb, var(--accent) 50%, rgba(255, 255, 255, 0.6));
+  box-shadow:
+    0 12px 28px color-mix(in srgb, var(--accent) 22%, transparent),
+    0 2px 6px rgba(0, 0, 0, 0.08),
+    inset 0 1px 0 rgba(255, 255, 255, 0.9);
+}
+html.dark .about-contact-btn:hover {
+  background: rgba(255, 255, 255, 0.14);
+  border-color: color-mix(in srgb, var(--accent) 55%, rgba(255, 255, 255, 0.14));
+}
+
+/* active：按下的瞬间（轻微缩小反馈） */
+.about-contact-btn:active {
+  transform: translateY(0) scale(0.94);
+  transition-duration: 0.12s;
+}
+
+/* focus-visible：键盘聚焦的视觉提示 */
+.about-contact-btn:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 3px;
+}
+
+/* 邮箱按钮：JS 解码前 href 为 # → JS 改完后变成 web compose URL */
+.about-contact-btn--email:not([href]),
+.about-contact-btn--email[href=""] {
+  cursor: pointer;
+}
+
+/* 无 JS / 邮箱解码失败兜底（noscript 块里纯文本联系方式） */
+.about-contact-fallback {
+  font-family: var(--font-serif-body);
+  font-style: italic;
+  font-size: 0.85rem;
+  color: var(--fg-mute);
+  margin: 0;
+  text-align: center;
+  line-height: 1.7;
+}
+.about-contact-fallback a {
+  color: var(--accent);
+  text-decoration: underline;
+  text-decoration-thickness: 1px;
+  text-underline-offset: 3px;
+  text-decoration-color: color-mix(in srgb, var(--accent) 50%, transparent);
+}
+.about-contact-fallback code {
+  font-family: var(--font-mono);
+  font-size: 0.85em;
+  background: color-mix(in srgb, var(--line) 60%, transparent);
+  padding: 0.1em 0.35em;
+  border-radius: 0.25rem;
+  color: var(--fg-base);
+}
+
+/* 移动端：缩小图标按钮和卡片间距 */
+@media (max-width: 540px) {
+  .about-contact-glass {
+    gap: 0.5rem;
+    padding: 0.5rem 0.7rem;
+    border-radius: 1.25rem;
+  }
+  .about-contact-btn {
+    width: 2.3rem;
+    height: 2.3rem;
+    border-radius: 0.7rem;
+  }
+  .about-contact-btn svg {
+    width: 1.05rem;
+    height: 1.05rem;
+  }
+}
+
+/* 尊重用户的减少动效偏好 */
+@media (prefers-reduced-motion: reduce) {
+  .about-contact,
+  .about-contact-btn,
+  .about-contact-btn svg {
+    animation: none !important;
+    transition: none !important;
+  }
+  .about-contact { opacity: 1; transform: none; }
+}
+
+/* ============================================================
+   剪贴板反馈 Toast（iOS 顶部通知风格）
+   QQ Mail 按钮点击 → 邮箱写入剪贴板 + 顶部弹出这个 Toast 提示
+   默认隐藏在视口上方（translateY(-150%)），加 .is-visible 后滑入
+   ============================================================ */
+.copy-toast {
+  position: fixed;
+  top: clamp(1rem, 3vh, 1.75rem);
+  left: 50%;
+  /* 默认隐藏在顶部上方 */
+  transform: translateX(-50%) translateY(-180%);
+  z-index: 9999;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.55rem;
+  padding: 0.7rem 1.15rem 0.7rem 0.85rem;
+  border-radius: 9999px;
+  background: rgba(20, 20, 19, 0.88);
+  backdrop-filter: blur(20px) saturate(180%);
+  -webkit-backdrop-filter: blur(20px) saturate(180%);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  box-shadow:
+    0 12px 32px rgba(0, 0, 0, 0.28),
+    0 2px 8px rgba(0, 0, 0, 0.18),
+    inset 0 1px 0 rgba(255, 255, 255, 0.08);
+  color: #FAF9F5;
+  font-family: var(--font-sans);
+  font-size: 0.82rem;
+  font-weight: 500;
+  letter-spacing: 0.01em;
+  white-space: nowrap;
+  max-width: calc(100vw - 2rem);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  opacity: 0;
+  pointer-events: none;
+  transition:
+    transform 0.45s cubic-bezier(0.22, 0.61, 0.36, 1),
+    opacity 0.35s ease;
+}
+.copy-toast.is-visible {
+  transform: translateX(-50%) translateY(0);
+  opacity: 1;
+}
+.copy-toast-icon {
+  flex-shrink: 0;
+  color: var(--accent);
+  /* 圆形高亮底，模仿 iOS 通知图标的"标记气泡" */
+  background: color-mix(in srgb, var(--accent) 18%, transparent);
+  border-radius: 9999px;
+  padding: 2px;
+  width: 20px;
+  height: 20px;
+}
+.copy-toast-text {
+  /* 中等字重，截断显示防止太长 */
+  font-weight: 500;
+}
+
+@media (max-width: 540px) {
+  .copy-toast {
+    font-size: 0.78rem;
+    padding: 0.6rem 1rem 0.6rem 0.75rem;
+    max-width: calc(100vw - 1.5rem);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .copy-toast {
+    transition: opacity 0.2s ease;
+    transform: translateX(-50%) translateY(0);
+  }
+  .copy-toast:not(.is-visible) {
+    transform: translateX(-50%) translateY(0);
+    opacity: 0;
+  }
 }

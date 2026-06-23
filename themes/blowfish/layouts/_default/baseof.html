@@ -10,7 +10,12 @@
 
   {{ $bodyLayout := "flex flex-col h-screen m-auto leading-7 max-w-7xl px-6 sm:px-14 md:px-24 lg:px-32" }}
   {{ $bodyColor := "text-lg bg-neutral text-neutral-900 dark:bg-neutral-800 dark:text-neutral" }}
-  <body class="{{ $bodyLayout }} {{ $bodyColor }} {{ if site.Params.enableStyledScrollbar | default true }}bf-scrollbar{{ end }}">
+  {{/*
+    [lyrumu 改造] 在首页 <body> 末尾追加 is-cover-page 类。
+    让 custom.css 不用 :has()、不用 !important 就能隐藏顶栏。
+    ⚠️ 升级 blowfish 时如果本行被覆盖，重新加这一段即可。
+  */}}
+  <body class="{{ $bodyLayout }} {{ $bodyColor }} {{ if site.Params.enableStyledScrollbar | default true }}bf-scrollbar{{ end }}{{ if .IsHome }} is-cover-page{{ end }}">
     <div id="the-top" class="absolute flex self-center">
       <a
         class="px-3 py-1 text-sm -translate-y-8 rounded-b-lg bg-primary-200 focus:translate-y-0 dark:bg-neutral-600"
