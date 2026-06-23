@@ -13,7 +13,7 @@ showTableOfContents: true
 
 {{< section-rule >}}
 
-### 计划收录
+### Planned to include
 - Scripts,Skills
 - coding skills
 
