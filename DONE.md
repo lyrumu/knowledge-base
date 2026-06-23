@@ -4,6 +4,77 @@
 
 ---
 
+## 2026-06-23 · Linux 入门文章整合（WSL2 / OpenCode / Hermes Agent）
+
+### 背景
+
+[`Vault/Docs/WSL2/`](file:///f:/Notes/Vault/Docs/WSL2/) 目录下散落着 8 篇 Linux 主题笔记（Opencode ×2 / Hermes ×3 / Fix ×3），没有入口页，Vault 内的阅读路径是"目录式"逐个点开。响应用户需求"在 docs 里上传一篇新文章，整理所有 Linux 相关内容"——合成一篇综合性入门文章，把这些碎片串成可线性阅读的教程。
+
+### 文章结构
+
+11 个主章节，**严格按用户给定的内容顺序**：
+
+1. 为什么选择 WSL2（vs 原生 / VM / Mac 对比表）
+2. 安装 WSL2 Ubuntu（一键安装 / 验证 / 重装）
+3. 基础配置（更新 / 换源清华 / 关闭 PATH 继承 / 备份 Ubuntu）
+4. **基础 Linux 命令入门**（10 个分类速查表，覆盖文件 / 文本 / 进程 / 权限 / 网络 / apt / 压缩 / 服务）
+5. 安装 Node.js（nvm 多版本管理，OpenCode / Hermes 共用前置）
+6. OpenCode Agent（安装 / 代理 / WSL 内项目 / AGENTS.md / Skills / MCP / Oh My OpenCode / Session 习惯）
+7. Hermes Agent（前置 / 一键安装 / 目录结构 / LLM Provider / TUI / 基础命令 / 安全加固 / 进阶 / 更新）
+8. **优势组合**（WSL2 vs Windows / Mac / VM 三方对比 + OpenCode vs Hermes 选型建议）
+9. 常见问题修复（VMware 关机 / WinNAT 端口 / Dashboard / API 网络）
+10. 速查命令汇总
+11. 参考资料（Vault 原文索引 + 官方文档链接）
+
+### 内容来源
+
+- **完全来自 Vault**：安装步骤、换源、PATH 优化、备份、OpenCode / Hermes 的命令、Fix 章节
+- **补充**：第 4 章基础 Linux 命令（Vault 没有专门的入门命令文档，按 Linux 常用清单补充）
+- **原创**：第 8 章优势组合对比（基于 Vault 内容做横向分析）
+
+### 文件清单
+
+| 类型 | 路径 |
+|---|---|
+| 新增 | [content/notes/docs/wsl2/linux-getting-started/index.md](file:///f:/Notes/content/notes/docs/wsl2/linux-getting-started/index.md) — 11 章节 ~580 行 |
+| 新增（图片） | [content/notes/docs/wsl2/linux-getting-started/image/](file:///f:/Notes/content/notes/docs/wsl2/linux-getting-started/image/) — 5 张 PNG（opencode ×3 + hermes ×2） |
+
+### 图片处理
+
+5 张图片从 `Vault/Docs/WSL2/` 复制到 `content/notes/docs/wsl2/linux-getting-started/image/`，并按内容语义重命名（便于 markdown 引用和未来维护）：
+
+| 原文件名 | 新文件名 | 用在哪 |
+|---|---|---|
+| `WSL内安装opencode.png` | 不改 | §6.1 OpenCode 一键安装 |
+| `opencode-AGENTSmd.png` | 不改 | §6.5 AGENTS.md |
+| `优化环境变量.png` | 不改 | §3.3 优化环境变量 |
+| `file-20260606222237624.png` | `hermes-tui-config.png` | §7.4 TUI 配置 |
+| `file-20260606221444684.png` | `hermes-tui-sessions.png` | §7.6 TUI 历史会话浏览 |
+
+Obsidian 自动生成的 `file-2026xxxxxxxxx.png` 命名无意义，重命名后 markdown 引用更可读。
+
+### 验证
+
+- `hugo --renderToMemory`：**56 页通过**（之前 47 → 56，新增 9 个页面 = 新文章 + 各种 alias/list 衍生）
+- 页面 URL：`/notes/docs/wsl2/linux-getting-started/` ✓
+- 渲染 HTML 大小：164KB（含 5 张图 + 完整 prose 样式）✓
+- 内部链接验证：所有 `file:///f:/Notes/Vault/...` 引用都基于 Obsidian Vault 路径，点击可在本地跳转
+
+### 设计决策
+
+- **不创建父级 _index.md**：用户明确表示"需求就是直接在 doc 里创建一篇文章"，不擅自新增 docs/ 和 wsl2/ 的入口页（避免范围蔓延）
+- **图片放本地**：`/image/...` 走 Hugo 静态资源，与项目其他文章风格一致（参考 python-env-setup）
+- **大量表格 + 代码块**：技术教程 + 命令速查的形式比纯散文更适合 Linux 入门
+- **章节顺序按用户指定**：安装 → 命令 → OpenCode → Hermes → 优势 → Fix，逻辑上由浅入深
+
+### 后续
+
+- 用户启动 hugo server 后可手动预览 `/notes/docs/wsl2/linux-getting-started/`
+- 父级 docs/ 和 wsl2/ 入口页留待后续需要时再补
+
+---
+
+
 ## 2026-06-23 · PC 端卡片相对 hero 偏左 · 真凶是 `.prose` 的 max-width: 65ch
 
 ### 根因

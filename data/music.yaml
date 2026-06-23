@@ -22,10 +22,17 @@ tracks:
     duration: "4:15"
     mood: "Melancholy"
 
+  - title: "Unravel"
+    artist: "TK from Ling Tosite Sigure"
+    album: "《Fantastic Magic》"
+    cover: "/image/cover-unravel.jpg"     
+    src:   "/life/music/Unravel.mp3"
+    duration: "3:58"
+    mood: ""
 
   - title: "黑色幽默"
     artist: "Jay Chou"
-    album: "Jay"
+    album: "《Jay》"
     cover: "/image/cover-Blackhumor.png"     
     src:   "/life/music/Blackhumor.mp3"
     duration: "4:43"
