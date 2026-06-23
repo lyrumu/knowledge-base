@@ -1,0 +1,518 @@
+/* =============================================================================
+   _cover.css — 封面页（全屏居中 + 暖白衬线 + 古典分隔符 + 缓慢淡入）
+   ----------------------------------------------------------------------------
+   来源：原 custom.css §1 - §13, §18, §19, §20, §28, §31 cover-theme-toggle
+   ----------------------------------------------------------------------------
+   本文件包含封面页"完整外观"所需的所有样式：
+     1.  顶栏隐藏（body.is-cover-page）
+     2.  全屏容器（.cover-page）
+     3.  噪点叠加 / 装饰花边 / 四角花朵
+     4.  顶部 eyebrow / kicker / title / epigraph / subtitle / divider / button / social / footnote
+     5.  Splitting.js 字符级入场
+     6.  通用淡入动画 @keyframes
+     7.  主题切换按钮（封面专用）
+     8.  旧的 aurora 装饰（保留 display:none 兜底）
+
+   关键策略（v3）：
+     封面态判断从 `body:has(.cover-page)` 改为 `body.is-cover-page`：
+       - class 由 baseof.html 在首页 server-side 注入
+       - specificity 起步 (0,5,0)，规则全部可以去掉 !important
+   ============================================================================= */
+
+/* =============================================================================
+   1. 封面页：隐藏顶栏 + 全屏 + 顶栏间距清零
+   ============================================================================= */
+
+/* 1.1 隐藏 blowfish 顶栏（fixed inset-x-0 z-100 是 header 的 Tailwind 类） */
+body.is-cover-page .fixed.inset-x-0.z-100 {
+  display: none;
+}
+
+/* 1.2 隐藏顶栏下方的占位 div（blowfish 给 header 留了 148px 高度） */
+body.is-cover-page .min-h-\[148px\] {
+  display: none;
+}
+
+/* 1.3 取消 main 顶部 padding（顶栏被隐藏后这段空隙是多余的） */
+body.is-cover-page main#main-content {
+  padding-top: 0;
+}
+
+/* 1.4 取消 main 外层容器的 min-height（让封面可以全屏撑开） */
+body.is-cover-page > div.relative.flex.flex-col.grow {
+  min-height: 0;
+}
+
+/* 1.5 取消 article 自身的宽度/边距限制（让 .cover-page 撑满 100vw） */
+body.is-cover-page main#main-content > article {
+  max-width: none;
+  padding: 0;
+  margin: 0;
+}
+
+/* =============================================================================
+   2. 封面页：背景 + 噪点
+   ============================================================================= */
+.cover-page {
+  position: relative;
+  /* 强制撑满整个视窗宽度（不受父 article/main 容器 max-width 限制）*/
+  width: 100vw;
+  margin-left: calc(50% - 50vw);
+  min-height: 100vh;
+  min-height: 100dvh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  background: linear-gradient(180deg,
+                              var(--pal-bg-from, var(--bg-base)) 0%,
+                              var(--pal-bg-to,   var(--bg-deep)) 100%);
+  overflow: hidden;
+  isolation: isolate;
+  padding: 6vh 4vw;
+}
+
+/* 噪点叠加（极轻 ~3%） */
+.cover-grain {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  pointer-events: none;
+  opacity: 0.035;
+  mix-blend-mode: multiply;
+  background-image: url("data:image/svg+xml;utf8,<svg viewBox='0 0 240 240' xmlns='http://www.w3.org/2000/svg'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2' stitchTiles='stitch'/></filter><rect width='100%25' height='100%25' filter='url(%23n)'/></svg>");
+  background-size: 240px 240px;
+}
+html.dark .cover-grain {
+  opacity: 0.06;
+  mix-blend-mode: screen;
+}
+
+/* =============================================================================
+   3. 封面页：顶部 eyebrow（细线 + 时间戳）
+   ============================================================================= */
+.cover-eyebrow {
+  position: absolute;
+  top: clamp(1.5rem, 4vh, 3rem);
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  align-items: center;
+  gap: 1.25rem;
+  z-index: 5;
+  font-family: var(--font-serif-display);
+  font-size: 0.7rem;
+  font-weight: 500;
+  letter-spacing: 0.32em;
+  color: var(--pal-kicker, var(--fg-soft));
+  text-transform: uppercase;
+}
+.cover-eyebrow-rule {
+  display: block;
+  width: 4rem;
+  height: 1px;
+  background: var(--pal-line, var(--line));
+  opacity: 0.7;
+}
+.cover-eyebrow-text {
+  font-feature-settings: "smcp";
+  font-style: italic;
+}
+
+/* =============================================================================
+   4. 封面页：内容容器（垂直居中）
+   ============================================================================= */
+.cover-content {
+  position: relative;
+  z-index: 5;
+  width: 100%;
+  max-width: 56rem;
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+/* =============================================================================
+   5. 封面页：kicker (顶部小字 / 衬线大写)
+   ============================================================================= */
+.cover-kicker {
+  font-family: var(--font-serif-display);
+  font-size: 0.78rem;
+  font-weight: 500;
+  letter-spacing: 0.42em;
+  text-transform: uppercase;
+  color: var(--pal-kicker, var(--fg-soft));
+  margin: 0 0 1.5rem;
+  font-feature-settings: "smcp" on;
+}
+
+/* =============================================================================
+   6. 封面页：avatar (可选)
+   ============================================================================= */
+.cover-avatar {
+  width: 5.5rem;
+  height: 5.5rem;
+  border-radius: 9999px;
+  object-fit: cover;
+  margin: 0 auto 1.75rem;
+  border: 1px solid var(--pal-line, var(--line));
+  filter: grayscale(10%) contrast(1.02);
+  opacity: 0;
+  animation: cover-fade 1.6s cubic-bezier(0.22, 0.61, 0.36, 1) 0.2s forwards;
+}
+
+/* =============================================================================
+   7. 封面页：主标题 (大号衬线)
+   ============================================================================= */
+.cover-title {
+  font-family: var(--font-serif-display);
+  font-size: clamp(3.5rem, 13vw, 8.5rem);
+  font-weight: 400;
+  font-style: normal;
+  letter-spacing: -0.045em;
+  line-height: 1.05;
+  margin: 0;
+  color: var(--pal-title, var(--fg-base));
+  /* 用字体光学尺寸 + 古典 kerning */
+  font-variation-settings: "opsz" 144, "SOFT" 50;
+}
+
+/* =============================================================================
+   8. 封面页：epigraph (题词 / 衬线斜体)
+   ============================================================================= */
+.cover-epigraph {
+  font-family: var(--font-serif-body);
+  font-style: italic;
+  font-weight: 300;
+  font-size: clamp(1rem, 1.8vw, 1.2rem);
+  color: var(--pal-epi, var(--fg-soft));
+  margin: 1.75rem auto 0;
+  max-width: 36rem;
+  line-height: 1.55;
+  opacity: 0;
+  animation: cover-fade 1.4s cubic-bezier(0.22, 0.61, 0.36, 1) 0.7s forwards;
+}
+
+/* =============================================================================
+   9. 封面页：subtitle (副标题)
+   ============================================================================= */
+.cover-subtitle {
+  font-family: var(--font-serif-body);
+  font-size: clamp(0.95rem, 1.6vw, 1.15rem);
+  font-weight: 400;
+  letter-spacing: 0.02em;
+  margin: 1rem auto 0;
+  color: var(--pal-sub, var(--fg-mute));
+  max-width: 32rem;
+  opacity: 0;
+  animation: cover-fade 1.4s cubic-bezier(0.22, 0.61, 0.36, 1) 0.85s forwards;
+}
+
+/* =============================================================================
+   10. 封面页：古典分隔符
+   ============================================================================= */
+.cover-divider {
+  display: flex;
+  align-items: center;
+  gap: 1.25rem;
+  margin: 2.5rem auto 2.5rem;
+  width: clamp(14rem, 22vw, 22rem);
+  opacity: 0;
+  animation: cover-fade 1.2s cubic-bezier(0.22, 0.61, 0.36, 1) 1.05s forwards;
+}
+.cover-divider-rule {
+  flex: 1;
+  height: 1px;
+  background: var(--pal-line, var(--line));
+}
+.cover-divider-mark {
+  font-family: var(--font-serif-display);
+  font-size: 0.95rem;
+  color: var(--pal-accent, var(--accent));
+  line-height: 1;
+  transform: translateY(-1px);
+}
+
+/* =============================================================================
+   11. 封面页：按钮 (复古带边框)
+   ============================================================================= */
+.cover-button {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 1rem 2.25rem;
+  border: 1.5px solid var(--pal-btn-bd, var(--fg-base));
+  border-radius: 9999px;
+  font-family: var(--font-serif-display);
+  font-size: 0.92rem;
+  font-weight: 500;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  text-decoration: none !important;
+  color: var(--pal-btn-fg, var(--fg-base));
+  background: transparent;
+  cursor: pointer;
+  position: relative;
+  overflow: hidden;
+  transition: color 0.45s cubic-bezier(0.22, 0.61, 0.36, 1),
+              border-color 0.45s cubic-bezier(0.22, 0.61, 0.36, 1);
+  opacity: 0;
+  animation: cover-fade 1.4s cubic-bezier(0.22, 0.61, 0.36, 1) 1.2s forwards;
+}
+
+.cover-button::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: var(--pal-btn-hbg, var(--fg-base));
+  transform: translateY(101%);
+  transition: transform 0.55s cubic-bezier(0.65, 0, 0.35, 1);
+  z-index: -1;
+}
+
+.cover-button:hover {
+  color: var(--pal-btn-hfg, var(--bg-base));
+}
+.cover-button:hover::before {
+  transform: translateY(0);
+}
+.cover-button:hover .cover-button-arrow {
+  transform: translateX(4px);
+}
+.cover-button-arrow {
+  display: inline-block;
+  transition: transform 0.45s cubic-bezier(0.22, 0.61, 0.36, 1);
+  font-family: var(--font-serif-display);
+}
+
+/* =============================================================================
+   12. 封面页：社交链接 (横向排列，文字 + 图标)
+   ============================================================================= */
+.cover-social {
+  margin-top: 2.5rem;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.75rem;
+  flex-wrap: wrap;
+  justify-content: center;
+  opacity: 0;
+  animation: cover-fade 1.4s cubic-bezier(0.22, 0.61, 0.36, 1) 1.45s forwards;
+}
+
+.cover-social-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.45rem 0.95rem;
+  border-radius: 9999px;
+  border: 1px solid transparent;
+  font-family: var(--font-serif-display);
+  font-size: 0.82rem;
+  font-weight: 500;
+  letter-spacing: 0.06em;
+  color: var(--pal-social, var(--fg-mute));
+  text-decoration: none !important;
+  transition: color 0.35s, border-color 0.35s, background 0.35s;
+}
+.cover-social-link:hover {
+  color: var(--pal-social-h, var(--fg-base));
+  border-color: var(--pal-line, var(--line));
+}
+.cover-social-sep {
+  opacity: 0.4;
+  font-weight: 300;
+}
+
+/* =============================================================================
+   13. 封面页：底部脚注
+   ============================================================================= */
+.cover-footnote {
+  position: absolute;
+  bottom: clamp(1.5rem, 4vh, 3rem);
+  left: 50%;
+  transform: translateX(-50%);
+  font-family: var(--font-serif-display);
+  font-style: italic;
+  font-size: 0.75rem;
+  font-weight: 400;
+  color: var(--pal-kicker, var(--fg-soft));
+  letter-spacing: 0.1em;
+  z-index: 5;
+}
+
+/* =============================================================================
+   Splitting.js 注入的样式（内联避免 ORB 拦截 splitting.css）
+   ============================================================================= */
+.splitting .word,
+.splitting .char {
+  display: inline-block;
+}
+
+/* Splitting.js 注入的字符容器 — 不裁剪，让 translateY 入场完整可见 */
+.cover-title .word,
+.cover-kicker .word {
+  display: inline-block;
+  vertical-align: bottom;
+}
+.cover-title .char,
+.cover-kicker .char {
+  display: inline-block;
+  will-change: transform, opacity;
+  opacity: 0;
+  transform: translateY(0.6em);
+  transition: transform 1s cubic-bezier(0.22, 0.61, 0.36, 1),
+              opacity 0.9s cubic-bezier(0.22, 0.61, 0.36, 1);
+  transition-delay: calc(var(--char-index, 0) * 35ms + 300ms);
+}
+
+.cover-page.is-ready .cover-title .char,
+.cover-page.is-ready .cover-kicker .char {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+/* 没 Splitting.js 加载时降级 */
+.cover-title:not([data-splitting]),
+.cover-kicker:not([data-splitting]) {
+  opacity: 0;
+  animation: cover-fade 1.4s cubic-bezier(0.22, 0.61, 0.36, 1) 0.4s forwards;
+}
+
+/* =============================================================================
+   14. 通用淡入动画（cover / page-hero 复用）
+   ============================================================================= */
+@keyframes cover-fade {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
+
+/* =============================================================================
+   18. 旧 Aurora / 装饰保留但默认隐藏（如果用户想换回用）
+   ----------------------------------------------------------------------------
+   ⚠️ 这两个类在当前 layouts/ 中已无引用（仅在 .bak.v1 备份里出现过），
+   但保留 display:none 兜底，避免误用导致视觉异常。
+   后续若确认彻底无用，可直接删除本节。
+   ============================================================================= */
+.cover-aurora, .cover-bg { display: none !important; }
+
+/* =============================================================================
+   19. 封面花边（无缝拼接 + 横向滚动）+ 四角花朵
+   ----------------------------------------------------------------------------
+   上下黑色花边 — 固定高度 56px（等比缩放原图 800×253）
+   → 单 tile = 177×56px；动画 -177px 一周期无缝循环
+   ============================================================================= */
+.cover-flower-strip {
+  position: absolute;
+  left: 0;
+  right: 0;
+  height: 56px;
+  z-index: 2;
+  pointer-events: none;
+  background-image: url("/image/上下填充黑色花.png");
+  background-repeat: repeat-x;
+  background-size: 177px 56px;
+  background-position: 0 50%;
+  opacity: 0;
+  animation:
+    flower-flow 38s linear infinite,
+    cover-fade 1.4s cubic-bezier(0.22, 0.61, 0.36, 1) 0.2s forwards;
+}
+.cover-flower-strip-top    { top: 0; }
+.cover-flower-strip-bottom { bottom: 0; transform: scaleY(-1); }
+
+/* 横向滚动关键帧 */
+@keyframes flower-flow {
+  from { background-position-x: 0; }
+  to   { background-position-x: -177px; }
+}
+
+/* 背景花朵（仅四角 · 避开上下花边和中央文字） */
+.cover-flowers {
+  position: absolute;
+  inset: 0;
+  z-index: 2;
+  pointer-events: none;
+  overflow: hidden;
+}
+.cover-flower-pos {
+  position: absolute;
+  transform: translate(-50%, -50%) rotate(var(--rot, -14deg));
+  pointer-events: none;
+  filter: drop-shadow(0 4px 12px rgba(0, 0, 0, 0.06));
+  opacity: 0;
+  animation: cover-fade 1.6s cubic-bezier(0.22, 0.61, 0.36, 1) forwards;
+}
+.cover-flower-pos img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  display: block;
+}
+
+@media (max-width: 720px) {
+  .cover-flower-strip {
+    height: 44px;
+    background-size: 139px 44px;
+  }
+  .cover-flower-pos { opacity: 0.55 !important; }
+  @keyframes flower-flow {
+    from { background-position-x: 0; }
+    to   { background-position-x: -139px; }
+  }
+}
+
+/* 暗色模式：花边反转（黑→白） */
+html.dark .cover-flower-strip {
+  filter: brightness(0) invert(1);
+  opacity: 0.4;
+}
+
+/* 暗色模式：四角黑花反转 */
+html.dark .cover-flower-black {
+  filter: brightness(0) invert(1);
+}
+
+/* 黄花：默认（明主题）压低饱和度，暗主题恢复明亮 */
+.cover-flower-yellow {
+  filter: brightness(0.35);
+}
+html.dark .cover-flower-yellow {
+  filter: none;
+  opacity: 1;
+}
+
+/* =============================================================================
+   封面主题切换按钮（右上角 · 独立于 header）
+   ----------------------------------------------------------------------------
+   避开顶部黑色花边（56px / 移动端 44px），再留一点呼吸距离
+   ============================================================================= */
+.cover-theme-toggle {
+  position: absolute;
+  top: clamp(4.75rem, 7vh, 5.5rem);
+  right: clamp(1.25rem, 3vw, 2.25rem);
+  z-index: 50;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 2.5rem;
+  height: 2.5rem;
+  border-radius: 9999px;
+  border: 1px solid var(--pal-line, var(--line));
+  background: color-mix(in srgb, var(--pal-btn-fg, var(--fg-base)) 5%, transparent);
+  color: var(--pal-kicker, var(--fg-mute));
+  cursor: pointer;
+  transition: color 0.3s, border-color 0.3s, background 0.3s, transform 0.3s;
+  backdrop-filter: blur(4px);
+}
+.cover-theme-toggle:hover {
+  color: var(--pal-title, var(--fg-base));
+  border-color: var(--pal-btn-fg, var(--fg-base));
+  transform: rotate(15deg);
+}
+.cover-theme-toggle-icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  line-height: 1;
+}

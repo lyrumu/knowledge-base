@@ -1,0 +1,1074 @@
+/* =============================================================================
+   [lyrumu 修复] 解除 main > section.prose 的 max-width 限制
+   ----------------------------------------------------------------------------
+   bug：layouts/_default/list.html line 32 用 `class="prose ... max-w-none"`，但
+   Tailwind 没生成纯 `.max-w-none`（只有 `.lg\:max-w-none`，仅 lg 断点），
+   导致 `.prose` 的 `max-width: 65ch` (576px) 仍生效。
+   结果：prose section 宽度被压到 576px → 子元素 .modules-grid width=100%=576px
+        → .modules-grid-stack (max-width: 56rem=896px) 在 576px 内居中
+        → 中心 = main.left + 288px ≈ 688px，跟 viewport 中心 (960px) 偏左 272px
+        → 用户感觉"下面内容相对 hero 明显偏左"。
+   修复：main > section.prose 强制 max-width: none，拉伸到 main 容器宽度，
+        下面的 .modules-grid-stack 才能居中到 viewport 中心，跟 hero 对齐。
+   ============================================================================= */
+main > section.prose {
+  max-width: none;
+}
+
+/* =============================================================================
+   _cards.css — 列表型卡片组件（module / vault / article-link / life / music / works）
+   ----------------------------------------------------------------------------
+   来源：原 custom.css §15, §16, §23, §28(section-rule), §29(file-tree),
+                  §32(life), §33(music list 部分), §34(works tags)
+   ----------------------------------------------------------------------------
+   本文件包含"短代码驱动"的列表型卡片。所有卡片共享同一套设计语言：
+     - 边框 1px + 圆角 + 透明底（暗色轻微叠加 3% 白）
+     - hover 时边框加深 + translateY(-2px)（暗色背景叠加 6% 白）
+     - 三栏 grid：左 icon / 中 body / 右 CTA
+     - 内部字体规则统一：标题用衬线、meta 用等宽小字大写、desc 用衬线斜体
+
+   注意：projects / resources / 音乐播放器是更重的"特化卡片"，
+   单独放在 _works-cards.css 和 _music-player.css。
+
+   所有类名保留原样（不在 HTML 模板里改任何东西）。
+   ============================================================================= */
+
+/* =============================================================================
+   共享变量与共用选择器
+   ----------------------------------------------------------------------------
+   多个卡片共用同一组 hover/dark 表现，用组合选择器集中声明。
+   单独卡片独有的属性（padding / grid 布局 / 字号）仍写在各自卡片块内。
+   ============================================================================= */
+
+/* 暗色卡片背景叠加（仅 background，不动 border / transform） */
+html.dark .module-card,
+html.dark .vault-section-card,
+html.dark .article-link--card,
+html.dark .article-link--related,
+html.dark .article-link--simple,
+html.dark .music-item,
+html.dark .life-sub-card {
+  background: rgba(255, 255, 255, 0.03);
+}
+
+/* 暗色 hover 背景叠加 */
+html.dark .module-card:hover,
+html.dark .vault-section-card:hover,
+html.dark .article-link--card:hover,
+html.dark .article-link--related:hover,
+html.dark .article-link--simple:hover,
+html.dark .music-item:hover,
+html.dark .life-sub-card:hover {
+  background: rgba(255, 255, 255, 0.06);
+}
+
+/* =============================================================================
+   15. 模块卡 (Claude 风：单列 · 横向布局 · 居中容器)
+   ----------------------------------------------------------------------------
+   数据驱动：data/modules.yaml → layouts/shortcodes/modules-grid.html
+   ============================================================================= */
+.modules-grid-stack {
+  max-width: 56rem; /* 原值原本是44rem*/
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.module-card {
+  position: relative;
+  display: grid;
+  grid-template-columns: auto 1fr auto;
+  align-items: center;
+  gap: 1.25rem;
+  border-radius: 0.5rem;
+  padding: 1.25rem 1.5rem;
+  text-decoration: none !important;
+  background: transparent;
+  border: 1px solid var(--line);
+  transition: border-color 0.5s cubic-bezier(0.22, 0.61, 0.36, 1),
+              transform 0.5s cubic-bezier(0.22, 0.61, 0.36, 1),
+              background 0.5s;
+  overflow: hidden;
+  isolation: isolate;
+}
+
+.module-card::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(90deg,
+    color-mix(in srgb, var(--accent) 6%, transparent) 0%,
+    transparent 50%);
+  opacity: 0;
+  transition: opacity 0.6s cubic-bezier(0.22, 0.61, 0.36, 1);
+  pointer-events: none;
+  z-index: -1;
+}
+.module-card:hover::before { opacity: 1; }
+
+.module-card:hover {
+  border-color: var(--fg-base);
+  transform: translateY(-2px);
+}
+
+.module-card-head {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 0.4rem;
+  grid-column: 1;
+}
+.module-card-icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 2.5rem;
+  height: 2.5rem;
+  color: var(--fg-base);
+  transition: color 0.4s, transform 0.4s cubic-bezier(0.22, 0.61, 0.36, 1);
+}
+.module-card-icon svg {
+  display: block;
+}
+.module-card:hover .module-card-icon {
+  color: var(--accent);
+  transform: rotate(-6deg);
+}
+
+.module-card-meta {
+  font-family: var(--font-serif-display);
+  font-size: 0.65rem;
+  font-weight: 500;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--fg-soft);
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+}
+.module-card-num {
+  font-style: italic;
+  color: var(--accent);
+  font-feature-settings: "smcp";
+}
+.module-card-divider {
+  opacity: 0.4;
+}
+.module-card-path {
+  font-family: var(--font-mono);
+  font-size: 0.6rem;
+  letter-spacing: 0.05em;
+  color: var(--fg-soft);
+  text-transform: lowercase;
+}
+
+.module-card-body {
+  grid-column: 2;
+  min-width: 0;
+}
+.module-card-name {
+  font-family: var(--font-serif-display);
+  font-size: 1.4rem;
+  font-weight: 500;
+  letter-spacing: -0.02em;
+  color: var(--fg-base);
+  font-variation-settings: "opsz" 60;
+  line-height: 1.15;
+}
+.module-card-title {
+  font-family: var(--font-mono);
+  font-size: 0.65rem;
+  font-weight: 400;
+  text-transform: uppercase;
+  letter-spacing: 0.18em;
+  color: var(--fg-soft);
+  margin-top: 0.25rem;
+}
+.module-card-desc {
+  font-family: var(--font-serif-body);
+  font-size: 0.88rem;
+  line-height: 1.55;
+  color: var(--fg-mute);
+  margin-top: 0.4rem;
+  font-style: italic;
+}
+
+.module-card-cta {
+  grid-column: 3;
+  font-family: var(--font-serif-display);
+  font-size: 0.7rem;
+  font-weight: 500;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--fg-mute);
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  transition: gap 0.3s cubic-bezier(0.22, 0.61, 0.36, 1),
+              color 0.3s;
+  white-space: nowrap;
+}
+.module-card:hover .module-card-cta {
+  gap: 0.8rem;
+  color: var(--accent);
+}
+.module-card-arrow {
+  display: inline-flex;
+  align-items: center;
+  transition: transform 0.4s cubic-bezier(0.22, 0.61, 0.36, 1);
+}
+.module-card:hover .module-card-arrow {
+  transform: translateX(3px);
+}
+
+@media (max-width: 640px) {
+  .module-card {
+    grid-template-columns: auto 1fr;
+    grid-template-rows: auto auto;
+    gap: 0.85rem;
+  }
+  .module-card-head { grid-row: 1; }
+  .module-card-body { grid-row: 1; grid-column: 2; }
+  .module-card-cta {
+    grid-row: 2;
+    grid-column: 1 / -1;
+    padding-top: 0.75rem;
+    border-top: 1px solid color-mix(in srgb, var(--line) 60%, transparent);
+    justify-content: flex-end;
+  }
+}
+
+/* =============================================================================
+   16. Vault 子分类卡（单列 · 居中 · 与 module-card 同语言）
+   ----------------------------------------------------------------------------
+   数据驱动：data/vault.yaml → layouts/shortcodes/vault-sections.html
+   ============================================================================= */
+.vault-sections-stack {
+  max-width: 56rem;
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.vault-section-card {
+  display: flex;
+  flex-direction: column;
+  border-radius: 0.5rem;
+  padding: 1.5rem 1.5rem;
+  text-decoration: none !important;
+  background: transparent;
+  border: 1px solid var(--line);
+  transition: border-color 0.4s, background 0.4s, transform 0.4s;
+  position: relative;
+  isolation: isolate;
+}
+.vault-section-card:hover {
+  border-color: var(--fg-base);
+  transform: translateY(-2px);
+}
+
+.vault-section-head {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  margin-bottom: 0.85rem;
+}
+.vault-section-icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 2rem;
+  height: 2rem;
+  color: var(--fg-base);
+  line-height: 1;
+  transition: transform 0.4s cubic-bezier(0.22, 0.61, 0.36, 1),
+              color 0.3s;
+  flex-shrink: 0;
+}
+.vault-section-card:hover .vault-section-icon {
+  transform: rotate(-6deg);
+  color: var(--accent);
+}
+.vault-section-icon svg {
+  display: block;
+}
+.vault-section-path {
+  font-family: var(--font-mono);
+  font-size: 0.65rem;
+  letter-spacing: 0.05em;
+  color: var(--fg-soft);
+  text-transform: lowercase;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.vault-section-name {
+  font-family: var(--font-serif-display);
+  font-size: 1.4rem;
+  font-weight: 500;
+  letter-spacing: -0.015em;
+  color: var(--fg-base);
+  font-variation-settings: "opsz" 60;
+  line-height: 1.2;
+}
+.vault-section-title {
+  font-family: var(--font-mono);
+  font-size: 0.65rem;
+  text-transform: uppercase;
+  letter-spacing: 0.18em;
+  color: var(--fg-soft);
+  margin-top: 0.3rem;
+}
+
+.vault-section-desc {
+  font-family: var(--font-serif-body);
+  font-size: 0.95rem;
+  font-style: italic;
+  color: var(--fg-mute);
+  line-height: 1.6;
+  margin: 0.75rem 0 0;
+}
+
+.vault-section-sample {
+  list-style: none;
+  padding: 0;
+  margin: 0.85rem 0 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+  font-family: var(--font-serif-body);
+  font-size: 0.88rem;
+  color: var(--fg-mute);
+}
+.vault-section-sample-item {
+  display: flex;
+  gap: 0.5rem;
+  align-items: baseline;
+}
+.vault-section-sample-mark {
+  display: inline-flex;
+  align-items: center;
+  color: var(--accent);
+  font-family: var(--font-serif-display);
+  flex-shrink: 0;
+}
+.vault-section-sample-mark svg {
+  display: block;
+}
+
+/* 标签药丸：vault / life / works / project / resource 共享 */
+.vault-section-tag,
+.life-sub-tag,
+.works-sub-tag,
+.project-card-tag,
+.resource-card-tag {
+  font-family: var(--font-mono);
+  font-size: 0.6rem;
+  padding: 0.1rem 0.5rem;
+  border-radius: 9999px;
+  border: 1px solid color-mix(in srgb, var(--line) 70%, transparent);
+  color: var(--fg-soft);
+  letter-spacing: 0.04em;
+}
+
+.vault-section-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.4rem;
+  margin-top: 1rem;
+  padding-top: 0.85rem;
+  border-top: 1px solid color-mix(in srgb, var(--line) 60%, transparent);
+}
+.vault-section-tag {
+  background: transparent;
+  transition: border-color 0.3s, color 0.3s;
+}
+.vault-section-card:hover .vault-section-tag {
+  border-color: color-mix(in srgb, var(--fg-soft) 40%, transparent);
+}
+
+/* =============================================================================
+   23. 文章列表卡（覆盖 blowfish 默认 article-link--card / --simple / --related）
+   ----------------------------------------------------------------------------
+   数据驱动：Blowfish 主题自带的 article-link partial
+   ============================================================================= */
+.article-link--card,
+.article-link--related {
+  border: 1px solid var(--line) !important;
+  border-radius: 0.5rem !important;
+  background: transparent !important;
+  transition: border-color 0.4s cubic-bezier(0.22, 0.61, 0.36, 1),
+              transform 0.4s cubic-bezier(0.22, 0.61, 0.36, 1),
+              background 0.4s;
+  overflow: hidden;
+}
+.article-link--card:hover,
+.article-link--related:hover {
+  border-color: var(--fg-base) !important;
+  transform: translateY(-2px);
+}
+.article-link--card h2,
+.article-link--related h2 {
+  font-family: var(--font-serif-display) !important;
+  font-weight: 500 !important;
+  font-size: 1.2rem !important;
+  letter-spacing: -0.015em !important;
+  color: var(--fg-base) !important;
+  font-variation-settings: "opsz" 60;
+  line-height: 1.3;
+}
+.article-link--card .text-neutral-500,
+.article-link--related .text-neutral-500,
+.article-link--card .text-neutral-400,
+.article-link--related .text-neutral-400 {
+  font-family: var(--font-serif-display);
+  font-size: 0.7rem;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+}
+.article-link__summary {
+  font-family: var(--font-serif-body) !important;
+  font-size: 0.95rem !important;
+  font-style: italic !important;
+  color: var(--fg-mute) !important;
+  line-height: 1.55 !important;
+}
+
+/* 简单列表卡（左图右文） */
+.article-link--simple {
+  border: 1px solid var(--line);
+  border-radius: 0.5rem;
+  background: transparent;
+  transition: border-color 0.4s, transform 0.4s, background 0.4s;
+}
+.article-link--simple:hover {
+  border-color: var(--fg-base);
+  transform: translateY(-2px);
+}
+.article-link--simple h2 {
+  font-family: var(--font-serif-display) !important;
+  font-weight: 500 !important;
+  letter-spacing: -0.015em !important;
+  color: var(--fg-base) !important;
+  font-variation-settings: "opsz" 60;
+}
+
+/* =============================================================================
+   32. life 子模块卡 (life-grid) — 横向布局：左封面 + 右内容 + 右侧 CTA
+   ----------------------------------------------------------------------------
+   数据驱动：data/life.yaml → layouts/shortcodes/life-grid.html
+   ============================================================================= */
+.life-grid-stack {
+  max-width: 56rem;
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.life-sub-card {
+  position: relative;
+  display: grid;
+  grid-template-columns: auto 1fr auto;
+  align-items: center;
+  gap: 1.5rem;
+  border-radius: 0.5rem;
+  padding: 1.25rem 1.5rem;
+  text-decoration: none !important;
+  background: transparent;
+  border: 1px solid var(--line);
+  transition: border-color 0.5s cubic-bezier(0.22, 0.61, 0.36, 1),
+              transform 0.5s cubic-bezier(0.22, 0.61, 0.36, 1),
+              background 0.5s;
+  overflow: hidden;
+  isolation: isolate;
+}
+
+/* 悬停渐变光（与 module-card 风格一致） */
+.life-sub-card::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(90deg,
+    color-mix(in srgb, var(--accent) 6%, transparent) 0%,
+    transparent 50%);
+  opacity: 0;
+  transition: opacity 0.6s cubic-bezier(0.22, 0.61, 0.36, 1);
+  pointer-events: none;
+  z-index: -1;
+}
+.life-sub-card:hover::before { opacity: 1; }
+.life-sub-card:hover {
+  border-color: var(--fg-base);
+  transform: translateY(-2px);
+}
+
+/* 准备中子模块（draft=true） */
+.life-sub-card.is-draft {
+  cursor: not-allowed;
+  opacity: 0.62;
+  filter: grayscale(20%);
+}
+.life-sub-card.is-draft:hover {
+  transform: none;
+  border-color: var(--line);
+}
+.life-sub-card.is-draft::before { display: none; }
+
+/* ---------- 左侧封面（封面图 / 内联 SVG / emoji 通用） ---------- */
+.life-sub-cover {
+  position: relative;
+  width: 5.5rem;
+  height: 5.5rem;
+  flex-shrink: 0;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 0.65rem;
+  border: 1px solid var(--line);
+  background: color-mix(in srgb, var(--bg-deep) 70%, transparent);
+  overflow: hidden;
+  transition: transform 0.6s cubic-bezier(0.22, 0.61, 0.36, 1),
+              border-color 0.5s,
+              box-shadow 0.5s;
+}
+html.dark .life-sub-cover {
+  background: color-mix(in srgb, var(--fg-base) 4%, transparent);
+}
+
+/* 图片类型：呼吸式 hover 动画（缩放 + 旋转 + 轻微浮动） */
+.life-sub-cover-img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+  transition: transform 0.7s cubic-bezier(0.22, 0.61, 0.36, 1),
+              filter 0.5s;
+  filter: saturate(0.92);
+}
+.life-sub-card:hover .life-sub-cover {
+  border-color: color-mix(in srgb, var(--accent) 50%, var(--line));
+  box-shadow: 0 4px 18px color-mix(in srgb, var(--accent) 12%, transparent);
+}
+.life-sub-card:hover .life-sub-cover-img {
+  transform: rotate(-6deg) scale(1.08);
+  filter: saturate(1.05);
+}
+
+/* SVG 类型：默认带个非常缓慢的"呼吸"动画（不依赖 hover，永远在动） */
+.life-sub-cover-svg {
+  width: 70%;
+  height: 70%;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  animation: life-cover-breathe 6s ease-in-out infinite;
+}
+.life-sub-cover-svg svg {
+  width: 100%;
+  height: 100%;
+  display: block;
+}
+.life-sub-card:hover .life-sub-cover-svg {
+  animation-play-state: paused;
+  transform: rotate(-8deg) scale(1.12);
+  transition: transform 0.7s cubic-bezier(0.22, 0.61, 0.36, 1);
+}
+@keyframes life-cover-breathe {
+  0%, 100% { transform: translateY(0) scale(1); }
+  50%      { transform: translateY(-3px) scale(1.03); }
+}
+
+/* emoji 类型 */
+.life-sub-cover-emoji {
+  font-family: var(--font-serif-display);
+  font-size: 2.4rem;
+  line-height: 1;
+  transition: transform 0.6s cubic-bezier(0.22, 0.61, 0.36, 1);
+}
+.life-sub-card:hover .life-sub-cover-emoji {
+  transform: rotate(-10deg) scale(1.12);
+}
+
+/* ---------- 中间内容区 ---------- */
+.life-sub-body {
+  grid-column: 2;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+}
+.life-sub-head {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-family: var(--font-serif-display);
+  font-size: 0.65rem;
+  font-weight: 500;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--fg-soft);
+}
+.life-sub-icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--fg-base);
+  transition: color 0.4s, transform 0.5s cubic-bezier(0.22, 0.61, 0.36, 1);
+}
+.life-sub-card:hover .life-sub-icon {
+  color: var(--accent);
+  transform: rotate(-8deg);
+}
+.life-sub-num {
+  font-style: italic;
+  color: var(--accent);
+  font-feature-settings: "smcp";
+}
+.life-sub-name {
+  font-family: var(--font-serif-display);
+  font-size: 1.4rem;
+  font-weight: 500;
+  letter-spacing: -0.02em;
+  color: var(--fg-base);
+  font-variation-settings: "opsz" 60;
+  line-height: 1.15;
+  margin-top: 0.1rem;
+}
+.life-sub-title {
+  font-family: var(--font-mono);
+  font-size: 0.65rem;
+  font-weight: 400;
+  text-transform: uppercase;
+  letter-spacing: 0.18em;
+  color: var(--fg-soft);
+}
+.life-sub-desc {
+  font-family: var(--font-serif-body);
+  font-size: 0.92rem;
+  font-style: italic;
+  line-height: 1.55;
+  color: var(--fg-mute);
+  margin: 0.3rem 0 0;
+}
+.life-sub-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.35rem;
+  margin-top: 0.7rem;
+}
+.life-sub-tag {
+  background: transparent;
+  transition: border-color 0.3s, color 0.3s;
+}
+.life-sub-card:hover .life-sub-tag {
+  border-color: color-mix(in srgb, var(--fg-soft) 35%, transparent);
+}
+.life-sub-draft-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.3rem;
+  margin-top: 0.5rem;
+  padding: 0.15rem 0.55rem;
+  border-radius: 9999px;
+  border: 1px dashed var(--line);
+  font-family: var(--font-serif-display);
+  font-size: 0.65rem;
+  font-style: italic;
+  color: var(--fg-soft);
+  letter-spacing: 0.05em;
+  width: max-content;
+}
+
+/* ---------- 右侧 CTA ---------- */
+.life-sub-cta {
+  grid-column: 3;
+  font-family: var(--font-serif-display);
+  font-size: 0.7rem;
+  font-weight: 500;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--fg-mute);
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  white-space: nowrap;
+  transition: gap 0.3s cubic-bezier(0.22, 0.61, 0.36, 1),
+              color 0.3s;
+}
+.life-sub-card:hover .life-sub-cta {
+  gap: 0.8rem;
+  color: var(--accent);
+}
+.life-sub-arrow {
+  display: inline-flex;
+  align-items: center;
+  transition: transform 0.4s cubic-bezier(0.22, 0.61, 0.36, 1);
+}
+.life-sub-card:hover .life-sub-arrow {
+  transform: translateX(3px);
+}
+
+/* ---------- 移动端 ---------- */
+@media (max-width: 640px) {
+  .life-sub-card {
+    grid-template-columns: auto 1fr;
+    grid-template-rows: auto auto;
+    gap: 0.85rem 1rem;
+    padding: 1rem 1.1rem;
+  }
+  .life-sub-cover {
+    grid-row: 1;
+    grid-column: 1;
+    width: 4.25rem;
+    height: 4.25rem;
+  }
+  .life-sub-body {
+    grid-row: 1;
+    grid-column: 2;
+  }
+  .life-sub-cta {
+    grid-row: 2;
+    grid-column: 1 / -1;
+    padding-top: 0.75rem;
+    border-top: 1px solid color-mix(in srgb, var(--line) 60%, transparent);
+    justify-content: flex-end;
+  }
+}
+
+/* =============================================================================
+   33. Music 子页 — 歌曲列表（grid / 卡片二选一，默认 grid）
+   ----------------------------------------------------------------------------
+   全局粘性播放器（.music-player）见 _music-player.css
+   数据驱动：data/music.yaml → layouts/shortcodes/music-list.html
+   ============================================================================= */
+.music-list {
+  max-width: 56rem;
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+.music-list-empty {
+  font-family: var(--font-serif-body);
+  font-style: italic;
+  color: var(--fg-mute);
+  text-align: center;
+  padding: 3rem 1rem;
+  border: 1px dashed var(--line);
+  border-radius: 0.5rem;
+}
+
+.music-item {
+  position: relative;
+  display: grid;
+  grid-template-columns: 3.5rem 1fr auto auto;
+  align-items: center;
+  gap: 1.1rem;
+  padding: 0.75rem 1.1rem;
+  border: 1px solid var(--line);
+  border-radius: 0.5rem;
+  background: transparent;
+  text-decoration: none !important;
+  color: var(--fg-base);
+  cursor: pointer;
+  transition: border-color 0.4s, background 0.4s,
+              transform 0.4s cubic-bezier(0.22, 0.61, 0.36, 1);
+  isolation: isolate;
+}
+.music-item:hover {
+  border-color: var(--fg-base);
+  transform: translateY(-1px);
+}
+.music-item.is-disabled {
+  cursor: not-allowed;
+  opacity: 0.55;
+}
+.music-item.is-disabled:hover {
+  border-color: var(--line);
+  transform: none;
+  background: transparent;
+}
+html.dark .music-item.is-disabled:hover {
+  background: rgba(255, 255, 255, 0.03);
+}
+.music-item.is-current {
+  border-color: color-mix(in srgb, var(--accent) 70%, var(--line));
+  background: color-mix(in srgb, var(--accent) 6%, transparent);
+}
+
+/* 封面 */
+.music-item-cover {
+  position: relative;
+  width: 3.5rem;
+  height: 3.5rem;
+  border-radius: 0.4rem;
+  overflow: hidden;
+  flex-shrink: 0;
+  background: var(--bg-deep);
+}
+.music-item-cover img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+  transition: transform 0.5s cubic-bezier(0.22, 0.61, 0.36, 1);
+}
+.music-item:hover .music-item-cover img {
+  transform: scale(1.06);
+}
+/* 悬停时浮出"播放"小图标 */
+.music-item-play-overlay {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: color-mix(in srgb, var(--bg-base) 65%, transparent);
+  opacity: 0;
+  transition: opacity 0.35s;
+  color: var(--accent);
+}
+.music-item:hover .music-item-play-overlay,
+.music-item.is-current .music-item-play-overlay {
+  opacity: 1;
+}
+
+/* 文字区 */
+.music-item-info {
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.15rem;
+}
+.music-item-title {
+  font-family: var(--font-serif-display);
+  font-size: 1.05rem;
+  font-weight: 500;
+  letter-spacing: -0.01em;
+  color: var(--fg-base);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.music-item-artist {
+  font-family: var(--font-serif-body);
+  font-style: italic;
+  font-size: 0.82rem;
+  color: var(--fg-mute);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.music-item-album {
+  font-family: var(--font-mono);
+  font-size: 0.62rem;
+  text-transform: uppercase;
+  letter-spacing: 0.18em;
+  color: var(--fg-soft);
+  white-space: nowrap;
+}
+
+/* 时长 + 当前播放状态指示 */
+.music-item-duration {
+  font-family: var(--font-mono);
+  font-size: 0.78rem;
+  color: var(--fg-mute);
+  font-variant-numeric: tabular-nums;
+  letter-spacing: 0.04em;
+}
+.music-item-eq {
+  display: inline-flex;
+  align-items: flex-end;
+  gap: 2px;
+  width: 1.1rem;
+  height: 1rem;
+  opacity: 0;
+}
+.music-item.is-current .music-item-eq { opacity: 1; }
+.music-item-eq span {
+  display: inline-block;
+  width: 2px;
+  background: var(--accent);
+  border-radius: 1px;
+  height: 30%;
+  animation: music-eq-bounce 0.9s ease-in-out infinite;
+}
+.music-item-eq span:nth-child(1) { animation-delay: 0s;   height: 35%; }
+.music-item-eq span:nth-child(2) { animation-delay: 0.18s; height: 70%; }
+.music-item-eq span:nth-child(3) { animation-delay: 0.36s; height: 50%; }
+@keyframes music-eq-bounce {
+  0%, 100% { transform: scaleY(0.3); }
+  50%      { transform: scaleY(1); }
+}
+
+@media (max-width: 640px) {
+  .music-item {
+    grid-template-columns: 3rem 1fr auto;
+    gap: 0.75rem;
+    padding: 0.65rem 0.85rem;
+  }
+  .music-item-cover { width: 3rem; height: 3rem; }
+  .music-item-album { display: none; }
+}
+
+/* =============================================================================
+   34. works 子页 (/works/) — 入口子模块网格（视觉与 /start/ 一致）
+   ----------------------------------------------------------------------------
+   主体复用 §15 .module-card 样式（shortcode 给元素加双类 module-card works-sub-card）
+   本节只定义 works 独有的：tags 列表 + draft 徽章 + draft 态
+   数据驱动：data/works.yaml → layouts/shortcodes/works-grid.html
+   ============================================================================= */
+.works-grid-stack {
+  max-width: 56rem;
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.works-sub-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.35rem;
+  margin-top: 0.7rem;
+}
+.works-sub-tag {
+  background: transparent;
+  transition: border-color 0.3s, color 0.3s;
+}
+.works-sub-card:hover .works-sub-tag {
+  border-color: color-mix(in srgb, var(--fg-soft) 35%, transparent);
+}
+
+.works-sub-draft-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.3rem;
+  margin-top: 0.5rem;
+  padding: 0.15rem 0.55rem;
+  border-radius: 9999px;
+  border: 1px dashed var(--line);
+  font-family: var(--font-serif-display);
+  font-size: 0.65rem;
+  font-style: italic;
+  color: var(--fg-soft);
+  letter-spacing: 0.05em;
+  width: max-content;
+}
+
+/* draft 态：覆盖 .module-card 的 hover 上浮和渐变光 */
+.works-sub-card.is-draft {
+  cursor: not-allowed;
+  opacity: 0.62;
+  filter: grayscale(20%);
+}
+.works-sub-card.is-draft:hover {
+  transform: none;
+  border-color: var(--line);
+}
+.works-sub-card.is-draft::before { display: none; }
+
+/* =============================================================================
+   28. 段间分隔小符号（用于 markdown 短行间分隔）
+   ----------------------------------------------------------------------------
+   用法：layouts/shortcodes/section-rule.html
+   ============================================================================= */
+.section-rule {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 1rem;
+  margin: 2.5rem 0;
+  font-family: var(--font-serif-display);
+  color: var(--accent);
+  font-size: 0.85rem;
+  letter-spacing: 0.5em;
+}
+.section-rule::before,
+.section-rule::after {
+  content: "";
+  flex: 1;
+  height: 1px;
+  background: var(--line);
+  opacity: 0.6;
+}
+
+/* =============================================================================
+   29. 文件树短代码（file-tree.html）
+   ----------------------------------------------------------------------------
+   用在 AIpython / Tools 等"展示一堆脚本"的页面
+   ============================================================================= */
+.file-tree {
+  border: 1px solid var(--line);
+  border-radius: 0.5rem;
+  padding: 1rem 1.25rem;
+  background: transparent;
+  font-family: var(--font-mono);
+  font-size: 0.88rem;
+  line-height: 1.7;
+  margin: 1.5rem 0;
+  max-width: 56rem;
+}
+.file-tree-children {
+  margin-left: 1.25rem;
+  padding-left: 0.85rem;
+  border-left: 1px dashed color-mix(in srgb, var(--line) 60%, transparent);
+  margin-top: 0.25rem;
+}
+.file-tree-dir > summary {
+  list-style: none;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  padding: 0.15rem 0;
+  font-family: var(--font-serif-display);
+  font-weight: 500;
+  letter-spacing: 0.02em;
+  color: var(--fg-base);
+  user-select: none;
+  transition: color 0.2s;
+}
+.file-tree-dir > summary::-webkit-details-marker { display: none; }
+.file-tree-dir > summary:hover { color: var(--accent); }
+.file-tree-chevron {
+  display: inline-block;
+  width: 0.85em;
+  font-size: 0.85em;
+  color: var(--fg-soft);
+  transition: transform 0.25s cubic-bezier(0.22, 0.61, 0.36, 1);
+}
+.file-tree-dir[open] > summary .file-tree-chevron {
+  transform: rotate(90deg);
+  color: var(--accent);
+}
+.file-tree-name {
+  font-family: var(--font-mono);
+  font-size: 0.88rem;
+}
+.file-tree-file {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  padding: 0.15rem 0;
+  text-decoration: none;
+  color: var(--fg-mute);
+  transition: color 0.2s, padding-left 0.2s;
+}
+.file-tree-file:hover {
+  color: var(--accent);
+  padding-left: 0.35rem;
+}
+.file-tree-mark {
+  color: var(--accent);
+  font-family: var(--font-serif-display);
+  font-size: 0.95rem;
+}
+.file-tree-empty {
+  color: var(--fg-mute);
+  font-style: italic;
+}

@@ -11,19 +11,22 @@ showTableOfContents: true
 
 <!-- ===== 头像 + 个人信息 + 联系方式 ===== -->
 <div class="about-profile">
-  <img class="about-avatar" src="/image/melody.png" alt="lyrumu" />
-  <h2 class="about-name">lyrumu</h2>
-  <p class="about-role">Student · Developer</p>
-  <p class="about-location">Hangzhou, Zhejiang, China</p>
-</div>
+  <div class="about-profile-row">
+    <img class="about-avatar" src="/image/melody.png" alt="lyrumu" />
+    <div class="about-profile-text">
+      <h2 class="about-name">lyrumu</h2>
+      <p class="about-role">Student · Developer</p>
+      <p class="about-location">Hangzhou, Zhejiang, China</p>
+    </div>
+  </div>
 
-<!-- iOS 风格毛玻璃联系方式 — 头像下方一排图标 -->
-{{< about-contact >}}
+  <!-- iOS 风格毛玻璃联系方式 — 头像行下方一排图标 -->
+  {{< about-contact >}}
+</div>
 
 ---
 
 ## Technical stack
-
 <!-- 基础类 .about-tag 默认蓝色（开发工具）；
      --purple / --green 两个修饰类按类别切换配色（语言框架 / AI & 前沿）。 -->
 <div class="about-tags">
@@ -40,7 +43,6 @@ showTableOfContents: true
 ---
 
 ## GitHub Contribution
-
 
 <img
   src="https://ghchart.rshah.org/lyrumu"

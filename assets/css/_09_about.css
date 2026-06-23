@@ -1,0 +1,371 @@
+/* =============================================================================
+   _about.css — About 页面所有样式（profile + tags + iOS 液态玻璃联系方式）
+   ----------------------------------------------------------------------------
+   来源：原 custom.css §37 (about-profile/tags) + §38 (about-contact 玻璃)
+   ----------------------------------------------------------------------------
+   本文件包含三块：
+     1. .about-profile / .about-avatar / .about-name / .about-role / .about-location
+        — 头像 + 个人基本信息（从 inline style 抽出）
+     2. .about-tags / .about-tag
+        — 技术栈药丸标签（蓝/紫/绿 三色分类，色值走 _tokens.css 变量）
+     3. .about-contact / .about-contact-glass / .about-contact-btn
+        — iOS 18 液态玻璃卡片 + Simple Icons 按钮（仿 Control Center）
+
+   变量依赖：
+     --about-avatar-shadow / --about-tag-shadow
+     --tag-{blue|purple|green}-{bg|fg}
+     以上变量定义在 _tokens.css
+   ============================================================================= */
+
+/* =============================================================================
+   37. About 页面 — 头像 + 个人信息
+   ----------------------------------------------------------------------------
+   原始 _index.md 里全是 style="..." 内联写法，
+   全部抽到本节，色值走 §0 定义的变量（暗色模式由 html.dark 自动接管）。
+   ============================================================================= */
+
+/* ----- 头像 + 个人信息块 ----- */
+.about-profile {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin: 2rem 0;
+}
+
+/* 头像 + 介绍文字 横向排列 */
+.about-profile-row {
+  display: flex;
+  flex-direction: row;
+  align-items: center;     /* 头像和文字垂直居中对齐 */
+  gap: 1.5rem;             /* 头像到文字的水平间距 */
+  margin-bottom: 1.5rem;   /* 头像行到下方联系方式图标的间距 */
+}
+.about-profile-text {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start; /* 文字左对齐（不要 center，center 会让多行文字看起来怪） */
+}
+
+.about-avatar {
+  width: 144px;
+  height: 144px;
+  border-radius: 50%;
+  box-shadow: 0 4px 12px var(--about-avatar-shadow);
+  object-fit: cover;
+  display: block;
+  flex-shrink: 0;
+  /* 旧版是 margin-bottom: 1rem（用在竖排布局）。
+     现在头像在 .about-profile-row 里横向排列，下方间距由 row 的 margin-bottom 控制。 */
+  margin-bottom: 0;
+}
+
+.about-name {
+  font-family: var(--font-serif-display);
+  font-size: 2rem;
+  font-weight: 700;
+  font-variation-settings: "opsz" 144;
+  letter-spacing: -0.02em;
+  margin: 0;
+  color: var(--fg-base);
+}
+
+.about-role {
+  margin: 0.25rem 0 0;
+  color: var(--fg-mute);
+  font-family: var(--font-serif-body);
+}
+
+.about-location {
+  margin: 0;
+  color: var(--fg-soft);
+  font-size: 0.875rem;
+  font-family: var(--font-serif-body);
+  font-style: italic;
+}
+
+/* =============================================================================
+   技术栈标签
+   ----------------------------------------------------------------------------
+   药丸标签：圆角 / 居中 / 字号 / 三色分类（蓝 = 开发工具 / 紫 = 语言与框架 / 绿 = AI）
+   默认蓝色（.about-tag），用 --purple / --green 修饰类切换
+   ============================================================================= */
+.about-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  margin: 1rem 0;
+}
+
+/* 药丸标签基础样式：圆角 / 居中 / 字号 / 默认配色（兜底蓝色） */
+.about-tag {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.375rem;
+  padding: 0.25rem 0.75rem;
+  border-radius: 9999px;
+  font-size: 0.875rem;
+  font-weight: 500;
+  font-family: var(--font-serif-body);
+  line-height: 1.2;
+  background: var(--tag-blue-bg);
+  color: var(--tag-blue-fg);
+  border: 1px solid transparent;
+  transition: transform 0.2s cubic-bezier(0.22, 0.61, 0.36, 1),
+              box-shadow 0.2s;
+}
+/* 让内嵌的 SVG 图标大小跟随文字，避免撑大药丸 */
+.about-tag svg {
+  width: 1em;
+  height: 1em;
+  display: block;
+  flex-shrink: 0;
+}
+
+/* 悬停：轻微上浮 + 阴影，呼吸感 */
+.about-tag:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 2px 6px var(--about-tag-shadow);
+}
+
+/* 分类色：基础类 .about-tag 已默认蓝色，下面三个修饰类按需切换 */
+.about-tag--purple { background: var(--tag-purple-bg); color: var(--tag-purple-fg); }
+.about-tag--green  { background: var(--tag-green-bg);  color: var(--tag-green-fg);  }
+
+/* =============================================================================
+   38. About 页面 — iOS 液态玻璃联系方式 (iOS 18 liquid glass · Simple Icons)
+   ----------------------------------------------------------------------------
+   设计要点（参考 iOS 18 Control Center / n9o.xyz 头像下排版）：
+   - 整体是一个毛玻璃卡片（backdrop-filter blur + saturate），不是单独的图标
+   - 卡片大圆角（24px ≈ iOS 控件） + 顶部 1px 高光描边（立体感）
+   - 单个图标按钮 = iOS 应用图标：圆角方（squircle） + 内部 icon 居中
+   - 图标本身用 Lucide 风格的细线条（stroke-width: 1.75），与下方 Simple Icons
+     风格的实心技术栈标签形成"硬标签 vs 软图标"的层次区分
+   - 品牌色只施加在 svg 本体（currentColor），按钮本体保持中性玻璃色
+   - 邮箱走 base64 + JS 解码，HTML 源码中无明文邮箱（防爬虫）
+   ============================================================================= */
+
+.about-contact {
+  margin: 0.25rem 0 2.5rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.85rem;
+  /* 在 .about-profile 里时清零 margin — 间距由 .about-avatar 的 margin-bottom: 1rem 控制 */
+  /* （放在 .about-profile 后面的兄弟位置 → 紧贴名字/角色/地点） */
+  /* 入场：从下方 12px 浮入并淡入 */
+  opacity: 0;
+  transform: translateY(8px);
+  animation: about-contact-rise 0.9s cubic-bezier(0.22, 0.61, 0.36, 1) 0.15s forwards;
+}
+@keyframes about-contact-rise {
+  to { opacity: 1; transform: translateY(0); }
+}
+
+/* 当 .about-contact 嵌在 .about-profile 里（头像正下方、名字上方）：
+   清零外 margin，间距由 .about-avatar 的 margin-bottom: 1rem 单独控制 */
+.about-profile > .about-contact {
+  margin: 0;
+}
+
+/* 小标题 "Find me on" */
+.about-contact-label {
+  font-family: var(--font-serif-display);
+  font-size: 0.7rem;
+  font-weight: 500;
+  letter-spacing: 0.32em;
+  text-transform: uppercase;
+  color: var(--fg-soft);
+  font-style: italic;
+  margin: 0;
+  font-feature-settings: "smcp" on;
+}
+
+/* 液态玻璃卡片容器（iOS 18 Control Center 风格：blur + saturate + brightness） */
+.about-contact-glass {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.6rem;
+  padding: 0.55rem 0.8rem;
+  border-radius: 1.5rem;
+  background: rgba(255, 255, 255, 0.42);
+  backdrop-filter: blur(40px) saturate(200%) brightness(110%);
+  -webkit-backdrop-filter: blur(40px) saturate(200%) brightness(110%);
+  border: 1px solid rgba(255, 255, 255, 0.55);
+  box-shadow:
+    0 16px 48px rgba(0, 0, 0, 0.10),
+    0 4px 12px rgba(0, 0, 0, 0.06),
+    inset 0 1px 0 rgba(255, 255, 255, 0.7),
+    inset 0 -1px 0 rgba(255, 255, 255, 0.18);
+  transition: box-shadow 0.5s cubic-bezier(0.22, 0.61, 0.36, 1),
+              border-color 0.4s;
+}
+html.dark .about-contact-glass {
+  background: rgba(40, 40, 39, 0.45);
+  border-color: rgba(255, 255, 255, 0.14);
+  box-shadow:
+    0 16px 48px rgba(0, 0, 0, 0.55),
+    0 4px 12px rgba(0, 0, 0, 0.35),
+    inset 0 1px 0 rgba(255, 255, 255, 0.12),
+    inset 0 -1px 0 rgba(255, 255, 255, 0.04);
+}
+
+/* 单个图标按钮 = iOS 应用图标（squircle）+ 内部 ::before 玻璃高光 */
+.about-contact-btn {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 2.9rem;
+  height: 2.9rem;
+  border-radius: 0.9rem;
+  text-decoration: none !important;
+  color: var(--fg-base);
+  background: rgba(255, 255, 255, 0.55);
+  border: 1px solid rgba(255, 255, 255, 0.6);
+  overflow: hidden;
+  isolation: isolate;
+  box-shadow:
+    0 6px 18px rgba(0, 0, 0, 0.08),
+    0 1px 3px rgba(0, 0, 0, 0.05),
+    inset 0 1px 0 rgba(255, 255, 255, 0.8);
+  transition:
+    transform 0.35s cubic-bezier(0.22, 0.61, 0.36, 1),
+    box-shadow 0.35s,
+    background 0.35s,
+    border-color 0.35s;
+}
+html.dark .about-contact-btn {
+  background: rgba(255, 255, 255, 0.08);
+  border-color: rgba(255, 255, 255, 0.14);
+  box-shadow:
+    0 6px 18px rgba(0, 0, 0, 0.4),
+    0 1px 3px rgba(0, 0, 0, 0.3),
+    inset 0 1px 0 rgba(255, 255, 255, 0.15);
+}
+
+/* 玻璃高光层：从左上到右下的微弱渐变，模拟被光照射的反光 */
+.about-contact-btn::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  background: linear-gradient(
+    135deg,
+    rgba(255, 255, 255, 0.35) 0%,
+    rgba(255, 255, 255, 0.0) 45%,
+    rgba(255, 255, 255, 0.0) 55%,
+    rgba(255, 255, 255, 0.06) 100%
+  );
+  pointer-events: none;
+  z-index: 0;
+  transition: opacity 0.35s;
+}
+html.dark .about-contact-btn::before {
+  background: linear-gradient(
+    135deg,
+    rgba(255, 255, 255, 0.12) 0%,
+    rgba(255, 255, 255, 0.0) 45%,
+    rgba(255, 255, 255, 0.0) 55%,
+    rgba(255, 255, 255, 0.02) 100%
+  );
+}
+
+/* SVG 图标本体：Simple Icons 自带品牌色填充，不再需要 color override */
+.about-contact-btn svg {
+  width: 1.35rem;
+  height: 1.35rem;
+  display: block;
+  flex-shrink: 0;
+  position: relative;
+  z-index: 1;
+  transition: transform 0.35s cubic-bezier(0.22, 0.61, 0.36, 1);
+}
+
+/* hover：上浮 + 微缩放 + 高亮背景 + accent 描边（iOS 按钮触感） */
+.about-contact-btn:hover {
+  transform: translateY(-2px) scale(1.06);
+  background: rgba(255, 255, 255, 0.7);
+  border-color: color-mix(in srgb, var(--accent) 50%, rgba(255, 255, 255, 0.6));
+  box-shadow:
+    0 12px 28px color-mix(in srgb, var(--accent) 22%, transparent),
+    0 2px 6px rgba(0, 0, 0, 0.08),
+    inset 0 1px 0 rgba(255, 255, 255, 0.9);
+}
+html.dark .about-contact-btn:hover {
+  background: rgba(255, 255, 255, 0.14);
+  border-color: color-mix(in srgb, var(--accent) 55%, rgba(255, 255, 255, 0.14));
+}
+
+/* active：按下的瞬间（轻微缩小反馈） */
+.about-contact-btn:active {
+  transform: translateY(0) scale(0.94);
+  transition-duration: 0.12s;
+}
+
+/* focus-visible：键盘聚焦的视觉提示 */
+.about-contact-btn:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 3px;
+}
+
+/* 邮箱按钮：JS 解码前 href 为 # → JS 改完后变成 web compose URL */
+.about-contact-btn--email:not([href]),
+.about-contact-btn--email[href=""] {
+  cursor: pointer;
+}
+
+/* 无 JS / 邮箱解码失败兜底（noscript 块里纯文本联系方式） */
+.about-contact-fallback {
+  font-family: var(--font-serif-body);
+  font-style: italic;
+  font-size: 0.85rem;
+  color: var(--fg-mute);
+  margin: 0;
+  text-align: center;
+  line-height: 1.7;
+}
+.about-contact-fallback a {
+  color: var(--accent);
+  text-decoration: underline;
+  text-decoration-thickness: 1px;
+  text-underline-offset: 3px;
+  text-decoration-color: color-mix(in srgb, var(--accent) 50%, transparent);
+}
+.about-contact-fallback code {
+  font-family: var(--font-mono);
+  font-size: 0.85em;
+  background: color-mix(in srgb, var(--line) 60%, transparent);
+  padding: 0.1em 0.35em;
+  border-radius: 0.25rem;
+  color: var(--fg-base);
+}
+
+/* 移动端：缩小图标按钮和卡片间距 */
+@media (max-width: 540px) {
+  .about-contact-glass {
+    gap: 0.5rem;
+    padding: 0.5rem 0.7rem;
+    border-radius: 1.25rem;
+  }
+  .about-contact-btn {
+    width: 2.3rem;
+    height: 2.3rem;
+    border-radius: 0.7rem;
+  }
+  .about-contact-btn svg {
+    width: 1.05rem;
+    height: 1.05rem;
+  }
+}
+
+/* 尊重用户的减少动效偏好 */
+@media (prefers-reduced-motion: reduce) {
+  .about-contact,
+  .about-contact-btn,
+  .about-contact-btn svg {
+    animation: none !important;
+    transition: none !important;
+  }
+  .about-contact { opacity: 1; transform: none; }
+}

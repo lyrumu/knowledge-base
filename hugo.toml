@@ -158,24 +158,24 @@ enableEmoji = true
 # 顺序：按 weight 从小到大
 # =============================================================================
 [[menu.main]]
-  name = 'DOCS'
-  url = '/notes/'
+  name = 'ABOUT ME'
+  url = '/about/'
   # weight 参数用于控制导航菜单的排序顺序，数值越小越靠前显示
   weight = 10
 
 [[menu.main]]
+  name = 'DOCS'
+  url = '/notes/'
+  weight = 20
+
+[[menu.main]]
   name = 'WORKS'
   url = '/works/'
-  weight = 20
+  weight = 30
 
 [[menu.main]]
   name = 'DAILY'
   url = '/life/'
-  weight = 30
-
-[[menu.main]]
-  name = 'ABOUT ME'
-  url = '/about/'
   weight = 40
 
 # =============================================================================

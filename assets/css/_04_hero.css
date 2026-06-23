@@ -1,0 +1,218 @@
+/* =============================================================================
+   _hero.css — 内页头部（page-hero / breadcrumbs / single header）
+   ----------------------------------------------------------------------------
+   来源：原 custom.css §21 (page-hero) + §22 (breadcrumbs) + §24 (single hero)
+                + 原 §28 末尾的 .page-eyebrow-rule 响应式断点
+   ----------------------------------------------------------------------------
+   本文件包含非封面页的"页头装饰"：
+     1. .page-hero       — 各 section 顶部的小封面（与 .cover-page 同语言但更小）
+     2. .breadcrumbs     — 多级 section 的面包屑
+     3. .single hero     — Blowfish single/list 页面的 header（覆写主题默认）
+     4. 顶栏间距修正    — 非封面页 main 顶部 padding / article 间距
+   ============================================================================= */
+
+/* =============================================================================
+   21. 内页 hero（cover-page 的"缩小版"）
+   ----------------------------------------------------------------------------
+   用法:  layouts/shortcodes/page-hero.html · partials/cover/page-hero.html
+   ============================================================================= */
+.page-hero {
+  position: relative;
+  text-align: center;
+  padding: clamp(2rem, 5vh, 4rem) 0 clamp(1.25rem, 3vh, 2.5rem);
+  margin: 0 auto clamp(2rem, 4vh, 3.5rem);
+  max-width: 56rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  border-bottom: 1px solid transparent;
+}
+.page-hero.align-left {
+  text-align: left;
+  align-items: flex-start;
+}
+
+.page-eyebrow {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  font-family: var(--font-serif-display);
+  font-size: 0.65rem;
+  font-weight: 500;
+  letter-spacing: 0.3em;
+  text-transform: uppercase;
+  color: var(--fg-soft);
+  margin-bottom: 1.25rem;
+}
+.page-eyebrow-rule {
+  display: block;
+  width: 3rem;
+  height: 1px;
+  background: var(--line);
+  opacity: 0.7;
+}
+.page-eyebrow-text {
+  font-feature-settings: "smcp";
+  font-style: italic;
+}
+
+.page-kicker {
+  font-family: var(--font-serif-display);
+  font-size: 0.72rem;
+  font-weight: 500;
+  letter-spacing: 0.4em;
+  text-transform: uppercase;
+  color: var(--fg-soft);
+  margin: 0 0 1rem;
+  font-feature-settings: "smcp" on;
+}
+
+.page-title {
+  font-family: var(--font-serif-display);
+  font-size: clamp(2.25rem, 6vw, 3.75rem);
+  font-weight: 400;
+  letter-spacing: -0.03em;
+  line-height: 1.08;
+  margin: 0;
+  color: var(--fg-base);
+  font-variation-settings: "opsz" 144, "SOFT" 50;
+}
+
+.page-subtitle {
+  font-family: var(--font-serif-body);
+  font-style: italic;
+  font-size: clamp(0.95rem, 1.5vw, 1.1rem);
+  font-weight: 300;
+  color: var(--fg-mute);
+  margin: 1.25rem auto 0;
+  max-width: 36rem;
+  line-height: 1.55;
+}
+
+/* 复用 cover 字符级入场（cover-title 已经定义了 .word/.char 规则） */
+.page-title .word,
+.page-kicker .word { display: inline-block; vertical-align: bottom; }
+.page-title .char,
+.page-kicker .char {
+  display: inline-block;
+  will-change: transform, opacity;
+  opacity: 0;
+  transform: translateY(0.6em);
+  transition: transform 0.9s cubic-bezier(0.22, 0.61, 0.36, 1),
+              opacity 0.8s cubic-bezier(0.22, 0.61, 0.36, 1);
+  transition-delay: calc(var(--char-index, 0) * 30ms + 200ms);
+}
+.page-hero.is-ready .page-title .char,
+.page-hero.is-ready .page-kicker .char {
+  opacity: 1;
+  transform: translateY(0);
+}
+.page-title:not([data-splitting]),
+.page-kicker:not([data-splitting]) {
+  opacity: 0;
+  animation: cover-fade 1.2s cubic-bezier(0.22, 0.61, 0.36, 1) 0.3s forwards;
+}
+
+.page-divider {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  margin: 1.5rem auto 0;
+  width: clamp(10rem, 18vw, 16rem);
+}
+.page-divider-rule {
+  flex: 1;
+  height: 1px;
+  background: var(--line);
+}
+.page-divider-mark {
+  font-family: var(--font-serif-display);
+  font-size: 0.85rem;
+  color: var(--accent);
+  line-height: 1;
+  transform: translateY(-1px);
+}
+
+/* =============================================================================
+   22. 面包屑 · 顶部小字衬线 (与封面 eyebrow 同源)
+   ============================================================================= */
+nav[aria-label="breadcrumb"] ol,
+.breadcrumbs ol,
+header ol {
+  font-family: var(--font-serif-display);
+  font-size: 0.7rem;
+  font-weight: 500;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--fg-soft);
+}
+.breadcrumbs a, header ol a {
+  color: var(--fg-soft);
+  text-decoration: none;
+  transition: color 0.3s;
+}
+.breadcrumbs a:hover, header ol a:hover {
+  color: var(--fg-base);
+}
+header ol .text-primary-500 {
+  color: var(--accent) !important;
+  opacity: 0.7;
+}
+
+/* =============================================================================
+   24. Hero (single / list 页面的封面条) — 与封面同语言
+   ----------------------------------------------------------------------------
+   覆写 blowfish 主题默认的 header#single_header 样式（标题字体/字号/字距）
+   ============================================================================= */
+.single_hero_background + #single_header,
+.prose > header,
+header#single_header {
+  font-family: var(--font-serif-display);
+}
+header#single_header h1,
+.prose > header h1 {
+  font-family: var(--font-serif-display);
+  font-weight: 400;
+  letter-spacing: -0.025em;
+  font-size: clamp(2rem, 5vw, 3.25rem) !important;
+  line-height: 1.1;
+  font-variation-settings: "opsz" 144, "SOFT" 50;
+}
+.prose > header h1 {
+  margin-top: 0;
+}
+header#single_header .mt-1,
+header#single_header .text-base {
+  font-family: var(--font-serif-display);
+  font-size: 0.72rem;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--fg-soft) !important;
+}
+
+/* =============================================================================
+   顶栏 fixed layout 与正文间距：避免被遮
+   ----------------------------------------------------------------------------
+   用 body:not(.is-cover-page) 替代 body:not(:has(.cover-page))：
+   - 少一次 DOM 探测，浏览器渲染更快
+   - 与 §1 保持同一种"封面态"判定方式
+   ============================================================================= */
+body:not(.is-cover-page) main#main-content {
+  padding-top: 0;
+}
+body:not(.is-cover-page) article {
+  padding-top: 1.5rem;
+}
+
+/* =============================================================================
+   响应式微调（page-hero 系列）
+   ----------------------------------------------------------------------------
+   原 §28 末尾的 @media (max-width: 720px) 块，
+   因变量定义同属 .page-hero/* 而归并到本文件
+   ============================================================================= */
+@media (max-width: 720px) {
+  .page-eyebrow-rule { width: 1.5rem; }
+  .page-hero { padding-top: 1.5rem; padding-bottom: 1rem; }
+  .page-title { font-size: clamp(2rem, 9vw, 2.75rem); }
+  .page-divider { width: 10rem; }
+}

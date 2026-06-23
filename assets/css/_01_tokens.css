@@ -1,0 +1,171 @@
+/* =============================================================================
+   _tokens.css — 设计系统：字体 + 颜色变量 + 全局基线
+   ----------------------------------------------------------------------------
+   加载位置：custom.css 第一个 @import
+   ----------------------------------------------------------------------------
+   本文件只放"全站通用"的东西：
+     1. @font-face — 本地化字体（避免 Google Fonts CDN）
+     2. :root / html.dark — 颜色 / 字体栈 / 标签分类色 等 CSS 变量
+     3. html / body / ::selection / code / pre / kbd / samp — 全局基线样式
+
+   命名约定：
+     --bg-* / --fg-* / --line / --accent — 全站通用色
+     --color-neutral-800/900 — 覆写 princess 主题 RGB 三元组（暗色）
+     --about-*               — About 页专用（头像阴影、标签阴影）
+     --tag-{blue|purple|green}-{bg|fg} — About 标签三色分类
+   ============================================================================= */
+
+/* -----------------------------------------------------------------------------
+   本地字体（fontsource variable） — 不依赖 Google Fonts CDN
+   -------------------------------------------------------------------------- */
+@font-face {
+  font-family: "Fraunces";
+  font-style: normal;
+  font-weight: 100 900;
+  font-display: swap;
+  src: url("/fonts/fraunces-latin-wght-normal.woff2") format("woff2-variations");
+}
+@font-face {
+  font-family: "Fraunces";
+  font-style: italic;
+  font-weight: 100 900;
+  font-display: swap;
+  src: url("/fonts/fraunces-latin-wght-italic.woff2") format("woff2-variations");
+}
+@font-face {
+  font-family: "Newsreader";
+  font-style: normal;
+  font-weight: 100 900;
+  font-display: swap;
+  src: url("/fonts/newsreader-latin-wght-normal.woff2") format("woff2-variations");
+}
+@font-face {
+  font-family: "Newsreader";
+  font-style: italic;
+  font-weight: 100 900;
+  font-display: swap;
+  src: url("/fonts/newsreader-latin-wght-italic.woff2") format("woff2-variations");
+}
+@font-face {
+  font-family: "Inter";
+  font-style: normal;
+  font-weight: 100 900;
+  font-display: swap;
+  src: url("/fonts/inter-latin-wght-normal.woff2") format("woff2-variations");
+}
+
+/* -----------------------------------------------------------------------------
+   CSS 变量 — 浅色（默认）
+   -------------------------------------------------------------------------- */
+:root {
+  /* 衬线 */
+  --font-serif-display: "Fraunces", "Newsreader", "Cormorant Garamond",
+                        "Source Han Serif SC", "Songti SC", "Noto Serif SC",
+                        Georgia, serif;
+  --font-serif-body:    "Newsreader", "Fraunces", "Source Han Serif SC",
+                        "Songti SC", "Noto Serif SC", Georgia, serif;
+
+  /* 无衬线 */
+  --font-sans: "Inter", "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei",
+               ui-sans-serif, system-ui, -apple-system, sans-serif;
+
+  /* 等宽 */
+  --font-mono: "JetBrains Mono", "Fira Code", ui-monospace, "Cascadia Code",
+               "Source Code Pro", Menlo, Monaco, Consolas, monospace;
+
+  /* 颜色 - light */
+  --bg-base: #FAF9F5;
+  --bg-deep: #F1EFE9;
+  --fg-base: #1F1E1D;
+  --fg-mute: #6B6962;
+  --fg-soft: #8A8880;
+  --line:    #C9C7BF;
+  --accent:  #D97757;
+  --selection-bg: rgba(217, 119, 87, 0.18);
+
+  /* ---- About 页面专用变量 ----
+     头像阴影：浅底用浅阴影；暗底需要更深阴影才看得见。
+     技术栈标签色：按"开发工具/语言/AI"三类分色。
+     浅色用低饱和浅底，文字用深色；暗色用半透明深底，文字用亮色，保持可读。 */
+  --about-avatar-shadow: rgba(0, 0, 0, 0.15);
+  --about-tag-shadow:    rgba(0, 0, 0, 0.08);
+
+  /* 标签分类（蓝 = 开发工具 / 紫 = 语言与框架 / 绿 = AI & 前沿） */
+  --tag-blue-bg:   #e0f2fe;
+  --tag-blue-fg:   #0369a1;
+  --tag-purple-bg: #f3e8ff;
+  --tag-purple-fg: #7c3aed;
+  --tag-green-bg:  #d1fae5;
+  --tag-green-fg:  #059669;
+}
+
+/* -----------------------------------------------------------------------------
+   CSS 变量 — 暗色覆写（html.dark · Claude 风：近黑 + 米黄文字）
+   -------------------------------------------------------------------------- */
+html.dark {
+  --bg-base: #141413;
+  --bg-deep: #0F0E0D;
+  --fg-base: #FAF9F5;
+  --fg-mute: #B0AEA6;
+  --fg-soft: #807D77;
+  /* Claude 官方 surface：#30302E，比 #2A2926 亮一档，卡片边框对比度刚好 */
+  --line:    #30302E;
+  --accent:  #E08769;
+  --selection-bg: rgba(224, 135, 105, 0.25);
+
+  /* ---------------------------------------------------------------------------
+     覆写 princess 主题的底层 RGB 三元组，让 blowfish 所有 bg-neutral-* utility
+     在暗主题下自动从"公主紫"切到 Claude 暖深。
+     不动 blowfish 的 utility class、不动 body、不动特异性 → 不破坏任何页面渲染。
+
+     princess.css 原值（紫调）：
+       --color-neutral-800: 45, 33, 45   (#2D212D 深紫，body/header/卡片背景)
+       --color-neutral-900: 21, 16, 21   (#151015 最深紫，mobile menu/遮罩)
+
+     改为 Claude 暖深：
+       --color-neutral-800: 20, 20, 19   (#141413 bg-base)
+       --color-neutral-900: 15, 14, 13   (#0F0E0D bg-deep)
+     --------------------------------------------------------------------------- */
+  --color-neutral-800: 20, 20, 19;
+  --color-neutral-900: 15, 14, 13;
+
+  /* About 页面专用变量 — 暗色覆写
+     头像阴影：暗底上需要更黑才能看出"立体感"。
+     标签分类色：底色降到 ~18% 不透明度的同色相深色，
+     文字提亮到色相更浅一档的亮色（天蓝/淡紫/薄荷绿），保证对比度。 */
+  --about-avatar-shadow: rgba(0, 0, 0, 0.55);
+  --about-tag-shadow:    rgba(0, 0, 0, 0.35);
+
+  --tag-blue-bg:   color-mix(in srgb, #0ea5e9 18%, transparent);
+  --tag-blue-fg:   #7dd3fc;
+  --tag-purple-bg: color-mix(in srgb, #8b5cf6 18%, transparent);
+  --tag-purple-fg: #c4b5fd;
+  --tag-green-bg:  color-mix(in srgb, #10b981 18%, transparent);
+  --tag-green-fg:  #6ee7b7;
+}
+
+/* -----------------------------------------------------------------------------
+   全局基线 — html / body / code / pre / kbd / samp / ::selection
+   风格基调：衬线 · 暖白 · 古典分隔符 · 缓慢淡入
+   -------------------------------------------------------------------------- */
+html {
+  font-feature-settings: "ss01", "cv11", "calt", "kern", "liga";
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-rendering: optimizeLegibility;
+}
+
+body, .prose {
+  font-family: var(--font-sans);
+  letter-spacing: -0.005em;
+}
+
+code, pre, kbd, samp {
+  font-family: var(--font-mono);
+  font-feature-settings: "calt" 0;
+}
+
+::selection {
+  background: var(--selection-bg);
+  color: inherit;
+}

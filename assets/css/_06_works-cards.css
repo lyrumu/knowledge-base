@@ -1,0 +1,563 @@
+/* =============================================================================
+   _works-cards.css — works 子页的"特化"卡片：projects + resources
+   ----------------------------------------------------------------------------
+   来源：原 custom.css §35 (projects) + §36 (resources)
+   ----------------------------------------------------------------------------
+   与 _cards.css 的区别：
+     - projects: 3D 倾斜 + hover 揭示 tags/actions + glare 反光层
+     - resources: CSS columns 瀑布流 + 格式徽章 + 来源链接
+     - 两者都比 module-card/vault-section-card 复杂（多 hover 揭示层、3D 上下文）
+
+   数据驱动：
+     - projects: data/projects.yaml → layouts/shortcodes/projects-list.html
+     - resources: data/resources.yaml → layouts/shortcodes/resources-list.html
+   ============================================================================= */
+
+/* =============================================================================
+   35. works/projects — 项目卡片网格（双列 + 3D 倾斜 + hover 揭示）
+   ----------------------------------------------------------------------------
+   - 桌面端：双列 grid，移动端单列
+   - 3D 倾斜：VanillaTilt.js 处理，CSS 只负责 perspective 和反光层
+   - hover 揭示：tags + actions 默认折叠，hover 时展开
+   - 封面缩放 + 边框描边
+   ============================================================================= */
+
+.projects-list { max-width: 64rem; margin: 0 auto; }
+
+.projects-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 1.25rem;
+  /* 3D 透视容器 —— 移到父元素，避免和 VanillaTilt 的 transform 冲突 */
+  perspective: 1000px;
+}
+@media (max-width: 720px) {
+  .projects-grid { grid-template-columns: 1fr; }
+}
+
+.project-card {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  border: 1px solid var(--line);
+  border-radius: 0.75rem;
+  background: transparent;
+  overflow: hidden;
+  text-decoration: none !important;
+  /* 保留 3D 渲染上下文；transform 完全交给 VanillaTilt 接管 */
+  transform-style: preserve-3d;
+  transition: border-color 0.5s cubic-bezier(0.22, 0.61, 0.36, 1),
+              background 0.5s;
+  isolation: isolate;
+  will-change: transform;
+}
+html.dark .project-card {
+  background: rgba(255, 255, 255, 0.03);
+}
+
+/* 鼠标反光层（VanillaTilt 会写入 --glare-x / --glare-y）
+   v2 修复：加 mix-blend-mode: multiply 让反光只影响"下层"（封面/背景），
+   不洗"上层"的按钮文字（即使 z-index 没赢透，也能保证文字清晰） */
+.project-card::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(
+    circle at var(--glare-x, 50%) var(--glare-y, 50%),
+    rgba(255, 255, 255, 0.18) 0%,
+    transparent 60%
+  );
+  opacity: 0;
+  transition: opacity 0.4s;
+  pointer-events: none;
+  z-index: 1;
+  mix-blend-mode: multiply;
+}
+.project-card:hover::after { opacity: 1; }
+html.dark .project-card::after {
+  background: radial-gradient(
+    circle at var(--glare-x, 50%) var(--glare-y, 50%),
+    rgba(255, 255, 255, 0.08) 0%,
+    transparent 60%
+  );
+}
+
+.project-card:hover {
+  border-color: color-mix(in srgb, var(--accent) 50%, var(--line));
+}
+
+.project-card-link {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  text-decoration: none !important;
+  color: inherit;
+  position: relative;
+  z-index: 2;
+}
+
+/* 封面 */
+.project-card-cover {
+  position: relative;
+  aspect-ratio: 16 / 9;
+  background: color-mix(in srgb, var(--bg-deep) 70%, transparent);
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+html.dark .project-card-cover {
+  background: color-mix(in srgb, var(--fg-base) 4%, transparent);
+}
+.project-card-cover img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+  filter: saturate(0.95);
+  transition: transform 0.6s cubic-bezier(0.22, 0.61, 0.36, 1),
+              filter 0.4s;
+}
+.project-card:hover .project-card-cover img {
+  transform: scale(1.05);
+  filter: saturate(1.05);
+}
+.project-card-cover-fallback {
+  color: var(--fg-mute);
+  display: inline-flex;
+}
+
+/* featured 角标 */
+.project-card-flag {
+  position: absolute;
+  top: 0.6rem;
+  left: 0.6rem;
+  font-family: var(--font-mono);
+  font-size: 0.55rem;
+  font-weight: 500;
+  letter-spacing: 0.18em;
+  padding: 0.18rem 0.55rem;
+  border-radius: 9999px;
+  background: var(--accent);
+  color: var(--bg-base);
+  z-index: 3;
+}
+
+/* 文字区 */
+.project-card-body {
+  padding: 1.1rem 1.25rem 1.2rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+  flex: 1;
+}
+.project-card-head {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-family: var(--font-mono);
+  font-size: 0.62rem;
+  text-transform: uppercase;
+  letter-spacing: 0.18em;
+  color: var(--fg-soft);
+  margin-bottom: 0.1rem;
+}
+.project-card-date { font-feature-settings: "tnum"; }
+.project-card-source {
+  display: inline-flex;
+  align-items: center;
+  color: var(--fg-mute);
+  transition: color 0.3s;
+}
+.project-card:hover .project-card-source { color: var(--accent); }
+
+.project-card-name {
+  font-family: var(--font-serif-display);
+  font-size: 1.2rem;
+  font-weight: 500;
+  letter-spacing: -0.01em;
+  color: var(--fg-base);
+  margin: 0;
+  font-variation-settings: "opsz" 60;
+  line-height: 1.2;
+}
+.project-card-title {
+  font-family: var(--font-mono);
+  font-size: 0.62rem;
+  text-transform: uppercase;
+  letter-spacing: 0.18em;
+  color: var(--fg-soft);
+}
+.project-card-desc {
+  font-family: var(--font-serif-body);
+  font-size: 0.9rem;
+  font-style: italic;
+  line-height: 1.55;
+  color: var(--fg-mute);
+  margin: 0.2rem 0 0;
+}
+
+/* tags — 默认折叠，hover 时展开 */
+.project-card-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.3rem;
+  max-height: 0;
+  opacity: 0;
+  overflow: hidden;
+  margin-top: 0;
+  transition: max-height 0.4s cubic-bezier(0.22, 0.61, 0.36, 1),
+              opacity 0.3s 0.1s,
+              margin-top 0.3s;
+}
+.project-card:hover .project-card-tags,
+.project-card:focus-within .project-card-tags {
+  max-height: 4rem;
+  opacity: 1;
+  margin-top: 0.6rem;
+}
+.project-card-tag {
+  /* 基础样式（font / 边框 / 圆角等）见 _cards.css 共享 .project-card-tag 块 */
+}
+
+/* 动作按钮 — 默认折叠，hover 时展开 */
+.project-card-actions {
+  display: flex;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+  max-height: 0;
+  opacity: 0;
+  overflow: hidden;
+  margin-top: 0;
+  transition: max-height 0.4s cubic-bezier(0.22, 0.61, 0.36, 1),
+              opacity 0.3s 0.15s,
+              margin-top 0.3s;
+}
+.project-card:hover .project-card-actions,
+.project-card:focus-within .project-card-actions {
+  max-height: 3rem;
+  opacity: 1;
+  margin-top: 0.9rem;
+}
+/* v2 修复（重构为 <a>）：覆盖 :link / :visited / :hover / :active 全状态
+   避免浏览器默认 <a> 蓝色 + 下划线盖掉我们设的颜色 */
+.project-card-btn,
+.project-card-btn:link,
+.project-card-btn:visited {
+  /* 必须比 .project-card::after 反光层（z-index: 1）更高，
+     否则 hover 反光层 opacity 1 时会蒙在按钮上、文字被冲淡 */
+  position: relative;
+  z-index: 2;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  font-family: var(--font-serif-display);
+  font-size: 0.68rem;
+  font-weight: 500;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  padding: 0.35rem 0.7rem;
+  border-radius: 9999px;
+  /* v3 关键修复：米白 #FAF9F5 在 accent #D97757 上对比度只有 3.08:1，
+     勉强够 AA Large 但小字看不清。
+     改成 color-mix(accent 70%, fg-base 30%) = #A15C46，对比度 4.64:1 ✓ AA 通过 */
+  background: color-mix(in srgb, var(--accent) 70%, var(--fg-base));
+  color: var(--bg-base);
+  text-decoration: none;
+  transition: background 0.3s, transform 0.3s;
+}
+/* v3 关键修复：hover 时进一步加深 background（60% accent + 40% fg-base = #9A5A38），
+   对比度 5.5:1 ✓ AA / AAA Large 都通过，文字始终清晰。
+   视觉反馈：背景更深 + transform 上浮，配合源码按钮的"低调"风格。 */
+.project-card-btn:hover,
+.project-card-btn:focus,
+.project-card-btn:active {
+  background: color-mix(in srgb, var(--accent) 60%, var(--fg-base));
+  color: var(--bg-base);
+  transform: translateY(-1px);
+  text-decoration: none;
+}
+.project-card-btn.is-secondary,
+.project-card-btn.is-secondary:link,
+.project-card-btn.is-secondary:visited {
+  background: transparent;
+  color: var(--fg-base);
+  border: 1px solid var(--line);
+}
+.project-card-btn.is-secondary:hover,
+.project-card-btn.is-secondary:focus,
+.project-card-btn.is-secondary:active {
+  background: color-mix(in srgb, var(--fg-base) 6%, transparent);
+  color: var(--fg-base);
+  text-decoration: none;
+}
+.project-card-btn-arrow {
+  display: inline-flex;
+  align-items: center;
+  transition: transform 0.3s;
+}
+.project-card-btn:hover .project-card-btn-arrow {
+  transform: translate(2px, -2px);
+}
+
+/* 草稿态 */
+.project-card.is-draft {
+  opacity: 0.6;
+  filter: grayscale(20%);
+  pointer-events: none;
+}
+
+/* 移动端禁用 3D 倾斜，hover 揭示改为常显 */
+@media (max-width: 720px) {
+  .project-card,
+  .project-card:hover { transform: none !important; }
+  .project-card-tags,
+  .project-card-actions {
+    max-height: 5rem;
+    opacity: 1;
+    margin-top: 0.6rem;
+  }
+}
+
+/* 空态 */
+.projects-empty {
+  text-align: center;
+  padding: 3rem 1.5rem;
+  border: 1px dashed var(--line);
+  border-radius: 0.5rem;
+  font-family: var(--font-serif-body);
+  font-style: italic;
+  color: var(--fg-mute);
+}
+.projects-empty strong {
+  font-family: var(--font-serif-display);
+  font-style: normal;
+  font-weight: 500;
+  color: var(--fg-base);
+  display: block;
+  margin-bottom: 0.4rem;
+  font-size: 1.05rem;
+  letter-spacing: 0.02em;
+}
+
+/* =============================================================================
+   36. works/resources — 资源卡片瀑布流
+   ----------------------------------------------------------------------------
+   - CSS columns 实现瀑布流（不同高度卡片自然错落）
+   - 封面 + 格式徽章 + 元信息（size/date）+ tags + 下载按钮
+   - 悬停时封面缩放 + 边框变 accent
+   ============================================================================= */
+
+.resources-list { max-width: 64rem; margin: 0 auto; }
+
+.resources-masonry {
+  column-count: 2;
+  column-gap: 1.25rem;
+}
+@media (max-width: 720px) {
+  .resources-masonry { column-count: 1; }
+}
+
+.resource-card {
+  break-inside: avoid;
+  margin-bottom: 1.25rem;
+  display: block;
+  border: 1px solid var(--line);
+  border-radius: 0.65rem;
+  overflow: hidden;
+  background: transparent;
+  text-decoration: none !important;
+  color: inherit;
+  transition: border-color 0.5s cubic-bezier(0.22, 0.61, 0.36, 1),
+              transform 0.5s cubic-bezier(0.22, 0.61, 0.36, 1),
+              background 0.5s;
+  isolation: isolate;
+}
+html.dark .resource-card {
+  background: rgba(255, 255, 255, 0.03);
+}
+.resource-card:hover {
+  border-color: color-mix(in srgb, var(--accent) 45%, var(--line));
+  transform: translateY(-2px);
+}
+html.dark .resource-card:hover {
+  background: rgba(255, 255, 255, 0.06);
+}
+
+.resource-card-link {
+  display: block;
+  text-decoration: none !important;
+  color: inherit;
+  padding: 0;
+}
+
+.resource-card-cover {
+  position: relative;
+  aspect-ratio: 16 / 10;
+  background: color-mix(in srgb, var(--bg-deep) 70%, transparent);
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+html.dark .resource-card-cover {
+  background: color-mix(in srgb, var(--fg-base) 4%, transparent);
+}
+.resource-card-cover img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+  filter: saturate(0.92);
+  transition: transform 0.6s cubic-bezier(0.22, 0.61, 0.36, 1),
+              filter 0.4s;
+}
+.resource-card:hover .resource-card-cover img {
+  transform: scale(1.05);
+  filter: saturate(1.05);
+}
+.resource-card-cover-fallback {
+  color: var(--fg-mute);
+  display: inline-flex;
+}
+
+/* 右上角格式徽章 */
+.resource-card-format {
+  position: absolute;
+  top: 0.55rem;
+  right: 0.55rem;
+  font-family: var(--font-mono);
+  font-size: 0.6rem;
+  font-weight: 500;
+  letter-spacing: 0.15em;
+  padding: 0.15rem 0.55rem;
+  border-radius: 9999px;
+  background: color-mix(in srgb, var(--bg-base) 80%, transparent);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  color: var(--fg-base);
+  border: 1px solid var(--line);
+}
+
+.resource-card-body {
+  padding: 1rem 1.1rem 1.1rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+}
+
+.resource-card-name {
+  font-family: var(--font-serif-display);
+  font-size: 1.1rem;
+  font-weight: 500;
+  letter-spacing: -0.01em;
+  color: var(--fg-base);
+  margin: 0;
+  font-variation-settings: "opsz" 60;
+  line-height: 1.2;
+}
+.resource-card-title {
+  font-family: var(--font-mono);
+  font-size: 0.6rem;
+  text-transform: uppercase;
+  letter-spacing: 0.18em;
+  color: var(--fg-soft);
+}
+.resource-card-desc {
+  font-family: var(--font-serif-body);
+  font-size: 0.88rem;
+  font-style: italic;
+  line-height: 1.55;
+  color: var(--fg-mute);
+  margin: 0.2rem 0 0;
+}
+
+.resource-card-meta {
+  display: flex;
+  align-items: center;
+  gap: 0.7rem;
+  margin-top: 0.5rem;
+  font-family: var(--font-mono);
+  font-size: 0.65rem;
+  color: var(--fg-soft);
+  font-variant-numeric: tabular-nums;
+}
+.resource-card-meta > * + * {
+  padding-left: 0.7rem;
+  border-left: 1px solid color-mix(in srgb, var(--line) 70%, transparent);
+}
+
+.resource-card-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.3rem;
+  margin-top: 0.5rem;
+}
+.resource-card-tag {
+  /* 基础样式（font / 边框 / 圆角等）见 _cards.css 共享块 */
+}
+
+.resource-card-cta {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  margin-top: 0.85rem;
+  align-self: flex-start;
+  font-family: var(--font-serif-display);
+  font-size: 0.7rem;
+  font-weight: 500;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--accent);
+  transition: gap 0.3s;
+}
+.resource-card:hover .resource-card-cta { gap: 0.6rem; }
+.resource-card-arrow {
+  display: inline-flex;
+  align-items: center;
+  transition: transform 0.4s;
+}
+.resource-card:hover .resource-card-arrow {
+  transform: translateY(2px);
+}
+
+.resource-card-source {
+  margin-top: 0.7rem;
+  padding-top: 0.6rem;
+  border-top: 1px solid color-mix(in srgb, var(--line) 60%, transparent);
+  font-family: var(--font-serif-body);
+  font-size: 0.72rem;
+  font-style: italic;
+  color: var(--fg-mute);
+  word-break: break-all;
+  line-height: 1.5;
+}
+.resource-card-source a {
+  color: var(--fg-soft);
+  text-decoration: underline;
+  text-decoration-color: color-mix(in srgb, var(--line) 80%, transparent);
+  text-underline-offset: 2px;
+  transition: color 0.3s;
+}
+.resource-card-source a:hover { color: var(--accent); }
+
+/* 空态 */
+.resources-empty {
+  text-align: center;
+  padding: 3rem 1.5rem;
+  border: 1px dashed var(--line);
+  border-radius: 0.5rem;
+  font-family: var(--font-serif-body);
+  font-style: italic;
+  color: var(--fg-mute);
+}
+.resources-empty strong {
+  font-family: var(--font-serif-display);
+  font-style: normal;
+  font-weight: 500;
+  color: var(--fg-base);
+  display: block;
+  margin-bottom: 0.4rem;
+  font-size: 1.05rem;
+  letter-spacing: 0.02em;
+}

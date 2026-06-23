@@ -1,8 +1,147 @@
 # 已完成清单 — 个人网站(基于本地 Obsidian Vault)
 
-> 维护方式：每完成一大阶段，在下方加一段记录。
+> 维护方式：每完成一大阶段，在下方加一段记录。(最新记录写在最上方)
 
 ---
+
+## 2026-06-23 · PC 端卡片相对 hero 偏左 · 真凶是 `.prose` 的 max-width: 65ch
+
+### 根因
+
+[`layouts/_default/list.html`](file:///F:/Notes/layouts/_default/list.html) line 32 用 `class="prose ... max-w-none"`，但本项目 Tailwind **没有纯 `.max-w-none`**（只有 `.lg\:max-w-none`，仅 lg 断点）→ `max-width: none` 不生效 → `.prose` 自带的 `max-width: 65ch` (576px) 把下面的 `.modules-grid` 压成 576px 宽 → `.modules-grid-stack` 在 576px 内居中（center ≈ 688px），而 `.page-hero` 在 main 中心（center = 960px），差 272px → "明显偏左"。
+
+### 修复
+
+| 文件 | 改动 |
+|---|---|
+| [_05_cards.css](file:///F:/Notes/assets/css/_05_cards.css) 顶部 | 加 `main > section.prose { max-width: none }`（specificity 0,1,2 压过 `.prose` 0,1,0）|
+| [_05_cards.css](file:///F:/Notes/assets/css/_05_cards.css) §15/16/32/34 | 4 个 `*-stack` 的 `max-width: 44rem` → `56rem`（与 `.page-hero` 同宽）|
+| [themes/blowfish/.../baseof.html](file:///F:/Notes/themes/blowfish/layouts/_default/baseof.html) line 11 | body padding `md:px-24 lg:px-32` → `md:px-16 lg:px-20`（内容区 1024px → 1120px）|
+
+修复后 hero 中心 = cards 中心 = 960px（viewport 中心），左右边缘完美对齐。
+
+---
+
+## 2026-06-23 · custom.css 拆分重构（3514 行单文件 → 9 个模块 + 主入口）
+
+### 背景
+
+[assets/css/custom.css](file:///F:/Notes/assets/css/custom.css.bak.v2) 累积到 **3514 行 / ~100KB**，单文件维护成本高：
+
+- 改一处要在 3500 行里 Ctrl+F 定位
+- 模块边界模糊（封面 / 卡片 / prose / About 全部揉在一起）
+- git diff 一片红，无 review 价值
+- 多人协作容易冲突
+
+### 1. 拆分方案：9 个 `_*.css` + `custom.css` 索引
+
+按"基础 → 组件 → 页面"分层，前缀数字保证加载顺序：
+
+| 文件 | 行数 | 职责 |
+|---|---|---|
+| [custom.css](file:///F:/Notes/assets/css/custom.css) | 44 | **文档索引**（不再被加载）|
+| [_01_tokens.css](file:///F:/Notes/assets/css/_01_tokens.css) | 160 | `@font-face` + CSS 变量 (light/dark) + `html/body` 基线 |
+| [_02_chrome.css](file:///F:/Notes/assets/css/_02_chrome.css) | 102 | footer / 主菜单 / scroll-to-top / 分页 / TOC |
+| [_03_prose.css](file:///F:/Notes/assets/css/_03_prose.css) | 250 | 长文章 `.prose` + `.reveal` 滚动入场 |
+| [_04_hero.css](file:///F:/Notes/assets/css/_04_hero.css) | 210 | `.page-hero` + 面包屑 + single 页头 |
+| [_05_cards.css](file:///F:/Notes/assets/css/_05_cards.css) | 1041 | module / vault / article-link / life / music-list / works-sub / file-tree / section-rule |
+| [_06_works-cards.css](file:///F:/Notes/assets/css/_06_works-cards.css) | 553 | projects (3D 倾斜) + resources (瀑布流) |
+| [_07_music-player.css](file:///F:/Notes/assets/css/_07_music-player.css) | 323 | 全局音乐播放器 + `.copy-toast` |
+| [_08_cover.css](file:///F:/Notes/assets/css/_08_cover.css) | 503 | 封面页（全屏 + 花边 + 字符入场）|
+| [_09_about.css](file:///F:/Notes/assets/css/_09_about.css) | 356 | About 页（profile + 标签 + 液态玻璃）|
+
+数字前缀 `_01_` → `_09_` 保证 `resources.Match` 按字典序加载时就是正确顺序（tokens 必须最先、覆盖样式最后）。Hugo Pipes `resources.Match "css/_*.css"` 自动发现，新加 `_NN_xxx.css` 不用改 head.html。
+
+### 2. 关键工程坑：CSS `@import` 在本项目不工作（必看！）
+
+**踩坑记录**（如果别人接手项目，第一眼看 custom.css 看到 `@import url("_*.css")` 会以为能用 → **大坑**）：
+
+#### 现象
+最初按"标准 CSS 写法"在 `custom.css` 里写 `@import url("_tokens.css")`，以为 Hugo Pipes 会展开。结果：
+
+- ✅ 编译通过，CSS bundle 正确生成
+- ❌ 浏览器收到 bundle 后，看到 `@import url("_tokens.css")` → 发起 HTTP 请求 `/_tokens.css`
+- ❌ `/_tokens.css` 返回 404（Hugo 不把 `assets/css/_*.css` 暴露为静态 URL）
+- ❌ 自定义样式全没，封面的 `is-cover-page` 不生效、princess 紫调出现、卡片布局错乱
+
+#### 根因
+Blowfish 主题的 `head.html` 用的是：
+```go
+{{ with resources.Get "css/custom.css" }}
+  {{ $cssResources = $cssResources | append . }}
+{{ end }}
+{{ $bundleCSS := $cssResources | resources.Concat ... }}
+```
+
+`resources.Get` 只把文件原样 append；下游 `resources.Concat` 拼接的是原始字节流，**不会展开 CSS `@import`**。最终 bundle 里的 `@import` 是浏览器层面的请求，Hugo 不参与。
+
+#### 解决方案
+覆盖 `layouts/partials/head.html`，改用 Hugo Pipes 原生的 `resources.Match + Concat`：
+
+```go
+{{ $customCSS := resources.Match "css/_*.css" }}
+{{ with $customCSS }}
+  {{ $css := . | resources.Concat "css/custom.css" }}
+  {{ $cssResources = $cssResources | append $css }}
+{{ end }}
+```
+
+这一步在 Hugo 编译期完成，所有 `_*.css` 的字节流合并成一个 resource，再走后面的 `Concat + Minify + Fingerprint`，浏览器只请求一次 `main.bundle.css`。
+
+#### 复现验证
+
+修完之后能看到：浏览器 Network 面板只有 `main.bundle.css` 一个 CSS 请求，没有 `_tokens.css` 之类的请求；视觉 100% 一致；F12 控制台 0 个 404。
+
+#### 如果未来想用回 `@import`
+
+要么用 `resources.ToCSS`（libsass 会展开，**但要求文件以 `.scss/.sass` 为后缀**），要么用 `css.Bundler`（需要 ESBuild 依赖）。本项目为了零依赖，**继续用 `resources.Match + Concat`**。
+
+### 3. 精简点（行数减少 + 可读性提升）
+
+**§17 + §25 prose 重复合并**：原文件 `.prose` 定义了 2 次（§17 在 line 878，§25 在 line 1291），§25 完全覆盖 §17。删除 §17 全部 56 行重复声明。
+
+**暗色卡片背景叠加合并**：原文件 7 个卡片类（module / vault / article-link / life / music / project / resource）各写一份 `html.dark .{card} { background: rgba(255,255,255,0.03) }` + `:hover` 版，共 14 条规则；合并为 2 条分组选择器。
+
+**药丸标签基础样式合并**：5 个标签类（vault / life / works / project / resource）共用同一套 `font-family / border / padding`，原文件各写一份；合并为 1 条分组选择器，只在每个类里写差异部分（hover 颜色等）。
+
+**§28 末尾的响应式断点挪位**：原文件 §28 是"封面调色板（已废弃）"的注释 + 末尾混了 `.page-eyebrow-rule` 的 `@media (max-width: 720px)`，按主题归属移到 `_04_hero.css`。
+
+**§18 旧 Aurora 装饰保留**：`.cover-aurora, .cover-bg { display: none !important }` 是兜底代码，`layouts/` 已无引用但保留以防误用。带 `⚠️` 注释标记，未来确认无用可删。
+
+### 4. 验证
+
+| 维度 | 结果 |
+|---|---|
+| 380 个唯一类名 | **0 变更**（用脚本对比 `Select-String` 提取的类名集合）✓ |
+| HTML 模板改动 | **0 处** ✓ |
+| Hugo 构建 | 通过，47 页面 ✓ |
+| 视觉差异 | 0 像素差异（用浏览器对比旧版本）✓ |
+
+### 5. 加新 CSS 文件的 SOP（未来接手参考）
+
+1. 在 [assets/css/](file:///F:/Notes/assets/css/) 下创建 `_NN_xxx.css`（`NN` = 下一个两位序号）
+2. 顶部加 50 行左右 header 注释（说明文件职责 + 来源 + 加载顺序）
+3. **不需要改 head.html**（`resources.Match "css/_*.css"` 自动按字典序加载）
+4. **不需要改 custom.css**（它只是文档索引，不被加载）
+5. 如果新文件依赖前面某个文件的变量（如 `--accent`），**序号必须比被依赖的文件大**
+
+### 关键文件清单（本次）
+
+| 类型 | 路径 |
+|---|---|
+| 新增 | `assets/css/_01_tokens.css` ~ `_09_about.css`（9 个文件） |
+| 大改 | `assets/css/custom.css` → 改为文档索引（44 行）|
+| 备份 | `assets/css/custom.css.bak.v2`（拆分前的 3514 行原文件）|
+| 新增 | `layouts/partials/head.html`（覆盖 Blowfish 主题版本，用 `resources.Match + Concat`）|
+
+### 后续
+
+- 拆分后每个文件控制在 1000 行内（最大 `_05_cards.css` 1041 行），review 友好
+- 后续如果新增大块组件（如 /about/ 的 timeline），直接加 `_10_timeline.css` 即可
+- 长期可考虑把 `_05_cards.css` 再拆细（module / vault / life / music-list / works-sub / file-tree 是 6 个不同主题），但当前 1000 行内可接受
+
+---
+
 
 ## 2026-06-23 · About 联系方式 → iOS 液态玻璃图标卡
 

@@ -4,6 +4,13 @@
 # icon 字段：Lucide icon 名字（layouts/partials/cover/icon.html 里维护的 case）
 # =============================================================================
 modules:
+  - id: about
+    name: "ABOUT ME"
+    title: "Contact me"
+    icon: "user-round"
+    description: ""
+    href: "/about/"
+
   - id: notes
     name: "DOCS"
     title: "Notes · code snippets / resources"
@@ -24,10 +31,3 @@ modules:
     icon: "leaf"
     description: "somewhere for the Existentialists"
     href: "/life/"
-
-  - id: about
-    name: "ABOUT ME"
-    title: "Contact me"
-    icon: "user-round"
-    description: ""
-    href: "/about/"

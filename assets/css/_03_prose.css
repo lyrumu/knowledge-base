@@ -1,0 +1,255 @@
+/* =============================================================================
+   _prose.css — 长文章 prose 样式 + 通用 reveal 滚动入场动画
+   ----------------------------------------------------------------------------
+   来源：原 custom.css §14 (reveal) + §17 + §25 (合并去重)
+   ----------------------------------------------------------------------------
+   历史说明：原 §17 / §25 是两次迭代，§25 完全覆盖 §17（同一选择器、靠后位置）。
+   本文件按"最终生效版本"合并，去掉 §17 中已被 §25 覆盖的重复声明。
+   ============================================================================= */
+
+/* -----------------------------------------------------------------------------
+   通用 reveal 滚动入场动画 — 其它页面用（cover-page / module-card 都有自己的入场）
+   -------------------------------------------------------------------------- */
+.reveal {
+  opacity: 1;
+}
+@supports (animation-timeline: view()) {
+  .reveal {
+    animation: reveal-fade 1s cubic-bezier(0.22, 0.61, 0.36, 1) both;
+    animation-timeline: view();
+    animation-range: entry 0% cover 25%;
+  }
+}
+@keyframes reveal-fade {
+  from { opacity: 0; transform: translateY(24px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+/* =============================================================================
+   长文章 prose 样式（衬线 · 暖白 · Claude 风 · 与封面同语言）
+   ----------------------------------------------------------------------------
+   说明：原 §17 是初版定义，§25 是补充定义且完全覆盖了 §17。
+   这里采用 §25 的最终值（约 200 行），按"块"重新组织，让阅读顺序符合
+   HTML 渲染顺序（标题 → 段落 → 链接 → 代码 → 引用 → 表格 → 列表 → 多媒体）。
+   ============================================================================= */
+
+/* 容器基线 */
+.prose {
+  font-family: var(--font-serif-body);
+  font-size: 1.05rem;
+  line-height: 1.8;
+  color: var(--fg-base);
+}
+
+/* ----- 标题 ----- */
+.prose h1, .prose h2, .prose h3, .prose h4, .prose h5 {
+  font-family: var(--font-serif-display);
+  font-weight: 500;
+  letter-spacing: -0.02em;
+  color: var(--fg-base);
+  font-variation-settings: "opsz" 80;
+}
+.prose h2 {
+  font-size: 1.85rem;
+  margin-top: 2.5rem;
+  padding-top: 0.5rem;
+  border-top: 1px solid var(--line);
+}
+.prose h2:first-child { border-top: 0; padding-top: 0; }
+.prose h3 {
+  font-size: 1.35rem;
+  margin-top: 2rem;
+}
+.prose h4 { font-size: 1.1rem; margin-top: 1.5rem; }
+
+/* ----- 段落 / 链接 ----- */
+.prose p { margin: 1rem 0; }
+.prose a {
+  color: var(--accent);
+  text-decoration: underline;
+  text-decoration-thickness: 1px;
+  text-underline-offset: 3px;
+  text-decoration-color: color-mix(in srgb, var(--accent) 50%, transparent);
+  transition: text-decoration-color 0.25s, color 0.25s;
+}
+.prose a:hover {
+  text-decoration-color: var(--accent);
+  color: var(--accent);
+}
+
+/* ----- 行内代码 / 代码块 ----- */
+.prose code {
+  font-size: 0.88em;
+  background: color-mix(in srgb, var(--line) 60%, transparent);
+  padding: 0.1em 0.35em;
+  border-radius: 0.25rem;
+  color: var(--fg-base);
+  font-weight: 500;
+}
+.prose pre {
+  border: 1px solid var(--line);
+  border-radius: 0.5rem;
+  padding: 1.1rem 0;
+  background: var(--bg-deep);
+  font-size: 0.85rem;
+  line-height: 1.65;
+  font-variant-numeric: tabular-nums;
+  overflow-x: auto;
+  margin: 1.5rem 0;
+}
+.prose pre code {
+  background: transparent;
+  padding: 0;
+  color: inherit;
+}
+
+/* chroma 渲染的代码块：去掉所有嵌套层级，让"一个框"就完事 */
+.prose .highlight-wrapper,
+.prose .highlight,
+.prose pre.chroma {
+  background: transparent;
+  border: 0;
+  margin: 0;
+  padding: 0;
+}
+.prose .highlight-wrapper {
+  border: 1px solid var(--line);
+  border-radius: 0.5rem;
+  background: var(--bg-deep);
+  padding: 1.1rem 0;
+  margin: 1.5rem 0;
+  overflow: hidden;
+}
+.prose pre.chroma {
+  padding: 0 1.25rem;
+  font-variant-numeric: tabular-nums;
+}
+.prose pre.chroma code {
+  display: block;
+  background: transparent;
+  counter-reset: chroma-line;
+}
+.prose pre.chroma .line {
+  display: block;
+  position: relative;
+  padding-left: 3rem;
+}
+.prose pre.chroma .line:hover {
+  background: color-mix(in srgb, var(--accent) 4%, transparent);
+}
+/* 行号：紧贴代码左边、用 CSS counter 自增生成 */
+.prose pre.chroma .ln {
+  display: inline-block;
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 2.4rem;
+  padding-right: 0.5rem;
+  text-align: right;
+  font-family: var(--font-mono);
+  font-size: 0.78em;
+  color: color-mix(in srgb, var(--fg-soft) 70%, transparent);
+  user-select: none;
+  border-right: 1px solid color-mix(in srgb, var(--line) 60%, transparent);
+  counter-increment: chroma-line;
+}
+.prose pre.chroma .ln::before {
+  content: counter(chroma-line);
+}
+.prose pre.chroma .cl {
+  display: inline;
+}
+
+/* ----- 古典分隔符 hr（衬线 ✦） ----- */
+.prose hr {
+  border: 0;
+  text-align: center;
+  margin: 2.5rem auto;
+  height: auto;
+}
+.prose hr::before {
+  content: "✦";
+  color: var(--accent);
+  font-size: 1rem;
+  letter-spacing: 0.5em;
+  padding-left: 0.5em;
+}
+
+/* ----- 引用 ----- */
+.prose blockquote {
+  border-left: 2px solid var(--accent);
+  padding: 0.25rem 0 0.25rem 1.25rem;
+  font-style: italic;
+  font-family: var(--font-serif-body);
+  color: var(--fg-mute);
+  margin: 1.5rem 0;
+  background: color-mix(in srgb, var(--accent) 5%, transparent);
+  border-radius: 0 0.25rem 0.25rem 0;
+}
+
+/* ----- 表格 ----- */
+.prose table {
+  border: 1px solid var(--line);
+  border-radius: 0.5rem;
+  overflow: hidden;
+  border-collapse: separate;
+  border-spacing: 0;
+}
+.prose table th {
+  background: color-mix(in srgb, var(--line) 40%, transparent);
+  font-family: var(--font-serif-display);
+  font-weight: 500;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  font-size: 0.78rem;
+  padding: 0.65rem 0.85rem;
+  border-bottom: 1px solid var(--line);
+}
+.prose table td {
+  padding: 0.65rem 0.85rem;
+  border-top: 1px solid color-mix(in srgb, var(--line) 50%, transparent);
+  font-family: var(--font-serif-body);
+}
+
+/* ----- 列表 ----- */
+.prose ul li::marker { color: var(--accent); }
+.prose ol li::marker {
+  color: var(--fg-soft);
+  font-family: var(--font-serif-display);
+  font-style: italic;
+}
+
+/* ----- 多媒体 / 其它 ----- */
+.prose img {
+  border-radius: 0.5rem;
+  border: 1px solid var(--line);
+}
+.prose kbd {
+  font-family: var(--font-mono);
+  font-size: 0.82em;
+  background: var(--bg-deep);
+  border: 1px solid var(--line);
+  border-bottom-width: 2px;
+  border-radius: 0.3rem;
+  padding: 0.1em 0.45em;
+  color: var(--fg-base);
+}
+.prose mark {
+  background: color-mix(in srgb, var(--accent) 25%, transparent);
+  color: inherit;
+  padding: 0.05em 0.2em;
+  border-radius: 0.15rem;
+}
+.prose details {
+  border: 1px solid var(--line);
+  border-radius: 0.5rem;
+  padding: 0.75rem 1rem;
+  margin: 1rem 0;
+  background: transparent;
+}
+.prose details summary {
+  font-family: var(--font-serif-display);
+  cursor: pointer;
+  font-style: italic;
+  color: var(--fg-base);
+}

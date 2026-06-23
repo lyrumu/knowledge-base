@@ -1,0 +1,106 @@
+/* =============================================================================
+   _chrome.css — 主题 chrome 元素（footer / 主菜单 / scroll-to-top / 分页 / TOC）
+   ----------------------------------------------------------------------------
+   来源：原 custom.css §26 (footer / scroll-to-top / pagination / TOC / 主菜单)
+                + 相关 articles 标题
+   ----------------------------------------------------------------------------
+   本文件包含"贯穿全站"的界面元素：footer、header 菜单、滚动到顶按钮、分页、目录。
+   这些组件通常被多个页面复用，所以单独成文件便于维护。
+   ============================================================================= */
+
+/* =============================================================================
+   Footer
+   ============================================================================= */
+#site-footer {
+  font-family: var(--font-serif-display);
+  border-top: 1px solid var(--line);
+  margin-top: 4rem;
+}
+#site-footer p,
+#site-footer a,
+#site-footer nav {
+  font-family: var(--font-serif-display);
+  font-size: 0.78rem;
+  letter-spacing: 0.08em;
+  color: var(--fg-soft);
+}
+#site-footer a:hover {
+  color: var(--fg-base);
+}
+
+/* =============================================================================
+   顶栏主菜单
+   ============================================================================= */
+.main-menu a,
+.main-menu span {
+  font-family: var(--font-serif-display);
+  font-size: 0.85rem;
+  letter-spacing: 0.06em;
+  font-weight: 500;
+}
+.main-menu a:hover,
+.main-menu a.active {
+  color: var(--accent) !important;
+}
+
+/* =============================================================================
+   Scroll-to-top
+   ============================================================================= */
+.scroll-to-top {
+  background: var(--fg-base) !important;
+  color: var(--bg-base) !important;
+  border-radius: 9999px !important;
+  opacity: 0.85 !important;
+}
+.scroll-to-top:hover {
+  opacity: 1 !important;
+}
+
+/* =============================================================================
+   分页
+   ============================================================================= */
+.pagination a,
+.pagination span {
+  font-family: var(--font-serif-display);
+  border: 1px solid var(--line) !important;
+  border-radius: 0.4rem !important;
+  background: transparent !important;
+  color: var(--fg-base) !important;
+}
+.pagination a:hover {
+  border-color: var(--fg-base) !important;
+}
+
+/* =============================================================================
+   相关文章标题
+   ============================================================================= */
+.related-articles h2,
+.article-pagination h2 {
+  font-family: var(--font-serif-display);
+  font-weight: 500;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  font-size: 0.85rem !important;
+  color: var(--fg-soft) !important;
+}
+
+/* =============================================================================
+   TOC（目录）
+   ============================================================================= */
+.toc a,
+#TableOfContents a {
+  font-family: var(--font-serif-display);
+  font-size: 0.82rem;
+  color: var(--fg-mute);
+  text-decoration: none;
+  border-left: 1px solid transparent;
+  padding-left: 0.6rem;
+  transition: color 0.25s, border-color 0.25s;
+}
+.toc a:hover,
+#TableOfContents a:hover,
+.toc a.active,
+#TableOfContents a.active {
+  color: var(--fg-base);
+  border-left-color: var(--accent);
+}
