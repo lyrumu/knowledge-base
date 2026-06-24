@@ -1,4 +1,4 @@
-# 已完成清单 — 个人网站(基于本地 Obsidian Vault)
+﻿# 已完成清单 — 个人网站(基于本地 Obsidian Vault)
 
 > 维护方式：每完成一大阶段，在下方加一段记录。(最新记录写在最上方)
 
@@ -64,59 +64,6 @@
 
 ---
 
-## 2026-06-24 · /about/ 加站点统计模块（零后端 + GitHub Actions 自动更新）
-
-### 背景
-
-`/about/` 页底部加一个"Site & Activity"统计模块。**全静态 + 零自建后端**：Hugo 变量算站点速览，GitHub Actions 每天 03:00 UTC 调 Cloudflare Analytics API → 写 `data/site-stats.yaml` → commit 触发 CF Pages 重建。**最终方案不统计 GitHub 数据，只统计网站本身**（用户决定）。
-
-### 改动清单
-
-| 类型 | 文件 | 关键变更 |
-|---|---|---|
-| 数据 | [data/site-stats.yaml](file:///f:/Notes/data/site-stats.yaml) | 2 个 section：`_meta` / `visitors`（GitHub section 已删） |
-| 模板（新增） | [layouts/partials/about-stats.html](file:///f:/Notes/layouts/partials/about-stats.html) | 2 个 group × 6/2 张卡片 + 入场动画 stagger |
-| 模板（新增） | [layouts/shortcodes/about-stats.html](file:///f:/Notes/layouts/shortcodes/about-stats.html) | `{{< about-stats >}}` 包装 |
-| 脚本（新增） | [scripts/refresh_stats.py](file:///f:/Notes/scripts/refresh_stats.py) | Python 脚本，调 CF GraphQL API 写 yaml（删了 fetch_github） |
-| CI（新增） | [.github/workflows/refresh-stats.yml](file:///f:/Notes/.github/workflows/refresh-stats.yml) | 每天 03:00 UTC + 手动 dispatch 触发，只需 2 个 env（CF_API_TOKEN / CF_ZONE_ID） |
-| 样式 | [assets/css/_09_about.css](file:///f:/Notes/assets/css/_09_about.css) | §39 新增 `.about-stats-*` 全套样式（暖白卡片 + accent 强调 + stagger 动画） |
-| 内容 | [content/about/_index.md](file:///f:/Notes/content/about/_index.md) | 在 GitHub 热力图下方插入"## 站点统计" + `{{< about-stats >}}` |
-
-### 模块内容（8 个数据点 + 1 个时间戳）
-
-- **Group 1 — Content（6 卡）**：累计字数 / 文章 / 分类 / 标签 / 运行时长（天） / 最近更新（天前）
-- **Group 2 — Visitors · past 30 days（2 卡）**：PV / UV + 数据更新时间戳
-
-### 关键工程坑
-
-1. **`.yaml.example` 触发 Hugo 加载失败**：第一版 `data/site-stats.yaml.example` 让 Hugo 误判格式为 "example" → `unmarshal of format "" is not supported`。**Hugo 按扩展名最后一截判断格式**，`.example` 不是已知格式 → 删了 example 文件，模板注释直接写进 yaml 头部
-2. **`.Site.Data` 已 deprecated**：Hugo v0.156+ 推荐用 `hugo.Data`（partial 改成 `hugo.Data.site_stats` 才消除 deprecated 警告）
-3. **CF Analytics 仅保留 30 天**：原本想 "全站累计 PV/UV"，但 CF 免费版只保留 30 天历史数据。**改字段名 `last30_pv` / `last30_uv` + UI 显式标注 "· past 30 days"**
-4. **GitHub streak 难 + 不统计用户 GitHub**：第一版计划拉 events API 算连续 commit，但 GitHub events 公开 API 只保留 90 天且不完整 → 用户最终决定**完全去掉 GitHub 统计**，只统计网站本身
-
-### 待用户操作（拿到 Token 才能跑通 workflow）
-
-去 [GitHub Settings → Secrets](https://github.com/lyrumu/site/settings/secrets/actions) 配 **2 个** Secret（不是 3 个，GitHub token 不用了）：
-
-| Secret 名 | 用途 | 拿法 |
-|---|---|---|
-| `CF_API_TOKEN` | Cloudflare API Token（Analytics: Read 权限） | Cloudflare → My Profile → API Tokens → Create Token → Custom token → Permissions: Account → Account Analytics: Read + Zone → Zone Analytics: Read |
-| `CF_ZONE_ID` | Cloudflare Zone ID（lyrumu.top 的） | Cloudflare → 域名 lyrumu.top → 右下角 API 区域 → Zone ID |
-
-### 教训
-
-- **Hugo data 文件不能用 `.example` 后缀**：会按扩展名尝试 unmarshal。模板放注释里就行
-- **依赖 v0.156+ 的新 API 时用 `hugo.Data`**：`.Site.Data` 还能用但有 deprecated 警告
-- **第三方服务的"全站累计"几乎都做不了**：CF Analytics 30 天、GitHub events 90 天。设计统计模块时按"时间窗口"命名比"累计"更准确
-- **零后端静态统计的局限**：streak 之类的"实时变化"数据要不就静态占位，要不就承认做不了
-- **GitHub PAT 申请流程变数大**：GitHub 2024-2025 改版 Fine-grained PAT 页面，UI 变化频繁，截图教学易失效。**用户主动决定不统计 GitHub 后**反而省了拿 Token 的麻烦
-
-### 验证
-
-- `hugo` build 0 warnings, 51 pages（trae-sandbox 文件写入限制让 `public/` 看起来都是 4 字节空文件，本地 `hugo server` 正常）
-- 删 GH 后 partial / shortcode / data / workflow / CSS / about 内容 6 项改动全部完成 + 0 warnings
-
----
 
 ## 2026-06-24 · 站点重构（语言切换 + 删除 /start/ + 顶栏主入口化）
 

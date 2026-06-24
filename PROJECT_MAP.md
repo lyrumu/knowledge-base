@@ -1,6 +1,6 @@
 # 项目地图 — 个人网站 `f:\Notes\`
 
-> 最后更新：2026-06-24 · /about/ 加站点统计模块（零后端 + GitHub Actions 自动更新；新增 layouts/partials/about-stats.html、layouts/shortcodes/about-stats.html、scripts/refresh_stats.py、.github/workflows/refresh-stats.yml、data/site-stats.yaml） · Hugo v0.163.2 · Blowfish v2
+> 最后更新：2026-06-24 · /about/ 紧凑化 + page-hero 不显示 + 删除站点统计模块 · Hugo v0.163.2 · Blowfish v2
 
 ---
 
@@ -106,7 +106,6 @@ f:\Notes\
 │   │   ├── cover/icon.html         # Lucide SVG icon 字典
 │   │   ├── cover/page-hero.html    # 内页"小封面" partial
 │   │   ├── home/custom.html        # 封面 partial
-│   │   ├── about-stats.html        # /about/ "Site & Activity" 统计模块（11 张卡片）
 │   │   ├── header/components/
 │   │   │   ├── desktop-menu.html   # 加 GitHub 按钮
 │   │   │   └── mobile-menu.html    # 加 GitHub 按钮
@@ -123,18 +122,12 @@ f:\Notes\
 │       ├── resources-list.html     # /works/resources/ 资源列表（瀑布流）
 │       ├── file-tree.html          # 可折叠文件树
 │       ├── about-contact.html      # /about/ 联系方式图标卡（壳）
-│       ├── about-stats.html        # {{< about-stats >}} 短代码（包装 about-stats.html partial）
 │       └── section-rule.html       # ✦ 分隔符
 ├── scripts/                        # ★ 运维脚本
-│   ├── vault-to-hugo.ps1           # Vault → Hugo 同步（日常使用）
-│   └── refresh_stats.py            # 拉 CF Analytics GraphQL API 写 yaml（被 workflow 调）
-├── .github/
-│   └── workflows/
-│       └── refresh-stats.yml       # 每天 03:00 UTC 跑 refresh_stats.py，commit data/site-stats.yaml
+│   └── vault-to-hugo.ps1           # Vault → Hugo 同步（日常使用）
 ├── data/
 │   ├── cover.yaml                  # 封面所有内容（标题/介绍/按钮等）
 │   ├── modules.yaml                # [废弃] 原 /start/ 大厅用，已注释说明
-│   ├── site-stats.yaml             # /about/ 统计模块数据源（被 GitHub Actions 自动更新）
 │   ├── vault.yaml                  # 顶栏 + 封面 Vault 卡的数据
 │   └── works.yaml                  # /works/ 卡片的展示数据
 ├── .vscode/                        # 编辑器配置（用户设的，非自动生成）
