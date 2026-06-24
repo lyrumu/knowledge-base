@@ -1,25 +1,6 @@
-# =============================================================================
-# site-stats.yaml（2026-06-24 新增）
-# ---------------------------------------------------------------------------
-# 站点统计模块的数据源（被 layouts/partials/about-stats.html 读取）
-# 全部数据由 .github/workflows/refresh-stats.yml 每日 03:00 UTC 自动更新。
-# 初次部署时手动填 _meta.first_pv_at（你最早一篇文章的发布日期）即可。
-# 其它字段 24 小时内会被 workflow 覆盖，无需手填。
-#
-# 字段说明（完整模板）：
-#   _meta.first_pv_at         站点"第一篇"日期 → 算"运行时长 XX 天"
-#   _meta.last_refreshed_at   workflow 最近一次跑通时间（ISO 8601），自动写
-#   visitors.last30_pv        过去 30 天 PV（Cloudflare Analytics GraphQL）
-#   visitors.last30_uv        过去 30 天 UV
-# =============================================================================
-
 _meta:
-  first_pv_at: '2026-06-19'    # ← TODO: 改成你最早一篇文章的发布日期
-  last_refreshed_at: ''        # ← workflow 自动写
-
-# 访客（CF Analytics 保留 30 天，故"过去 30 天"）
+  first_pv_at: '2026-06-19'
+  last_refreshed_at: '2026-06-24T13:53:04Z'
 visitors:
   last30_pv: 0
   last30_uv: 0
-
-
