@@ -1,7 +1,3 @@
-<div align="center">
-  <img src="static/image/cover-README.png" alt="lyrumu.top 封面" width="100%" style="border-radius: 10px;" />
-</div>
-
 <p align="center">
   <a href="https://lyrumu.top"><img src="https://img.shields.io/badge/Website-lyrumu.top-ff69b4?style=flat-square" alt="Website" /></a>
   <a href="https://github.com/lyrumu/knowledge-base"><img src="https://img.shields.io/github/last-commit/lyrumu/knowledge-base?label=last%20commit&color=ff69b4&style=flat-square&display_timestamp=committer" alt="Last Commit" /></a>
