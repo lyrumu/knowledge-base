@@ -1,7 +1,7 @@
 {{/*
   _default/list.html — Claude 风覆写版
   ----------------------------------------------------------------
-  适用：Blowfish 中所有 section 的 _index.md（/start/, /notes/, /works/, /life/, /about/ ...）
+  适用：Blowfish 中所有 section 的 _index.md（/notes/, /works/, /life/, /about/ ...）
   替换掉默认 blowfish list.html 的"大黑标题 + 元信息条"，
   改为我们的"小封面"模式（page-hero） + 下方正文 + 文章列表。
   ----------------------------------------------------------------
@@ -9,6 +9,10 @@
 
 {{ define "main" }}
   {{ .Scratch.Set "scope" "list" }}
+  {{/* 2026-06-24：about section 渲染 page-hero 时加 page-hero--no-deco class
+       （CSS 用这个 class 隐藏 eyebrow 和 divider 两组装饰线） */}}
+  {{ $heroClass := "" }}
+  {{ if eq .Section "about" }}{{ $heroClass = "page-hero--no-deco" }}{{ end }}
 
   {{/* Page Hero（封面风格的小头部） */}}
   {{ partial "cover/page-hero.html" (dict
@@ -16,6 +20,7 @@
     "subtitle" .Params.subtitle
     "eyebrow"  .Params.eyebrow
     "title"    .Title
+    "extraClass" $heroClass
   ) }}
 
   {{/* 面包屑（仅多级时显示） */}}

@@ -916,7 +916,7 @@ html.dark .music-item.is-disabled:hover {
 }
 
 /* =============================================================================
-   34. works 子页 (/works/) — 入口子模块网格（视觉与 /start/ 一致）
+   34. works 子页 (/works/)
    ----------------------------------------------------------------------------
    主体复用 §15 .module-card 样式（shortcode 给元素加双类 module-card works-sub-card）
    本节只定义 works 独有的：tags 列表 + draft 徽章 + draft 态

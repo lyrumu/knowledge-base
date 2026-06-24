@@ -1,8 +1,10 @@
 # =============================================================================
 # Vault 模块的索引数据 — 学习笔记（/notes/）入口页
-# 大厅页（/start/）由 data/modules.yaml 渲染
 # 数据来源：/Vault 目录结构
 # icon 字段：Lucide icon 名字（layouts/partials/cover/icon.html）
+#
+# 2026-06-24：删除了"大厅页（/start/）由 data/modules.yaml 渲染"一行
+# 原因：/start/ 大厅页已删除，data/modules.yaml 已是 dead code（保留作历史）
 # =============================================================================
 sections:
   - id: docs

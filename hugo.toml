@@ -2,36 +2,44 @@
 # lyrumu's site — Hugo configuration
 # Theme: Blowfish · 部署 Cloudflare Pages
 #
-# 模块说明：
-#   - 封面（/）         → 无顶栏，只显示标题 + 入口按钮
-#   - 大厅（/start/）   → 真正进入后的第一页，有顶栏
-#   - 4 个模块：notes / life / works / about
-#   - 加新模块 = hugo.toml 加 menu + content/<slug>/_index.md
+# 模块说明（2026-06-24 更新）：
+#   - 封面（/）         → 无顶栏，只显示标题 + 入口按钮（点进 /about/）
+#   - /about/           → 主入口（原 Catalogue 位置升级），含个人简介 + 顶栏右侧索引
+#   - /notes/ /life/ /works/ → 三块内容板块，由顶栏右侧 menu.main 导航
+#   - 加新模块 = hugo.toml [[menu.main]] 加项 + content/<slug>/_index.md
+#
+# 历史：原 /start/ 大厅页已删除（2026-06-24），顶栏左侧的"主入口"由
+# [[menu.main]] identifier = "home" 的菜单项通过 header/basic.html 渲染，
+# desktop-menu / mobile-menu 按 identifier 跳过该项避免重复。
 # =============================================================================
 
 baseURL = 'https://lyrumu.top/'
-defaultContentLanguage = 'zh-cn'
+defaultContentLanguage = 'en'
 title = "lyrumu's page"
 
 # =============================================================================
 # 多语言
+# 默认语言从 zh-cn 改为 en（2026-06-24）
+# - 语言键重命名 [languages.zh-cn] → [languages.en]
+# - label / displayName / isoCode / locale 同步更新为英文
+# - contentDir 仍为 'content'，URL 路径不变，无需迁移文件
 # =============================================================================
-[languages.zh-cn]
-  label = '简体中文'
+[languages.en]
+  label = 'English'
   weight = 1
-  locale = 'zh-CN'
+  locale = 'en-US'
   contentDir = 'content'
   title = "lyrumu's page"
 
-  [languages.zh-cn.params]
-    displayName = '简体中文'
-    isoCode = 'zh-cn'
+  [languages.en.params]
+    displayName = 'English'
+    isoCode = 'en'
     rtl = false
     dateFormat = '2006-01-02'
     logo = ''
     description = ''
 
-    [languages.zh-cn.params.author]
+    [languages.en.params.author]
       name = 'lyrumu'
       email = ''
 
@@ -59,6 +67,10 @@ relativeURLs = true
 disablePathToLower = true
 enableRobotsTXT = true
 
+# 文章正文以中文居多 → 保留 CJK 分词/字数/换行规则
+# 与 defaultContentLanguage = 'en' 不冲突：
+# - defaultContentLanguage 管 URL/i18n/语言切换
+# - hasCJKLanguage    管正文分词、summaryLength、阅读时间
 hasCJKLanguage = true
 summaryLength = 30
 enableEmoji = true
@@ -98,7 +110,8 @@ enableEmoji = true
     disableSpecialFirstPost = true
     mainSections = ['notes', 'works', 'life']
 
-  # /start/ 大厅页的"最近文章"行为（被 [params.homepage] 影响，但独立可控）
+  # 列表页（/notes/ /works/ /life/ 等）的"列表卡片"行为
+  # （被 [params.homepage] 影响，但独立可控）
   [params.list]
     showHero = false
     showSummary = true
@@ -157,7 +170,13 @@ enableEmoji = true
 # 加模块 = 在这里加一项 + content/<slug>/_index.md
 # 顺序：按 weight 从小到大
 # =============================================================================
+# 主入口"ABOUT ME"（2026-06-24 重构）
+# - identifier = "home" 标识它由 header/basic.html 渲染在顶栏左侧（原 Catalogue 位置）
+# - desktop-menu.html / mobile-menu.html 通过 if ne .Identifier "home" 跳过此项，
+#   避免在右侧 menu.main 中重复出现
+# - 改 name / url 后只需改这一处，左侧渲染 + 右侧跳过都自动跟随
 [[menu.main]]
+  identifier = 'home'
   name = 'ABOUT ME'
   url = '/about/'
   # weight 参数用于控制导航菜单的排序顺序，数值越小越靠前显示
@@ -179,13 +198,19 @@ enableEmoji = true
   weight = 40
 
 # =============================================================================
-# 输出格式
+# 输出格式（2026-06-24 修正两个 WARN）
+# - 加 page = ['HTML']：消除 "no layout file for html for kind page" 警告
+#   （不写 page 时 Hugo 用默认 _default/single.html 也能渲染，但会发 WARN）
+# - JSON 保留：home 的 JSON 输出由 layouts/home.json 提供，消除
+#   "no layout file for json for layout background for kind home" 警告
+#   （主题的 _default/index.json 仍作为其它 kind 的 catch-all）
 # =============================================================================
 [outputs]
   home = ['HTML', 'RSS', 'JSON']
   section = ['HTML', 'RSS']
   taxonomy = ['HTML', 'RSS']
   term = ['HTML']
+  page = ['HTML']
 
 # =============================================================================
 # 标记与渲染
@@ -224,4 +249,5 @@ enableEmoji = true
   series = 'series'
 
 # 抑制已知无害的日志
+# - warning-goldmark-raw-html：blowfish 主题原 html 写法触发，金标 markdown 的已知噪音
 ignoreLogs = ["warning-goldmark-raw-html"]

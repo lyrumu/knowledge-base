@@ -38,7 +38,11 @@
 {{ $align := "center" }}
 {{ with .align    }}{{ $align = . }}{{ end }}
 
-<div class="page-hero not-prose align-{{ $align }}">
+{{/* 2026-06-24：可选 extraClass 参数（list.html 调用时给 about 传 page-hero--no-deco） */}}
+{{ $extraClass := "" }}
+{{ with .extraClass }}{{ $extraClass = . }}{{ end }}
+
+<div class="page-hero not-prose align-{{ $align }} {{ $extraClass }}">
 
   {{ if $eyebrow }}
   <div class="page-eyebrow reveal">

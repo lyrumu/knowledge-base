@@ -32,9 +32,11 @@ cover:
   repo_url: "https://github.com/lyrumu/knowledge-base"
 
   # --- 入口按钮 -----------------------------------------------------------
+  # 2026-06-24：href 从 /start/ 改为 /about/
+  # 原因：删除 /start/ 索引页后，封面直达 about me（"个人展示站"主入口）
   entrance:
     label: "Have a look?"
-    href: "/start/" #希望之后入口改为/about/
+    href: "/about/"
 
   # --- 社交链接（封面底部"显眼位置"） -----------------------------------
   # 加新链接 = 加一项即可。可用 icon 见 layouts/partials/cover/icon.html

@@ -26,9 +26,29 @@
       {{ .Site.Title | markdownify }}
     </a>
     <span class="text-neutral-400 dark:text-neutral-600 text-sm select-none">·</span>
-    <a href="{{ "/start/" | relLangURL }}" class="text-sm hover:text-primary-700 dark:hover:text-primary-400 transition-colors">
-      Catalogue
+    {{/*
+      2026-06-24：主入口"ABOUT ME"渲染位（原 Catalogue 位置）。
+      数据来源：hugo.toml [[menu.main]] identifier = "home" 的项
+      这样设计的好处：
+        1. hugo.toml 是真理源 — 改 name / url 自动同步到此
+        2. 模板只决定"渲染位置"，不写死文字/链接
+        3. desktop-menu / mobile-menu 按 identifier 跳过，避免重复
+      若 [[menu.main]] 中无 identifier="home" 的项，则此区域为空（fail-safe）。
+
+      实现注意：Hugo v0.163.2 的 navigation.Menu 类型不提供 GetByIdentifier
+      方法（只有 ByName/ByWeight/Limit/Reverse），改用 range 遍历查找。
+      早期版本曾有 GetByName / GetByIdentifier，但已移除。
+    */}}
+    {{ $homeEntry := "" }}
+    {{ range .Site.Menus.main }}
+      {{ if eq .Identifier "home" }}{{ $homeEntry = . }}{{ end }}
+    {{ end }}
+    {{ with $homeEntry }}
+    <a href="{{ .URL | relLangURL }}"
+       class="text-sm hover:text-primary-700 dark:hover:text-primary-400 transition-colors">
+      {{ .Name | markdownify }}
     </a>
+    {{ end }}
   {{ end }}
   <div class="flex items-center ms-auto">
     <div class="hidden md:flex">

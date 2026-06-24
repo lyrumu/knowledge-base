@@ -1,10 +1,17 @@
 {{/*
   Shortcode: modules-grid
   ----------------------------------------------------------------
-  渲染 data/modules.yaml 的模块列表为 Claude 风卡片（单列 · 居中）
-  用法: {{< modules-grid >}}
-  数据源: data/modules.yaml -> hugo.Data.modules.modules
+  ⚠️  废弃 shortcode（2026-06-24）— 仅作历史保留，不再被任何页面调用
+  原用途：渲染 data/modules.yaml 的模块列表为 Claude 风卡片
+  当前状态：原 /start/ 索引页已删除，无任何 _index.md 调用此 shortcode
+
+  清理建议：若确认不再需要，可直接删除本文件
+  相关 dead code：data/modules.yaml（同日废弃）
+
+  保留理由：用户明确要求"暂不删除 dead code，但写明注释"
   ----------------------------------------------------------------
+  用法（仅供历史参考）：{{< modules-grid >}}
+  数据源（仅供历史参考）：data/modules.yaml -> hugo.Data.modules.modules
 */}}
 {{ $modules := hugo.Data.modules.modules }}
 {{ if $modules }}

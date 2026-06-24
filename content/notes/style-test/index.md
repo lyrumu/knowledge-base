@@ -9,6 +9,8 @@ topics: ["样式测试"]
 series: ["关于本站"]
 showHero: true
 heroStyle: "background"
+# 2026-06-24：从 /start/style-test/ 迁到 /notes/style-test/
+# 原因：删除 /start/ 索引页时一并迁出，本页面是样式效果"标尺"，需要保留
 ---
 
 > 这一篇是"测试样章"，**不是教程**。
@@ -17,7 +19,7 @@ heroStyle: "background"
 
 ## 1. 文字
 
-普通文字，**粗体**，*斜体*，~~删除线~~，`inline code`，[内链](/start/)，[外链](https://gohugo.io/)。
+普通文字，**粗体**，*斜体*，~~删除线~~，`inline code`，[内链](/notes/)，[外链](https://gohugo.io/)。
 
 行内公式：$E = mc^2$。
 

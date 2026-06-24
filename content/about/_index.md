@@ -1,4 +1,4 @@
----
+<!-- ---
 title: "ABOUT ME"
 kicker: "ABOUT ME · MODULE 04"
 subtitle: "Some info about me"
@@ -7,7 +7,7 @@ layout: "page"
 showHero: true
 showBreadcrumbs: true
 showTableOfContents: true
----
+--- --首页不想要这个东西了 因此注释掉>
 
 <!-- ===== 头像 + 个人信息 + 联系方式 ===== -->
 <div class="about-profile">
@@ -23,8 +23,6 @@ showTableOfContents: true
   <!-- iOS 风格毛玻璃联系方式 — 头像行下方一排图标 -->
   {{< about-contact >}}
 </div>
-
----
 
 ## Technical stack
 <!-- 基础类 .about-tag 默认蓝色（开发工具）；
@@ -49,5 +47,10 @@ showTableOfContents: true
   alt="lyrumu's GitHub contribution chart"
   class="w-full my-4 rounded-lg"
 />
+
+
+---
+
+{{< about-stats >}}
 
 ---

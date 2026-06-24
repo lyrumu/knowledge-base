@@ -1,6 +1,6 @@
 # 项目地图 — 个人网站 `f:\Notes\`
 
-> 最后更新：2026-06-23 · custom.css 拆分重构（3514 行 → 9 个模块文件 + 索引） · Hugo v0.163.2 · Blowfish v2
+> 最后更新：2026-06-24 · /about/ 加站点统计模块（零后端 + GitHub Actions 自动更新；新增 layouts/partials/about-stats.html、layouts/shortcodes/about-stats.html、scripts/refresh_stats.py、.github/workflows/refresh-stats.yml、data/site-stats.yaml） · Hugo v0.163.2 · Blowfish v2
 
 ---
 
@@ -19,7 +19,6 @@
 | 改封面的颜色 | [`assets/css/_01_tokens.css`](file:///F:/Notes/assets/css/_01_tokens.css) 顶部 `:root` / `html.dark` 的 `--bg-base / --line / --accent`（v3：封面 `--pal-*` 已派生自全局变量，统一改一处即可） |
 | 改封面的字距 / 大小 / 花边位置 | [`assets/css/_08_cover.css`](file:///F:/Notes/assets/css/_08_cover.css) |
 | 改内页"小封面"的文案 | 对应 `content/xxx/_index.md` 的 frontmatter `kicker / subtitle` |
-| 换 /start/ 大厅的模块卡 | [`data/modules.yaml`](file:///f:/Notes/data/modules.yaml)（加/删条目改 `items` 数组） |
 | 换 /notes/ 的分类卡 | [`data/vault.yaml`](file:///f:/Notes/data/vault.yaml) |
 | 换 /life/ 的子模块卡 | [`data/life.yaml`](file:///f:/Notes/data/life.yaml)（加图片 / 读书 / 旅行…都改这里） |
 | 换 /life/music/ 的歌单 | [`data/music.yaml`](file:///f:/Notes/data/music.yaml)（加一首填一个 `- title/artist/cover/src/...` 条目） |
@@ -71,7 +70,6 @@ f:\Notes\
 │
 ├── content/                        # ★ 所有页面内容
 │   ├── _index.md                   # 封面（极简，只放 layout: page）
-│   ├── start/_index.md             # /start/ 大厅
 │   ├── notes/                      # /notes/ 学习笔记
 │   │   ├── _index.md
 │   │   ├── docs/                   # Docs 分类（含 vscode, wsl2, docker 等嵌套）
@@ -90,7 +88,6 @@ f:\Notes\
 │
 ├── data/                           # ★ 数据驱动（改这里就能改 UI）
 │   ├── cover.yaml                  # 封面所有内容 + 调色
-│   ├── modules.yaml                # 大厅的模块卡
 │   ├── vault.yaml                  # /notes/ 的 vault 分类卡
 │   ├── life.yaml                   # /life/ 子模块清单（music / 图片 / 读书…）
 │   ├── music.yaml                  # /life/music/ 歌单
@@ -100,6 +97,8 @@ f:\Notes\
 │
 ├── layouts/                        # ★ 自定义模板（覆写主题）
 │   ├── _default/list.html          # section 主页 → page-hero 模式
+│   ├── home.json                   # home kind 的 JSON 输出（消 build WARN；内容同主题 _default/index.json）
+│   ├── page.html                   # 任何 layout: "page" 的页面（消 build WARN；复用主题 single.html 的 main 块）
 │   ├── partials/
 │   │   ├── head.html               # ⚠️ [lyrumu 改造] 覆盖 Blowfish 主题版本
 │   │   │                           #  原因：CSS `@import` 在 Hugo Pipes 不展开（详见 §8 踩坑提醒）
@@ -107,6 +106,7 @@ f:\Notes\
 │   │   ├── cover/icon.html         # Lucide SVG icon 字典
 │   │   ├── cover/page-hero.html    # 内页"小封面" partial
 │   │   ├── home/custom.html        # 封面 partial
+│   │   ├── about-stats.html        # /about/ "Site & Activity" 统计模块（11 张卡片）
 │   │   ├── header/components/
 │   │   │   ├── desktop-menu.html   # 加 GitHub 按钮
 │   │   │   └── mobile-menu.html    # 加 GitHub 按钮
@@ -115,7 +115,6 @@ f:\Notes\
 │   │   └── about-contact.html      # /about/ 联系方式图标卡 partial（被 about-contact shortcode 调）
 │   └── shortcodes/
 │       ├── page-hero.html          # {{< page-hero >}} 短代码
-│       ├── modules-grid.html       # 大厅模块网格
 │       ├── vault-sections.html     # /notes/ 分类网格
 │       ├── life-grid.html          # /life/ 子模块网格
 │       ├── music-list.html         # /life/music/ 歌曲列表
@@ -124,10 +123,21 @@ f:\Notes\
 │       ├── resources-list.html     # /works/resources/ 资源列表（瀑布流）
 │       ├── file-tree.html          # 可折叠文件树
 │       ├── about-contact.html      # /about/ 联系方式图标卡（壳）
+│       ├── about-stats.html        # {{< about-stats >}} 短代码（包装 about-stats.html partial）
 │       └── section-rule.html       # ✦ 分隔符
-│
 ├── scripts/                        # ★ 运维脚本
-│   └── vault-to-hugo.ps1           # Vault → Hugo 同步（日常使用）
+│   ├── vault-to-hugo.ps1           # Vault → Hugo 同步（日常使用）
+│   └── refresh_stats.py            # 拉 CF Analytics GraphQL API 写 yaml（被 workflow 调）
+├── .github/
+│   └── workflows/
+│       └── refresh-stats.yml       # 每天 03:00 UTC 跑 refresh_stats.py，commit data/site-stats.yaml
+├── data/
+│   ├── cover.yaml                  # 封面所有内容（标题/介绍/按钮等）
+│   ├── modules.yaml                # [废弃] 原 /start/ 大厅用，已注释说明
+│   ├── site-stats.yaml             # /about/ 统计模块数据源（被 GitHub Actions 自动更新）
+│   ├── vault.yaml                  # 顶栏 + 封面 Vault 卡的数据
+│   └── works.yaml                  # /works/ 卡片的展示数据
+├── .vscode/                        # 编辑器配置（用户设的，非自动生成）
 │
 ├── static/                         # 静态资源
 │   ├── fonts/                      # 字体文件（本地化）
@@ -174,13 +184,6 @@ f:\Notes\
 | kicker / subtitle / eyebrow | 各 `_index.md` frontmatter | [`layouts/partials/cover/page-hero.html`](file:///f:/Notes/layouts/partials/cover/page-hero.html) |
 | 短代码调用 | — | [`layouts/shortcodes/page-hero.html`](file:///f:/Notes/layouts/shortcodes/page-hero.html) |
 | CSS | — | [`assets/css/_04_hero.css`](file:///F:/Notes/assets/css/_04_hero.css) |
-
-### /start/ 大厅
-
-| 元素 | 数据源 | 模板 |
-|------|--------|------|
-| 模块卡列表 | [`data/modules.yaml`](file:///f:/Notes/data/modules.yaml) | [`layouts/shortcodes/modules-grid.html`](file:///f:/Notes/layouts/shortcodes/modules-grid.html) |
-| icon | `modules.yaml` → `icon` | 走 `cover/icon.html` 解释为 Lucide SVG |
 
 ### /notes/ 分类页
 
@@ -244,7 +247,7 @@ f:\Notes\
 | 元素 | 数据源 | 模板 |
 |------|--------|------|
 | 子模块卡列表（projects / resources / tools…） | [`data/works.yaml`](file:///f:/Notes/data/works.yaml) | [`layouts/shortcodes/works-grid.html`](file:///f:/Notes/layouts/shortcodes/works-grid.html) |
-| 视觉 | **与 /start/ 模块卡 1:1 一致**（完全复用 `_05_cards.css` 的 `.module-card` 样式） | — |
+| 视觉 | **与 about/ 主入口的 module-card 同源**（完全复用 `_05_cards.css` 的 `.module-card` 样式） | — |
 | 独有元素 | `works-sub-tags`（标签列表）/ `works-sub-draft-badge`（准备中徽章） | [`assets/css/_05_cards.css`](file:///F:/Notes/assets/css/_05_cards.css) |
 | icon | `works.yaml` → `icon` | 走 `cover/icon.html` 解释为 Lucide SVG |
 | 加新子模块 | 在 `data/works.yaml` 加一条 + 在 `content/works/<id>/_index.md` 建子页 | — |
@@ -349,7 +352,7 @@ html.dark { --bg-base: #141413 }  ──→  卡片边框 border: 1px solid var(
 
 ### 改页面的 section layout
 
-所有 section 主页（/start/ /notes/ /works/ /life/ /about/）都走 [`layouts/_default/list.html`](file:///f:/Notes/layouts/_default/list.md)。每个页面的 `_index.md` 可以设自己的 `kicker` / `subtitle`。
+所有 section 主页（/notes/ /works/ /life/ /about/）都走 [`layouts/_default/list.html`](file:///f:/Notes/layouts/_default/list.md)。每个页面的 `_index.md` 可以设自己的 `kicker` / `subtitle`。
 
 ### 加 life 子模块（如「图片」）
 
