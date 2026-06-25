@@ -66,19 +66,29 @@
         {{ end }}
       </section>
     {{ else }}
+      {{/* 2026-06-25 加 cardColumns 控制（默认 3，notes/_index.md 用 1） */}}
+      {{ $cardColumns := .Params.cardColumns | default 3 }}
       {{ if $groupByYear }}
         {{ range (.Paginate (.Pages.GroupByDate "2006")).PageGroups }}
           <h2 class="not-prose mt-10 mb-3 text-xl font-semibold text-neutral-700 dark:text-neutral-300">
             {{ .Key }}
           </h2>
-          <section class="not-prose w-full grid gap-4 sm:grid-cols-2 md:grid-cols-3">
+          {{ if eq $cardColumns 1 }}
+          <section class="not-prose w-full flex flex-col gap-4">
+          {{ else }}
+          <section class="not-prose w-full grid gap-4 sm:grid-cols-2 md:grid-cols-{{ $cardColumns }}">
+          {{ end }}
             {{ range .Pages }}
               {{ partial "article-link/card.html" . }}
             {{ end }}
           </section>
         {{ end }}
       {{ else }}
-        <section class="not-prose w-full grid gap-4 sm:grid-cols-2 md:grid-cols-3">
+        {{ if eq $cardColumns 1 }}
+        <section class="not-prose w-full flex flex-col gap-4">
+        {{ else }}
+        <section class="not-prose w-full grid gap-4 sm:grid-cols-2 md:grid-cols-{{ $cardColumns }}">
+        {{ end }}
           {{ if not $orderByWeight }}
             {{ range (.Paginate (.Pages.GroupByDate "2006")).PageGroups }}
               {{ range .Pages }}

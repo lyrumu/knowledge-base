@@ -2,7 +2,7 @@
 title: "DAILY"
 kicker: "DAILY · MODULE 03"
 subtitle: "hi"
-description: ""
+description: "Daily life — music playlist, photos, reading notes, and travel"
 layout: "page"
 showHero: true
 showBreadcrumbs: true

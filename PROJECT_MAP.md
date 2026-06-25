@@ -19,7 +19,7 @@
 | 改封面的颜色 | [`assets/css/_01_tokens.css`](file:///F:/Notes/assets/css/_01_tokens.css) 顶部 `:root` / `html.dark` 的 `--bg-base / --line / --accent`（v3：封面 `--pal-*` 已派生自全局变量，统一改一处即可） |
 | 改封面的字距 / 大小 / 花边位置 | [`assets/css/_08_cover.css`](file:///F:/Notes/assets/css/_08_cover.css) |
 | 改内页"小封面"的文案 | 对应 `content/xxx/_index.md` 的 frontmatter `kicker / subtitle` |
-| 换 /notes/ 的分类卡 | [`data/vault.yaml`](file:///f:/Notes/data/vault.yaml) |
+| 改 /notes/ 入口展示方式（单列 / 3 列等）| `content/notes/_index.md` frontmatter `cardColumns`（1/2/3） |
 | 换 /life/ 的子模块卡 | [`data/life.yaml`](file:///f:/Notes/data/life.yaml)（加图片 / 读书 / 旅行…都改这里） |
 | 换 /life/music/ 的歌单 | [`data/music.yaml`](file:///f:/Notes/data/music.yaml)（加一首填一个 `- title/artist/cover/src/...` 条目） |
 | 换 /life/music/ 的封面/SVG 动画 | [`assets/css/_05_cards.css`](file:///F:/Notes/assets/css/_05_cards.css) 的 `.life-sub-cover-*` 规则 |
@@ -69,13 +69,7 @@ f:\Notes\
 │   └── default.md                  # `hugo new` 模板
 │
 ├── content/                        # ★ 所有页面内容
-│   ├── _index.md                   # 封面（极简，只放 layout: page）
-│   ├── notes/                      # /notes/ 学习笔记
-│   │   ├── _index.md
-│   │   ├── docs/                   # Docs 分类（含 vscode, wsl2, docker 等嵌套）
-│   │   ├── language/               # Language 分类（含 cpp, python）
-│   │   ├── demo/                   # Demo 分类（含 minecraft, aipython）
-│   │   └── tools/                  # 工具脚本页面
+│   ├（待整理）
 │   ├── works/                      # /works/ 相关（作品 / 资源 / 工具）
 │   │   ├── _index.md               # 入口（works-grid 短代码）
 │   │   ├── projects/_index.md      # 项目子页（projects-list 短代码 + 3D 倾斜）
@@ -125,15 +119,15 @@ f:\Notes\
 │       └── section-rule.html       # ✦ 分隔符
 ├── scripts/                        # ★ 运维脚本
 │   └── vault-to-hugo.ps1           # Vault → Hugo 同步（日常使用）
-├── data/
-│   ├── cover.yaml                  # 封面所有内容（标题/介绍/按钮等）
-│   ├── modules.yaml                # [废弃] 原 /start/ 大厅用，已注释说明
-│   ├── vault.yaml                  # 顶栏 + 封面 Vault 卡的数据
-│   └── works.yaml                  # /works/ 卡片的展示数据
-├── .vscode/                        # 编辑器配置（用户设的，非自动生成）
 │
 ├── static/                         # 静态资源
 │   ├── fonts/                      # 字体文件（本地化）
+│   ├── css/aos.css                 # ★ AOS.js 样式（2026-06-25 本地化，原 jsDelivr CDN）
+│   ├── js/                         # ★ 第三方 JS（2026-06-25 本地化）
+│   │   ├── aos.js                  # AOS.js 滚动入场
+│   │   ├── splitting.min.js        # Splitting.js 字符分割
+│   │   ├── vanilla-tilt.min.js     # VanillaTilt.js 3D 倾斜
+│   │   └── music-player.js         # 音乐播放器逻辑
 │   ├── image/                      # 装饰 PNG（花边 / 花朵 / musicheart）
 │   │   ├── life/music/             # /life/music/ 封面（用户自行放入）
 │   │   └── works/                  # /works/ 子模块封面
@@ -141,7 +135,6 @@ f:\Notes\
 │   │       └── resources/          # /works/resources/ 资源封面（用户自行放入）
 │   ├── life/music/                 # /life/music/ 音频文件（用户自行放入）
 │   ├── works-resources/            # /works/resources/ 下载文件（用户自行放入）
-│   ├── js/music-player.js          # 音乐播放器逻辑
 │   └── notes-assets/               # 可下载资源（aipython, minecraft, tools）
 │
 ├── themes/blowfish/                # 主题本体（一般不改）
@@ -152,7 +145,7 @@ f:\Notes\
 │                                # 被项目级 layouts/partials/head.html 覆盖（改 CSS 加载方式）
 │                                # 升级主题时优先看 [lyrumu 改造] 段，对比后再决定
 │
-├── DONE.md                         # 开发日志（本地保留）
+├── DONE.md                         # 开发日志
 └── .trae/rules/个人网站开发规则.md   # 项目宪法
 ```
 
@@ -345,7 +338,27 @@ html.dark { --bg-base: #141413 }  ──→  卡片边框 border: 1px solid var(
 
 ### 改页面的 section layout
 
-所有 section 主页（/notes/ /works/ /life/ /about/）都走 [`layouts/_default/list.html`](file:///f:/Notes/layouts/_default/list.md)。每个页面的 `_index.md` 可以设自己的 `kicker` / `subtitle`。
+所有 section 主页（/notes/ /works/ /life/ /about/）都走 [`layouts/_default/list.html`](file:///f:/Notes/layouts/_default/list.html)。每个页面的 `_index.md` 可以设自己的 `kicker` / `subtitle`。
+
+**frontmatter 开关**（list.html 支持）：
+
+| 参数 | 作用 | 默认 |
+|---|---|---|
+| `cardColumns` | 子页面卡片列数（1 = 单列 / 2 / 3） | 3 |
+| `showChildList` | 是否显示子页面卡片网格 | true |
+| `cardView` | 卡片视图 vs 简单列表 | true |
+| `groupByYear` | 按年份分组 | false |
+| `orderByWeight` | 按 weight 排序（false 则按日期） | true |
+
+### 加 /notes/ 的文章
+
+```bash
+# 新文章直接手写
+mkdir content/notes/<section>/<slug>
+vim content/notes/<section>/<slug>/index.md   # frontmatter + Markdown
+# 图片放 static/image/notes/<slug>/*.png
+# hugo server 验证，/notes/ 入口自动渲染（受 cardColumns 控制）
+```
 
 ### 加 life 子模块（如「图片」）
 

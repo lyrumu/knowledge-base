@@ -1,0 +1,31 @@
+{{/*
+  Shortcode: site-stats
+  ----------------------------------------------------------------
+  站点统计 S1（极简版）：
+  - 显示 3 个指标：notes 数 / tags 数 / 最近更新日期
+  - 数据源 Hugo 自动（build 时计算，零外部依赖）
+  - 用于 /about/ 末尾
+  - 2026-06-25 新增
+  ----------------------------------------------------------------
+  用法: {{< site-stats >}}
+*/}}
+<section class="site-stats not-prose">
+  <span class="site-stats-item">
+    <span class="site-stats-num">{{ len (where .Site.RegularPages "Section" "notes") }}</span>
+    <span class="site-stats-label">notes</span>
+  </span>
+  <span class="site-stats-sep" aria-hidden="true">·</span>
+  <span class="site-stats-item">
+    <span class="site-stats-num">{{ len .Site.Taxonomies.tags }}</span>
+    <span class="site-stats-label">tags</span>
+  </span>
+  <span class="site-stats-sep" aria-hidden="true">·</span>
+  <span class="site-stats-item">
+    <span class="site-stats-label">last updated</span>
+    <span class="site-stats-num">
+      {{- range first 1 (where .Site.RegularPages "Section" "notes").ByDate.Reverse -}}
+        {{- .Date.Format "2006-01-02" -}}
+      {{- end -}}
+    </span>
+  </span>
+</section>

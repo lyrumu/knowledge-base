@@ -395,3 +395,41 @@ html.dark .about-contact-btn:hover {
   margin-bottom: 0.4em;
 }
 
+/* =============================================================================
+   站点统计 S1（2026-06-25 新增）
+   ----------------------------------------------------------------------------
+   用于 layouts/shortcodes/site-stats.html 渲染 /about/ 末尾的统计行
+   - 衬线斜体小字 + 等宽数字（与 about 整体风格一致）
+   - 数字用 font-variant-numeric: tabular-nums 对齐
+   ============================================================================= */
+.site-stats {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  align-items: baseline;
+  margin-top: 2rem;
+  font-family: var(--font-serif-body);
+  color: var(--fg-soft);
+  font-style: italic;
+  font-size: 0.9rem;
+}
+.site-stats-item {
+  display: inline-flex;
+  align-items: baseline;
+  gap: 0.3rem;
+}
+.site-stats-num {
+  font-variant-numeric: tabular-nums;
+  font-weight: 600;
+  color: var(--fg-base);
+  font-style: normal;
+  font-family: var(--font-mono);
+  font-size: 0.85rem;
+}
+.site-stats-label {
+  letter-spacing: 0.02em;
+}
+.site-stats-sep {
+  opacity: 0.4;
+}
+

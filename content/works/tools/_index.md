@@ -2,7 +2,7 @@
 title: "TOOLS"
 kicker: "WORKS · TOOLS"
 subtitle: ""
-description: ""
+description: "Tools and scripts — utility scripts and coding snippets"
 layout: "page"
 showHero: true
 showBreadcrumbs: true

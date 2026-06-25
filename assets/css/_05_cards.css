@@ -4,12 +4,13 @@
    bug：layouts/_default/list.html line 32 用 `class="prose ... max-w-none"`，但
    Tailwind 没生成纯 `.max-w-none`（只有 `.lg\:max-w-none`，仅 lg 断点），
    导致 `.prose` 的 `max-width: 65ch` (576px) 仍生效。
-   结果：prose section 宽度被压到 576px → 子元素 .modules-grid width=100%=576px
-        → .modules-grid-stack (max-width: 56rem=896px) 在 576px 内居中
-        → 中心 = main.left + 288px ≈ 688px，跟 viewport 中心 (960px) 偏左 272px
-        → 用户感觉"下面内容相对 hero 明显偏左"。
+   结果：prose section 宽度被压到 576px → 子元素 width=100%=576px
+        → 居中容器（如 module-stack / vault-stack）只能在 576px 内居中
+        → 中心偏左，与 hero 对不齐。
    修复：main > section.prose 强制 max-width: none，拉伸到 main 容器宽度，
-        下面的 .modules-grid-stack 才能居中到 viewport 中心，跟 hero 对齐。
+        下面的居中容器才能对齐 viewport 中心，跟 hero 对齐。
+   （2026-06-25 更新：注释里 .modules-grid-stack / .vault-section-stack 是历史引用，
+        对应 dead code 已删除，仅留历史记录）
    ============================================================================= */
 main > section.prose {
   max-width: none;
@@ -42,7 +43,6 @@ main > section.prose {
 
 /* 暗色卡片背景叠加（仅 background，不动 border / transform） */
 html.dark .module-card,
-html.dark .vault-section-card,
 html.dark .article-link--card,
 html.dark .article-link--related,
 html.dark .article-link--simple,
@@ -53,7 +53,6 @@ html.dark .life-sub-card {
 
 /* 暗色 hover 背景叠加 */
 html.dark .module-card:hover,
-html.dark .vault-section-card:hover,
 html.dark .article-link--card:hover,
 html.dark .article-link--related:hover,
 html.dark .article-link--simple:hover,
@@ -65,14 +64,22 @@ html.dark .life-sub-card:hover {
 /* =============================================================================
    15. 模块卡 (Claude 风：单列 · 横向布局 · 居中容器)
    ----------------------------------------------------------------------------
-   数据驱动：data/modules.yaml → layouts/shortcodes/modules-grid.html
+   数据驱动：（2026-06-25 删除）原 data/modules.yaml + modules-grid.html 已删，
+       移除 .modules-grid-stack 容器规则，.module-card 通用样式保留
    ============================================================================= */
-.modules-grid-stack {
-  max-width: 56rem; /* 原值原本是44rem*/
-  margin: 0 auto;
-  display: flex;
-  flex-direction: column;
-  gap: 1rem;
+
+/* 标签药丸共享基础样式（life / works / project / resource） */
+.life-sub-tag,
+.works-sub-tag,
+.project-card-tag,
+.resource-card-tag {
+  font-family: var(--font-mono);
+  font-size: 0.6rem;
+  padding: 0.1rem 0.5rem;
+  border-radius: 9999px;
+  border: 1px solid color-mix(in srgb, var(--line) 70%, transparent);
+  color: var(--fg-soft);
+  letter-spacing: 0.04em;
 }
 
 .module-card {
@@ -240,155 +247,11 @@ html.dark .life-sub-card:hover {
 }
 
 /* =============================================================================
-   16. Vault 子分类卡（单列 · 居中 · 与 module-card 同语言）
-   ----------------------------------------------------------------------------
-   数据驱动：data/vault.yaml → layouts/shortcodes/vault-sections.html
+   ~~ 16. Vault 子分类卡（2026-06-25 删除）~~
+   ~~ data/vault.yaml + layouts/shortcodes/vault-sections.html 已删除，
+       相关 CSS 规则全部移除。原本服务 /notes/ 入口分类卡，
+       现 /notes/ 入口由 list.html + card.html 自动渲染子页面卡片。 ~~
    ============================================================================= */
-.vault-sections-stack {
-  max-width: 56rem;
-  margin: 0 auto;
-  display: flex;
-  flex-direction: column;
-  gap: 1rem;
-}
-
-.vault-section-card {
-  display: flex;
-  flex-direction: column;
-  border-radius: 0.5rem;
-  padding: 1.5rem 1.5rem;
-  text-decoration: none !important;
-  background: transparent;
-  border: 1px solid var(--line);
-  transition: border-color 0.4s, background 0.4s, transform 0.4s;
-  position: relative;
-  isolation: isolate;
-}
-.vault-section-card:hover {
-  border-color: var(--fg-base);
-  transform: translateY(-2px);
-}
-
-.vault-section-head {
-  display: flex;
-  align-items: center;
-  gap: 0.75rem;
-  margin-bottom: 0.85rem;
-}
-.vault-section-icon {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  width: 2rem;
-  height: 2rem;
-  color: var(--fg-base);
-  line-height: 1;
-  transition: transform 0.4s cubic-bezier(0.22, 0.61, 0.36, 1),
-              color 0.3s;
-  flex-shrink: 0;
-}
-.vault-section-card:hover .vault-section-icon {
-  transform: rotate(-6deg);
-  color: var(--accent);
-}
-.vault-section-icon svg {
-  display: block;
-}
-.vault-section-path {
-  font-family: var(--font-mono);
-  font-size: 0.65rem;
-  letter-spacing: 0.05em;
-  color: var(--fg-soft);
-  text-transform: lowercase;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-}
-
-.vault-section-name {
-  font-family: var(--font-serif-display);
-  font-size: 1.4rem;
-  font-weight: 500;
-  letter-spacing: -0.015em;
-  color: var(--fg-base);
-  font-variation-settings: "opsz" 60;
-  line-height: 1.2;
-}
-.vault-section-title {
-  font-family: var(--font-mono);
-  font-size: 0.65rem;
-  text-transform: uppercase;
-  letter-spacing: 0.18em;
-  color: var(--fg-soft);
-  margin-top: 0.3rem;
-}
-
-.vault-section-desc {
-  font-family: var(--font-serif-body);
-  font-size: 0.95rem;
-  font-style: italic;
-  color: var(--fg-mute);
-  line-height: 1.6;
-  margin: 0.75rem 0 0;
-}
-
-.vault-section-sample {
-  list-style: none;
-  padding: 0;
-  margin: 0.85rem 0 0;
-  display: flex;
-  flex-direction: column;
-  gap: 0.35rem;
-  font-family: var(--font-serif-body);
-  font-size: 0.88rem;
-  color: var(--fg-mute);
-}
-.vault-section-sample-item {
-  display: flex;
-  gap: 0.5rem;
-  align-items: baseline;
-}
-.vault-section-sample-mark {
-  display: inline-flex;
-  align-items: center;
-  color: var(--accent);
-  font-family: var(--font-serif-display);
-  flex-shrink: 0;
-}
-.vault-section-sample-mark svg {
-  display: block;
-}
-
-/* 标签药丸：vault / life / works / project / resource 共享 */
-.vault-section-tag,
-.life-sub-tag,
-.works-sub-tag,
-.project-card-tag,
-.resource-card-tag {
-  font-family: var(--font-mono);
-  font-size: 0.6rem;
-  padding: 0.1rem 0.5rem;
-  border-radius: 9999px;
-  border: 1px solid color-mix(in srgb, var(--line) 70%, transparent);
-  color: var(--fg-soft);
-  letter-spacing: 0.04em;
-}
-
-.vault-section-tags {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 0.4rem;
-  margin-top: 1rem;
-  padding-top: 0.85rem;
-  border-top: 1px solid color-mix(in srgb, var(--line) 60%, transparent);
-}
-.vault-section-tag {
-  background: transparent;
-  transition: border-color 0.3s, color 0.3s;
-}
-.vault-section-card:hover .vault-section-tag {
-  border-color: color-mix(in srgb, var(--fg-soft) 40%, transparent);
-}
 
 /* =============================================================================
    23. 文章列表卡（覆盖 blowfish 默认 article-link--card / --simple / --related）

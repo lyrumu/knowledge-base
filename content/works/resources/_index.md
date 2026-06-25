@@ -1,8 +1,8 @@
 ---
-title: "REOURCES"
+title: "RESOURCES"
 kicker: "WORKS · RESOURCES"
 subtitle: " Maybe something useful that you can download"
-description: ""
+description: "Downloadable resources — Minecraft resource packs, fonts, scripts, and templates"
 layout: "page"
 showHero: true
 showBreadcrumbs: true

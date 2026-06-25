@@ -47,3 +47,5 @@ showTableOfContents: true
   alt="lyrumu's GitHub contribution chart"
   class="w-full my-4 rounded-lg"
 />
+
+{{< site-stats >}}

@@ -1,0 +1,29 @@
+# lyrumu's page
+
+> Personal page of lyrumu — Student · Developer in Hangzhou, China.
+> About the project structure, learning notes, and tools I use.
+
+## Docs
+
+- [Style Test](/notes/style-test/): Markdown / frontmatter / heading / list / table / code / image / foldout / formula / link style test page
+- [Linux Basics: WSL2 Installation to OpenCode / Hermes Agent Deployment](/notes/linux-getting-started/): WSL2 setup, common Linux commands, OpenCode / Hermes Agent deployment, VMware shutdown hooks, WinNAT port conflicts, Dashboard repair, API network fix
+- [Python Package Development](/notes/python-env-setup/): Python environment setup and package publishing workflow
+
+## Works
+
+- [Projects](/works/projects/): Personal projects — vibe coding, demos, experimental works
+- [Resources](/works/resources/): Downloadable resources — Minecraft resource packs, fonts, scripts
+- [Tools](/works/tools/): Tools and scripts
+
+## Daily
+
+- [Music](/life/music/): Playlist — irregularly updated
+
+## About
+
+- [About lyrumu](/about/): Profile, skill tags, GitHub contribution chart, and contact info
+
+---
+
+Add a new page here when you add content under `content/<section>/<slug>/`.
+Maintained manually (no auto-sync).

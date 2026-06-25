@@ -1,6 +1,6 @@
 ---
 title: "lyrumu's page"
-description: ""
+description: "lyrumu's personal page — Student · Developer in Hangzhou, China"
 layout: "background"
 showHero: true
 showBreadcrumbs: true

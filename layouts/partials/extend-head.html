@@ -2,36 +2,22 @@
   extend-head.html
   --------------------------------------------------------------------------
   Blowfish 的官方扩展点：在 <head> 末尾插入内容。
-  - 字体：本地化到 static/fonts/*(避免 Google Fonts CDN 不稳)
-  - Splitting.js：jsDelivr CDN（字符级动画分割）
-  - AOS.js + aos.css：滚动入场淡入（projects / resources 列表用到 data-aos 属性）
-  - VanillaTilt.js：3D 鼠标倾斜（projects 卡片用 data-tilt 属性）
+  - 字体：本地化到 static/fonts/*（避免 Google Fonts CDN 不稳）
+  - Splitting.js / AOS.js / VanillaTilt.js / aos.css：本地化到 static/（2026-06-25）
+    原 jsDelivr CDN + SRI 已弃用，避免 npm republish 时 hash 失效 → CDN 拒载
   --------------------------------------------------------------------------
 */}}
 
 {{/* AOS 样式表（必须，否则 aos.js 无视觉效果） */}}
-<link rel="stylesheet"
-      href="https://cdn.jsdelivr.net/npm/aos@2.3.4/dist/aos.css"
-      integrity="sha384-/rJKQnzOkEo+daG0jMjU1IwwY9unxt1NBw3Ef2fmOJ3PW/TfAg2KXVoWwMZQZtw9"
-      crossorigin="anonymous"
-      referrerpolicy="no-referrer" />
+<link rel="stylesheet" href="/css/aos.css" />
 
-<script src="https://cdn.jsdelivr.net/npm/splitting@1.0.6/dist/splitting.min.js"
-        integrity="sha384-taxnKSnzdVS5gZB4jZcieFZlmBPQMFqhdEmCScZsrIFCxX8Zizq4fKJJH5kBwMXT"
-        crossorigin="anonymous"
-        defer></script>
-<script src="https://cdn.jsdelivr.net/npm/aos@2.3.4/dist/aos.js"
-        integrity="sha384-n1AULnKdMJlK1oQCLNDL9qZsDgXtH6jRYFCpBtWFc+a9Yve0KSoMn575rk755NJZ"
-        crossorigin="anonymous"
-        defer></script>
-<script src="https://cdn.jsdelivr.net/npm/vanilla-tilt@1.8.1/dist/vanilla-tilt.min.js"
-        integrity="sha384-0k1dj5tm+KUH/4vkNk/i90XsjDA8Ltmt+ybcrFoH4t0dgv/WZsPpVBnkhcroX8UL"
-        crossorigin="anonymous"
-        defer></script>
+<script src="/js/splitting.min.js" defer></script>
+<script src="/js/aos.js" defer></script>
+<script src="/js/vanilla-tilt.min.js" defer></script>
 
 {{/*
   统一管理动画库的初始化：
-  - 全部包装在 window.load 里，确保所有 defer CDN 脚本加载完成
+  - 全部包装在 window.load 里，确保所有 defer 脚本加载完成
   - AOS.init()：检测 prefers-reduced-motion
   - VanillaTilt.init()：用 IntersectionObserver 延迟初始化，节省性能
 */}}

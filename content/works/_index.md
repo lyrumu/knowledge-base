@@ -2,7 +2,7 @@
 title: "WORKS"
 kicker: "WORKS · MODULE 02"
 subtitle: "My works"
-description: ""
+description: "My works — projects (vibe coding, demos), downloadable resources, and tools"
 layout: "page"
 showHero: true
 showBreadcrumbs: true

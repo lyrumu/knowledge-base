@@ -1,6 +1,7 @@
 # 部署与维护指南
 
 > 首次部署：2026-06-19 · v1.0.0  
+> 最近更新：2026-06-25 · dead code 清理 + CDN 本地化 + scripts/ 冻结  
 > 平台：Cloudflare Pages · Hugo v0.163.2 · Blowfish 主题
 
 ---
@@ -10,29 +11,29 @@
 ### 你只需要做三件事
 
 ```
-1. 在 Obsidian 写文章
-2. 终端运行脚本同步
+1. 在 content/ 下手写文章（Markdown + frontmatter）
+2. hugo server 本地验证
 3. git push 部署上线
 ```
 
 ### 详细步骤
 
-#### Step 1：写文章（Obsidian）
+#### Step 1：写文章（手写）
 
-在 `/Vault/` 里正常写笔记，图片放在同目录的 `image/` 文件夹。
+在 `content/<section>/<slug>/index.md` 手写 Markdown + frontmatter：
+- 图片放 `static/image/<section>/<slug>/*.png`
+- 详细 SOP 参见 [PROJECT_MAP.md §7](file:///f:/Notes/PROJECT_MAP.md)
 
-#### Step 2：同步到 Hugo
+> ⚠️ **2026-06-25 起**：`scripts/vault-to-hugo.ps1` 已冻结，不再日常使用。
+> 历史同步脚本仅供回退参考（详见 [scripts/README.md](file:///f:/Notes/scripts/README.md)）。
+
+#### Step 2：本地验证
 
 ```bash
-# 在项目根目录执行
-powershell -File scripts/vault-to-hugo.ps1
+hugo server --themesDir themes --theme blowfish --config hugo.toml --bind 127.0.0.1 --port 1313
 ```
 
-脚本会自动：
-- 扫描 `/Vault/` 下所有 `.md` 文件
-- 按 Vault 中的目录层级创建对应的 Hugo leaf bundle
-- 把 `image/` 文件夹一起复制过去
-- 只更新有改动的文件（幂等，< 1 秒）
+打开浏览器 `http://127.0.0.1:1313/` 预览。
 
 #### Step 3：部署上线
 
@@ -68,22 +69,12 @@ git push origin v1.0.0
 
 ---
 
-## 三、加新文章
-
-### 方式 A：通过 vault-to-hugo 脚本（推荐）
-
-1. 在 `/Vault/` 对应目录下新建 `.md` 文件
-2. 参照现有文章格式：一级标题 `# 标题` 开头，图片放在同级 `image/` 目录
-3. 运行同步脚本：`powershell -File scripts/vault-to-hugo.ps1`
-4. 脚本会自动在 `/content/notes/` 下生成对应的 leaf bundle
-5. 提交推送即可
-
-### 方式 B：手动创建 Hugo 文章
+## 三、加新文章（手写）
 
 ```bash
-# 创建 leaf bundle
-mkdir content/notes/docs/新文章名
-vim content/notes/docs/新文章名/index.md
+# 创建 leaf bundle 目录
+mkdir content/notes/<section>/<slug>
+vim content/notes/<section>/<slug>/index.md
 ```
 
 文章的 frontmatter 参考 [archetypes/default.md](file:///f:/Notes/archetypes/default.md)：
@@ -100,16 +91,20 @@ heroStyle: "background"
 ---
 ```
 
+> ⚠️ **2026-06-25 起**：`vault-to-hugo.ps1` 同步脚本已冻结。所有文章改为手写。
+
 ---
 
-## 四、加新分类
+## 四、加新分类（在 /notes/ 下加 section）
 
-如果想在 `/notes/` 下加一个全新的大分类（如 `design/`）：
+1. 在 `content/notes/<新分类>/_index.md` 建 section 主页
+   - frontmatter 含 `title / kicker / subtitle / description`
+   - 可选 `cardColumns: 1`（单列）或 3（默认多列）
+2. 在 `content/notes/<新分类>/` 下放具体文章（leaf bundle）
+3. **不需要改菜单**：`hugo.toml` 的 `[[menu.main]]` 已包含 `/notes/`，新子页通过 `/notes/` 入口可达
 
-1. 在 [data/vault.yaml](file:///f:/Notes/data/vault.yaml) 中添加 section 定义
-2. 在 [hugo.toml](file:///f:/Notes/hugo.toml) 中确认是否需要加新的 `[[menu.main]]` 条目
-3. 新建 `content/notes/<新分类>/_index.md`
-4. 在 `content/notes/<新分类>/` 下放具体文章（leaf bundle）
+> ⚠️ **2026-06-25 起**：旧流程"在 `data/vault.yaml` 中添加 section 定义"已废弃（vault.yaml 已删除）。
+> 新流程是直接手写 `_index.md` + frontmatter。
 
 ---
 
@@ -121,12 +116,7 @@ hugo server --themesDir themes --theme blowfish --config hugo.toml --bind 127.0.
 
 # 生产构建
 hugo --minify --themesDir themes --theme blowfish --config hugo.toml
-
-# 带着 vault 同步脚本一起 (在另一个终端)
-powershell -File scripts/vault-to-hugo.ps1 -Watch
 ```
-
-> `-Watch` 模式下脚本每 5 秒扫描一次 Vault 变更，配合 `hugo server` 实现 Obsidian 保存 → 浏览器自动刷新。
 
 ---
 
@@ -134,15 +124,23 @@ powershell -File scripts/vault-to-hugo.ps1 -Watch
 
 ```
 f:\Notes\
-├── vault-to-hugo.ps1     ← 同步脚本（零配置自动发现）
-├── hugo.toml             ← 全局 Hugo 配置
-├── DEPLOY.md             ← 本文件
-├── content/notes/        ← 所有文章 leaf bundle（由脚本维护）
-├── data/                 ← 封面 / 模块 / vault 分类数据
-├── layouts/              ← 自定义模板（覆写 Blowfish）
-├── assets/css/           ← 自定义样式（全部 DIY 在这）
-├── static/               ← 字体 / 图片 / 可下载资源
-└── .github/workflows/    ← CI（hugo-build.yml 只做构建验证）
+├── hugo.toml             # 全局 Hugo 配置
+├── DEPLOY.md             # 本文件
+├── PROJECT_MAP.md        # 项目地图
+├── OPTIMIZE.md           # 优化方案 + 决策日志
+├── DONE.md               # 开发日志（历史记录，不修改）
+├── content/              # 所有页面内容（含 notes 文章、section 主页、子页）
+├── data/                 # 数据驱动（封面 / life / music / works / projects / resources）
+├── layouts/              # 自定义模板（覆写 Blowfish）
+├── assets/css/           # 自定义样式（9 个 _*.css + custom.css 索引）
+├── static/               # 字体 / CSS / JS / 图片 / 可下载资源
+│   ├── css/aos.css       # ★ 本地化（2026-06-25，原 jsDelivr CDN）
+│   ├── js/aos.js         # ★ 本地化
+│   ├── js/splitting.min.js  # ★ 本地化
+│   ├── js/vanilla-tilt.min.js  # ★ 本地化
+│   └── js/music-player.js # 音乐播放器
+├── scripts/              # ⚠️ 历史脚本（已冻结，详见 scripts/README.md）
+└── themes/blowfish/      # 主题本体（一般不改）
 ```
 
 想改什么 → 查 [PROJECT_MAP.md](file:///f:/Notes/PROJECT_MAP.md)，里面有逐项对照表。
@@ -167,5 +165,5 @@ f:\Notes\
 |------|------|------|
 | 构建失败：`can't evaluate field Locale` | Hugo 版本不对 | 检查 `HUGO_VERSION` 环境变量 |
 | 图片加载 404 | 路径或文件名含中文未转义 | 改用英文 slug 命名 | 
-| 同步脚本中文报错 | 脚本缺少 UTF-8 BOM | 用 VS Code 打开 → 另存为 UTF-8 with BOM |
-| 部署后内容没更新 | 忘记跑同步脚本 | `powershell -File scripts/vault-to-hugo.ps1` 后再 push |
+| 样式全没（封面失效、princess 紫调出现） | 不要在 `custom.css` 写 `@import`（见 PROJECT_MAP.md §8） | 用 `resources.Match "css/_*.css"` 机制 | 
+| 部署后内容没更新 | push 后 Cloudflare 还在构建 | 等 2-3 分钟再刷新 |

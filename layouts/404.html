@@ -1,0 +1,34 @@
+{{/*
+  404.html — 自定义 404 页
+  ----------------------------------------------------------------
+  替换主题默认的 404 风格：
+  - 与站点风格统一（暖白衬线 + 罗马数字 + 古典分隔符）
+  - 居中布局
+  - 提供 5 个返回链接 + 提示文案
+  - 2026-06-25 新增
+
+  注意：这是 template 文件，不能用 {{< shortcode >}} 调用 shortcode
+       （短代码是 markdown 上下文）。section-rule 改用内联 div。
+  ----------------------------------------------------------------
+*/}}
+{{ define "main" }}
+<article class="not-found not-prose">
+  <div class="not-found-kicker">ERROR · DCCCIV</div>
+  <h1 class="not-found-title">Page Not Found</h1>
+  <p class="not-found-subtitle">
+    Looks like this page got lost in the void.
+  </p>
+
+  <div class="section-rule not-prose" aria-hidden="true">✦</div>
+
+  <p class="not-found-tip">How about trying one of these:</p>
+
+  <div class="not-found-actions">
+    <a href="/" class="not-found-btn">← Home</a>
+    <a href="/notes/" class="not-found-btn">DOCS</a>
+    <a href="/works/" class="not-found-btn">WORKS</a>
+    <a href="/life/" class="not-found-btn">DAILY</a>
+    <a href="/about/" class="not-found-btn">ABOUT</a>
+  </div>
+</article>
+{{ end }}
