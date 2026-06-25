@@ -59,7 +59,7 @@ showWordCount: true
 # =============================================================================
 showEdit: false
 showZenMode: true
-showRelatedContent: true
+showRelatedContent: false
 relatedContentLimit: 3
 sharingLinks: []
 
@@ -82,7 +82,6 @@ images: []
 # =============================================================================
 # 布局覆写（留空 = 使用主题默认）
 # =============================================================================
-layout: ""
 ---
 
 ## 环境准备

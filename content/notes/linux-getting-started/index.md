@@ -58,7 +58,7 @@ showWordCount: true
 # =============================================================================
 showEdit: false
 showZenMode: true
-showRelatedContent: true
+showRelatedContent: false
 relatedContentLimit: 3
 sharingLinks: []
 

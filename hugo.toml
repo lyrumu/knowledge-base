@@ -132,8 +132,8 @@ enableEmoji = true
     showDraftLabel = true
     showTableOfContents = true
     showReadingTime = true
-    showWordCount = false
-    showRelatedContent = true
+    showWordCount = true
+    showRelatedContent = true #管理相关近期文章的显示
     relatedContentLimit = 6
     showZenMode = true
     sharingLinks = ['github', 'twitter', 'email']
@@ -141,15 +141,15 @@ enableEmoji = true
   [params.term]
     showHero = true
     showBreadcrumbs = true
-    showTableOfContents = false
+    showTableOfContents = true
     cardView = true
 
   [params.taxonomy]
     showTermCount = true
     showHero = true
     showBreadcrumbs = true
-    showTableOfContents = false
-    cardView = false
+    showTableOfContents = true
+    cardView = true
 
   [params.footer]
     showMenu = true

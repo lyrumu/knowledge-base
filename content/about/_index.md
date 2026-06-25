@@ -1,4 +1,4 @@
-<!-- ---
+﻿<!-- ---
 title: "ABOUT ME"
 kicker: "ABOUT ME · MODULE 04"
 subtitle: "Some info about me"

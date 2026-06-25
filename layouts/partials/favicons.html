@@ -1,0 +1,11 @@
+{{/*
+  favicons.html — 自定义 favicon（2026-06-25）
+  ----------------------------------------------------------------
+  替换主题默认的 PNG ICO 系列（apple-touch-icon.png / favicon-32x32.png / ...）。
+  使用 SVG 矢量 favicon（自适应所有尺寸，零额外资源）。
+  ----------------------------------------------------------------
+  设计：圆角深色背景 + 衬线斜体 "rumu" 文字（与站点风格一致）
+  ----------------------------------------------------------------
+*/}}
+<link rel="icon" type="image/svg+xml" href="{{ "favicon.svg" | relURL }}">
+<link rel="alternate icon" href="{{ "favicon.svg" | relURL }}">

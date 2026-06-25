@@ -26,6 +26,12 @@
     return m + ':' + (s < 10 ? '0' + s : s);
   }
 
+  function normSrc(src) {
+    if (!src) return '';
+    try { return new URL(src, window.location.href).pathname; }
+    catch (e) { return src; }
+  }
+
   // ---------- 入口 ----------
   document.addEventListener('DOMContentLoaded', function () {
     var items = $$('.music-item');
@@ -192,8 +198,14 @@
 
     audio.addEventListener('timeupdate', function () { setProgressUI(); savePos(); });
     audio.addEventListener('ended', next);
-    audio.addEventListener('play',  function () { player.classList.add('is-playing'); setIcon(true); });
-    audio.addEventListener('pause', function () { player.classList.remove('is-playing'); setIcon(false); });
+    audio.addEventListener('play',  function () {
+      savePos();
+      player.classList.add('is-playing'); setIcon(true);
+    });
+    audio.addEventListener('pause', function () {
+      savePos();
+      player.classList.remove('is-playing'); setIcon(false);
+    });
     audio.addEventListener('error', function () {
       // 区分真错误 vs 用户主动 abort
       // - code=1 (MEDIA_ERR_ABORTED)：用户切歌/暂停触发的取消请求，不是真错误 → 静默
@@ -222,7 +234,8 @@
         localStorage.setItem(STORAGE_KEY, JSON.stringify({
           index: curIndex,
           time:  audio.currentTime,
-          src:   audio.src
+          src:   audio.currentSrc || audio.src,
+          playing: !audio.paused
         }));
       } catch (e) {}
     }
@@ -233,11 +246,28 @@
         if (!raw) return false;
         var s = JSON.parse(raw);
         // 根据 src 找回 index（避免 playlist 顺序改变时错位）
-        var idx = items.findIndex(function (el) { return el.dataset.src === s.src; });
+        var savedSrc = normSrc(s.src);
+        var idx = items.findIndex(function (el) { return normSrc(el.dataset.src) === savedSrc; });
         if (idx < 0) return false;
         loadIndex(idx, false);
-        if (isFinite(s.time)) audio.currentTime = s.time;
-        setProgressUI();
+        function applyRestore() {
+          if (isFinite(s.time)) audio.currentTime = s.time;
+          setProgressUI();
+          if (s.playing) {
+            audio.play().then(function () {
+              player.classList.add('is-playing');
+              setIcon(true);
+              savePos();
+            }).catch(function () {});
+          }
+        }
+        if (audio.readyState >= 1) applyRestore();
+        else {
+          audio.addEventListener('loadedmetadata', function onceRestore() {
+            audio.removeEventListener('loadedmetadata', onceRestore);
+            applyRestore();
+          });
+        }
         return true;
       } catch (e) { return false; }
     }

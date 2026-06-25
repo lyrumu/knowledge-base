@@ -1,7 +1,11 @@
 {{/*
   _default/list.html — Claude 风覆写版
   ----------------------------------------------------------------
-  适用：Blowfish 中所有 section 的 _index.md（/notes/, /works/, /life/, /about/ ...）
+  适用：当前项目实际服务 2 个 _index.md
+    1. content/notes/_index.md — 显式 layout: "list"（笔记入口）
+    2. content/about/_index.md — frontmatter 在 HTML 注释里（无 layout）→ kind=section fallback
+  注：6 个 _index.md（life / life-music / works / 3 个 works 子页）显式 layout: "page" 走 page.html
+      封面走主题 layouts/index.html → partials/home/custom.html
   替换掉默认 blowfish list.html 的"大黑标题 + 元信息条"，
   改为我们的"小封面"模式（page-hero） + 下方正文 + 文章列表。
   ----------------------------------------------------------------
@@ -39,8 +43,11 @@
   </section>
   {{ end }}
 
-  {{/* 子页面列表（卡片 / 简单列表） */}}
-  {{ if gt (len .Pages) 0 }}
+  {{/* 子页面列表（卡片 / 简单列表）
+       默认开启；像 /life/ /works/ 这类已在正文中手写 shortcode 网格的 section，
+       可在 frontmatter 里设 showChildList: false 关闭自动重复渲染。 */}}
+  {{ $showChildList := .Params.showChildList | default true }}
+  {{ if and $showChildList (gt (len .Pages) 0) }}
     {{ $cardView := .Params.cardView | default (site.Params.list.cardView | default true) }}
     {{ $groupByYear := .Params.groupByYear | default (site.Params.list.groupByYear | default false) }}
     {{ $orderByWeight := .Params.orderByWeight | default (site.Params.list.orderByWeight | default true) }}
@@ -106,7 +113,7 @@
 
     {{ partial "pagination.html" . }}
   {{ else }}
-    {{ if not .Content }}
+    {{ if and $showChildList (not .Content) }}
     <section class="not-prose prose dark:prose-invert max-w-none">
       <p class="py-8 border-t border-neutral-200 dark:border-neutral-700 italic text-neutral-500">
         （这里还没有内容 — 你可以在 <code>content/{{ .Section }}/</code> 下新建 <code>.md</code> 文件开始）
