@@ -36,7 +36,10 @@
 
 {{ $pal := $cfg.palette }}
 {{ $ent := $cfg.entrance }}
-{{ $social := $cfg.social }}
+{{ $latestNote := "" }}
+{{ range first 1 (where .Site.RegularPages.ByDate.Reverse "Section" "notes") }}{{ $latestNote = . }}{{ end }}
+{{ $musicPage := site.GetPage "/life/music/" }}
+{{ $projectsPage := site.GetPage "/works/projects/" }}
 
 {{/*
   调色板：用 <style> 块写而不是 inline `style=""`
@@ -91,23 +94,41 @@
   <div class="cover-flower-strip cover-flower-strip-top" aria-hidden="true"></div>
   <div class="cover-flower-strip cover-flower-strip-bottom" aria-hidden="true"></div>
 
-  {{/* 背景花朵（黑 + 黄 · 4 朵 · 角度统一 · 分两组摆放） */}}
-  {{ $imgs := slice "黑色花.png" "黄色花.png" }}
+  {{/* 背景花朵（只保留黑花，避免色彩抢正文） */}}
   <div class="cover-flowers" aria-hidden="true">
-    {{ range $i, $p := slice
-      (dict "x" 92 "y" 74 "s" 325 "o" 0.32 "r" -18 "i" 0)
-      (dict "x" 13 "y" 20 "s" 250 "o" 0.80 "r"  18 "i" 1)
+    {{ range $clusterIndex, $cluster := slice
+      (dict
+        "clusterClass" "cover-flower-cluster--left"
+        "items" (slice
+          (dict "file" "黑色花.png" "class" "cover-flower-black" "w" 242 "x" 18 "y" 4  "r" -11 "o" 0.35)
+          (dict "file" "黑色花.png" "class" "cover-flower-black" "w" 308 "x" -4 "y" 34 "r" 9 "o" 0.48)
+          (dict "file" "黑色花.png" "class" "cover-flower-black cover-flower-soft" "w" 168 "x" 30 "y" 80 "r" -3 "o" 0.27)
+        )
+      )
+      (dict
+        "clusterClass" "cover-flower-cluster--right"
+        "items" (slice
+          (dict "file" "黑色花.png" "class" "cover-flower-black" "w" 242 "x" 18 "y" 4  "r" -11 "o" 0.35)
+          (dict "file" "黑色花.png" "class" "cover-flower-black" "w" 308 "x" -4 "y" 34 "r" 9 "o" 0.48)
+          (dict "file" "黑色花.png" "class" "cover-flower-black cover-flower-soft" "w" 168 "x" 30 "y" 80 "r" -3 "o" 0.27)
+        )
+      )
     }}
-      <div class="cover-flower-pos" style="
-        left: {{ .x }}%;
-        top: {{ .y }}%;
-        width: {{ .s }}px;
-        height: {{ .s }}px;
-        opacity: {{ .o }};
-        --rot: {{ .r }}deg;
-        animation-delay: {{ mul $i 0.18 }}s;
-      ">
-        <img src="/image/{{ index $imgs .i }}" alt="" loading="lazy"{{ if eq .i 0 }} class="cover-flower-black"{{ else }} class="cover-flower-yellow"{{ end }}>
+      <div class="cover-flower-cluster {{ $cluster.clusterClass }}" style="animation-delay: {{ mul $clusterIndex 0.18 }}s;">
+        {{ range $cluster.items }}
+        <img
+          src="/image/{{ .file }}"
+          alt=""
+          loading="lazy"
+          class="cover-flower-sprite {{ .class }}"
+          style="
+            width: {{ .w }}px;
+            left: {{ .x }}%;
+            top: {{ .y }}%;
+            opacity: {{ .o }};
+            --rot: {{ .r }}deg;
+          ">
+        {{ end }}
       </div>
     {{ end }}
   </div>
@@ -147,25 +168,57 @@
       <span class="cover-divider-rule"></span>
     </div>
 
-    <a href="{{ $ent.href | relURL }}" class="cover-button">
-      <span class="cover-button-label">{{ $ent.label }}</span>
-      <span class="cover-button-arrow" aria-hidden="true">→</span>
-    </a>
-
-    {{ with $social }}
-    <nav class="cover-social" aria-label="Social links">
-      {{ range . }}
-      <a href="{{ .url | safeURL }}"
-         class="cover-social-link"
-         {{ with .title }}title="{{ . }}" aria-label="{{ . }}"{{ end }}
-         target="_blank" rel="noopener noreferrer">
-        {{ with .name }}<span class="cover-social-name">{{ . }}</span>{{ end }}
-        {{ if and .name .url }}<span class="cover-social-sep" aria-hidden="true">·</span>{{ end }}
-        {{ partial "cover/icon.html" (dict "name" .icon "size" 16) }}
+    <div class="cover-actions">
+      <a href="/about/" class="cover-button">
+        <span class="cover-button-label">Get To Know Me</span>
+        <span class="cover-button-arrow" aria-hidden="true">→</span>
       </a>
-      {{ end }}
-    </nav>
-    {{ end }}
+      <button
+        type="button"
+        class="cover-button"
+        id="cover-start-here-trigger"
+        aria-expanded="false"
+        aria-controls="cover-start-here">
+        <span class="cover-button-label">Start Here</span>
+        <span class="cover-button-arrow" aria-hidden="true">→</span>
+      </button>
+    </div>
+
+    <section class="cover-showcase" id="cover-start-here" aria-label="Start here" hidden>
+      <div class="cover-showcase-head">
+        <span class="cover-showcase-kicker">Start Here</span>
+        <p class="cover-showcase-text">
+          Three good openings: the newest note, the music page, and the projects area.
+          Start anywhere, then use the top navigation when you want to keep exploring.
+        </p>
+      </div>
+      <div class="cover-showcase-grid">
+        {{ with $latestNote }}
+        <a href="{{ .RelPermalink }}" class="cover-feature-card">
+          <span class="cover-feature-tag">Latest Note</span>
+          <strong class="cover-feature-title">{{ .Title }}</strong>
+          <span class="cover-feature-desc">{{ .Description | default "A recent long-form note from the docs area." }}</span>
+          <span class="cover-feature-link">Open note →</span>
+        </a>
+        {{ end }}
+        {{ with $musicPage }}
+        <a href="{{ .RelPermalink }}" class="cover-feature-card">
+          <span class="cover-feature-tag">Current Playlist</span>
+          <strong class="cover-feature-title">{{ .Title }}</strong>
+          <span class="cover-feature-desc">{{ .Description | default "A small playlist page with local tracks and an in-page player." }}</span>
+          <span class="cover-feature-link">Listen now →</span>
+        </a>
+        {{ end }}
+        {{ with $projectsPage }}
+        <a href="{{ .RelPermalink }}" class="cover-feature-card">
+          <span class="cover-feature-tag">Projects</span>
+          <strong class="cover-feature-title">{{ .Title }}</strong>
+          <span class="cover-feature-desc">{{ .Description | default "Projects, demos, and experiments worth opening first." }}</span>
+          <span class="cover-feature-link">Browse projects →</span>
+        </a>
+        {{ end }}
+      </div>
+    </section>
   </main>
 </div>
 
@@ -198,6 +251,26 @@
             document.documentElement.classList.contains('dark') ? 'dark' : 'light');
         } catch (e) {}
       }
+    });
+  })();
+
+  (function () {
+    var trigger = document.getElementById('cover-start-here-trigger');
+    var panel = document.getElementById('cover-start-here');
+    if (!trigger || !panel) return;
+
+    trigger.addEventListener('click', function () {
+      if (panel.hasAttribute('hidden')) {
+        panel.removeAttribute('hidden');
+        panel.classList.remove('cover-showcase--revealed');
+        void panel.offsetWidth;
+        panel.classList.add('cover-showcase--revealed');
+        trigger.setAttribute('aria-expanded', 'true');
+      }
+
+      requestAnimationFrame(function () {
+        panel.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      });
     });
   })();
 </script>

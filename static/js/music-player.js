@@ -172,7 +172,8 @@
 
     // ---------- 事件绑定 ----------
     items.forEach(function (el, i) {
-      el.addEventListener('click', function () {
+      el.addEventListener('click', function (e) {
+        if (e.target && e.target.closest('.music-item-download')) return;
         // 没有 src 的示例项 → 不响应
         if (el.classList.contains('is-disabled')) return;
         // 点击当前曲目 → 切换 播放/暂停

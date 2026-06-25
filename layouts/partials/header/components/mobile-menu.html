@@ -70,12 +70,7 @@
 </div>
 
 {{ define "mobile-main-menu" }}
-  {{/*
-    2026-06-24：跳过 identifier = "home" 的菜单项（同 desktop-menu.html 原因）
-    详见 header/basic.html 顶部注释。
-  */}}
   {{ range .Site.Menus.main }}
-    {{ if ne .Identifier "home" }}
     {{ $submenuId := printf "fullscreen-submenu-%s" (.Identifier | default .Name | anchorize) }}
     <div class="px-2">
       <a
@@ -132,7 +127,6 @@
         </div>
       {{ end }}
     </div>
-    {{ end }}
   {{ end }}
 {{ end }}
 

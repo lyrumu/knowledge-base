@@ -726,6 +726,13 @@ html.dark .music-item.is-disabled:hover {
   text-overflow: ellipsis;
   white-space: nowrap;
 }
+.music-item-note {
+  margin-left: 0.4rem;
+  color: var(--fg-soft);
+  font-style: normal;
+  font-family: var(--font-serif-body);
+  font-size: 0.75rem;
+}
 .music-item-album {
   font-family: var(--font-mono);
   font-size: 0.62rem;
@@ -733,6 +740,56 @@ html.dark .music-item.is-disabled:hover {
   letter-spacing: 0.18em;
   color: var(--fg-soft);
   white-space: nowrap;
+}
+.music-item-meta-row {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  flex-wrap: wrap;
+  margin-top: 0.15rem;
+}
+.music-item-filemeta {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  font-family: var(--font-mono);
+  font-size: 0.62rem;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--fg-soft);
+  white-space: nowrap;
+}
+.music-item-download {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.38rem;
+  padding: 0.28rem 0.72rem;
+  border: 1px solid color-mix(in srgb, var(--accent) 34%, var(--line));
+  border-radius: 999px;
+  background: color-mix(in srgb, var(--accent) 7%, transparent);
+  color: var(--accent);
+  text-decoration: none !important;
+  font-family: var(--font-sans);
+  font-size: 0.72rem;
+  letter-spacing: 0.02em;
+  line-height: 1;
+  transition: transform 0.3s cubic-bezier(0.22, 0.61, 0.36, 1),
+              border-color 0.3s,
+              background 0.3s,
+              color 0.3s;
+}
+.music-item-download:hover {
+  transform: translateY(-1px);
+  border-color: color-mix(in srgb, var(--accent) 54%, var(--line));
+  background: color-mix(in srgb, var(--accent) 13%, transparent);
+  color: var(--fg-base);
+}
+.music-item-download:focus-visible {
+  outline: 2px solid color-mix(in srgb, var(--accent) 45%, transparent);
+  outline-offset: 2px;
+}
+.music-item-download svg {
+  flex-shrink: 0;
 }
 
 /* 时长 + 当前播放状态指示 */
@@ -776,6 +833,13 @@ html.dark .music-item.is-disabled:hover {
   }
   .music-item-cover { width: 3rem; height: 3rem; }
   .music-item-album { display: none; }
+  .music-item-meta-row { gap: 0.45rem; }
+  .music-item-download {
+    padding: 0.28rem 0.5rem;
+  }
+  .music-item-download span {
+    display: none;
+  }
 }
 
 /* =============================================================================

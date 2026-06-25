@@ -63,13 +63,13 @@ body.is-cover-page main#main-content > article {
   display: flex;
   flex-direction: column;
   align-items: center;
-  justify-content: center;
+  justify-content: flex-start;
   background: linear-gradient(180deg,
                               var(--pal-bg-from, var(--bg-base)) 0%,
                               var(--pal-bg-to,   var(--bg-deep)) 100%);
   overflow: hidden;
   isolation: isolate;
-  padding: 6vh 4vw;
+  padding: clamp(4rem, 4.8vh, 5rem) 4vw clamp(4.25rem, 5.2vh, 5.6rem);
 }
 
 /* 噪点叠加（极轻 ~3%） */
@@ -131,6 +131,7 @@ html.dark .cover-grain {
   display: flex;
   flex-direction: column;
   align-items: center;
+  margin-top: clamp(3.9rem, 7vh, 5.8rem);
 }
 
 /* =============================================================================
@@ -143,7 +144,7 @@ html.dark .cover-grain {
   letter-spacing: 0.42em;
   text-transform: uppercase;
   color: var(--pal-kicker, var(--fg-soft));
-  margin: 0 0 1.5rem;
+  margin: 0 0 1.1rem;
   font-feature-settings: "smcp" on;
 }
 
@@ -155,7 +156,7 @@ html.dark .cover-grain {
   height: 5.5rem;
   border-radius: 9999px;
   object-fit: cover;
-  margin: 0 auto 1.75rem;
+  margin: 0 auto 0.95rem;
   border: 1px solid var(--pal-line, var(--line));
   filter: grayscale(10%) contrast(1.02);
   opacity: 0;
@@ -167,11 +168,11 @@ html.dark .cover-grain {
    ============================================================================= */
 .cover-title {
   font-family: var(--font-serif-display);
-  font-size: clamp(3.5rem, 13vw, 8.5rem);
+  font-size: clamp(2.55rem, 8.9vw, 5.8rem);
   font-weight: 400;
   font-style: normal;
   letter-spacing: -0.045em;
-  line-height: 1.05;
+  line-height: 1.02;
   margin: 0;
   color: var(--pal-title, var(--fg-base));
   /* 用字体光学尺寸 + 古典 kerning */
@@ -187,7 +188,7 @@ html.dark .cover-grain {
   font-weight: 300;
   font-size: clamp(1rem, 1.8vw, 1.2rem);
   color: var(--pal-epi, var(--fg-soft));
-  margin: 1.75rem auto 0;
+  margin: 1.2rem auto 0;
   max-width: 36rem;
   line-height: 1.55;
   opacity: 0;
@@ -202,7 +203,7 @@ html.dark .cover-grain {
   font-size: clamp(0.95rem, 1.6vw, 1.15rem);
   font-weight: 400;
   letter-spacing: 0.02em;
-  margin: 1rem auto 0;
+  margin: 0.7rem auto 0;
   color: var(--pal-sub, var(--fg-mute));
   max-width: 32rem;
   opacity: 0;
@@ -216,7 +217,7 @@ html.dark .cover-grain {
   display: flex;
   align-items: center;
   gap: 1.25rem;
-  margin: 2.5rem auto 2.5rem;
+  margin: 1.5rem auto 1.35rem;
   width: clamp(14rem, 22vw, 22rem);
   opacity: 0;
   animation: cover-fade 1.2s cubic-bezier(0.22, 0.61, 0.36, 1) 1.05s forwards;
@@ -241,11 +242,11 @@ html.dark .cover-grain {
   display: inline-flex;
   align-items: center;
   gap: 0.75rem;
-  padding: 1rem 2.25rem;
+  padding: 1.02rem 2.5rem;
   border: 1.5px solid var(--pal-btn-bd, var(--fg-base));
   border-radius: 9999px;
   font-family: var(--font-serif-display);
-  font-size: 0.92rem;
+  font-size: 0.98rem;
   font-weight: 500;
   letter-spacing: 0.18em;
   text-transform: uppercase;
@@ -285,43 +286,117 @@ html.dark .cover-grain {
   transition: transform 0.45s cubic-bezier(0.22, 0.61, 0.36, 1);
   font-family: var(--font-serif-display);
 }
+.cover-actions {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+  gap: 0.9rem;
+  flex-wrap: wrap;
+  width: min(26rem, 100%);
+  margin-top: 0.15rem;
+}
+.cover-actions .cover-button {
+  width: min(24rem, 100%);
+  justify-content: center;
+}
 
 /* =============================================================================
-   12. 封面页：社交链接 (横向排列，文字 + 图标)
+   11.5 封面页：精选起点
    ============================================================================= */
-.cover-social {
-  margin-top: 2.5rem;
-  display: inline-flex;
-  align-items: center;
-  gap: 0.75rem;
-  flex-wrap: wrap;
-  justify-content: center;
-  opacity: 0;
-  animation: cover-fade 1.4s cubic-bezier(0.22, 0.61, 0.36, 1) 1.45s forwards;
+.cover-showcase {
+  width: min(62rem, 100%);
+  margin-top: 1.15rem;
+  margin-bottom: clamp(2.4rem, 5vh, 3.4rem);
+  padding: 1.2rem;
+  border: 1px solid color-mix(in srgb, var(--pal-line, var(--line)) 82%, transparent);
+  border-radius: 1.35rem;
+  background: color-mix(in srgb, var(--pal-bg-from, var(--bg-base)) 72%, transparent);
+  box-shadow: 0 12px 38px color-mix(in srgb, var(--fg-base) 6%, transparent);
+  opacity: 1;
 }
-
-.cover-social-link {
-  display: inline-flex;
-  align-items: center;
+.cover-showcase[hidden] {
+  display: none !important;
+}
+.cover-showcase--revealed {
+  animation: cover-fade 0.75s cubic-bezier(0.22, 0.61, 0.36, 1) forwards;
+}
+.cover-showcase-head {
+  margin-bottom: 0.95rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.45rem;
+}
+.cover-showcase-kicker {
+  font-family: var(--font-mono);
+  font-size: 0.68rem;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: var(--pal-accent, var(--accent));
+}
+.cover-showcase-text {
+  margin: 0;
+  font-family: var(--font-serif-body);
+  font-size: 0.92rem;
+  line-height: 1.6;
+  color: var(--pal-sub, var(--fg-mute));
+  text-align: left;
+}
+.cover-showcase-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 0.9rem;
+}
+.cover-feature-card {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
   gap: 0.5rem;
-  padding: 0.45rem 0.95rem;
-  border-radius: 9999px;
-  border: 1px solid transparent;
-  font-family: var(--font-serif-display);
-  font-size: 0.82rem;
-  font-weight: 500;
-  letter-spacing: 0.06em;
-  color: var(--pal-social, var(--fg-mute));
+  min-height: 11.5rem;
+  padding: 1rem 1rem 1.05rem;
+  border-radius: 1rem;
+  border: 1px solid color-mix(in srgb, var(--pal-line, var(--line)) 88%, transparent);
+  background: color-mix(in srgb, var(--pal-bg-to, var(--bg-deep)) 20%, transparent);
   text-decoration: none !important;
-  transition: color 0.35s, border-color 0.35s, background 0.35s;
+  transition: transform 0.35s cubic-bezier(0.22, 0.61, 0.36, 1),
+              border-color 0.35s,
+              background 0.35s,
+              box-shadow 0.35s;
 }
-.cover-social-link:hover {
-  color: var(--pal-social-h, var(--fg-base));
-  border-color: var(--pal-line, var(--line));
+.cover-feature-card:hover {
+  transform: translateY(-2px);
+  border-color: color-mix(in srgb, var(--pal-accent, var(--accent)) 36%, var(--pal-line, var(--line)));
+  background: color-mix(in srgb, var(--pal-accent, var(--accent)) 6%, transparent);
+  box-shadow: 0 10px 24px color-mix(in srgb, var(--fg-base) 7%, transparent);
 }
-.cover-social-sep {
-  opacity: 0.4;
-  font-weight: 300;
+.cover-feature-tag {
+  font-family: var(--font-mono);
+  font-size: 0.66rem;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--pal-accent, var(--accent));
+}
+.cover-feature-title {
+  font-family: var(--font-serif-display);
+  font-size: 1.08rem;
+  font-weight: 500;
+  line-height: 1.25;
+  color: var(--pal-title, var(--fg-base));
+  text-align: left;
+}
+.cover-feature-desc {
+  font-family: var(--font-serif-body);
+  font-size: 0.84rem;
+  line-height: 1.55;
+  color: var(--pal-sub, var(--fg-mute));
+  text-align: left;
+}
+.cover-feature-link {
+  margin-top: auto;
+  font-family: var(--font-serif-display);
+  font-size: 0.78rem;
+  letter-spacing: 0.08em;
+  color: var(--pal-title, var(--fg-base));
 }
 
 /* =============================================================================
@@ -427,7 +502,7 @@ html.dark .cover-grain {
   to   { background-position-x: -177px; }
 }
 
-/* 背景花朵（仅四角 · 避开上下花边和中央文字） */
+/* 背景花朵（左右两侧分层花束） */
 .cover-flowers {
   position: absolute;
   inset: 0;
@@ -435,30 +510,104 @@ html.dark .cover-grain {
   pointer-events: none;
   overflow: hidden;
 }
-.cover-flower-pos {
+.cover-flower-cluster {
   position: absolute;
-  transform: translate(-50%, -50%) rotate(var(--rot, -14deg));
+  top: 50%;
+  width: min(26rem, 29vw);
+  height: min(34rem, 38vw);
+  transform: translateY(-50%);
   pointer-events: none;
-  filter: drop-shadow(0 4px 12px rgba(0, 0, 0, 0.06));
   opacity: 0;
   animation: cover-fade 1.6s cubic-bezier(0.22, 0.61, 0.36, 1) forwards;
 }
-.cover-flower-pos img {
-  width: 100%;
-  height: 100%;
+.cover-flower-cluster::before {
+  content: "";
+  position: absolute;
+  inset: 10% 8%;
+  border-radius: 999px;
+  background:
+    radial-gradient(circle at 50% 50%,
+      color-mix(in srgb, var(--fg-base) 8%, transparent) 0%,
+      transparent 72%);
+  filter: blur(18px);
+  opacity: 0.42;
+}
+.cover-flower-cluster--left {
+  left: clamp(-6rem, -5vw, -2rem);
+}
+/* 右侧整组镜像：模板里复用左侧同一组参数，后续只需维护一套坐标。 */
+.cover-flower-cluster--right {
+  right: clamp(-6rem, -5vw, -2rem);
+  transform: translateY(-50%) scaleX(-1);
+}
+.cover-flower-sprite {
+  position: absolute;
+  transform: rotate(var(--rot, 0deg));
+  transform-origin: 50% 50%;
+  filter: drop-shadow(0 10px 26px rgba(0, 0, 0, 0.08));
   object-fit: contain;
   display: block;
 }
+.cover-flower-soft {
+  filter: blur(0.3px) drop-shadow(0 16px 28px rgba(0, 0, 0, 0.06));
+}
 
 @media (max-width: 720px) {
+  .cover-content {
+    margin-top: 3.3rem;
+  }
+  .cover-actions {
+    width: min(22rem, 100%);
+    gap: 0.75rem;
+  }
+  .cover-button {
+    width: min(22rem, 100%);
+    justify-content: center;
+    padding: 0.98rem 1.45rem;
+  }
+  .cover-showcase {
+    margin-top: 1.1rem;
+    margin-bottom: 2.9rem;
+    padding: 0.95rem;
+  }
+  .cover-showcase-grid {
+    grid-template-columns: 1fr;
+  }
+  .cover-feature-card {
+    min-height: 0;
+  }
   .cover-flower-strip {
     height: 44px;
     background-size: 139px 44px;
   }
-  .cover-flower-pos { opacity: 0.55 !important; }
+  .cover-flower-cluster {
+    width: 13rem;
+    height: 16rem;
+    opacity: 0.68 !important;
+  }
+  .cover-flower-cluster--left {
+    left: -3.9rem;
+    top: 28%;
+  }
+  .cover-flower-cluster--right {
+    right: -4.2rem;
+    top: 73%;
+  }
+  .cover-flower-sprite {
+    filter: drop-shadow(0 8px 18px rgba(0, 0, 0, 0.06));
+  }
   @keyframes flower-flow {
     from { background-position-x: 0; }
     to   { background-position-x: -139px; }
+  }
+}
+
+@media (min-width: 721px) and (max-width: 1080px) {
+  .cover-showcase-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+  .cover-showcase-grid > :last-child:nth-child(odd) {
+    grid-column: 1 / -1;
   }
 }
 
@@ -472,14 +621,8 @@ html.dark .cover-flower-strip {
 html.dark .cover-flower-black {
   filter: brightness(0) invert(1);
 }
-
-/* 黄花：默认（明主题）压低饱和度，暗主题恢复明亮 */
-.cover-flower-yellow {
-  filter: brightness(0.35);
-}
-html.dark .cover-flower-yellow {
-  filter: none;
-  opacity: 1;
+html.dark .cover-flower-soft.cover-flower-black {
+  filter: brightness(0) invert(1) blur(0.3px) drop-shadow(0 16px 28px rgba(0, 0, 0, 0.16));
 }
 
 /* =============================================================================

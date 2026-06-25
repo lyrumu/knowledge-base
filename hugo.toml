@@ -170,13 +170,8 @@ enableEmoji = true
 # 加模块 = 在这里加一项 + content/<slug>/_index.md
 # 顺序：按 weight 从小到大
 # =============================================================================
-# 主入口"ABOUT ME"（2026-06-24 重构）
-# - identifier = "home" 标识它由 header/basic.html 渲染在顶栏左侧（原 Catalogue 位置）
-# - desktop-menu.html / mobile-menu.html 通过 if ne .Identifier "home" 跳过此项，
-#   避免在右侧 menu.main 中重复出现
-# - 改 name / url 后只需改这一处，左侧渲染 + 右侧跳过都自动跟随
+# 主导航：ABOUT ME / DOCS / WORKS / DAILY 全部回归普通菜单项
 [[menu.main]]
-  identifier = 'home'
   name = 'ABOUT ME'
   url = '/about/'
   # weight 参数用于控制导航菜单的排序顺序，数值越小越靠前显示

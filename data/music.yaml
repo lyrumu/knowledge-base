@@ -10,6 +10,7 @@
 #   - cover    : 封面图 url（推荐放到 /image/life/music/<slug>.jpg）
 #   - src      : 音频 url（推荐放到 /life/music/<slug>.mp3）
 #   - duration : 时长（mm:ss），可空（前端会等 audio 加载后自动补上）
+#   - size     : 下载文件大小提示（如 3.8 MB），可空
 #   - mood     : 心情标签（可空）
 #   - note     : 一句话小记（可空）
 # =============================================================================
@@ -20,6 +21,7 @@ tracks:
     cover: "/image/cover-Departures.jpg"          # ← 占位封面；换成你真实的 /image/life/music/xxx.jpg
     src:   "/life/music/Departures.mp3"                           # ← 把 mp3 放进 static/life/music/ 后填入路径，如 /life/music/xxx.mp3
     duration: "4:15"
+    size: "7.9 MB"
     mood: "Melancholy"
 
   - title: "Unravel"
@@ -28,6 +30,7 @@ tracks:
     cover: "/image/cover-unravel.jpg"     
     src:   "/life/music/Unravel.mp3"
     duration: "3:58"
+    size: "3.8 MB"
     mood: ""
 
   - title: "黑色幽默"
@@ -36,4 +39,5 @@ tracks:
     cover: "/image/cover-Blackhumor.png"     
     src:   "/life/music/Blackhumor.mp3"
     duration: "4:43"
+    size: "11.4 MB"
     mood: ""

@@ -12,6 +12,10 @@
   {{ if $tracks }}
     {{ range $i, $t := $tracks }}
     {{ $isDisabled := not $t.src }}
+    {{ $format := "" }}
+    {{ with $t.src }}
+      {{ $format = upper (replaceRE "^\\." "" (path.Ext .)) }}
+    {{ end }}
     <div class="music-item reveal{{ if $isDisabled }} is-disabled{{ end }}"
          data-index="{{ $i }}"
          data-src="{{ $t.src }}"
@@ -32,9 +36,29 @@
 
       <div class="music-item-info">
         <div class="music-item-title">{{ $t.title }}</div>
-        <div class="music-item-artist">{{ $t.artist }}{{ with $t.note }}<span style="color:var(--fg-soft);font-style:normal;font-family:var(--font-serif-body);font-size:.75rem;margin-left:.4rem">— {{ . }}</span>{{ end }}</div>
+        <div class="music-item-artist">{{ $t.artist }}{{ with $t.note }}<span class="music-item-note">— {{ . }}</span>{{ end }}</div>
         {{ with $t.album }}
         <div class="music-item-album">{{ . }}</div>
+        {{ end }}
+        {{ if or $format $t.size $t.src }}
+        <div class="music-item-meta-row">
+          {{ if or $format $t.size }}
+          <div class="music-item-filemeta">
+            {{ with $format }}<span>{{ . }}</span>{{ end }}
+            {{ with $t.size }}<span aria-hidden="true">·</span><span>{{ . }}</span>{{ end }}
+          </div>
+          {{ end }}
+          {{ with $t.src }}
+          <a class="music-item-download"
+             href="{{ . | safeURL }}"
+             download
+             aria-label="Download {{ $t.title }}"
+             title="Download {{ $t.title }}{{ if $format }} ({{ $format }}{{ with $t.size }} · {{ . }}{{ end }}){{ end }}">
+            {{ partial "cover/icon.html" (dict "name" "download" "size" 13 "stroke" 1.9) }}
+            <span>Download</span>
+          </a>
+          {{ end }}
+        </div>
         {{ end }}
       </div>
 

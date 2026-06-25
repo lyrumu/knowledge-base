@@ -1,6 +1,6 @@
 # 项目地图 — 个人网站 `f:\Notes\`
 
-> 最后更新：2026-06-24 · /about/ 紧凑化 + page-hero 不显示 + 删除站点统计模块 · Hugo v0.163.2 · Blowfish v2
+> 最后更新：2026-06-25 · 首页收口为封面式快速开始页 + Music 下载入口 + 文档同步到当前代码状态 · Hugo v0.163.2 · Blowfish v2
 
 ---
 
@@ -16,12 +16,13 @@
 | 我想…… | 改这个文件 |
 |---------|-----------|
 | 改封面的标题 / subtitle / 按钮文案 | [`data/cover.yaml`](file:///f:/Notes/data/cover.yaml) |
+| 改首页 `Start Here` 的三张卡内容 | [`layouts/partials/home/custom.html`](file:///f:/Notes/layouts/partials/home/custom.html)（当前是模板内固定；默认隐藏，点首页 `Start Here` 后展开） |
 | 改封面的颜色 | [`assets/css/_01_tokens.css`](file:///F:/Notes/assets/css/_01_tokens.css) 顶部 `:root` / `html.dark` 的 `--bg-base / --line / --accent`（v3：封面 `--pal-*` 已派生自全局变量，统一改一处即可） |
 | 改封面的字距 / 大小 / 花边位置 | [`assets/css/_08_cover.css`](file:///F:/Notes/assets/css/_08_cover.css) |
 | 改内页"小封面"的文案 | 对应 `content/xxx/_index.md` 的 frontmatter `kicker / subtitle` |
 | 改 /notes/ 入口展示方式（单列 / 3 列等）| `content/notes/_index.md` frontmatter `cardColumns`（1/2/3） |
 | 换 /life/ 的子模块卡 | [`data/life.yaml`](file:///f:/Notes/data/life.yaml)（加图片 / 读书 / 旅行…都改这里） |
-| 换 /life/music/ 的歌单 | [`data/music.yaml`](file:///f:/Notes/data/music.yaml)（加一首填一个 `- title/artist/cover/src/...` 条目） |
+| 换 /life/music/ 的歌单 | [`data/music.yaml`](file:///f:/Notes/data/music.yaml)（加一首填一个 `- title/artist/cover/src/duration/size/...` 条目） |
 | 换 /life/music/ 的封面/SVG 动画 | [`assets/css/_05_cards.css`](file:///F:/Notes/assets/css/_05_cards.css) 的 `.life-sub-cover-*` 规则 |
 | 换 /works/ 的子模块卡 | [`data/works.yaml`](file:///f:/Notes/data/works.yaml)（projects / resources / tools…） |
 | 换 /works/projects/ 的项目卡 | [`data/projects.yaml`](file:///f:/Notes/data/projects.yaml)（加一条填 `- name/title/desc/cover/href/repo/tags/date/featured`） |
@@ -70,6 +71,8 @@ f:\Notes\
 │
 ├── content/                        # ★ 所有页面内容
 │   ├（待整理）
+│   ├── notes/                      # /notes/ 文章入口（layout:list + list.html 卡片列表）
+│   │   └── _index.md               # notes 入口页（正文 + 自动文章列表）
 │   ├── works/                      # /works/ 相关（作品 / 资源 / 工具）
 │   │   ├── _index.md               # 入口（works-grid 短代码）
 │   │   ├── projects/_index.md      # 项目子页（projects-list 短代码 + 3D 倾斜）
@@ -81,8 +84,8 @@ f:\Notes\
 │   └── about/_index.md             # /about/ 关于（avatar + 液态玻璃联系方式 + 技术栈 + GitHub 热力图）
 │
 ├── data/                           # ★ 数据驱动（改这里就能改 UI）
-│   ├── cover.yaml                  # 封面所有内容 + 调色
-│   ├── vault.yaml                  # /notes/ 的 vault 分类卡
+│   ├── cover.yaml                  # 封面基础文案 / 头像 / 调色（Start Here 当前不走数据驱动）
+│   ├── vault.yaml                  # 旧版 /notes/ 分类卡数据（当前前台未使用，保留作历史参考）
 │   ├── life.yaml                   # /life/ 子模块清单（music / 图片 / 读书…）
 │   ├── music.yaml                  # /life/music/ 歌单
 │   ├── works.yaml                  # /works/ 子模块清单（projects / resources / tools…）
@@ -90,7 +93,7 @@ f:\Notes\
 │   └── resources.yaml              # /works/resources/ 资源清单
 │
 ├── layouts/                        # ★ 自定义模板（覆写主题）
-│   ├── _default/list.html          # section 主页 → page-hero 模式
+│   ├── _default/list.html          # section 主页 → page-hero + 正文 + 子页面列表（notes/about 当前走这里）
 │   ├── home.json                   # home kind 的 JSON 输出（消 build WARN；内容同主题 _default/index.json）
 │   ├── page.html                   # 任何 layout: "page" 的页面（消 build WARN；复用主题 single.html 的 main 块）
 │   ├── partials/
@@ -108,7 +111,7 @@ f:\Notes\
 │   │   └── about-contact.html      # /about/ 联系方式图标卡 partial（被 about-contact shortcode 调）
 │   └── shortcodes/
 │       ├── page-hero.html          # {{< page-hero >}} 短代码
-│       ├── vault-sections.html     # /notes/ 分类网格
+│       ├── vault-sections.html     # 旧版 /notes/ 分类网格（当前前台未使用）
 │       ├── life-grid.html          # /life/ 子模块网格
 │       ├── music-list.html         # /life/music/ 歌曲列表
 │       ├── works-grid.html         # /works/ 子模块网格
@@ -157,11 +160,34 @@ f:\Notes\
 
 | 元素 | 数据源 | 模板 |
 |------|--------|------|
-| 封面排版 / 社交链接 / 花边 | [`data/cover.yaml`](file:///f:/Notes/data/cover.yaml) | [`layouts/partials/home/custom.html`](file:///f:/Notes/layouts/partials/home/custom.html) |
+| 封面排版 / 花边 / CTA / `Start Here` 展开区 | [`data/cover.yaml`](file:///f:/Notes/data/cover.yaml)（基础文案） | [`layouts/partials/home/custom.html`](file:///f:/Notes/layouts/partials/home/custom.html) |
 | 封面 CSS（字体 / 调色 / 布局） | — | [`assets/css/_08_cover.css`](file:///F:/Notes/assets/css/_08_cover.css) |
 | 封面主题切换按钮 | — | 内嵌在 `custom.html` 的 JS |
-| 封面装饰元素（四角花朵） | — | 直接用 `static/image/` 下的 png |
+| 封面装饰元素（上下流动花边 + 左右黑花） | — | 直接用 `static/image/` 下的 png |
 | 封面调色（明 / 暗） | `cover.yaml` → `palette` | `custom.html` 的 `<style>` 块 |
+| 首页 `Start Here` 三张卡 | 当前写死在 [`layouts/partials/home/custom.html`](file:///f:/Notes/layouts/partials/home/custom.html) | `Latest Note` 自动取 `notes` 分区最新文章；`Music` 固定指向 `/life/music/`；`Projects` 固定指向 `/works/projects/` |
+
+**以后如何更新 `Start Here`：**
+
+1. **改最新文章卡**
+   - 现在是自动取 `notes` 分区最新一篇：`$latestNote`
+   - 想继续自动跟随：不用改任何数据文件，只要你正常新增 / 更新 `content/notes/` 文章即可
+   - 想改成固定推荐文章：把 `custom.html` 里的 `$latestNote` 逻辑换成 `site.GetPage "/notes/某篇文章路径/"` 即可
+
+2. **改 Music 卡**
+   - 现在固定读取 `site.GetPage "/life/music/"`
+   - 想换成别的 life 子页，就把这个路径改掉
+   - 想只改卡片文案，不改跳转地址，直接改同文件里对应卡片的 `tag / title / desc / link text`
+
+3. **改 Projects 卡**
+   - 现在固定读取 `site.GetPage "/works/projects/"`
+   - 想换成某个具体项目页或别的 works 子页，就把这个路径改掉
+   - 想只改文案，同样直接改 `custom.html` 里这张卡的文本
+
+4. **如果以后想把 `Start Here` 做成数据驱动**
+   - 可以新建 `data/start-here.yaml`
+   - 再让 `custom.html` 从 yaml 循环渲染
+   - 但在当前只有 3 张固定卡的阶段，直接写在模板里更简单、更稳定
 
 ### 内页"小封面"（section 主页顶部）
 
@@ -171,11 +197,18 @@ f:\Notes\
 | 短代码调用 | — | [`layouts/shortcodes/page-hero.html`](file:///f:/Notes/layouts/shortcodes/page-hero.html) |
 | CSS | — | [`assets/css/_04_hero.css`](file:///F:/Notes/assets/css/_04_hero.css) |
 
-### /notes/ 分类页
+### /notes/ 文章入口页
 
 | 元素 | 数据源 | 模板 |
 |------|--------|------|
-| 分类卡列表 | [`data/vault.yaml`](file:///f:/Notes/data/vault.yaml) | [`layouts/shortcodes/vault-sections.html`](file:///f:/Notes/layouts/shortcodes/vault-sections.html) |
+| notes 入口页正文 | [`content/notes/_index.md`](file:///f:/Notes/content/notes/_index.md) | [`layouts/_default/list.html`](file:///f:/Notes/layouts/_default/list.html) |
+| 文章卡列表 | `content/notes/**` 下的文章 | [`layouts/_default/list.html`](file:///f:/Notes/layouts/_default/list.html) + `article-link/card.html` |
+| 列数控制 | `content/notes/_index.md` frontmatter `cardColumns` | [`layouts/_default/list.html`](file:///f:/Notes/layouts/_default/list.html) |
+
+**说明：**
+
+- 当前前台的 `/notes/` 已不再使用 `data/vault.yaml + vault-sections.html` 这条旧链路
+- `vault.yaml` / `vault-sections.html` 目前保留在仓库里，主要用于历史参考；若以后确认不再回退，可再统一清理
 
 ### /life/ 子模块网格
 
@@ -191,8 +224,9 @@ f:\Notes\
 |------|--------|------|
 | 歌曲列表 | [`data/music.yaml`](file:///f:/Notes/data/music.yaml) | [`layouts/shortcodes/music-list.html`](file:///f:/Notes/layouts/shortcodes/music-list.html) |
 | 粘性播放器 HTML | — | [`layouts/partials/music-player.html`](file:///f:/Notes/layouts/partials/music-player.html) |
-| 播放器逻辑（点击切歌 / 进度跳转 / 记忆位置 / 键盘） | — | [`static/js/music-player.js`](file:///f:/Notes/static/js/music-player.js) |
-| 列表样式 + 播放器样式 | — | [`assets/css/_05_cards.css`](file:///F:/Notes/assets/css/_05_cards.css) 的 `.music-item` + [`_07_music-player.css`](file:///F:/Notes/assets/css/_07_music-player.css) 的 `.music-player` |
+| 播放器逻辑（点击切歌 / 进度跳转 / 记忆位置 / 键盘 / 关闭清状态） | — | [`static/js/music-player.js`](file:///f:/Notes/static/js/music-player.js) |
+| 歌曲下载入口 + 文件信息 | `data/music.yaml` 的 `src / size` | [`layouts/shortcodes/music-list.html`](file:///f:/Notes/layouts/shortcodes/music-list.html) + [`assets/css/_05_cards.css`](file:///F:/Notes/assets/css/_05_cards.css) |
+| 列表样式 + 播放器样式 | — | [`assets/css/_05_cards.css`](file:///F:/Notes/assets/css/_05_cards.css) 的 `.music-item*` + [`_07_music-player.css`](file:///F:/Notes/assets/css/_07_music-player.css) 的 `.music-player` |
 | 资源存放约定 | `static/life/music/<slug>.mp3` + `static/image/life/music/<slug>.jpg` | — |
 
 ### /about/ 联系方式图标卡（iOS 液态玻璃）

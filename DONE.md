@@ -4,6 +4,75 @@
 
 ---
 
+## 2026-06-25 · 首页收口为“封面式快速开始页” + Music 下载入口补齐
+
+### 背景
+
+原首页更像一张气质很强的封面图：有辨识度，但信息效率偏低。用户第一次进入站点后，需要先看封面，再通过入口按钮跳到 `/about/` 才能开始浏览。与此同时，`ABOUT ME` 被特殊渲染在顶栏左侧，已经不再适合新的首页定位。随后首页又经历了多轮收口：去重、按钮简化、`Start Here` 延迟展开、花朵重排、间距压缩。与此同时，`/life/music/` 也补上了下载入口与文件信息提示。
+
+本轮调整的目标：
+
+1. **保留首页封面的审美气质**
+2. **让首页本身承担“快速开始页”的职责**
+3. **让 `ABOUT ME` 回归与 `DOCS / WORKS / DAILY` 同级的普通菜单项**
+4. **清掉首页重复入口，只保留真正有意义的首屏动作**
+5. **让 `/life/music/` 的每首歌都能直接下载**
+
+### 改动
+
+| 文件 | 改动 |
+|---|---|
+| [layouts/partials/home/custom.html](file:///f:/Notes/layouts/partials/home/custom.html) | 首页封面改为最终版：首屏只保留 `Get To Know Me` / `Start Here` 两个 CTA；`Start Here` 默认隐藏，点击后展开；去掉重复导航卡和底部社交；黑花左右镜像、参数只维护一套 |
+| [assets/css/_08_cover.css](file:///f:/Notes/assets/css/_08_cover.css) | 首页 CTA、`Start Here` 展开区、间距、标题大小、按钮纵排、花朵镜像与明亮主题黑花透明度都收口到当前版本 |
+| [layouts/partials/header/basic.html](file:///f:/Notes/layouts/partials/header/basic.html) | 删除 `ABOUT ME` 的顶栏左侧特殊渲染，恢复为标准站点标题 + 右侧菜单结构 |
+| [layouts/partials/header/components/desktop-menu.html](file:///f:/Notes/layouts/partials/header/components/desktop-menu.html) | 右侧桌面菜单恢复渲染全部 `menu.main` 项，不再跳过 `ABOUT ME` |
+| [layouts/partials/header/components/mobile-menu.html](file:///f:/Notes/layouts/partials/header/components/mobile-menu.html) | 移动端菜单恢复渲染全部 `menu.main` 项 |
+| [hugo.toml](file:///f:/Notes/hugo.toml) | `ABOUT ME` 去掉特殊 `identifier`，回归普通 Hugo 菜单配置 |
+| [layouts/shortcodes/music-list.html](file:///f:/Notes/layouts/shortcodes/music-list.html) | 每首歌增加下载按钮，并显示文件格式 / 大小信息 |
+| [assets/css/_05_cards.css](file:///f:/Notes/assets/css/_05_cards.css) | 下载按钮样式与歌曲文件信息样式；顺手把歌曲 note 的内联样式收成独立 class |
+| [data/music.yaml](file:///f:/Notes/data/music.yaml) | 为现有歌曲补了 `size` 字段，给下载提示使用 |
+| [static/js/music-player.js](file:///f:/Notes/static/js/music-player.js) | 点击下载按钮时不再误触发卡片播放；播放器状态恢复逻辑补齐 `playing` 和 `src` 匹配 |
+| [PROJECT_MAP.md](file:///f:/Notes/PROJECT_MAP.md) | 补了首页 `Start Here` 的维护说明，并同步当前首页结构与 notes 实际渲染方式 |
+
+### 首页结构变化
+
+- **保留**：暖白衬线封面、头像、大标题、上下流动花边、左右黑花装饰、顶栏导航
+- **首屏 CTA**：`Get To Know Me`、`Start Here`
+- **展开区**：3 个“Start Here”精选起点（最新笔记 / Music / Projects）
+- **删除**：重复的四张导航卡、底部 GitHub / Google Mail 社交按钮、黄色花素材
+
+也就是说，首页不再只是“进入网站前的封面”，而是直接承担：
+
+- 第一印象
+- 导览
+- 精选入口
+
+### 设计取舍
+
+- **没有推翻封面**：继续保留首页最有辨识度的视觉资产
+- **没有把 `/about/` 强行改成首页替身**：`/about/` 回归“深入了解我”的页面职责
+- **没有新加复杂模块或脚本**：只在现有 Hugo 模板和 CSS 结构内增强首页信息架构
+
+### 验证
+
+- `GetDiagnostics`：首页模板、封面 CSS、顶栏模板、`hugo.toml` 全部无报错
+- `hugo --renderToMemory --themesDir themes --theme blowfish --config hugo.toml` 构建通过
+- 构建结果：52 pages / 158 static files / 0 构建失败
+
+### 结果
+
+- 首页现在是“封面式快速开始页”
+- 顶栏左侧只保留站点标题 `lyrumu's page`
+- `ABOUT ME` 已回到顶栏右侧，与 `DOCS / WORKS / DAILY` 同级
+- 首屏 CTA 精简为两个统一按钮：`Get To Know Me` 与 `Start Here`
+- `Start Here` 现在默认隐藏，点击按钮后才会展开并平滑滚动到精选区
+- 两个按钮改为竖排，展开区底部留白更安全，不会贴到下方流动花边
+- 标题、头像区和整体上下留白都压紧了一轮，首屏更紧凑
+- 封面只保留黑花，右侧花群通过镜像左侧参数保持对称
+- `/life/music/` 现在每首歌都可直接下载，并显示格式与大小提示
+
+---
+
 ## 2026-06-24 · /about/ 整个 page-hero 不显示（让头像顶上去）
 
 ### 背景

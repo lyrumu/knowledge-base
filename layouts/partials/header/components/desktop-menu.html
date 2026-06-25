@@ -5,16 +5,9 @@
     2. 主题切换按钮沿用原版
 */}}
 <nav class="flex items-center gap-x-5 h-12">
-  {{/*
-    2026-06-24：跳过 identifier = "home" 的菜单项
-    原因：该菜单项由 header/basic.html 渲染在顶栏左侧"原 Catalogue 位置"
-    这里跳过避免在右侧菜单重复出现。
-  */}}
   {{ if .Site.Menus.main }}
     {{ range .Site.Menus.main }}
-      {{ if ne .Identifier "home" }}
-        {{ template "DesktopMenu" . }}
-      {{ end }}
+      {{ template "DesktopMenu" . }}
     {{ end }}
   {{ end }}
 
