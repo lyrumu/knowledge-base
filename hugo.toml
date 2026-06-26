@@ -1,16 +1,7 @@
 # =============================================================================
 # lyrumu's site — Hugo configuration
-# Theme: Blowfish · 部署 Cloudflare Pages
-#
-# 模块说明（2026-06-24 更新）：
-#   - 封面（/）         → 无顶栏，只显示标题 + 入口按钮（点进 /about/）
-#   - /about/           → 主入口（原 Catalogue 位置升级），含个人简介 + 顶栏右侧索引
-#   - /notes/ /life/ /works/ → 三块内容板块，由顶栏右侧 menu.main 导航
+# Theme: Blowfish · 部署 github&&Cloudflare Pages
 #   - 加新模块 = hugo.toml [[menu.main]] 加项 + content/<slug>/_index.md
-#
-# 历史：原 /start/ 大厅页已删除（2026-06-24），顶栏左侧的"主入口"由
-# [[menu.main]] identifier = "home" 的菜单项通过 header/basic.html 渲染，
-# desktop-menu / mobile-menu 按 identifier 跳过该项避免重复。
 # =============================================================================
 
 baseURL = 'https://lyrumu.top/'
@@ -79,7 +70,7 @@ enableEmoji = true
 # 站点参数
 # =============================================================================
 [params]
-  colorScheme = 'princess' #初始为blowfish
+  colorScheme = 'blowfish' #初始为blowfish
   defaultAppearance = 'dark'
   autoSwitchAppearance = true
   enableSearch = true
