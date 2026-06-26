@@ -16,5 +16,3 @@ showChildList: false
 {{< life-grid >}}
 
 {{< section-rule >}}
-
----

@@ -9,7 +9,4 @@ cardColumns: 1
 ---
 
 {{< section-rule >}}
-
 {{< site-stats >}}
-
-> ⏳ Under construction...

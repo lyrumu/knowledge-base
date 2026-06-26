@@ -904,24 +904,38 @@ html.dark .music-item.is-disabled:hover {
    ----------------------------------------------------------------------------
    用法：layouts/shortcodes/section-rule.html
    ============================================================================= */
-.section-rule {
+.section-rule,
+.page-divider,
+.cover-divider {
   display: flex;
   align-items: center;
   justify-content: center;
   gap: 1rem;
-  margin: 2.5rem 0;
   font-family: var(--font-serif-display);
   color: var(--accent);
+}
+.section-rule {
+  margin: 2.5rem 0;
   font-size: 0.85rem;
   letter-spacing: 0.5em;
 }
 .section-rule::before,
-.section-rule::after {
+.section-rule::after,
+.page-divider-rule,
+.cover-divider-rule {
   content: "";
   flex: 1;
   height: 1px;
-  background: var(--line);
-  opacity: 0.6;
+  background: color-mix(in srgb, var(--line) 78%, var(--fg-base) 22%);
+  opacity: 0.82;
+}
+.page-divider-mark,
+.cover-divider-mark {
+  font-family: var(--font-serif-display);
+  font-size: 0.85rem;
+  color: var(--accent);
+  line-height: 1;
+  transform: translateY(-1px);
 }
 
 /* =============================================================================

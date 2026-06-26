@@ -11,6 +11,3 @@ showTableOfContents: true
 
 {{< projects-list >}}
 {{< section-rule >}}
-
-
----

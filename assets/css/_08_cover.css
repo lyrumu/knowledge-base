@@ -214,25 +214,10 @@ html.dark .cover-grain {
    10. 封面页：古典分隔符
    ============================================================================= */
 .cover-divider {
-  display: flex;
-  align-items: center;
-  gap: 1.25rem;
   margin: 1.5rem auto 1.35rem;
   width: clamp(14rem, 22vw, 22rem);
   opacity: 0;
   animation: cover-fade 1.2s cubic-bezier(0.22, 0.61, 0.36, 1) 1.05s forwards;
-}
-.cover-divider-rule {
-  flex: 1;
-  height: 1px;
-  background: var(--pal-line, var(--line));
-}
-.cover-divider-mark {
-  font-family: var(--font-serif-display);
-  font-size: 0.95rem;
-  color: var(--pal-accent, var(--accent));
-  line-height: 1;
-  transform: translateY(-1px);
 }
 
 /* =============================================================================
@@ -258,8 +243,7 @@ html.dark .cover-grain {
   overflow: hidden;
   transition: color 0.45s cubic-bezier(0.22, 0.61, 0.36, 1),
               border-color 0.45s cubic-bezier(0.22, 0.61, 0.36, 1);
-  opacity: 0;
-  animation: cover-fade 1.4s cubic-bezier(0.22, 0.61, 0.36, 1) 1.2s forwards;
+  opacity: 1;
 }
 
 .cover-button::before {

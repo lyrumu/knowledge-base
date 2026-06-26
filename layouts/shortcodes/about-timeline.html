@@ -1,0 +1,74 @@
+{{/*
+  Shortcode: about-timeline
+  --------------------------------------------------------------
+  /about/ 的 Path so far 区块。
+  当前内容由 data/about_timeline.yaml 驱动，shortcode 只负责渲染：
+    - 整块折叠（group）
+    - 单条里程碑折叠（items）
+    - 可选左图右文
+*/}}
+{{ $timeline := index hugo.Data "about_timeline" }}
+{{ $timeline = default (dict
+  "groups" (slice)
+) $timeline }}
+{{ $groups := $timeline.groups | default (slice) }}
+{{ if eq (len $groups) 0 }}
+  {{ $groups = slice (dict
+    "title" ($timeline.group.title | default "Selected milestones")
+    "meta" ($timeline.group.meta | default "Expand the full timeline only when you want the longer version.")
+    "default_open" ($timeline.group.default_open | default false)
+    "items" ($timeline.items | default (slice))
+  ) }}
+{{ end }}
+
+<div class="about-timeline-groups">
+  {{ range $group := $groups }}
+  <details class="about-timeline-group"{{ if $group.default_open }} open{{ end }}>
+    <summary class="about-timeline-group-summary">
+      <span class="about-timeline-group-main">
+        <span class="about-timeline-group-title">{{ $group.title }}</span>
+        <span class="about-timeline-group-meta">{{ $group.meta }}</span>
+      </span>
+    </summary>
+
+    <div class="about-timeline">
+      {{ range $item := $group.items }}
+      {{ $hasMedia := and $item.image $item.image_alt }}
+      <details class="about-milestone"{{ if $item.open }} open{{ end }}>
+        <summary class="about-milestone-summary">
+          <span class="about-timeline-mark">{{ $item.mark }}</span>
+          <span class="about-milestone-summary-main">
+            <span class="about-milestone-title">{{ $item.title }}</span>
+            <span class="about-milestone-meta">{{ $item.meta }}</span>
+          </span>
+        </summary>
+        <div class="about-milestone-panel">
+          <div class="about-milestone-layout{{ if $hasMedia }} about-milestone-layout--has-media{{ end }}">
+            {{ if $hasMedia }}
+            <div class="about-milestone-media-wrap">
+              <img
+                class="about-milestone-media"
+                src="{{ $item.image | relURL }}"
+                alt="{{ $item.image_alt }}"
+                loading="lazy"
+                decoding="async">
+              {{ with $item.image_caption }}
+              <p class="about-milestone-caption">{{ . }}</p>
+              {{ end }}
+            </div>
+            {{ end }}
+            <div class="about-timeline-body">
+              {{ with $item.body }}
+                {{ . | markdownify }}
+              {{ else }}
+                {{ with $item.summary }}<p>{{ . }}</p>{{ end }}
+              {{ end }}
+            </div>
+          </div>
+        </div>
+      </details>
+      {{ end }}
+    </div>
+  </details>
+  {{ end }}
+</div>

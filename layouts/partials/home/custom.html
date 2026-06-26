@@ -36,10 +36,13 @@
 
 {{ $pal := $cfg.palette }}
 {{ $ent := $cfg.entrance }}
-{{ $latestNote := "" }}
-{{ range first 1 (where .Site.RegularPages.ByDate.Reverse "Section" "notes") }}{{ $latestNote = . }}{{ end }}
-{{ $musicPage := site.GetPage "/life/music/" }}
-{{ $projectsPage := site.GetPage "/works/projects/" }}
+{{ $startHere := index hugo.Data "start_here" }}
+{{/* 以下这段文字渲染实际已经由data/start_here.yaml控制 留着只是作为兜底 */}}
+{{ $startHere = default (dict
+  "section_kicker" "Start Here"
+  "section_text" "Three good openings: the newest note, the music page, and the projects area. Start anywhere, then use the top navigation when you want to keep exploring."
+  "items" (slice)
+) $startHere }}
 
 {{/*
   调色板：用 <style> 块写而不是 inline `style=""`
@@ -119,7 +122,9 @@
         <img
           src="/image/{{ .file }}"
           alt=""
-          loading="lazy"
+          loading="eager"
+          decoding="async"
+          fetchpriority="high"
           class="cover-flower-sprite {{ .class }}"
           style="
             width: {{ .w }}px;
@@ -148,7 +153,15 @@
     {{ end }}
 
     {{ with $cfg.avatar }}
-    <img class="cover-avatar" src="{{ . | relURL }}" alt="" />
+    <img
+      class="cover-avatar"
+      src="{{ . | relURL }}"
+      alt="lyrumu"
+      width="88"
+      height="88"
+      loading="eager"
+      decoding="async"
+      fetchpriority="high" />
     {{ end }}
 
     <h1 class="cover-title" data-splitting>{{ $cfg.title }}</h1>
@@ -186,36 +199,23 @@
 
     <section class="cover-showcase" id="cover-start-here" aria-label="Start here" hidden>
       <div class="cover-showcase-head">
-        <span class="cover-showcase-kicker">Start Here</span>
+        <span class="cover-showcase-kicker">{{ $startHere.section_kicker }}</span>
         <p class="cover-showcase-text">
-          Three good openings: the newest note, the music page, and the projects area.
-          Start anywhere, then use the top navigation when you want to keep exploring.
+          {{ $startHere.section_text }}
         </p>
       </div>
       <div class="cover-showcase-grid">
-        {{ with $latestNote }}
-        <a href="{{ .RelPermalink }}" class="cover-feature-card">
-          <span class="cover-feature-tag">Latest Note</span>
-          <strong class="cover-feature-title">{{ .Title }}</strong>
-          <span class="cover-feature-desc">{{ .Description | default "A recent long-form note from the docs area." }}</span>
-          <span class="cover-feature-link">Open note →</span>
-        </a>
-        {{ end }}
-        {{ with $musicPage }}
-        <a href="{{ .RelPermalink }}" class="cover-feature-card">
-          <span class="cover-feature-tag">Current Playlist</span>
-          <strong class="cover-feature-title">{{ .Title }}</strong>
-          <span class="cover-feature-desc">{{ .Description | default "A small playlist page with local tracks and an in-page player." }}</span>
-          <span class="cover-feature-link">Listen now →</span>
-        </a>
-        {{ end }}
-        {{ with $projectsPage }}
-        <a href="{{ .RelPermalink }}" class="cover-feature-card">
-          <span class="cover-feature-tag">Projects</span>
-          <strong class="cover-feature-title">{{ .Title }}</strong>
-          <span class="cover-feature-desc">{{ .Description | default "Projects, demos, and experiments worth opening first." }}</span>
-          <span class="cover-feature-link">Browse projects →</span>
-        </a>
+        {{ range $item := $startHere.items }}
+          {{ $target := "" }}
+          {{ with site.GetPage $item.path }}{{ $target = . }}{{ end }}
+          {{ with $target }}
+          <a href="{{ .RelPermalink }}" class="cover-feature-card">
+            <span class="cover-feature-tag">{{ $item.tag }}</span>
+            <strong class="cover-feature-title">{{ $item.title | default .Title }}</strong>
+            <span class="cover-feature-desc">{{ $item.desc | default (.Description | default "") }}</span>
+            <span class="cover-feature-link">{{ $item.link_text | default "Open" }} →</span>
+          </a>
+          {{ end }}
         {{ end }}
       </div>
     </section>

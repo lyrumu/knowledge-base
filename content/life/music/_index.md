@@ -8,9 +8,7 @@ showHero: true
 showBreadcrumbs: true
 showTableOfContents: true
 ---
-Recently Listen to
+Recently Listen to(Irregular updates)
 {{< music-list >}}
-(Unregularly updated)
-{{< section-rule >}}
 
----
+{{< section-rule >}}

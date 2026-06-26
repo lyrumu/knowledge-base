@@ -38,7 +38,7 @@
 
   {{/* 描述 / Markdown 正文（如 _index.md 中写的） */}}
   {{ if .Content }}
-  <section class="prose dark:prose-invert max-w-none mb-12">
+  <section class="prose dark:prose-invert max-w-none mb-12{{ if eq .Section "about" }} about-page-content{{ end }}">
     {{ .Content }}
   </section>
   {{ end }}

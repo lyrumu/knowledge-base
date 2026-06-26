@@ -16,5 +16,3 @@ showTableOfContents: true
 ### Planned to include
 - Scripts,Skills
 - coding skills
-
----

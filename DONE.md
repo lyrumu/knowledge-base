@@ -1,6 +1,154 @@
-﻿# 已完成清单 — 个人网站(基于本地 Obsidian Vault)
+# 已完成清单 — 个人网站(基于本地 Obsidian Vault)
 
 > 维护方式：每完成一大阶段，在下方加一段记录。(最新记录写在最上方)
+
+---
+
+## 2026-06-26 · About Timeline 改为数据驱动并支持多组
+
+### 改动
+
+| 文件 | 改动 |
+|---|---|
+| [data/about_timeline.yaml](file:///f:/Notes/data/about_timeline.yaml) | 用 `groups` 结构统一管理时间线分组、里程碑顺序、文案、折叠状态和可选图片字段，并新增一组 `Learning path` |
+| [layouts/shortcodes/about-timeline.html](file:///f:/Notes/layouts/shortcodes/about-timeline.html) | 改为循环读取多组 `about_timeline.yaml`，保留整块折叠 + 单条折叠结构，并支持可选左图右文 |
+| [assets/css/_09_about.css](file:///f:/Notes/assets/css/_09_about.css) | 补充时间线多组容器间距和里程碑图片样式；图片改为“原比例优先 + 统一最大尺寸范围” |
+| [PROJECT_MAP.md](file:///f:/Notes/PROJECT_MAP.md) | 同步 about timeline 的新维护入口和加图方式 |
+
+### 结果
+
+- 以后加里程碑文字，不用再改 shortcode 结构
+- 以后给某条里程碑加图片，只需在数据文件里补字段
+- 现在同一个 about timeline 可以放多组内容，`Learning path` 已直接接入
+- 里程碑图片不再强制裁成固定比例，而是按原图比例缩放到相近大小
+
+---
+
+## 2026-06-26 · Start Here 改为数据驱动
+
+### 改动
+
+| 文件 | 改动 |
+|---|---|
+| [data/start_here.yaml](file:///f:/Notes/data/start_here.yaml) | 新增首页 `Start Here` 数据文件，统一管理三张卡的文案、跳转和读取模式 |
+| [layouts/partials/home/custom.html](file:///f:/Notes/layouts/partials/home/custom.html) | 改成循环读取 `start_here.yaml`；当前统一按固定 `page` 路径渲染三张卡 |
+| [PROJECT_MAP.md](file:///f:/Notes/PROJECT_MAP.md) | 把 `Start Here` 的维护入口更新为数据文件，并同步新的更新规则 |
+
+### 结果
+
+- 后续改首页三张卡片的固定文字，不用再改模板
+- `Latest Note` 现在固定跳到 `/notes/`，用户能直接看到最新文章并继续自由选择
+- `Music` / `Projects` 的跳转和文案也集中到一个数据文件里维护
+
+---
+
+## 2026-06-26 · Inner Hero Spacing Tightened + Divider Contrast Raised
+
+### 改动
+
+| 文件 | 改动 |
+|---|---|
+| [assets/css/_04_hero.css](file:///f:/Notes/assets/css/_04_hero.css) | 再次上移共享 `page-hero`；继续减少非封面页 `article` 的顶部 padding |
+| [layouts/page.html](file:///f:/Notes/layouts/page.html) | 将 `layout: "page"` 页面里的 `#single_header` 顶部间距进一步收紧到 `mt-0` |
+| [assets/css/_05_cards.css](file:///f:/Notes/assets/css/_05_cards.css) + [assets/css/_03_prose.css](file:///f:/Notes/assets/css/_03_prose.css) | 提高 `section-rule` / `page-divider` / `cover-divider` 与正文 `hr` 两侧横线的对比度 |
+
+### 结果
+
+- 非封面页的 hero 区块整体更靠上
+- 顶栏下方的空白更少，但仍保留安全呼吸感
+- “横线 + ✦ + 横线” 里的横线不再过淡
+- 封面页和 `ABOUT ME` 保持当前状态不变
+
+---
+
+## 2026-06-26 · 全站分隔符统一为“横线 + ✦ + 横线”
+
+### 改动
+
+| 文件 | 改动 |
+|---|---|
+| [assets/css/_03_prose.css](file:///f:/Notes/assets/css/_03_prose.css) | 统一正文 `hr` 样式；补分隔符相邻去重；分隔符后紧跟 `h2` 时自动去掉标题顶部细线 |
+| [assets/css/_05_cards.css](file:///f:/Notes/assets/css/_05_cards.css) + [assets/css/_04_hero.css](file:///f:/Notes/assets/css/_04_hero.css) + [assets/css/_08_cover.css](file:///f:/Notes/assets/css/_08_cover.css) | 收口 `section-rule`、`page-divider`、`cover-divider` 的基础视觉语言 |
+| [assets/css/_09_about.css](file:///f:/Notes/assets/css/_09_about.css) | 去掉 about 的特殊分隔符覆盖，让 about 回到全站统一规则 |
+| [content/life/_index.md](file:///f:/Notes/content/life/_index.md) 等 6 个页面 | 删除 `section-rule` 后面紧跟的重复 `---` |
+| [PROJECT_MAP.md](file:///f:/Notes/PROJECT_MAP.md) | 增加全站分隔符规则和写作约定 |
+
+### 结果
+
+- 全站块级分隔符统一成一种视觉语言
+- about 和普通文章都回到同一套分隔规则
+- 已有重复分隔源头被清掉，后续写作也有约定可循
+
+---
+
+## 2026-06-26 · ABOUT ME 结构收口为 Technical stack 下的 Focus + 可折叠 Path
+
+### 背景
+
+上一版 `ABOUT ME` 里新增了 `Now`、`Current focus`、`Path so far` 三块，但实际看下来有两个问题：
+
+1. `Now` 和 `Current focus` 语义重叠，信息层级不够清楚
+2. `Path so far` 如果后续继续加内容，会越来越长，页面不够轻，也不利于后面给里程碑扩展图片
+
+这轮的目标就是把新增内容收口得更统一、更利于后续维护：
+
+- 新增内容统一压到 `Technical stack` 下面
+- `Now` 合并进 `Current focus`
+- `Path so far` 改成可折叠的里程碑结构
+- about 各板块之间统一补上星型分隔符
+
+### 改动
+
+| 文件 | 改动 |
+|---|---|
+| [content/about/_index.md](file:///f:/Notes/content/about/_index.md) | 删除单独的 `Now` 板块；把新增内容统一放到 `Technical stack` 下方；`Path so far` 改成“整块先折叠、里程碑再细折叠”的结构，并改为通过 shortcode 引入，避免原始 HTML 在 markdown 中被当文本显示 |
+| [layouts/shortcodes/about-timeline.html](file:///f:/Notes/layouts/shortcodes/about-timeline.html) | 新增 about 专用 shortcode，承载 `Path so far` 的双层折叠里程碑结构，后续扩图也统一在这里维护 |
+| [assets/css/_09_about.css](file:///f:/Notes/assets/css/_09_about.css) | 清理旧 `about-glance` 样式；补 `about-timeline-group-*` 和 `about-milestone-*` 样式；把原先较重的 `+ / -` 按钮改成更简约的 chevron；about 里只保留星型分隔符，不再叠加默认横线 |
+| [layouts/_default/list.html](file:///f:/Notes/layouts/_default/list.html) | 给 about 的正文容器补 `about-page-content` 类，让分隔符去横线的覆盖只作用于 about，不影响其他 section |
+| [PROJECT_MAP.md](file:///f:/Notes/PROJECT_MAP.md) | 同步记录：about 新增内容现在的实际顺序、`Path so far` 的 shortcode 入口、双层 `<details>` 结构、倒叙维护方式，以及未来给里程碑加左图的方式 |
+
+### 结果
+
+- `ABOUT ME` 的新增内容层级更明确，不再出现 `Now` / `Current focus` 重复
+- `Path so far` 默认先收起整块内容，页面长度更可控，展开后再看细节
+- 后续如果要给某个里程碑加图，已经有现成结构可接，不需要再推翻样式
+- about 的板块分隔现在也走全站统一分隔规则
+
+---
+
+## 2026-06-26 · 首屏资源预加载 + ABOUT ME 内容扩充
+
+### 背景
+
+新一轮问题主要集中在 3 个点：
+
+1. 首页和内页的一些图片资源希望更快、更稳，尽量减少刷新时的空白和失败概率
+2. `ABOUT ME` 当前内容偏薄，除了头像、联系方式、技术栈和热力图外，缺少真正能说明“现在在做什么”的正文
+3. 首页封面的 CTA 按钮刷新后会晚一拍才出现，影响首屏完成度
+
+### 改动
+
+| 文件 | 改动 |
+|---|---|
+| [layouts/partials/head.html](file:///f:/Notes/layouts/partials/head.html) | 按页面条件为首页和 `/about/` 首屏关键图片、字体加 `preload`，减少封面与头像的等待时间 |
+| [layouts/partials/home/custom.html](file:///f:/Notes/layouts/partials/home/custom.html) | 首页头像和装饰花改为更积极的加载策略：`loading="eager"` / `decoding="async"` / `fetchpriority="high"` |
+| [assets/css/_08_cover.css](file:///f:/Notes/assets/css/_08_cover.css) | 去掉首页 CTA 的延迟淡入，让按钮刷新后直接可见 |
+| [layouts/partials/article-link/card.html](file:///f:/Notes/layouts/partials/article-link/card.html) | 文章卡封面图补 `fetchpriority="low"` 与可用时的 `width/height`，降低布局跳动 |
+| [content/about/_index.md](file:///f:/Notes/content/about/_index.md) | 在原有头像 / 联系方式 / 技术栈之外，新增 `Now`、`Current focus`、`Path so far` 三块内容 |
+| [assets/css/_09_about.css](file:///f:/Notes/assets/css/_09_about.css) | 新增 about 内容卡、焦点区和时间线路径样式，延续现有暖白衬线风格 |
+| [PROJECT_MAP.md](file:///f:/Notes/PROJECT_MAP.md) | 补记录：`ABOUT ME` 新内容块维护入口、首页 / about 预加载链路位置 |
+
+### 设计取舍
+
+- **预加载只做关键资源**：只给首页和 `/about/` 的首屏图片与主要字体加 `preload`，避免全站无差别抢带宽
+- **不动整体气质**：about 仍然保留头像、联系方式、技术栈、热力图这条主线，只是补齐“我现在在做什么”
+- **按钮立即可见**：保留现有 hover 和交互语言，但去掉不必要的入场延迟
+
+### 结果
+
+- 首页 CTA 刷新后不再晚一拍出现
+- 首页和 `/about/` 的关键图片有了更积极的加载优先级
+- `ABOUT ME` 不再只是资料页，而是开始具备“当前方向 + 学习路径”的个人叙事
 
 ---
 

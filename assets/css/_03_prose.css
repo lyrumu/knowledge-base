@@ -56,6 +56,11 @@
   border-top: 1px solid var(--line);
 }
 .prose h2:first-child { border-top: 0; padding-top: 0; }
+.prose hr + h2,
+.prose .section-rule + h2 {
+  border-top: 0;
+  padding-top: 0;
+}
 .prose h3 {
   font-size: 1.35rem;
   margin-top: 2rem;
@@ -160,19 +165,35 @@
   display: inline;
 }
 
-/* ----- 古典分隔符 hr（衬线 ✦） ----- */
+/* ----- 古典分隔符 hr（全站统一为：横线 + ✦ + 横线） ----- */
 .prose hr {
   border: 0;
   text-align: center;
-  margin: 2.5rem auto;
+  margin: 2.5rem 0;
   height: auto;
+  position: relative;
+  background:
+    linear-gradient(color-mix(in srgb, var(--line) 78%, var(--fg-base) 22%), color-mix(in srgb, var(--line) 78%, var(--fg-base) 22%)) left center / calc(50% - 1.25rem) 1px no-repeat,
+    linear-gradient(color-mix(in srgb, var(--line) 78%, var(--fg-base) 22%), color-mix(in srgb, var(--line) 78%, var(--fg-base) 22%)) right center / calc(50% - 1.25rem) 1px no-repeat;
 }
 .prose hr::before {
   content: "✦";
+  display: inline-block;
   color: var(--accent);
-  font-size: 1rem;
+  font-family: var(--font-serif-display);
+  font-size: 0.85rem;
   letter-spacing: 0.5em;
   padding-left: 0.5em;
+  background: var(--bg-base);
+  line-height: 1;
+}
+
+/* 防止正文里连续出现两个分隔符（section-rule / hr）时视觉重复 */
+.prose .section-rule + .section-rule,
+.prose .section-rule + hr,
+.prose hr + .section-rule,
+.prose hr + hr {
+  display: none;
 }
 
 /* ----- 引用 ----- */

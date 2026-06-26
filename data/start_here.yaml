@@ -1,0 +1,27 @@
+section_kicker: "Start Here"
+section_text: "Three good openings: the newest notes list, the daily page, and the projects area. Start anywhere, then use the top navigation when you want to keep exploring."
+
+items:
+  - id: "latest-note"
+    source: "page"
+    path: "/notes/"
+    tag: "Latest Note"
+    title: ""
+    desc: "Start from the docs index, where the latest notes are listed first and older notes stay easy to browse."
+    link_text: "Open note"
+
+  - id: "music"
+    source: "page"
+    path: "/life/music/"
+    tag: "Current Playlist"
+    title: ""
+    desc: "A small playlist page with local tracks and an in-page player."
+    link_text: "Listen now"
+
+  - id: "projects"
+    source: "page"
+    path: "/works/projects/"
+    tag: "Projects"
+    title: ""
+    desc: "Projects, demos, and experiments worth opening first."
+    link_text: "Browse projects"

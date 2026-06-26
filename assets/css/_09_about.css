@@ -94,6 +94,207 @@
 }
 
 /* =============================================================================
+   About 页面补充内容：Current focus / Path So Far
+   ----------------------------------------------------------------------------
+   - Current focus：放在 Technical stack 下方的 3 张内容卡
+   - Path so far：整个板块可折叠，内部里程碑也可单独展开
+   - 里程碑支持可选左图：给 .about-milestone-layout 追加
+     .about-milestone-layout--has-media，并在内部放 .about-milestone-media-wrap
+   ============================================================================= */
+.about-focus-item,
+.about-milestone {
+  border: 1px solid color-mix(in srgb, var(--line) 82%, transparent);
+  border-radius: 1.2rem;
+  background: color-mix(in srgb, var(--bg-elevated, var(--bg-base)) 78%, transparent);
+  box-shadow: 0 12px 30px color-mix(in srgb, var(--fg-base) 5%, transparent);
+}
+.about-focus-item h3,
+.about-timeline-body h3 {
+  margin: 0;
+  font-family: var(--font-serif-display);
+  font-size: 1.1rem;
+  line-height: 1.15;
+  color: var(--fg-base);
+}
+.about-focus-item p,
+.about-timeline-body p {
+  margin: 0.55rem 0 0;
+  font-family: var(--font-serif-body);
+  color: var(--fg-mute);
+  line-height: 1.7;
+}
+
+.about-focus-list {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 1rem;
+  margin: 0.8rem 0 1.5rem;
+}
+.about-focus-item {
+  padding: 1rem 1rem 1.05rem;
+}
+
+.about-timeline-group {
+  border: 1px solid color-mix(in srgb, var(--line) 82%, transparent);
+  border-radius: 1.25rem;
+  background: color-mix(in srgb, var(--bg-elevated, var(--bg-base)) 78%, transparent);
+  box-shadow: 0 12px 30px color-mix(in srgb, var(--fg-base) 5%, transparent);
+  overflow: hidden;
+}
+.about-timeline-group summary {
+  list-style: none;
+}
+.about-timeline-group summary::-webkit-details-marker {
+  display: none;
+}
+.about-timeline-group-summary {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  gap: 1rem;
+  align-items: center;
+  padding: 1rem 1rem 1.05rem;
+  cursor: pointer;
+}
+.about-timeline-group-summary::after,
+.about-milestone-summary::after {
+  content: "";
+  width: 0.52rem;
+  height: 0.52rem;
+  border-right: 1px solid currentColor;
+  border-bottom: 1px solid currentColor;
+  color: var(--fg-soft);
+  transform: rotate(45deg);
+  transition: transform 0.22s ease, color 0.22s ease;
+}
+.about-timeline-group[open] .about-timeline-group-summary::after {
+  color: var(--accent);
+  transform: rotate(225deg);
+}
+.about-timeline-group-main {
+  display: grid;
+  gap: 0.18rem;
+}
+.about-timeline-group-title {
+  display: block;
+  font-family: var(--font-serif-display);
+  font-size: 1.08rem;
+  line-height: 1.2;
+  color: var(--fg-base);
+}
+.about-timeline-group-meta {
+  display: block;
+  font-family: var(--font-serif-body);
+  font-size: 0.92rem;
+  color: var(--fg-soft);
+  line-height: 1.55;
+}
+.about-timeline-groups {
+  display: grid;
+  gap: 0.1rem;
+}
+.about-timeline {
+  display: grid;
+  gap: 0.9rem;
+  margin: 0;
+  padding: 0 1rem 1rem;
+}
+.about-timeline-mark {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 2.2rem;
+  height: 2.2rem;
+  border-radius: 9999px;
+  border: 1px solid color-mix(in srgb, var(--accent) 55%, transparent);
+  color: var(--accent);
+  font-family: var(--font-serif-display);
+  font-size: 0.82rem;
+  line-height: 1;
+}
+.about-milestone {
+  overflow: hidden;
+  transition: border-color 0.3s, box-shadow 0.3s, background 0.3s;
+}
+.about-milestone:hover {
+  border-color: color-mix(in srgb, var(--accent) 20%, var(--line));
+  box-shadow: 0 16px 34px color-mix(in srgb, var(--fg-base) 7%, transparent);
+}
+.about-milestone summary {
+  list-style: none;
+}
+.about-milestone summary::-webkit-details-marker {
+  display: none;
+}
+.about-milestone-summary {
+  display: grid;
+  grid-template-columns: auto 1fr auto;
+  gap: 0.95rem;
+  align-items: center;
+  padding: 0.95rem 1rem;
+  cursor: pointer;
+}
+.about-milestone[open] .about-milestone-summary::after {
+  color: var(--accent);
+  transform: rotate(225deg);
+}
+.about-milestone-summary-main {
+  display: grid;
+  gap: 0.18rem;
+  min-width: 0;
+}
+.about-milestone-title {
+  display: block;
+  font-family: var(--font-serif-display);
+  font-size: 1.1rem;
+  line-height: 1.15;
+  color: var(--fg-base);
+}
+.about-milestone-meta {
+  display: block;
+  font-family: var(--font-serif-body);
+  font-size: 0.92rem;
+  color: var(--fg-soft);
+  line-height: 1.5;
+}
+.about-milestone-panel {
+  padding: 0 1rem 0.95rem;
+}
+.about-milestone-layout {
+  display: block;
+}
+.about-milestone-layout--has-media {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr);
+  gap: 1rem;
+  align-items: start;
+}
+.about-milestone-media-wrap {
+  width: fit-content;
+  max-width: min(11rem, 30vw);
+  border-radius: 1rem;
+  border: 1px solid color-mix(in srgb, var(--line) 78%, transparent);
+  background: color-mix(in srgb, var(--bg-deep) 10%, transparent);
+}
+.about-milestone-media {
+  display: block;
+  width: auto;
+  max-width: min(11rem, 30vw);
+  max-height: 13.5rem;
+  height: auto;
+}
+.about-milestone-caption {
+  margin: 0;
+  padding: 0.6rem 0.75rem 0.7rem;
+  font-family: var(--font-serif-body);
+  font-size: 0.78rem;
+  color: var(--fg-soft);
+  line-height: 1.45;
+}
+.about-timeline-body {
+  min-width: 0;
+}
+
+/* =============================================================================
    技术栈标签
    ----------------------------------------------------------------------------
    药丸标签：圆角 / 居中 / 字号 / 三色分类（蓝 = 开发工具 / 紫 = 语言与框架 / 绿 = AI）
@@ -354,6 +555,27 @@ html.dark .about-contact-btn:hover {
 
 /* 移动端：缩小图标按钮和卡片间距 */
 @media (max-width: 540px) {
+  .about-focus-list {
+    grid-template-columns: 1fr;
+  }
+  .about-timeline-group-summary {
+    grid-template-columns: 1fr auto;
+    gap: 0.75rem;
+  }
+  .about-timeline-mark {
+    width: 2.1rem;
+  }
+  .about-milestone-summary {
+    grid-template-columns: auto 1fr;
+  }
+  .about-milestone-summary::after {
+    grid-column: 2;
+    justify-self: end;
+    margin-top: -0.1rem;
+  }
+  .about-milestone-layout--has-media {
+    grid-template-columns: 1fr;
+  }
   .about-contact-glass {
     gap: 0.5rem;
     padding: 0.5rem 0.7rem;
@@ -381,16 +603,9 @@ html.dark .about-contact-btn:hover {
   .about-contact { opacity: 1; transform: none; }
 }
 
-/* 2026-06-24 新增：覆盖主题 prose hr 的 3em margin，about 内的 section-rule hr 用 1.2em */
-.article-content hr,
-.about hr {
-  margin-top: 1.2em;
-  margin-bottom: 1.2em;
-}
-
 /* 2026-06-24 新增：覆盖主题 prose h2 的 1.5em/0.5em，about 内的 section 标题更紧凑 */
 .article-content h2,
-.about h2 {
+.about-page-content h2 {
   margin-top: 0.7em;
   margin-bottom: 0.4em;
 }
@@ -431,4 +646,3 @@ html.dark .about-contact-btn:hover {
 .site-stats-sep {
   opacity: 0.4;
 }
-

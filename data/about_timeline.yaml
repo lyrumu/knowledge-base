@@ -1,0 +1,73 @@
+groups:
+
+  - id: "learn-path"
+    title: "Learn path"
+    meta: "My Milestone in Computer Learning"
+    default_open: false
+    items:
+      - id: "build-personal-site"
+        mark: "3"
+        title: "Build my personal site(lyrumu's page)"
+        meta: "2026.6"
+        summary: "Creating and improving my own digital space."
+        body: |
+          Creating and improving my own digital space to showcase learning notes and projects,demos.
+        open: false
+      - id: "hermes-opencode-wsl2"
+        mark: "2"
+        title: "Begin to use Hermes and Opencode in WSL2"
+        meta: "2026.3"
+        summary: "Setting up efficient tools inside WSL2."
+        body: |
+          The first time I interacted with agents using the CLI of Windows.
+          Though both Hermes and Opencode have the TUI mode,I still prefer the file list style of VScode.
+          Thus,now i choose to use Trae.
+        open: false
+      - id: "learn-algorithm"
+        mark: "1"
+        title: "Learn Algorithm"
+        meta: "2025.8"
+        summary: "Strengthening algorithmic thinking and coding skills."
+        body: |
+          Before entering university,I was introduced to algorithms for the first time.
+          After one year of study,I realized that I didn't have any talent for algorithm competitions
+          (perhaps it was because I relied too much on AI).
+          So I no longer devoted all my energy to solving algorithm problems.
+        open: false
+
+  - id: "bad-morning"
+    title: "Bad morning"
+    meta: "emmm,also bad night"
+    default_open: false
+    items:
+      - id: "find-spirit"
+        mark: "3"
+        title: "Find my spirit"
+        meta: "2026"
+        summary: "Reconnecting with what gives me energy and purpose."
+        image: "/image/westlake.png"
+        image_alt: "Failed to load~"
+        body: |
+          How come I just don’t wanna do my work?
+        open: false
+      - id: "find-happiness"
+        mark: "2"
+        title: "Find my happiness"
+        meta: "2024-2025"
+        summary: "Seeking simple sources of happiness and lightness."
+        image: "/image/bedrock_MC.png"
+        image_alt: "Failed to load~"
+        body: |
+          Who could please talk with me?
+        open: false
+      - id: "find-myself"
+        mark: "1"
+        title: "Find myself"
+        meta: "2023-2024"
+        summary: "Returning to who I am beneath the noise."
+        image: "/image/why.jpg"
+        image_alt: "Failed to load~"
+        body: |
+          Why am I even alive?
+        open: false
+

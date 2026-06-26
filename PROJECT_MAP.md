@@ -16,7 +16,7 @@
 | 我想…… | 改这个文件 |
 |---------|-----------|
 | 改封面的标题 / subtitle / 按钮文案 | [`data/cover.yaml`](file:///f:/Notes/data/cover.yaml) |
-| 改首页 `Start Here` 的三张卡内容 | [`layouts/partials/home/custom.html`](file:///f:/Notes/layouts/partials/home/custom.html)（当前是模板内固定；默认隐藏，点首页 `Start Here` 后展开） |
+| 改首页 `Start Here` 的三张卡内容 | [`data/start_here.yaml`](file:///f:/Notes/data/start_here.yaml)（文案 / 跳转 / 读取模式都在这里；默认隐藏，点首页 `Start Here` 后展开） |
 | 改封面的颜色 | [`assets/css/_01_tokens.css`](file:///F:/Notes/assets/css/_01_tokens.css) 顶部 `:root` / `html.dark` 的 `--bg-base / --line / --accent`（v3：封面 `--pal-*` 已派生自全局变量，统一改一处即可） |
 | 改封面的字距 / 大小 / 花边位置 | [`assets/css/_08_cover.css`](file:///F:/Notes/assets/css/_08_cover.css) |
 | 改内页"小封面"的文案 | 对应 `content/xxx/_index.md` 的 frontmatter `kicker / subtitle` |
@@ -29,8 +29,11 @@
 | 换 /works/resources/ 的资源卡 | [`data/resources.yaml`](file:///f:/Notes/data/resources.yaml)（加一条填 `- name/title/desc/cover/file/format/size/tags/date/source`） |
 | 改 /works/projects/ 的 3D 倾斜角度 | [`assets/css/_06_works-cards.css`](file:///F:/Notes/assets/css/_06_works-cards.css) 的 `.project-card` 或 shortcode 里的 `data-tilt-*` |
 | 加一个 Lucide icon | [`layouts/partials/cover/icon.html`](file:///f:/Notes/layouts/partials/cover/icon.html) 加 `else if` 分支 |
+| 改 /about/ 个人内容块（Now / Focus / Path） | [`content/about/_index.md`](file:///f:/Notes/content/about/_index.md) |
 | 改 /about/ 联系方式图标 / 邮箱 | [`content/about/_index.md`](file:///f:/Notes/content/about/_index.md) + [`layouts/partials/about-contact.html`](file:///f:/Notes/layouts/partials/about-contact.html)（base64 邮箱解码 + Toast） |
+| 改全站分隔符规则 | [`assets/css/_03_prose.css`](file:///f:/Notes/assets/css/_03_prose.css) + [`assets/css/_05_cards.css`](file:///f:/Notes/assets/css/_05_cards.css) + [`assets/css/_04_hero.css`](file:///f:/Notes/assets/css/_04_hero.css) + [`assets/css/_08_cover.css`](file:///f:/Notes/assets/css/_08_cover.css) |
 | 改 /about/ 图标玻璃效果 | [`assets/css/_09_about.css`](file:///F:/Notes/assets/css/_09_about.css)（`.about-contact-glass` / `.about-contact-btn` / `.copy-toast`） |
+| 调首页 / about 首屏图片预加载 | [`layouts/partials/head.html`](file:///f:/Notes/layouts/partials/head.html)（按页面条件 preload 关键图片和字体） |
 | 改顶栏的菜单项 | [`hugo.toml`](file:///f:/Notes/hugo.toml) 的 `[[menu.main]]` 段 |
 | 加一篇新文章 | 见下方 §4 |
 | 写 CSS（字体 / 颜色 / 间距） | 见下方 §3 · 选对模块文件 |
@@ -62,8 +65,8 @@ f:\Notes\
 │   │   ├── _05_cards.css           # ★ module / vault / article-link / life / music-list / works-sub / file-tree / section-rule
 │   │   ├── _06_works-cards.css     # ★ projects (3D 倾斜) + resources (瀑布流)
 │   │   ├── _07_music-player.css    # ★ 全局音乐播放器 + copy-toast
-│   │   ├── _08_cover.css           # ★ 封面页（全屏 + 花边 + 字符入场）
-│   │   └── _09_about.css           # ★ About 页（profile + 标签 + 液态玻璃联系方式）
+│   │   ├── _08_cover.css           # ★ 封面页（全屏 + 花边 + 字符入场 + CTA）
+│   │   └── _09_about.css           # ★ About 页（profile + Now/Focus/Path + 标签 + 液态玻璃联系方式）
 │   └── icons/                      # Simple Icons 品牌色 SVG（github/gmail/qq 等联系方式图标）
 │
 ├── archetypes/
@@ -81,10 +84,12 @@ f:\Notes\
 │   ├── life/                       # /life/ 生活（可扩展子模块网格）
 │   │   ├── _index.md               # 子模块入口（life-grid 短代码）
 │   │   └── music/_index.md         # /life/music/ 子页
-│   └── about/_index.md             # /about/ 关于（avatar + 液态玻璃联系方式 + 技术栈 + GitHub 热力图）
+│   └── about/_index.md             # /about/ 关于（avatar + Now/Focus/Path + 联系方式 + 技术栈 + GitHub 热力图）
 │
 ├── data/                           # ★ 数据驱动（改这里就能改 UI）
 │   ├── cover.yaml                  # 封面基础文案 / 头像 / 调色（Start Here 当前不走数据驱动）
+│   ├── about_timeline.yaml         # ABOUT ME 的 Path so far 里程碑（文字 / 顺序 / 可选图片）
+│   ├── start_here.yaml             # 首页 Start Here 三张卡（文案 / 跳转 / 读取模式）
 │   ├── vault.yaml                  # 旧版 /notes/ 分类卡数据（当前前台未使用，保留作历史参考）
 │   ├── life.yaml                   # /life/ 子模块清单（music / 图片 / 读书…）
 │   ├── music.yaml                  # /life/music/ 歌单
@@ -163,31 +168,28 @@ f:\Notes\
 | 封面排版 / 花边 / CTA / `Start Here` 展开区 | [`data/cover.yaml`](file:///f:/Notes/data/cover.yaml)（基础文案） | [`layouts/partials/home/custom.html`](file:///f:/Notes/layouts/partials/home/custom.html) |
 | 封面 CSS（字体 / 调色 / 布局） | — | [`assets/css/_08_cover.css`](file:///F:/Notes/assets/css/_08_cover.css) |
 | 封面主题切换按钮 | — | 内嵌在 `custom.html` 的 JS |
+| 首页首屏关键图 / 字体预加载 | — | [`layouts/partials/head.html`](file:///f:/Notes/layouts/partials/head.html) |
 | 封面装饰元素（上下流动花边 + 左右黑花） | — | 直接用 `static/image/` 下的 png |
 | 封面调色（明 / 暗） | `cover.yaml` → `palette` | `custom.html` 的 `<style>` 块 |
-| 首页 `Start Here` 三张卡 | 当前写死在 [`layouts/partials/home/custom.html`](file:///f:/Notes/layouts/partials/home/custom.html) | `Latest Note` 自动取 `notes` 分区最新文章；`Music` 固定指向 `/life/music/`；`Projects` 固定指向 `/works/projects/` |
+| 首页 `Start Here` 三张卡 | [`data/start_here.yaml`](file:///f:/Notes/data/start_here.yaml) | 由 [`layouts/partials/home/custom.html`](file:///f:/Notes/layouts/partials/home/custom.html) 循环渲染；当前统一用固定 `page` 路径模式 |
 
 **以后如何更新 `Start Here`：**
 
-1. **改最新文章卡**
-   - 现在是自动取 `notes` 分区最新一篇：`$latestNote`
-   - 想继续自动跟随：不用改任何数据文件，只要你正常新增 / 更新 `content/notes/` 文章即可
-   - 想改成固定推荐文章：把 `custom.html` 里的 `$latestNote` 逻辑换成 `site.GetPage "/notes/某篇文章路径/"` 即可
+1. **改文案**
+   - 直接改 [`data/start_here.yaml`](file:///f:/Notes/data/start_here.yaml) 里的 `section_kicker / section_text / items[].tag / title / desc / link_text`
 
-2. **改 Music 卡**
-   - 现在固定读取 `site.GetPage "/life/music/"`
-   - 想换成别的 life 子页，就把这个路径改掉
-   - 想只改卡片文案，不改跳转地址，直接改同文件里对应卡片的 `tag / title / desc / link text`
+2. **改卡片跳转**
+   - 固定页面卡：改对应条目的 `path`
+   - 例如 `Music` 现在默认是 `/life/music/`，`Projects` 默认是 `/works/projects/`
 
-3. **改 Projects 卡**
-   - 现在固定读取 `site.GetPage "/works/projects/"`
-   - 想换成某个具体项目页或别的 works 子页，就把这个路径改掉
-   - 想只改文案，同样直接改 `custom.html` 里这张卡的文本
+3. **改“最新文章卡”的跳转方式**
+   - 现在固定跳到 `/notes/`
+   - 这样既能保留 `Latest Note` 这个入口名称，也能让用户直接看到置顶的最新文章，并自行选择继续浏览哪一篇
+   - 如果以后想改成某篇固定文章，直接把它的 `path` 改成对应文章路径即可
 
-4. **如果以后想把 `Start Here` 做成数据驱动**
-   - 可以新建 `data/start-here.yaml`
-   - 再让 `custom.html` 从 yaml 循环渲染
-   - 但在当前只有 3 张固定卡的阶段，直接写在模板里更简单、更稳定
+4. **模板职责**
+   - [`layouts/partials/home/custom.html`](file:///f:/Notes/layouts/partials/home/custom.html) 现在只负责循环渲染和按 `path` 取页面
+   - 日常改字、改链接，优先不要再直接改模板
 
 ### 内页"小封面"（section 主页顶部）
 
@@ -229,11 +231,13 @@ f:\Notes\
 | 列表样式 + 播放器样式 | — | [`assets/css/_05_cards.css`](file:///F:/Notes/assets/css/_05_cards.css) 的 `.music-item*` + [`_07_music-player.css`](file:///F:/Notes/assets/css/_07_music-player.css) 的 `.music-player` |
 | 资源存放约定 | `static/life/music/<slug>.mp3` + `static/image/life/music/<slug>.jpg` | — |
 
-### /about/ 联系方式图标卡（iOS 液态玻璃）
+### /about/ 页面内容
 
 | 元素 | 数据源 | 模板 |
 |------|--------|------|
 | 头像 + 个人信息 + 联系方式的整体排版 | [`content/about/_index.md`](file:///f:/Notes/content/about/_index.md) | markdown（`.about-profile` 容器 + `{{< about-contact >}}` 短代码） |
+| `Technical stack` 下方的 `Current focus / Path so far` | [`content/about/_index.md`](file:///f:/Notes/content/about/_index.md) + [`data/about_timeline.yaml`](file:///f:/Notes/data/about_timeline.yaml) | markdown + data + [`layouts/shortcodes/about-timeline.html`](file:///f:/Notes/layouts/shortcodes/about-timeline.html) + [`assets/css/_09_about.css`](file:///F:/Notes/assets/css/_09_about.css) 的 `.about-focus-* / .about-timeline-group-* / .about-milestone-* / .about-timeline-*` |
+| about 首屏头像 / 字体预加载 | — | [`layouts/partials/head.html`](file:///f:/Notes/layouts/partials/head.html) |
 | 联系方式短代码壳 | — | [`layouts/shortcodes/about-contact.html`](file:///f:/Notes/layouts/shortcodes/about-contact.html)（仅调 partial） |
 | 联系方式 partial：3 个图标按钮 + base64 邮箱 + Toast + 解码 JS | 邮箱 base64 直接硬编码在 partial 里 | [`layouts/partials/about-contact.html`](file:///f:/Notes/layouts/partials/about-contact.html) |
 | 邮箱按钮图标（GitHub / Gmail / QQ） | — | [`assets/icons/github.svg`](file:///f:/Notes/assets/icons/github.svg) / [gmail.svg](file:///f:/Notes/assets/icons/gmail.svg) / [qq.svg](file:///f:/Notes/assets/icons/qq.svg)（Simple Icons 品牌色填充） |
@@ -254,6 +258,41 @@ f:\Notes\
 1. 从 `https://cdn.simpleicons.org/<name>` 下载 SVG → [`assets/icons/`](file:///f:/Notes/assets/icons/)
 2. [`layouts/partials/about-contact.html`](file:///f:/Notes/layouts/partials/about-contact.html) 复制一个 `<a>` 块，改类名 + `href` + 调 `{{< icon >}}`
 3. 邮箱类按钮还需要加 `data-contact-b64` + `data-contact-platform`，并在 JS 里加平台 URL 拼装分支
+
+**调整 about 新增内容块**：
+
+1. `Current focus` 和 `Path so far` 现在统一放在 `Technical stack` 下方，中间用 `{{< section-rule >}}` 分隔
+2. `Path so far` 的正文现在不直接写在 markdown 或 shortcode 里，而是通过 [`data/about_timeline.yaml`](file:///f:/Notes/data/about_timeline.yaml) 提供内容，由 [`layouts/shortcodes/about-timeline.html`](file:///f:/Notes/layouts/shortcodes/about-timeline.html) 输出
+3. `about_timeline.yaml` 现在支持 `groups`：每组都有自己的 `title / meta / default_open / items`
+4. 每组内部的里程碑顺序按对应 `items` 顺序维护；当前约定仍是倒叙：最新阶段放最上面，最早阶段放最下面
+5. 如果以后想给某个里程碑加左图：
+   - 在对应条目里补 `image` 和 `image_alt`
+   - 可选补 `image_caption`
+   - 不填这些字段时，会自动保持纯文字卡片
+   - 当前图片规则是“原比例优先 + 统一最大尺寸范围”：不会强制裁成同一比例，但会等比缩放到相近的视觉大小
+
+### 全站分隔符规则
+
+| 类型 | 来源 | 当前规则 |
+|------|------|----------|
+| 正文里的 `---` | markdown `hr` | 统一走 [`_03_prose.css`](file:///f:/Notes/assets/css/_03_prose.css) 的“横线 + ✦ + 横线”样式 |
+| `{{< section-rule >}}` | [`layouts/shortcodes/section-rule.html`](file:///f:/Notes/layouts/shortcodes/section-rule.html) | 作为显式插入的块级分隔符，外观与正文 `hr`、hero divider 对齐 |
+| 首页 / 内页 hero 分隔符 | [`custom.html`](file:///f:/Notes/layouts/partials/home/custom.html) / [`page-hero.html`](file:///f:/Notes/layouts/partials/cover/page-hero.html) | 基础视觉样式由 [`_05_cards.css`](file:///f:/Notes/assets/css/_05_cards.css) 统一，页面文件只保留位置和宽度差异 |
+
+**维护规则：**
+
+1. 全站只保留一种块级分隔语言：`横线 + ✦ + 横线`
+2. 如果已经写了 `{{< section-rule >}}`，就不要在它前后再紧跟 `---`
+3. [`_03_prose.css`](file:///f:/Notes/assets/css/_03_prose.css) 里有相邻分隔符去重规则：`section-rule + hr`、`hr + section-rule`、`section-rule + section-rule`、`hr + hr` 会自动隐藏后一个
+4. `h2` 默认带顶部细线；但如果它前面紧挨着 `section-rule` 或 `hr`，[`_03_prose.css`](file:///f:/Notes/assets/css/_03_prose.css) 会自动取消这条线，避免看起来像“分隔符后又跟一条默认横线”
+5. 想插一个显式分隔时，优先用 `{{< section-rule >}}`；`---` 更适合普通文章正文里的语义分段
+
+**写作约定（最常用）**
+
+- 正文里想分段：直接写 `---`
+- 想插一个更明确的块级分隔：用 `{{< section-rule >}}`
+- 不要把 `---` 和 `{{< section-rule >}}` 紧挨着写
+- 如果分隔符后面马上是 `##`，系统会自动去掉标题自带的顶部细线，不需要手动处理
 
 ### 顶栏
 
