@@ -21,6 +21,8 @@
 | 改封面的字距 / 大小 / 花边位置 | [`assets/css/_08_cover.css`](file:///F:/Notes/assets/css/_08_cover.css) |
 | 改内页"小封面"的文案 | 对应 `content/xxx/_index.md` 的 frontmatter `kicker / subtitle` |
 | 改 /notes/ 入口展示方式（单列 / 3 列等）| `content/notes/_index.md` frontmatter `cardColumns`（1/2/3） |
+| 改 `notes` 文章的 taxonomy / Edit Link / 上一篇下一篇规则 | [`content/notes/_index.md`](file:///f:/Notes/content/notes/_index.md) 的 `cascade`（只对 `notes` 下文章生效） |
+| 改 `notes` 文章里 tags / categories / series 的维护规范 | [`BLOWFISH_FEATURE_AUDIT.md`](file:///f:/Notes/BLOWFISH_FEATURE_AUDIT.md) 末尾的 `Taxonomies 后续维护约定` |
 | 换 /life/ 的子模块卡 | [`data/life.yaml`](file:///f:/Notes/data/life.yaml)（加图片 / 读书 / 旅行…都改这里） |
 | 换 /life/music/ 的歌单 | [`data/music.yaml`](file:///f:/Notes/data/music.yaml)（加一首填一个 `- title/artist/cover/src/duration/size/...` 条目） |
 | 换 /life/music/ 的封面/SVG 动画 | [`assets/css/_05_cards.css`](file:///F:/Notes/assets/css/_05_cards.css) 的 `.life-sub-cover-*` 规则 |
@@ -35,6 +37,7 @@
 | 改 /about/ 图标玻璃效果 | [`assets/css/_09_about.css`](file:///F:/Notes/assets/css/_09_about.css)（`.about-contact-glass` / `.about-contact-btn` / `.copy-toast`） |
 | 调首页 / about 首屏图片预加载 | [`layouts/partials/head.html`](file:///f:/Notes/layouts/partials/head.html)（按页面条件 preload 关键图片和字体） |
 | 改顶栏的菜单项 | [`hugo.toml`](file:///f:/Notes/hugo.toml) 的 `[[menu.main]]` 段 |
+| 改 Umami 统计配置 | [`hugo.toml`](file:///f:/Notes/hugo.toml) 的 `[params.umamiAnalytics]` |
 | 加一篇新文章 | 见下方 §4 |
 | 写 CSS（字体 / 颜色 / 间距） | 见下方 §3 · 选对模块文件 |
 | 改文章内容样式 | [`assets/css/_03_prose.css`](file:///F:/Notes/assets/css/_03_prose.css) |
@@ -51,6 +54,7 @@
 f:\Notes\
 ├── hugo.toml                       # 全局 Hugo 配置
 ├── DEPLOY.md                       # 部署与维护指南
+├── BLOWFISH_FEATURE_AUDIT.md       # Blowfish / Hugo 原生能力审计与 taxonomy 维护约定
 ├── PROJECT_MAP.md                  # ← 你正在看（本地保留）
 │
 ├── assets/
@@ -75,7 +79,7 @@ f:\Notes\
 ├── content/                        # ★ 所有页面内容
 │   ├（待整理）
 │   ├── notes/                      # /notes/ 文章入口（layout:list + list.html 卡片列表）
-│   │   └── _index.md               # notes 入口页（正文 + 自动文章列表）
+│   │   └── _index.md               # notes 入口页（正文 + 自动文章列表 + cascade 控制后代文章的 taxonomy/edit/pagination）
 │   ├── works/                      # /works/ 相关（作品 / 资源 / 工具）
 │   │   ├── _index.md               # 入口（works-grid 短代码）
 │   │   ├── projects/_index.md      # 项目子页（projects-list 短代码 + 3D 倾斜）
@@ -100,7 +104,7 @@ f:\Notes\
 ├── layouts/                        # ★ 自定义模板（覆写主题）
 │   ├── _default/list.html          # section 主页 → page-hero + 正文 + 子页面列表（notes/about 当前走这里）
 │   ├── home.json                   # home kind 的 JSON 输出（消 build WARN；内容同主题 _default/index.json）
-│   ├── page.html                   # 任何 layout: "page" 的页面（消 build WARN；复用主题 single.html 的 main 块）
+│   ├── page.html                   # kind=page 的项目级模板；当前 notes 普通文章也命中这里，taxonomy/edit/pagination 需在此补回
 │   ├── partials/
 │   │   ├── head.html               # ⚠️ [lyrumu 改造] 覆盖 Blowfish 主题版本
 │   │   │                           #  原因：CSS `@import` 在 Hugo Pipes 不展开（详见 §8 踩坑提醒）
@@ -206,11 +210,14 @@ f:\Notes\
 | notes 入口页正文 | [`content/notes/_index.md`](file:///f:/Notes/content/notes/_index.md) | [`layouts/_default/list.html`](file:///f:/Notes/layouts/_default/list.html) |
 | 文章卡列表 | `content/notes/**` 下的文章 | [`layouts/_default/list.html`](file:///f:/Notes/layouts/_default/list.html) + `article-link/card.html` |
 | 列数控制 | `content/notes/_index.md` frontmatter `cardColumns` | [`layouts/_default/list.html`](file:///f:/Notes/layouts/_default/list.html) |
+| 后代文章的 `taxonomy / Edit Link / 上一篇下一篇` 默认规则 | [`content/notes/_index.md`](file:///f:/Notes/content/notes/_index.md) 的 `cascade` | [`layouts/page.html`](file:///f:/Notes/layouts/page.html) + `article-meta/basic.html` + `article-pagination.html` |
 
 **说明：**
 
 - 当前前台的 `/notes/` 已不再使用 `data/vault.yaml + vault-sections.html` 这条旧链路
 - `vault.yaml` / `vault-sections.html` 目前保留在仓库里，主要用于历史参考；若以后确认不再回退，可再统一清理
+- `notes` 的 taxonomy / Edit Link / 上一篇下一篇不靠全局配置硬开，而是通过 `content/notes/_index.md` 的 `cascade` 只作用到 `notes` 后代文章
+- 后续维护 tags / categories / series 的约定见 [`BLOWFISH_FEATURE_AUDIT.md`](file:///f:/Notes/BLOWFISH_FEATURE_AUDIT.md) 末尾 `Taxonomies 后续维护约定`
 
 ### /life/ 子模块网格
 

@@ -4,6 +4,28 @@
 
 ---
 
+## 2026-06-27 · Notes 开启 Taxonomies / Edit Link / Pagination + 接入 Umami
+
+### 改动
+
+| 文件 | 改动 |
+|---|---|
+| [hugo.toml](file:///f:/Notes/hugo.toml) | 补 `article.editURL / editAppendPath`，并按 Blowfish 原生方式接入 `[params.umamiAnalytics]` |
+| [content/notes/_index.md](file:///f:/Notes/content/notes/_index.md) | 新增 `cascade`，只给 `notes` 下文章开启 `showTaxonomies / showEdit / showPagination` |
+| [content/notes/linux-getting-started/index.md](file:///f:/Notes/content/notes/linux-getting-started/index.md) + [content/notes/python-env-setup/index.md](file:///f:/Notes/content/notes/python-env-setup/index.md) | 删掉旧的 `showEdit: false`，避免覆盖 `notes` 分区级默认规则 |
+| [BLOWFISH_FEATURE_AUDIT.md](file:///f:/Notes/BLOWFISH_FEATURE_AUDIT.md) | 补充本轮已确认实施方案，并新增 `Taxonomies 后续维护约定` |
+| [PROJECT_MAP.md](file:///f:/Notes/PROJECT_MAP.md) | 同步 notes 分区 `cascade`、Umami 配置入口和 taxonomy 维护入口 |
+
+### 结果
+
+- `notes` 文章现在可以显示 taxonomy 信息，并继续沿用 Blowfish 原生渲染链路
+- `Edit Link` 只在 `notes` 文章里开启，且只是跳转到 GitHub 编辑页，真正修改权限仍由仓库控制
+- `notes` 文章的上一篇 / 下一篇由 [`layouts/page.html`](file:///f:/Notes/layouts/page.html) 补回主题原生 `article-pagination`
+- Umami 已按 Blowfish 原生 analytics 配置接入，不需要手写 head 脚本
+- 后续如何维护 `tags / categories / series` 已写入根目录文档，避免后面越写越乱
+
+---
+
 ## 2026-06-26 · About Timeline 改为数据驱动并支持多组
 
 ### 改动

@@ -56,7 +56,6 @@ showWordCount: true
 # =============================================================================
 # 其他功能
 # =============================================================================
-showEdit: false
 showZenMode: true
 showRelatedContent: false
 relatedContentLimit: 3

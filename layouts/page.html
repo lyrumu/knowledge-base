@@ -1,11 +1,9 @@
 {{/*
   <!-- Hugo template: HTML output (do not add real HTML comments at top, this is Hugo template syntax) -->
   page.html — 2026-06-24 新增
-  作用：消除 "no layout file for html for kind page" 警告。
-  触发：多个 _index.md 设了 layout: "page"（about、life、works、works/*、life/music、notes）
-  而主题没有 page.html。Hugo 实际 fallback 到 _default/single.html 能正常渲染，
-  但每次 build 都警告。
-  解决：直接复用 single.html 的 main 块，保持输出与文章单页一致。
+  作用：提供 kind=page 的项目级模板，复用 Blowfish single 页面主体结构。
+  现状：当前本项目的普通 notes 文章会命中这里，因此 taxonomy / edit link / pagination
+  这类 single 文章能力如果需要定制，应该在本文件补回，而不是只改文档。
 */}}
 {{ define "main" }}
   {{ .Scratch.Set "scope" "single" }}
@@ -62,6 +60,11 @@
         {{ partial "related.html" . }}
       </div>
     </section>
+    <footer class="pt-8 max-w-prose print:hidden">
+      {{ if eq .Section "notes" }}
+        {{ partial "article-pagination.html" . }}
+      {{ end }}
+    </footer>
   </article>
 {{ end }}
 

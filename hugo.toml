@@ -127,6 +127,10 @@ enableEmoji = true
     showRelatedContent = true #管理相关近期文章的显示
     relatedContentLimit = 6
     showZenMode = true
+    # 仅提供编辑入口，真正能否改内容仍由 GitHub 仓库权限决定。
+    # 这里先提供基础编辑 URL，是否显示由具体页面/section 控制。
+    editURL = 'https://github.com/lyrumu/knowledge-base/edit/master/content'
+    editAppendPath = true
     sharingLinks = ['github', 'twitter', 'email']
 
   [params.term]
@@ -155,6 +159,12 @@ enableEmoji = true
   [params.cover]
     linkFullImages = true
     hiddenInList = false
+
+  # 2026-06-27：接入 Umami（走 Blowfish 原生 analytics partial，而非手写 head script）
+  [params.umamiAnalytics]
+    websiteid = '515c1183-2e68-4a62-8fd9-b879507a9f28'
+    domain = 'cloud.umami.is'
+    enableTrackEvent = true
 
 # =============================================================================
 # 顶部分类导航
