@@ -4,6 +4,58 @@
 
 ---
 
+## 2026-06-27 · 首页封面收尾清理与信息对齐
+
+### 改动
+
+| 文件 | 改动 |
+|---|---|
+| [assets/css/_08_cover.css](file:///f:/Notes/assets/css/_08_cover.css) | 将首页副标题与站点统计改为居中；删除首页已不再使用的 `cover-footnote`、封面逐字入场残留选择器，并补充“封面略超出版心”的维护注释 |
+| [assets/css/_04_hero.css](file:///f:/Notes/assets/css/_04_hero.css) | 修正 page hero 注释，明确 `Splitting` 的共享基础样式来自 `_08_cover.css` |
+| [layouts/partials/home/custom.html](file:///f:/Notes/layouts/partials/home/custom.html) | 删除首页已无视觉作用的 `data-splitting`、`Splitting()` 初始化脚本和黑花 `animation-delay` 残留；收紧 `cover` / `home_highlights` 的 fallback 到当前真实在用字段 |
+| [data/home_highlights.yaml](file:///f:/Notes/data/home_highlights.yaml) | 删除首页已不再读取的 `section_kicker / section_title / section_text` 字段，并补注释说明当前只维护 `sections` |
+| [data/cover.yaml](file:///f:/Notes/data/cover.yaml) | 清理旧首页遗留的 `background / entrance / social / decorations / palette` 字段与过期注释，只保留当前首页 masthead 与顶栏 GitHub 按钮真实在用配置 |
+| [PROJECT_MAP.md](file:///f:/Notes/PROJECT_MAP.md) | 同步首页数据结构与维护说明，去掉已经失效的首页字段说明 |
+
+### 结果
+
+- 首页 masthead 里的 `Welcome to...` 副标题与站点统计现在都居中，不再偏向头像这一侧
+- 首页模板、数据文件和 CSS 里已经确定无效的残留逻辑又清掉一轮，后续维护时不会再被旧字段和旧脚本误导
+- 首页配色和数据入口的注释更贴近当前真实结构，减少“文档还停留在前一版”的问题
+
+### 验证
+
+- `GetDiagnostics`：[`custom.html`](file:///f:/Notes/layouts/partials/home/custom.html)、[`_08_cover.css`](file:///f:/Notes/assets/css/_08_cover.css)、[`_04_hero.css`](file:///f:/Notes/assets/css/_04_hero.css)、[`cover.yaml`](file:///f:/Notes/data/cover.yaml)、[`home_highlights.yaml`](file:///f:/Notes/data/home_highlights.yaml) 当前无 diagnostics 报错
+- `hugo --renderToMemory --themesDir themes --theme blowfish --config hugo.toml` 构建通过
+
+---
+
+## 2026-06-27 · 首页封面重构为“真首页式封面”
+
+### 改动
+
+| 文件 | 改动 |
+|---|---|
+| [layouts/partials/home/custom.html](file:///f:/Notes/layouts/partials/home/custom.html) | 首页主体从“居中 CTA + Start Here 展开区”改为“上方 masthead + 下方三组 highlights”；移除封面专用主题切换与首页专属假 header 逻辑，直接复用主题原生 header |
+| [assets/css/_08_cover.css](file:///f:/Notes/assets/css/_08_cover.css) | 删除首页对主题 header 的隐藏规则，保留暖白、grain、上下花边、左右黑花与古典分隔符；重写首页 masthead 与三列 highlights 样式，并补移动端纵向堆叠 |
+| [data/home_highlights.yaml](file:///f:/Notes/data/home_highlights.yaml) | 新增首页精选数据文件，独立维护 `Daily / Docs / Works Highlights` 的分组说明、组级入口与手动精选条目 |
+| [content/_index.md](file:///f:/Notes/content/_index.md) | 同步首页注释说明，标明首页现在由 `cover.yaml` + `home_highlights.yaml` 驱动 |
+| [PROJECT_MAP.md](file:///f:/Notes/PROJECT_MAP.md) | 同步首页维护入口、数据源和当前首页结构说明 |
+
+### 结果
+
+- 首页现在直接显示与内页一致的主题原生 header，不再靠 `_08_cover.css` 隐藏 header 再另做一套首页专用交互
+- 首屏信息层级从“两个大按钮”切换成“轻量个人 intro + 精选导览”，头像、名字、副标题、统计仍保留，但不再压住整页重心
+- 原有暖白衬线、grain、上下流动花边、左右黑花和古典分隔符都保留下来，没有被改成普通博客首页
+- 首页精选改为完全数据驱动；以后换首页推荐内容，优先改 [`data/home_highlights.yaml`](file:///f:/Notes/data/home_highlights.yaml)，不用再动模板本体
+- 旧的 [`data/start_here.yaml`](file:///f:/Notes/data/start_here.yaml) 目前不再参与首页渲染，但文件先保留作历史参考，避免贸然删除带来回溯困难
+
+### 验证
+
+- `GetDiagnostics`：[`custom.html`](file:///f:/Notes/layouts/partials/home/custom.html) 与 [`_08_cover.css`](file:///f:/Notes/assets/css/_08_cover.css) 当前无 diagnostics 报错
+
+---
+
 ## 2026-06-27 · Notes 接入 Firebase 阅读数与点赞
 
 ### 改动

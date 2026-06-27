@@ -1,8 +1,8 @@
 {{/*
-  Cover-page custom layout — v2 (Claude-inspired)
+  Home cover layout — v4
   ----------------------------------------------------------------
-  设计语言：极简 · 衬线 · 暖白 · 古典分隔符 · 缓慢淡入
-  数据来源：data/cover.yaml
+  设计语言：暖白衬线 · 古典花边 · 首页式导览
+  数据来源：data/cover.yaml + data/home_highlights.yaml
   ----------------------------------------------------------------
 */}}
 {{ $cfg := index hugo.Data "cover" "cover" }}
@@ -12,38 +12,12 @@
   "kicker" ""
   "epigraph" ""
   "avatar" ""
-  "background" ""
   "show_stats" false
-  "entrance" (dict "label" "进入" "href" "/about/")
-  "social" (slice)
-  "decorations" (slice)
-  "palette" (dict
-    "background_from" "#FAF9F5"
-    "background_to"   "#F1EFE9"
-    "title_color"     "#1F1E1D"
-    "subtitle_color"  "#6B6962"
-    "kicker_color"    "#999995"
-    "line_color"      "#C9C7BF"
-    "epigraph_color"  "#8A8880"
-    "button_border"   "#1F1E1D"
-    "button_text"     "#1F1E1D"
-    "button_hover_bg" "#1F1E1D"
-    "button_hover_fg" "#FAF9F5"
-    "social_color"    "#6B6962"
-    "social_hover"    "#1F1E1D"
-    "accent"          "#D97757"
-  )
 ) $cfg }}
-
-{{ $pal := $cfg.palette }}
-{{ $ent := $cfg.entrance }}
-{{ $startHere := index hugo.Data "start_here" }}
-{{/* 以下这段文字渲染实际已经由data/start_here.yaml控制 留着只是作为兜底 */}}
-{{ $startHere = default (dict
-  "section_kicker" "Start Here"
-  "section_text" "Three good openings: the newest note, the music page, and the projects area. Start anywhere, then use the top navigation when you want to keep exploring."
-  "items" (slice)
-) $startHere }}
+{{ $highlights := index hugo.Data "home_highlights" }}
+{{ $highlights = default (dict
+  "sections" (slice)
+) $highlights }}
 
 {{/*
   调色板：用 <style> 块写而不是 inline `style=""`
@@ -51,9 +25,8 @@
   会盖掉暗色覆写，导致封面"叠"在主题切换之上。
   <style> 块里的 `.cover-page` 只有 (0,1,0)，暗色覆写可以稳定赢。
 
-  v3 改动：--pal-* 不再写死颜色值，全部派生自全局变量（--bg-base / --line / --accent 等）。
-  这样改一个全局变量，封面 + 后续页面 + blowfish utility 全部跟着变，保持一致。
-  data/cover.yaml 里的 palette 字段保留（兼容旧配置），但实际渲染以 var() 为准。
+  v4 约定：首页封面颜色全部派生自全局变量（--bg-base / --line / --accent 等）。
+  这样改一个全局变量，封面 + 后续页面 + blowfish utility 全部一起变化。
 */}}
 <style class="cover-palette">
   .cover-page {
@@ -68,29 +41,11 @@
     --pal-btn-fg:  var(--fg-base);
     --pal-btn-hbg: var(--fg-base);
     --pal-btn-hfg: var(--bg-base);
-    --pal-social:  var(--fg-mute);
-    --pal-social-h:var(--fg-base);
     --pal-accent:  var(--accent);
   }
 </style>
 
 <div class="cover-page">
-
-  {{/* 主题切换按钮（封面专用 · 右上角 · 避开顶部黑色花边） */}}
-  <button
-    id="appearance-switcher-cover"
-    aria-label="Dark mode switcher"
-    type="button"
-    class="cover-theme-toggle"
-    title="切换明暗主题">
-    <span class="cover-theme-toggle-icon dark:hidden">
-      {{ partial "cover/icon.html" (dict "name" "moon" "size" 18) }}
-    </span>
-    <span class="cover-theme-toggle-icon hidden dark:flex">
-      {{ partial "cover/icon.html" (dict "name" "sun" "size" 18) }}
-    </span>
-  </button>
-
   {{/* 噪点叠加 */}}
   <div class="cover-grain" aria-hidden="true"></div>
 
@@ -100,9 +55,9 @@
 
   {{/* 背景花朵（只保留黑花，避免色彩抢正文） */}}
   <div class="cover-flowers" aria-hidden="true">
-    {{ range $clusterIndex, $cluster := slice
+    {{ range $cluster := slice
       (dict
-        "clusterClass" "cover-flower-cluster--left"
+        "clusterClass" "cover-flower-cluster--top-left"
         "items" (slice
           (dict "file" "黑色花.png" "class" "cover-flower-black" "w" 242 "x" 18 "y" 4  "r" -11 "o" 0.35)
           (dict "file" "黑色花.png" "class" "cover-flower-black" "w" 308 "x" -4 "y" 34 "r" 9 "o" 0.48)
@@ -110,7 +65,23 @@
         )
       )
       (dict
-        "clusterClass" "cover-flower-cluster--right"
+        "clusterClass" "cover-flower-cluster--top-right"
+        "items" (slice
+          (dict "file" "黑色花.png" "class" "cover-flower-black" "w" 242 "x" 18 "y" 4  "r" -11 "o" 0.35)
+          (dict "file" "黑色花.png" "class" "cover-flower-black" "w" 308 "x" -4 "y" 34 "r" 9 "o" 0.48)
+          (dict "file" "黑色花.png" "class" "cover-flower-black cover-flower-soft" "w" 168 "x" 30 "y" 80 "r" -3 "o" 0.27)
+        )
+      )
+      (dict
+        "clusterClass" "cover-flower-cluster--bottom-left"
+        "items" (slice
+          (dict "file" "黑色花.png" "class" "cover-flower-black" "w" 242 "x" 18 "y" 4  "r" -11 "o" 0.35)
+          (dict "file" "黑色花.png" "class" "cover-flower-black" "w" 308 "x" -4 "y" 34 "r" 9 "o" 0.48)
+          (dict "file" "黑色花.png" "class" "cover-flower-black cover-flower-soft" "w" 168 "x" 30 "y" 80 "r" -3 "o" 0.27)
+        )
+      )
+      (dict
+        "clusterClass" "cover-flower-cluster--bottom-right"
         "items" (slice
           (dict "file" "黑色花.png" "class" "cover-flower-black" "w" 242 "x" 18 "y" 4  "r" -11 "o" 0.35)
           (dict "file" "黑色花.png" "class" "cover-flower-black" "w" 308 "x" -4 "y" 34 "r" 9 "o" 0.48)
@@ -118,7 +89,7 @@
         )
       )
     }}
-      <div class="cover-flower-cluster {{ $cluster.clusterClass }}" style="animation-delay: {{ mul $clusterIndex 0.18 }}s;">
+      <div class="cover-flower-cluster {{ $cluster.clusterClass }}">
         {{ range $cluster.items }}
         <img
           src="/image/{{ .file }}"
@@ -147,40 +118,49 @@
   </div>
 
   <main class="cover-content">
-    {{ with $cfg.kicker }}
-    <p class="cover-kicker" data-splitting>{{ . }}</p>
-    {{ else }}
-    <p class="cover-kicker">PRO TEMPLUM</p>
-    {{ end }}
+    <section class="cover-masthead">
+      {{ with $cfg.kicker }}
+      <p class="cover-kicker">{{ . }}</p>
+      {{ else }}
+      <p class="cover-kicker">PRO TEMPLUM</p>
+      {{ end }}
 
-    {{ with $cfg.avatar }}
-    <img
-      class="cover-avatar"
-      src="{{ . | relURL }}"
-      alt="lyrumu"
-      width="88"
-      height="88"
-      loading="eager"
-      decoding="async"
-      fetchpriority="high" />
-    {{ end }}
+      <div class="cover-identity">
+        {{ with $cfg.avatar }}
+        <img
+          class="cover-avatar"
+          src="{{ . | relURL }}"
+          alt="lyrumu"
+          width="88"
+          height="88"
+          loading="eager"
+          decoding="async"
+          fetchpriority="high" />
+        {{ end }}
 
-    <h1 class="cover-title" data-splitting>{{ $cfg.title }}</h1>
+        <div class="cover-identity-copy">
+          <h1 class="cover-title">{{ $cfg.title }}</h1>
 
-    {{ with $cfg.epigraph }}
-    <p class="cover-epigraph">{{ . }}</p>
-    {{ end }}
+          {{ with $cfg.epigraph }}
+          <p class="cover-epigraph">{{ . }}</p>
+          {{ end }}
 
-    {{ with $cfg.subtitle }}
-    <p class="cover-subtitle">{{ . }}</p>
-    {{ end }}
+          {{ if or $cfg.subtitle $cfg.show_stats }}
+          <div class="cover-info-island">
+            {{ with $cfg.subtitle }}
+            <p class="cover-subtitle">{{ . }}</p>
+            {{ end }}
 
-    {{/* 站点统计走 partial 复用，避免把 shortcode 语法塞进 data/cover.yaml。 */}}
-    {{ if $cfg.show_stats }}
-    <div class="cover-stats">
-      {{ partial "site-stats.html" . }}
-    </div>
-    {{ end }}
+            {{ if $cfg.show_stats }}
+            <div class="cover-stats">
+              {{ partial "site-stats.html" . }}
+            </div>
+            {{ end }}
+          </div>
+          {{ end }}
+        </div>
+      </div>
+    </section>
 
     {{/* 古典装饰分隔符 */}}
     <div class="cover-divider" aria-hidden="true">
@@ -189,96 +169,74 @@
       <span class="cover-divider-rule"></span>
     </div>
 
-    <div class="cover-actions">
-      <a href="/about/" class="cover-button">
-        <span class="cover-button-label">Get To Know Me</span>
-        <span class="cover-button-arrow" aria-hidden="true">→</span>
-      </a>
-      <button
-        type="button"
-        class="cover-button"
-        id="cover-start-here-trigger"
-        aria-expanded="false"
-        aria-controls="cover-start-here">
-        <span class="cover-button-label">Start Here</span>
-        <span class="cover-button-arrow" aria-hidden="true">→</span>
-      </button>
-    </div>
-
-    <section class="cover-showcase" id="cover-start-here" aria-label="Start here" hidden>
-      <div class="cover-showcase-head">
-        <span class="cover-showcase-kicker">{{ $startHere.section_kicker }}</span>
-        <p class="cover-showcase-text">
-          {{ $startHere.section_text }}
-        </p>
-      </div>
-      <div class="cover-showcase-grid">
-        {{ range $item := $startHere.items }}
-          {{ $target := "" }}
-          {{ with site.GetPage $item.path }}{{ $target = . }}{{ end }}
-          {{ with $target }}
-          <a href="{{ .RelPermalink }}" class="cover-feature-card">
-            <span class="cover-feature-tag">{{ $item.tag }}</span>
-            <strong class="cover-feature-title">{{ $item.title | default .Title }}</strong>
-            <span class="cover-feature-desc">{{ $item.desc | default (.Description | default "") }}</span>
-            <span class="cover-feature-link">{{ $item.link_text | default "Open" }} →</span>
-          </a>
+    <section class="cover-highlights" aria-label="Home highlights">
+      {{/* 手动精选：只读 data/home_highlights.yaml 的 sections */}}
+      <div class="cover-highlights-grid">
+        {{ range $section := $highlights.sections }}
+          {{ $sectionHref := $section.cta_path }}
+          {{ $sectionExternal := or (strings.HasPrefix $sectionHref "http://") (strings.HasPrefix $sectionHref "https://") }}
+          {{ $sectionPage := "" }}
+          {{ if and $sectionHref (not $sectionExternal) }}
+            {{ with site.GetPage $sectionHref }}{{ $sectionPage = . }}{{ end }}
           {{ end }}
+          <section class="cover-highlight-column cover-highlight-column--{{ $section.id }}">
+            <div class="cover-highlight-head">
+              <div class="cover-highlight-heading">
+                {{ with $section.kicker }}
+                <p class="cover-highlight-kicker">{{ . }}</p>
+                {{ end }}
+                <h3 class="cover-highlight-title">{{ $section.title }}</h3>
+              </div>
+            </div>
+
+            {{ with $section.desc }}
+            <p class="cover-highlight-text">{{ . }}</p>
+            {{ end }}
+
+            <div class="cover-highlight-items">
+              {{ range $item := $section.items }}
+                {{ $href := $item.path }}
+                {{ $isExternal := or (strings.HasPrefix $href "http://") (strings.HasPrefix $href "https://") }}
+                {{ $targetPage := "" }}
+                {{ if and $href (not $isExternal) }}
+                  {{ with site.GetPage $href }}{{ $targetPage = . }}{{ end }}
+                {{ end }}
+                {{ if or $isExternal $targetPage }}
+                  {{ $badge := or $item.label $item.tag }}
+                  {{ $title := $item.title }}
+                  {{ if and (not $title) $targetPage }}{{ $title = $targetPage.Title }}{{ end }}
+                  {{ $desc := $item.desc }}
+                  {{ if and (not $desc) $targetPage }}{{ $desc = ($targetPage.Params.description | default $targetPage.Description) }}{{ end }}
+                  <a
+                    href="{{ if $targetPage }}{{ $targetPage.RelPermalink }}{{ else }}{{ $href | safeURL }}{{ end }}"
+                    class="cover-highlight-item"
+                    {{ if $isExternal }}target="_blank" rel="noopener noreferrer"{{ end }}>
+                    {{ with $badge }}
+                    <span class="cover-highlight-item-label">{{ . }}</span>
+                    {{ end }}
+                    <strong class="cover-highlight-item-title">{{ $title }}</strong>
+                    {{ with $desc }}
+                    <span class="cover-highlight-item-desc">{{ . }}</span>
+                    {{ end }}
+                    <span class="cover-highlight-item-link">{{ $item.link_text | default "Open" }} →</span>
+                  </a>
+                {{ end }}
+              {{ end }}
+            </div>
+
+            {{ if or $sectionExternal $sectionPage }}
+            <div class="cover-highlight-footer">
+              <a
+                href="{{ if $sectionPage }}{{ $sectionPage.RelPermalink }}{{ else }}{{ $sectionHref | safeURL }}{{ end }}"
+                class="cover-highlight-footer-link"
+                {{ if $sectionExternal }}target="_blank" rel="noopener noreferrer"{{ end }}>
+                {{ $section.cta_label | default (printf "Open %s" $section.title) }} →
+              </a>
+            </div>
+            {{ end }}
+          </section>
         {{ end }}
       </div>
     </section>
   </main>
 </div>
-
-<script>
-  // Splitting.js 启动后再打上 .is-ready 类，启用逐字入场动画
-  document.addEventListener('DOMContentLoaded', function () {
-    requestAnimationFrame(function () {
-      if (window.Splitting) {
-        Splitting({ target: '[data-splitting]' });
-      }
-      document.querySelector('.cover-page')?.classList.add('is-ready');
-    });
-  });
-
-  // 封面主题切换：转发到顶栏的 appearance-switcher（沿用同一份持久化逻辑）
-  // 之所以不直接绑自己的 listener：blowfish appearance.js 里读
-  // localStorage、updateLogo、updateMermaidTheme 都只挂在那个按钮上，
-  // 转发 .click() 能 100% 复用同一套状态。
-  (function () {
-    var coverBtn = document.getElementById('appearance-switcher-cover');
-    if (!coverBtn) return;
-    coverBtn.addEventListener('click', function () {
-      var main = document.getElementById('appearance-switcher');
-      if (main) main.click();
-      else {
-        // 兜底：万一某天顶栏按钮没了，自己手动切
-        document.documentElement.classList.toggle('dark');
-        try {
-          localStorage.setItem('appearance',
-            document.documentElement.classList.contains('dark') ? 'dark' : 'light');
-        } catch (e) {}
-      }
-    });
-  })();
-
-  (function () {
-    var trigger = document.getElementById('cover-start-here-trigger');
-    var panel = document.getElementById('cover-start-here');
-    if (!trigger || !panel) return;
-
-    trigger.addEventListener('click', function () {
-      if (panel.hasAttribute('hidden')) {
-        panel.removeAttribute('hidden');
-        panel.classList.remove('cover-showcase--revealed');
-        void panel.offsetWidth;
-        panel.classList.add('cover-showcase--revealed');
-        trigger.setAttribute('aria-expanded', 'true');
-      }
-
-      requestAnimationFrame(function () {
-        panel.scrollIntoView({ behavior: 'smooth', block: 'start' });
-      });
-    });
-  })();
-</script>

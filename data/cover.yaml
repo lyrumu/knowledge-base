@@ -1,77 +1,18 @@
 # =============================================================================
-# 封面页（/）的配置 — v2 (Claude-inspired)
-# 想改标题/副标题/入口按钮/社交链接/调色？只动这一个文件就够了。
-# 详细使用见 content/_index.md 顶部注释。
+# 首页 masthead 配置
+# 当前只保留首页真实在用的字段：
+# - title / kicker / subtitle / epigraph
+# - avatar / show_stats
+# - repo_url（顶栏 GitHub 按钮）
+# 颜色统一走 assets/css/_01_tokens.css，全站一起改。
 # =============================================================================
 cover:
-  # --- 核心信息 -----------------------------------------------------------
-  title: "Hi,i'm lyrumu"
-
-  # 顶部小标（衬线大写间距大）
-  # 例： "PRO TEMPLUM"  /  "PERSONAL · 2026"
+  title: "lyrumu"
   kicker: "PRO TEMPLUM"
+  subtitle: ""
+  epigraph: "Remembering the deceased"
 
-  # 副标题（短句）
-  subtitle: "Welcome to my personal website"
-
-  # 题词 / 引文（衬线斜体小字，标题与副标题之间）
-  epigraph: ""
-
-  # 是否在封面显示站点统计摘要（notes / tags / days online / last updated）
-  # 说明：这里只控制显示开关，实际渲染逻辑在 partial，不要把 {{< site-stats >}} 直接写进 YAML
+  # 这里只控制首页是否显示站点统计；实际统计逻辑在 layouts/partials/site-stats.html
   show_stats: true
-
-  # --- 装饰（路径可留空 = 不显示） ---------------------------------------
-  # 路径相对于 /static/，如 "img/avatar.png" → /static/img/avatar.png
   avatar: "image/melody.png"
-  # 背景图路径（修复中文文件名显示问题，建议改用英文文件名避免编码兼容问题）
-  # 背景图路径，需将图片放置在 /static/ 目录下，路径相对于static文件夹填写
-  # 例如将图片放在static/image/bedrock_mc.png，就填 "image/bedrock_mc.png"
-  # 如果依旧不显示，请检查：1. 图片路径是否正确 2. 图片文件名是否为英文 3. 主题封面页模板是否支持自定义背景图
-  background: "image/bedrock_mc.png"
-
-  # --- 项目仓库链接（顶栏 GitHub 按钮用） -------------------------------
-  # 这是"网站本身的项目仓库"，区别于 social 里的"个人 GitHub"
-  # 留空 = 顶栏不显示 GitHub 按钮
   repo_url: "https://github.com/lyrumu/knowledge-base"
-
-  # --- 入口按钮 -----------------------------------------------------------
-  # 2026-06-24：href 从 /start/ 改为 /about/
-  # 原因：删除 /start/ 索引页后，封面直达 about me（"个人展示站"主入口）
-  entrance:
-    label: "Have a look?"
-    href: "/about/"
-
-  # --- 社交链接（封面底部"显眼位置"） -----------------------------------
-  # 加新链接 = 加一项即可。可用 icon 见 layouts/partials/cover/icon.html
-  #   github / mail / twitter / bilibili / rss / link
-  social:
-    - name: "GitHub"
-      url: "https://github.com/lyrumu"
-      icon: "github"
-      title: "@lyrumu"
-    - name: "Google Email"
-      url: "https://mail.google.com/mail/?view=cm&fs=1&to=llyrumu@gmail.com"
-      icon: "mail"
-      title: "llyrumu@gmail.com"
-
-  # --- 装饰元素（预留扩展位） -------------------------------------------
-  decorations: []
-
-  # --- 调色（可覆盖主题默认色） -----------------------------------------
-  # 默认是暖白底（Claude 风）。打开暗色模式会自动反相。
-  palette:
-    background_from: "#FAF9F5"
-    background_to:   "#F1EFE9"
-    title_color:     "#1F1E1D"
-    subtitle_color:  "#6B6962"
-    kicker_color:    "#999995"
-    line_color:      "#C9C7BF"
-    epigraph_color:  "#8A8880"
-    button_border:   "#1F1E1D"
-    button_text:     "#1F1E1D"
-    button_hover_bg: "#1F1E1D"
-    button_hover_fg: "#FAF9F5"
-    social_color:    "#6B6962"
-    social_hover:    "#1F1E1D"
-    accent:          "#D97757"

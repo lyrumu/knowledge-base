@@ -1,49 +1,28 @@
 /* =============================================================================
-   _cover.css — 封面页（全屏居中 + 暖白衬线 + 古典分隔符 + 缓慢淡入）
+   _cover.css — 首页封面（保留古典封面气质，但重构为真正的首页）
    ----------------------------------------------------------------------------
-   来源：原 custom.css §1 - §13, §18, §19, §20, §28, §31 cover-theme-toggle
+   来源：原 custom.css §1 - §13, §18, §19, §20
    ----------------------------------------------------------------------------
-   本文件包含封面页"完整外观"所需的所有样式：
-     1.  顶栏隐藏（body.is-cover-page）
-     2.  全屏容器（.cover-page）
-     3.  噪点叠加 / 装饰花边 / 四角花朵
-     4.  顶部 eyebrow / kicker / title / epigraph / subtitle / divider / button / social / footnote
-     5.  Splitting.js 字符级入场
-     6.  通用淡入动画 @keyframes
-     7.  主题切换按钮（封面专用）
-     8.  旧的 aurora 装饰（保留 display:none 兜底）
-
-   关键策略（v3）：
-     封面态判断从 `body:has(.cover-page)` 改为 `body.is-cover-page`：
-       - class 由 baseof.html 在首页 server-side 注入
-       - specificity 起步 (0,5,0)，规则全部可以去掉 !important
+  本文件包含首页封面的完整外观：
+    1.  首页沿用全站版心（保留主题原生 header）
+    2.  收束式封面背景 + 噪点 + 花边 + 左右花束
+    3.  上方 intro / masthead
+    4.  下方三列 highlights 导览
+    5.  共享的 Splitting 基础与 cover-fade 关键帧（供 page-hero 复用）
+    6.  旧 aurora 装饰兜底隐藏
    ============================================================================= */
 
 /* =============================================================================
-   1. 封面页：隐藏顶栏 + 全屏 + 顶栏间距清零
+   1. 首页：保留主题原生 header，并沿用全站相同版心
    ============================================================================= */
-
-/* 1.1 隐藏 blowfish 顶栏（fixed inset-x-0 z-100 是 header 的 Tailwind 类） */
-body.is-cover-page .fixed.inset-x-0.z-100 {
-  display: none;
-}
-
-/* 1.2 隐藏顶栏下方的占位 div（blowfish 给 header 留了 148px 高度） */
-body.is-cover-page .min-h-\[148px\] {
-  display: none;
-}
-
-/* 1.3 取消 main 顶部 padding（顶栏被隐藏后这段空隙是多余的） */
 body.is-cover-page main#main-content {
   padding-top: 0;
 }
 
-/* 1.4 取消 main 外层容器的 min-height（让封面可以全屏撑开） */
-body.is-cover-page > div.relative.flex.flex-col.grow {
-  min-height: 0;
+body.is-cover-page .min-h-\[148px\] {
+  min-height: 5.1rem;
 }
 
-/* 1.5 取消 article 自身的宽度/边距限制（让 .cover-page 撑满 100vw） */
 body.is-cover-page main#main-content > article {
   max-width: none;
   padding: 0;
@@ -54,12 +33,11 @@ body.is-cover-page main#main-content > article {
    2. 封面页：背景 + 噪点
    ============================================================================= */
 .cover-page {
+  /* 让封面本体比正文版心略宽一点，但不改 header 的横向位置。 */
+  --cover-bleed: clamp(2rem, 4vw, 4.5rem);
   position: relative;
-  /* 强制撑满整个视窗宽度（不受父 article/main 容器 max-width 限制）*/
-  width: 100vw;
-  margin-left: calc(50% - 50vw);
-  min-height: 100vh;
-  min-height: 100dvh;
+  width: calc(100% + var(--cover-bleed));
+  margin-inline: calc(var(--cover-bleed) / -2);
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -69,10 +47,10 @@ body.is-cover-page main#main-content > article {
                               var(--pal-bg-to,   var(--bg-deep)) 100%);
   overflow: hidden;
   isolation: isolate;
-  padding: clamp(4rem, 4.8vh, 5rem) 4vw clamp(4.25rem, 5.2vh, 5.6rem);
+  border-radius: 1.6rem;
+  padding: clamp(0.85rem, 1.6vw, 1.45rem) clamp(1.1rem, 2vw, 1.8rem) clamp(4rem, 5vw, 5.3rem);
 }
 
-/* 噪点叠加（极轻 ~3%） */
 .cover-grain {
   position: absolute;
   inset: 0;
@@ -93,7 +71,7 @@ html.dark .cover-grain {
    ============================================================================= */
 .cover-eyebrow {
   position: absolute;
-  top: clamp(1.5rem, 4vh, 3rem);
+  top: clamp(-0.2rem, 0.35vw, 0.32rem);
   left: 50%;
   transform: translateX(-50%);
   display: flex;
@@ -120,23 +98,29 @@ html.dark .cover-grain {
 }
 
 /* =============================================================================
-   4. 封面页：内容容器（垂直居中）
+   4. 封面页：内容容器
    ============================================================================= */
 .cover-content {
   position: relative;
   z-index: 5;
   width: 100%;
-  max-width: 56rem;
-  text-align: center;
+  max-width: 100rem;
   display: flex;
   flex-direction: column;
-  align-items: center;
-  margin-top: clamp(3.9rem, 7vh, 5.8rem);
+  align-items: flex-start;
+  margin-top: clamp(2.1rem, 2.8vw, 3rem);
 }
 
 /* =============================================================================
-   5. 封面页：kicker (顶部小字 / 衬线大写)
+   5. 上方 masthead
    ============================================================================= */
+.cover-masthead {
+  width: min(46rem, 100%);
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+}
+
 .cover-kicker {
   font-family: var(--font-serif-display);
   font-size: 0.78rem;
@@ -144,31 +128,38 @@ html.dark .cover-grain {
   letter-spacing: 0.42em;
   text-transform: uppercase;
   color: var(--pal-kicker, var(--fg-soft));
-  margin: 0 0 1.1rem;
+  margin: 0 0 0.8rem;
   font-feature-settings: "smcp" on;
 }
 
-/* =============================================================================
-   6. 封面页：avatar (可选)
-   ============================================================================= */
-.cover-avatar {
-  width: 5.5rem;
-  height: 5.5rem;
-  border-radius: 9999px;
-  object-fit: cover;
-  margin: 0 auto 0.95rem;
-  border: 1px solid var(--pal-line, var(--line));
-  filter: grayscale(10%) contrast(1.02);
-  opacity: 0;
-  animation: cover-fade 1.6s cubic-bezier(0.22, 0.61, 0.36, 1) 0.2s forwards;
+.cover-identity {
+  display: flex;
+  align-items: flex-start;
+  gap: 1.15rem;
+  width: 100%;
 }
 
-/* =============================================================================
-   7. 封面页：主标题 (大号衬线)
-   ============================================================================= */
+.cover-avatar {
+  width: 4.85rem;
+  height: 4.85rem;
+  border-radius: 9999px;
+  object-fit: cover;
+  margin: 0;
+  border: 1px solid var(--pal-line, var(--line));
+  filter: grayscale(10%) contrast(1.02);
+  opacity: 1;
+}
+
+.cover-identity-copy {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  min-width: 0;
+}
+
 .cover-title {
   font-family: var(--font-serif-display);
-  font-size: clamp(2.55rem, 8.9vw, 5.8rem);
+  font-size: clamp(2.8rem, 6vw, 5rem);
   font-weight: 400;
   font-style: normal;
   letter-spacing: -0.045em;
@@ -179,49 +170,57 @@ html.dark .cover-grain {
   font-variation-settings: "opsz" 144, "SOFT" 50;
 }
 
-/* =============================================================================
-   8. 封面页：epigraph (题词 / 衬线斜体)
-   ============================================================================= */
 .cover-epigraph {
   font-family: var(--font-serif-body);
   font-style: italic;
-  font-weight: 300;
+  font-weight: 400;
   font-size: clamp(1rem, 1.8vw, 1.2rem);
-  color: var(--pal-epi, var(--fg-soft));
-  margin: 1.2rem auto 0;
-  max-width: 36rem;
+  color: color-mix(in srgb, var(--pal-epi, var(--fg-soft)) 80%, var(--pal-title, var(--fg-base)) 20%);
+  margin: 0.95rem 0 0;
+  max-width: 34rem;
   line-height: 1.55;
-  opacity: 0;
-  animation: cover-fade 1.4s cubic-bezier(0.22, 0.61, 0.36, 1) 0.7s forwards;
+  opacity: 1;
 }
 
-/* =============================================================================
-   9. 封面页：subtitle (副标题)
-   ============================================================================= */
+.cover-info-island {
+  width: min(42rem, 100%);
+  align-self: center;
+  margin-top: 1rem;
+  padding: 1rem 1.25rem 1.05rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.8rem;
+  text-align: center;
+  border: 1px solid color-mix(in srgb, var(--pal-line, var(--line)) 82%, transparent);
+  border-radius: 1.3rem;
+  background: color-mix(in srgb, var(--pal-bg-from, var(--bg-base)) 82%, transparent);
+  box-shadow: 0 10px 24px color-mix(in srgb, var(--fg-base) 4%, transparent);
+  backdrop-filter: blur(2px);
+}
+
 .cover-subtitle {
   font-family: var(--font-serif-body);
   font-size: clamp(0.95rem, 1.6vw, 1.15rem);
-  font-weight: 400;
+  font-weight: 500;
   letter-spacing: 0.02em;
-  margin: 0.7rem auto 0;
-  color: var(--pal-sub, var(--fg-mute));
-  max-width: 32rem;
-  opacity: 0;
-  animation: cover-fade 1.4s cubic-bezier(0.22, 0.61, 0.36, 1) 0.85s forwards;
+  margin: 0;
+  color: color-mix(in srgb, var(--pal-sub, var(--fg-mute)) 72%, var(--pal-title, var(--fg-base)) 28%);
+  max-width: 38rem;
+  text-align: center;
+  opacity: 1;
 }
 
-/* =============================================================================
-   10. 封面页：站点统计摘要
-   ============================================================================= */
 .cover-stats {
-  margin-top: 1.1rem;
-  opacity: 0;
-  animation: cover-fade 1.4s cubic-bezier(0.22, 0.61, 0.36, 1) 0.95s forwards;
+  width: 100%;
+  opacity: 1;
 }
 
 .cover-stats .site-stats {
   justify-content: center;
+  gap: 0.55rem 0.9rem;
   margin-top: 0;
+  text-align: center;
   color: var(--pal-sub, var(--fg-mute));
 }
 
@@ -230,42 +229,175 @@ html.dark .cover-grain {
 }
 
 /* =============================================================================
-   11. 封面页：古典分隔符
+   6. 封面页：古典分隔符
    ============================================================================= */
 .cover-divider {
-  margin: 1.5rem auto 1.35rem;
-  width: clamp(14rem, 22vw, 22rem);
-  opacity: 0;
-  animation: cover-fade 1.2s cubic-bezier(0.22, 0.61, 0.36, 1) 1.05s forwards;
-}
-
-/* =============================================================================
-   12. 封面页：按钮 (复古带边框)
-   ============================================================================= */
-.cover-button {
-  display: inline-flex;
-  align-items: center;
-  gap: 0.75rem;
-  padding: 1.02rem 2.5rem;
-  border: 1.5px solid var(--pal-btn-bd, var(--fg-base));
-  border-radius: 9999px;
-  font-family: var(--font-serif-display);
-  font-size: 0.98rem;
-  font-weight: 500;
-  letter-spacing: 0.18em;
-  text-transform: uppercase;
-  text-decoration: none !important;
-  color: var(--pal-btn-fg, var(--fg-base));
-  background: transparent;
-  cursor: pointer;
-  position: relative;
-  overflow: hidden;
-  transition: color 0.45s cubic-bezier(0.22, 0.61, 0.36, 1),
-              border-color 0.45s cubic-bezier(0.22, 0.61, 0.36, 1);
+  margin: 1.95rem 0 1.5rem;
+  width: 100%;
   opacity: 1;
 }
 
-.cover-button::before {
+/* =============================================================================
+   7. 首页精选导览
+   ============================================================================= */
+.cover-highlights {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+  opacity: 1;
+}
+
+.cover-highlight-kicker {
+  margin: 0;
+  font-family: var(--font-mono);
+  font-size: 0.68rem;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: var(--pal-accent, var(--accent));
+}
+
+.cover-highlight-text {
+  margin: 0;
+  font-family: var(--font-serif-body);
+  font-size: 0.92rem;
+  line-height: 1.65;
+  color: color-mix(in srgb, var(--pal-sub, var(--fg-mute)) 68%, var(--pal-title, var(--fg-base)) 32%);
+  font-weight: 500;
+}
+
+.cover-highlights-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(18.75rem, 100%), 1fr));
+  gap: 1rem;
+}
+
+.cover-highlight-column {
+  display: flex;
+  flex-direction: column;
+  min-height: 100%;
+  padding: 1.2rem 1.1rem 1.15rem;
+  border: 1px solid color-mix(in srgb, var(--pal-line, var(--line)) 82%, transparent);
+  border-radius: 1.4rem;
+  background: color-mix(in srgb, var(--pal-bg-from, var(--bg-base)) 78%, transparent);
+  box-shadow: 0 10px 28px color-mix(in srgb, var(--fg-base) 5%, transparent);
+}
+
+.cover-highlight-head {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 0.75rem;
+}
+
+.cover-highlight-heading {
+  display: flex;
+  flex-direction: column;
+  gap: 0.28rem;
+}
+
+.cover-highlight-title {
+  margin: 0;
+  font-family: var(--font-serif-display);
+  font-size: 1.5rem;
+  font-weight: 400;
+  line-height: 1.15;
+  color: var(--pal-title, var(--fg-base));
+}
+
+.cover-highlight-text {
+  margin-top: 0.72rem;
+}
+
+.cover-highlight-items {
+  display: flex;
+  flex-direction: column;
+  gap: 0.78rem;
+  margin-top: 0.95rem;
+}
+
+.cover-highlight-item {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 0.38rem;
+  min-height: 9.35rem;
+  padding: 0.9rem 0.95rem 0.95rem;
+  border-radius: 1rem;
+  border: 1px solid color-mix(in srgb, var(--pal-line, var(--line)) 88%, transparent);
+  background: color-mix(in srgb, var(--pal-bg-to, var(--bg-deep)) 22%, transparent);
+  text-decoration: none !important;
+  transition: transform 0.35s cubic-bezier(0.22, 0.61, 0.36, 1),
+              border-color 0.35s,
+              background 0.35s,
+              box-shadow 0.35s;
+}
+
+.cover-highlight-item:hover {
+  transform: translateY(-2px);
+  border-color: color-mix(in srgb, var(--pal-accent, var(--accent)) 36%, var(--pal-line, var(--line)));
+  background: color-mix(in srgb, var(--pal-accent, var(--accent)) 6%, transparent);
+  box-shadow: 0 10px 24px color-mix(in srgb, var(--fg-base) 6%, transparent);
+}
+
+.cover-highlight-item-label {
+  font-family: var(--font-mono);
+  font-size: 0.64rem;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--pal-accent, var(--accent));
+}
+
+.cover-highlight-item-title {
+  font-family: var(--font-serif-display);
+  font-size: 1.04rem;
+  font-weight: 500;
+  line-height: 1.28;
+  color: var(--pal-title, var(--fg-base));
+  text-align: left;
+}
+
+.cover-highlight-item-desc {
+  font-family: var(--font-serif-body);
+  font-size: 0.84rem;
+  line-height: 1.58;
+  color: var(--pal-sub, var(--fg-mute));
+  text-align: left;
+}
+
+.cover-highlight-item-link,
+.cover-highlight-footer-link {
+  font-family: var(--font-serif-display);
+  font-size: 0.78rem;
+  letter-spacing: 0.08em;
+  color: var(--pal-title, var(--fg-base));
+  text-decoration: none !important;
+}
+
+.cover-highlight-item-link {
+  margin-top: auto;
+}
+
+.cover-highlight-footer {
+  margin-top: auto;
+  padding-top: 0.92rem;
+}
+
+.cover-highlight-footer-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.72rem 1.35rem;
+  border: 1.5px solid var(--pal-btn-bd, var(--fg-base));
+  border-radius: 9999px;
+  position: relative;
+  overflow: hidden;
+  transition: color 0.45s cubic-bezier(0.22, 0.61, 0.36, 1),
+              border-color 0.45s cubic-bezier(0.22, 0.61, 0.36, 1),
+              transform 0.35s cubic-bezier(0.22, 0.61, 0.36, 1);
+}
+
+.cover-highlight-footer-link::before {
   content: "";
   position: absolute;
   inset: 0;
@@ -275,190 +407,25 @@ html.dark .cover-grain {
   z-index: -1;
 }
 
-.cover-button:hover {
+.cover-highlight-footer-link:hover {
   color: var(--pal-btn-hfg, var(--bg-base));
+  transform: translateY(-1px);
 }
-.cover-button:hover::before {
+
+.cover-highlight-footer-link:hover::before {
   transform: translateY(0);
 }
-.cover-button:hover .cover-button-arrow {
-  transform: translateX(4px);
-}
-.cover-button-arrow {
-  display: inline-block;
-  transition: transform 0.45s cubic-bezier(0.22, 0.61, 0.36, 1);
-  font-family: var(--font-serif-display);
-}
-.cover-actions {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  flex-direction: column;
-  gap: 0.9rem;
-  flex-wrap: wrap;
-  width: min(26rem, 100%);
-  margin-top: 0.15rem;
-}
-.cover-actions .cover-button {
-  width: min(24rem, 100%);
-  justify-content: center;
-}
 
 /* =============================================================================
-   11.5 封面页：精选起点
-   ============================================================================= */
-.cover-showcase {
-  width: min(62rem, 100%);
-  margin-top: 1.15rem;
-  margin-bottom: clamp(2.4rem, 5vh, 3.4rem);
-  padding: 1.2rem;
-  border: 1px solid color-mix(in srgb, var(--pal-line, var(--line)) 82%, transparent);
-  border-radius: 1.35rem;
-  background: color-mix(in srgb, var(--pal-bg-from, var(--bg-base)) 72%, transparent);
-  box-shadow: 0 12px 38px color-mix(in srgb, var(--fg-base) 6%, transparent);
-  opacity: 1;
-}
-.cover-showcase[hidden] {
-  display: none !important;
-}
-.cover-showcase--revealed {
-  animation: cover-fade 0.75s cubic-bezier(0.22, 0.61, 0.36, 1) forwards;
-}
-.cover-showcase-head {
-  margin-bottom: 0.95rem;
-  display: flex;
-  flex-direction: column;
-  gap: 0.45rem;
-}
-.cover-showcase-kicker {
-  font-family: var(--font-mono);
-  font-size: 0.68rem;
-  letter-spacing: 0.22em;
-  text-transform: uppercase;
-  color: var(--pal-accent, var(--accent));
-}
-.cover-showcase-text {
-  margin: 0;
-  font-family: var(--font-serif-body);
-  font-size: 0.92rem;
-  line-height: 1.6;
-  color: var(--pal-sub, var(--fg-mute));
-  text-align: left;
-}
-.cover-showcase-grid {
-  display: grid;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
-  gap: 0.9rem;
-}
-.cover-feature-card {
-  display: flex;
-  flex-direction: column;
-  align-items: flex-start;
-  gap: 0.5rem;
-  min-height: 11.5rem;
-  padding: 1rem 1rem 1.05rem;
-  border-radius: 1rem;
-  border: 1px solid color-mix(in srgb, var(--pal-line, var(--line)) 88%, transparent);
-  background: color-mix(in srgb, var(--pal-bg-to, var(--bg-deep)) 20%, transparent);
-  text-decoration: none !important;
-  transition: transform 0.35s cubic-bezier(0.22, 0.61, 0.36, 1),
-              border-color 0.35s,
-              background 0.35s,
-              box-shadow 0.35s;
-}
-.cover-feature-card:hover {
-  transform: translateY(-2px);
-  border-color: color-mix(in srgb, var(--pal-accent, var(--accent)) 36%, var(--pal-line, var(--line)));
-  background: color-mix(in srgb, var(--pal-accent, var(--accent)) 6%, transparent);
-  box-shadow: 0 10px 24px color-mix(in srgb, var(--fg-base) 7%, transparent);
-}
-.cover-feature-tag {
-  font-family: var(--font-mono);
-  font-size: 0.66rem;
-  letter-spacing: 0.18em;
-  text-transform: uppercase;
-  color: var(--pal-accent, var(--accent));
-}
-.cover-feature-title {
-  font-family: var(--font-serif-display);
-  font-size: 1.08rem;
-  font-weight: 500;
-  line-height: 1.25;
-  color: var(--pal-title, var(--fg-base));
-  text-align: left;
-}
-.cover-feature-desc {
-  font-family: var(--font-serif-body);
-  font-size: 0.84rem;
-  line-height: 1.55;
-  color: var(--pal-sub, var(--fg-mute));
-  text-align: left;
-}
-.cover-feature-link {
-  margin-top: auto;
-  font-family: var(--font-serif-display);
-  font-size: 0.78rem;
-  letter-spacing: 0.08em;
-  color: var(--pal-title, var(--fg-base));
-}
-
-/* =============================================================================
-   13. 封面页：底部脚注
-   ============================================================================= */
-.cover-footnote {
-  position: absolute;
-  bottom: clamp(1.5rem, 4vh, 3rem);
-  left: 50%;
-  transform: translateX(-50%);
-  font-family: var(--font-serif-display);
-  font-style: italic;
-  font-size: 0.75rem;
-  font-weight: 400;
-  color: var(--pal-kicker, var(--fg-soft));
-  letter-spacing: 0.1em;
-  z-index: 5;
-}
-
-/* =============================================================================
-   Splitting.js 注入的样式（内联避免 ORB 拦截 splitting.css）
+   8. Splitting.js 注入的共享基础样式（page-hero 也会复用）
    ============================================================================= */
 .splitting .word,
 .splitting .char {
   display: inline-block;
 }
 
-/* Splitting.js 注入的字符容器 — 不裁剪，让 translateY 入场完整可见 */
-.cover-title .word,
-.cover-kicker .word {
-  display: inline-block;
-  vertical-align: bottom;
-}
-.cover-title .char,
-.cover-kicker .char {
-  display: inline-block;
-  will-change: transform, opacity;
-  opacity: 0;
-  transform: translateY(0.6em);
-  transition: transform 1s cubic-bezier(0.22, 0.61, 0.36, 1),
-              opacity 0.9s cubic-bezier(0.22, 0.61, 0.36, 1);
-  transition-delay: calc(var(--char-index, 0) * 35ms + 300ms);
-}
-
-.cover-page.is-ready .cover-title .char,
-.cover-page.is-ready .cover-kicker .char {
-  opacity: 1;
-  transform: translateY(0);
-}
-
-/* 没 Splitting.js 加载时降级 */
-.cover-title:not([data-splitting]),
-.cover-kicker:not([data-splitting]) {
-  opacity: 0;
-  animation: cover-fade 1.4s cubic-bezier(0.22, 0.61, 0.36, 1) 0.4s forwards;
-}
-
 /* =============================================================================
-   14. 通用淡入动画（cover / page-hero 复用）
+   9. 通用淡入关键帧（当前由 page-hero 复用）
    ============================================================================= */
 @keyframes cover-fade {
   from { opacity: 0; }
@@ -466,7 +433,7 @@ html.dark .cover-grain {
 }
 
 /* =============================================================================
-   18. 旧 Aurora / 装饰保留但默认隐藏（如果用户想换回用）
+   10. 旧 Aurora / 装饰保留但默认隐藏（如果用户想换回用）
    ----------------------------------------------------------------------------
    ⚠️ 这两个类在当前 layouts/ 中已无引用（仅在 .bak.v1 备份里出现过），
    但保留 display:none 兜底，避免误用导致视觉异常。
@@ -475,7 +442,7 @@ html.dark .cover-grain {
 .cover-aurora, .cover-bg { display: none !important; }
 
 /* =============================================================================
-   19. 封面花边（无缝拼接 + 横向滚动）+ 四角花朵
+   11. 封面花边（无缝拼接 + 横向滚动）+ 四角花朵
    ----------------------------------------------------------------------------
    上下黑色花边 — 固定高度 56px（等比缩放原图 800×253）
    → 单 tile = 177×56px；动画 -177px 一周期无缝循环
@@ -491,13 +458,11 @@ html.dark .cover-grain {
   background-repeat: repeat-x;
   background-size: 177px 56px;
   background-position: 0 50%;
-  opacity: 0;
-  animation:
-    flower-flow 38s linear infinite,
-    cover-fade 1.4s cubic-bezier(0.22, 0.61, 0.36, 1) 0.2s forwards;
+  opacity: 1;
+  animation: flower-flow 38s linear infinite;
 }
-.cover-flower-strip-top    { top: 0; }
-.cover-flower-strip-bottom { bottom: 0; transform: scaleY(-1); }
+.cover-flower-strip-top    { top: -14px; }
+.cover-flower-strip-bottom { bottom: -14px; transform: scaleY(-1); }
 
 /* 横向滚动关键帧 */
 @keyframes flower-flow {
@@ -515,13 +480,12 @@ html.dark .cover-grain {
 }
 .cover-flower-cluster {
   position: absolute;
-  top: 50%;
-  width: min(26rem, 29vw);
-  height: min(34rem, 38vw);
+  width: min(28rem, 31vw);
+  height: min(36rem, 40vw);
   transform: translateY(-50%);
   pointer-events: none;
-  opacity: 0;
-  animation: cover-fade 1.6s cubic-bezier(0.22, 0.61, 0.36, 1) forwards;
+  opacity: 1;
+  animation: none;
 }
 .cover-flower-cluster::before {
   content: "";
@@ -535,13 +499,23 @@ html.dark .cover-grain {
   filter: blur(18px);
   opacity: 0.42;
 }
-.cover-flower-cluster--left {
+.cover-flower-cluster--top-left,
+.cover-flower-cluster--bottom-left {
   left: clamp(-6rem, -5vw, -2rem);
 }
 /* 右侧整组镜像：模板里复用左侧同一组参数，后续只需维护一套坐标。 */
-.cover-flower-cluster--right {
+.cover-flower-cluster--top-right,
+.cover-flower-cluster--bottom-right {
   right: clamp(-6rem, -5vw, -2rem);
   transform: translateY(-50%) scaleX(-1);
+}
+.cover-flower-cluster--top-left,
+.cover-flower-cluster--top-right {
+  top: 22%;
+}
+.cover-flower-cluster--bottom-left,
+.cover-flower-cluster--bottom-right {
+  top: 73%;
 }
 .cover-flower-sprite {
   position: absolute;
@@ -556,45 +530,88 @@ html.dark .cover-grain {
 }
 
 @media (max-width: 720px) {
+  body.is-cover-page .min-h-\[148px\] {
+    min-height: 4.5rem;
+  }
   .cover-content {
-    margin-top: 3.3rem;
+    margin-top: 2.1rem;
   }
-  .cover-actions {
-    width: min(22rem, 100%);
-    gap: 0.75rem;
+  .cover-eyebrow {
+    gap: 0.7rem;
   }
-  .cover-button {
-    width: min(22rem, 100%);
-    justify-content: center;
-    padding: 0.98rem 1.45rem;
+  .cover-eyebrow-rule {
+    width: 2.3rem;
   }
-  .cover-showcase {
-    margin-top: 1.1rem;
-    margin-bottom: 2.9rem;
-    padding: 0.95rem;
+  .cover-page {
+    --cover-bleed: 0rem;
+    border-radius: 1.15rem;
+    padding-inline: 0.95rem;
   }
-  .cover-showcase-grid {
+  .cover-content,
+  .cover-masthead {
+    width: 100%;
+  }
+  .cover-identity {
+    flex-direction: column;
+    gap: 0.88rem;
+  }
+  .cover-info-island {
+    width: 100%;
+    padding: 0.9rem 0.95rem 0.95rem;
+    gap: 0.72rem;
+  }
+  .cover-avatar {
+    width: 4.15rem;
+    height: 4.15rem;
+  }
+  .cover-title {
+    font-size: clamp(2.3rem, 10vw, 3.15rem);
+  }
+  .cover-divider {
+    margin: 1.65rem 0 1.3rem;
+  }
+  .cover-highlights-grid {
     grid-template-columns: 1fr;
   }
-  .cover-feature-card {
+  .cover-highlight-column {
+    padding: 1rem 0.95rem;
+  }
+  .cover-highlight-footer-link {
+    padding: 0.68rem 1.1rem;
+  }
+  .cover-highlight-item {
     min-height: 0;
   }
   .cover-flower-strip {
     height: 44px;
     background-size: 139px 44px;
   }
+  .cover-flower-strip-top {
+    top: -10px;
+  }
+  .cover-flower-strip-bottom {
+    bottom: -10px;
+  }
   .cover-flower-cluster {
     width: 13rem;
     height: 16rem;
     opacity: 0.68 !important;
   }
-  .cover-flower-cluster--left {
+  .cover-flower-cluster--top-left,
+  .cover-flower-cluster--bottom-left {
     left: -3.9rem;
-    top: 28%;
   }
-  .cover-flower-cluster--right {
+  .cover-flower-cluster--top-right,
+  .cover-flower-cluster--bottom-right {
     right: -4.2rem;
-    top: 73%;
+  }
+  .cover-flower-cluster--top-left,
+  .cover-flower-cluster--top-right {
+    top: 18%;
+  }
+  .cover-flower-cluster--bottom-left,
+  .cover-flower-cluster--bottom-right {
+    top: 72%;
   }
   .cover-flower-sprite {
     filter: drop-shadow(0 8px 18px rgba(0, 0, 0, 0.06));
@@ -602,15 +619,6 @@ html.dark .cover-grain {
   @keyframes flower-flow {
     from { background-position-x: 0; }
     to   { background-position-x: -139px; }
-  }
-}
-
-@media (min-width: 721px) and (max-width: 1080px) {
-  .cover-showcase-grid {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-  }
-  .cover-showcase-grid > :last-child:nth-child(odd) {
-    grid-column: 1 / -1;
   }
 }
 
@@ -626,39 +634,4 @@ html.dark .cover-flower-black {
 }
 html.dark .cover-flower-soft.cover-flower-black {
   filter: brightness(0) invert(1) blur(0.3px) drop-shadow(0 16px 28px rgba(0, 0, 0, 0.16));
-}
-
-/* =============================================================================
-   封面主题切换按钮（右上角 · 独立于 header）
-   ----------------------------------------------------------------------------
-   避开顶部黑色花边（56px / 移动端 44px），再留一点呼吸距离
-   ============================================================================= */
-.cover-theme-toggle {
-  position: absolute;
-  top: clamp(4.75rem, 7vh, 5.5rem);
-  right: clamp(1.25rem, 3vw, 2.25rem);
-  z-index: 50;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  width: 2.5rem;
-  height: 2.5rem;
-  border-radius: 9999px;
-  border: 1px solid var(--pal-line, var(--line));
-  background: color-mix(in srgb, var(--pal-btn-fg, var(--fg-base)) 5%, transparent);
-  color: var(--pal-kicker, var(--fg-mute));
-  cursor: pointer;
-  transition: color 0.3s, border-color 0.3s, background 0.3s, transform 0.3s;
-  backdrop-filter: blur(4px);
-}
-.cover-theme-toggle:hover {
-  color: var(--pal-title, var(--fg-base));
-  border-color: var(--pal-btn-fg, var(--fg-base));
-  transform: rotate(15deg);
-}
-.cover-theme-toggle-icon {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  line-height: 1;
 }

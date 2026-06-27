@@ -1,6 +1,6 @@
 # 项目地图 — 个人网站 `f:\Notes\`
 
-> 最后更新：2026-06-25 · 首页收口为封面式快速开始页 + Music 下载入口 + 文档同步到当前代码状态 · Hugo v0.163.2 · Blowfish v2
+> 最后更新：2026-06-27 · 首页封面收尾清理：副标题/站点统计居中，cover/home_highlights 只保留真实在用字段 · Hugo v0.163.2 · Blowfish v2
 
 ---
 
@@ -15,9 +15,9 @@
 
 | 我想…… | 改这个文件 |
 |---------|-----------|
-| 改封面的标题 / subtitle / 按钮文案 | [`data/cover.yaml`](file:///f:/Notes/data/cover.yaml) |
-| 改首页 `Start Here` 的三张卡内容 | [`data/start_here.yaml`](file:///f:/Notes/data/start_here.yaml)（文案 / 跳转 / 读取模式都在这里；默认隐藏，点首页 `Start Here` 后展开） |
-| 改封面的颜色 | [`assets/css/_01_tokens.css`](file:///F:/Notes/assets/css/_01_tokens.css) 顶部 `:root` / `html.dark` 的 `--bg-base / --line / --accent`（v3：封面 `--pal-*` 已派生自全局变量，统一改一处即可） |
+| 改封面的标题 / subtitle / avatar / 统计开关 / 顶栏 GitHub 链接 | [`data/cover.yaml`](file:///f:/Notes/data/cover.yaml) |
+| 改首页三组精选内容 | [`data/home_highlights.yaml`](file:///f:/Notes/data/home_highlights.yaml)（Daily / Docs / Works 三组精选都在这里；现在只维护 `sections` 即可） |
+| 改封面的颜色 | [`assets/css/_01_tokens.css`](file:///F:/Notes/assets/css/_01_tokens.css) 顶部 `:root` / `html.dark` 的 `--bg-base / --line / --accent`（首页颜色已不再单独存进 `cover.yaml`） |
 | 改封面的字距 / 大小 / 花边位置 | [`assets/css/_08_cover.css`](file:///F:/Notes/assets/css/_08_cover.css) |
 | 改内页"小封面"的文案 | 对应 `content/xxx/_index.md` 的 frontmatter `kicker / subtitle` |
 | 改 /notes/ 入口展示方式（单列 / 3 列等）| `content/notes/_index.md` frontmatter `cardColumns`（1/2/3） |
@@ -75,7 +75,7 @@ f:\Notes\
 │   │   ├── _05_cards.css           # ★ module / vault / article-link / life / music-list / works-sub / file-tree / section-rule
 │   │   ├── _06_works-cards.css     # ★ projects (3D 倾斜) + resources (瀑布流)
 │   │   ├── _07_music-player.css    # ★ 全局音乐播放器 + copy-toast
-│   │   ├── _08_cover.css           # ★ 封面页（全屏 + 花边 + 字符入场 + CTA）
+│   │   ├── _08_cover.css           # ★ 首页封面（真 header + masthead + highlights + 花边）
 │   │   └── _09_about.css           # ★ About 页（profile + Now/Focus/Path + 标签 + 液态玻璃联系方式）
 │   └── icons/                      # Simple Icons 品牌色 SVG（github/gmail/qq 等联系方式图标）
 │
@@ -97,9 +97,10 @@ f:\Notes\
 │   └── about/_index.md             # /about/ 关于（avatar + Now/Focus/Path + 联系方式 + 技术栈 + GitHub 热力图）
 │
 ├── data/                           # ★ 数据驱动（改这里就能改 UI）
-│   ├── cover.yaml                  # 封面基础文案 / 头像 / 显示开关 / 调色（含 show_stats）
+│   ├── cover.yaml                  # 首页 masthead 基础信息 / avatar / show_stats / 顶栏 GitHub repo_url
+│   ├── home_highlights.yaml        # 首页三组精选（Daily / Docs / Works）数据源；当前只维护 sections
 │   ├── about_timeline.yaml         # ABOUT ME 的 Path so far 里程碑（文字 / 顺序 / 可选图片）
-│   ├── start_here.yaml             # 首页 Start Here 三张卡（文案 / 跳转 / 读取模式）
+│   ├── start_here.yaml             # 旧版首页 Start Here 数据（当前首页已不再使用，保留作历史参考）
 │   ├── vault.yaml                  # 旧版 /notes/ 分类卡数据（当前前台未使用，保留作历史参考）
 │   ├── life.yaml                   # /life/ 子模块清单（music / 图片 / 读书…）
 │   ├── music.yaml                  # /life/music/ 歌单
@@ -179,30 +180,30 @@ f:\Notes\
 
 | 元素 | 数据源 | 模板 |
 |------|--------|------|
-| 封面排版 / 花边 / CTA / `Start Here` 展开区 | [`data/cover.yaml`](file:///f:/Notes/data/cover.yaml)（基础文案） | [`layouts/partials/home/custom.html`](file:///f:/Notes/layouts/partials/home/custom.html) |
+| 封面排版 / 花边 / 上方 masthead | [`data/cover.yaml`](file:///f:/Notes/data/cover.yaml)（基础文案 / 头像 / 统计开关 / repo_url） | [`layouts/partials/home/custom.html`](file:///f:/Notes/layouts/partials/home/custom.html) |
 | 封面 CSS（字体 / 调色 / 布局） | — | [`assets/css/_08_cover.css`](file:///F:/Notes/assets/css/_08_cover.css) |
-| 封面主题切换按钮 | — | 内嵌在 `custom.html` 的 JS |
+| 封面主题切换 | — | 直接复用主题原生顶栏按钮；首页不再保留封面专属切换器 |
 | 首页首屏关键图 / 字体预加载 | — | [`layouts/partials/head.html`](file:///f:/Notes/layouts/partials/head.html) |
 | 封面装饰元素（上下流动花边 + 左右黑花） | — | 直接用 `static/image/` 下的 png |
-| 封面调色（明 / 暗） | `cover.yaml` → `palette` | `custom.html` 的 `<style>` 块 |
-| 首页 `Start Here` 三张卡 | [`data/start_here.yaml`](file:///f:/Notes/data/start_here.yaml) | 由 [`layouts/partials/home/custom.html`](file:///f:/Notes/layouts/partials/home/custom.html) 循环渲染；当前统一用固定 `page` 路径模式 |
+| 封面调色（明 / 暗） | [`assets/css/_01_tokens.css`](file:///f:/Notes/assets/css/_01_tokens.css) 的全局变量 | [`custom.html`](file:///f:/Notes/layouts/partials/home/custom.html) 的 `<style>` 块只负责把全局变量派生到封面局部变量 |
+| 首页 `Daily / Docs / Works Highlights` | [`data/home_highlights.yaml`](file:///f:/Notes/data/home_highlights.yaml) | 由 [`layouts/partials/home/custom.html`](file:///f:/Notes/layouts/partials/home/custom.html) 循环渲染；支持 section 级入口和 1-3 条手动精选 |
 
-**以后如何更新 `Start Here`：**
+**以后如何更新首页 Highlights：**
 
-1. **改文案**
-   - 直接改 [`data/start_here.yaml`](file:///f:/Notes/data/start_here.yaml) 里的 `section_kicker / section_text / items[].tag / title / desc / link_text`
+1. **改分组文案**
+   - 直接改 [`data/home_highlights.yaml`](file:///f:/Notes/data/home_highlights.yaml) 各组里的 `kicker / title / desc / cta_label / cta_path`
 
-2. **改卡片跳转**
-   - 固定页面卡：改对应条目的 `path`
-   - 例如 `Music` 现在默认是 `/life/music/`，`Projects` 默认是 `/works/projects/`
+2. **改单条精选跳转**
+   - 改对应条目的 `items[].path`
+   - 站内页可直接写 `/notes/xxx/`、`/life/xxx/`、`/works/xxx/`
+   - 外链也可直接写完整 `https://...`
 
-3. **改“最新文章卡”的跳转方式**
-   - 现在固定跳到 `/notes/`
-   - 这样既能保留 `Latest Note` 这个入口名称，也能让用户直接看到置顶的最新文章，并自行选择继续浏览哪一篇
-   - 如果以后想改成某篇固定文章，直接把它的 `path` 改成对应文章路径即可
+3. **控制每组显示数量**
+   - 每组 `items` 建议维护 1-3 条
+   - 首页不会自动抓“最新内容”，而是严格按这个文件里手动挑选的顺序渲染
 
 4. **模板职责**
-   - [`layouts/partials/home/custom.html`](file:///f:/Notes/layouts/partials/home/custom.html) 现在只负责循环渲染和按 `path` 取页面
+   - [`layouts/partials/home/custom.html`](file:///f:/Notes/layouts/partials/home/custom.html) 现在只负责循环渲染和按 `path` 解析站内页 / 外链
    - 日常改字、改链接，优先不要再直接改模板
 
 ### 内页"小封面"（section 主页顶部）

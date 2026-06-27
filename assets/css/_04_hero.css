@@ -89,7 +89,7 @@
   line-height: 1.55;
 }
 
-/* 复用 cover 字符级入场（cover-title 已经定义了 .word/.char 规则） */
+/* 复用 Splitting 的共享基础样式（由 _08_cover.css 提供 .splitting .word/.char） */
 .page-title .word,
 .page-kicker .word { display: inline-block; vertical-align: bottom; }
 .page-title .char,

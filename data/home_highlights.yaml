@@ -1,0 +1,47 @@
+# 首页三组手动精选。
+# 只维护 sections 即可；模板不会再读取旧的 section_kicker / section_title / section_text。
+sections:
+  - id: "daily"
+    kicker: "Slow & Small"
+    title: "Highlights of DAILY"
+    desc: "Collect some high-quality items"
+    cta_label: "Open Daily"
+    cta_path: "/life/"
+    items:
+      - label: "Listening"
+        title: "Current Playlist"
+        desc: "A small playlist page with local tracks and an in-page player."
+        path: "/life/music/"
+        link_text: "Listen now"
+
+  - id: "docs"
+    kicker: "Reading & Notes"
+    title: "Highlights of DOCS"
+    desc: "Some of my study records"
+    cta_label: "Open Docs"
+    cta_path: "/notes/"
+    items:
+      - label: "Linux Basics"
+        title: "Linux Basics: WSL2 Installation to OpenCode / Hermes Agent Deployment"
+        desc: "A longer practical guide covering WSL2 setup, Linux basics, and agent tooling."
+        path: "/notes/linux-getting-started/"
+        link_text: "Read guide"
+      - label: "Python"
+        title: "make a python package"
+        desc: "A shorter entry around Python packaging, environment setup, and local workflow."
+        path: "/notes/python-env-setup/"
+        link_text: "Open note"
+
+  - id: "works"
+    kicker: "Built & Shared"
+    title: "Highlights of WORKS"
+    desc: "Projects and things made to be opened, tested, or downloaded rather than only read about."
+    cta_label: "Open Works"
+    cta_path: "/works/"
+    items:
+      - label: "Projects"
+        title: My only demo now
+        desc: "A small projects shelf for demos, experiments, and ongoing builds."
+        path: "/works/projects/"
+        link_text: "View projects"
+      

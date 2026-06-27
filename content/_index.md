@@ -9,7 +9,8 @@ showComments: true
 ---
 
 <!--
-  封面页：除了标题和一个入口按钮，不显示其他东西。
-  视觉配置在 data/cover.yaml，可随时改。
+  首页封面：上方个人 intro + 下方 highlights 导览。
+  基础信息在 data/cover.yaml，可随时改。
+  首页精选在 data/home_highlights.yaml，可随时改。
   详细说明见 layouts/partials/home/custom.html。
 -->
