@@ -150,11 +150,126 @@
   border-color: var(--fg-base) !important;
 }
 
+.article-pagination {
+  padding-top: 2rem;
+}
+
+.article-pagination-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 1rem;
+  padding-top: 1rem;
+  border-top: 1px solid color-mix(in srgb, var(--line) 78%, transparent);
+}
+
+.article-pagination-card {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: 0.45rem;
+  min-width: 0;
+  padding: 1rem 1.1rem;
+  text-decoration: none !important;
+  border: 1px solid color-mix(in srgb, var(--line) 88%, transparent);
+  border-radius: 0.7rem;
+  background: transparent;
+  transition: border-color 0.35s cubic-bezier(0.22, 0.61, 0.36, 1),
+              background 0.35s cubic-bezier(0.22, 0.61, 0.36, 1),
+              transform 0.35s cubic-bezier(0.22, 0.61, 0.36, 1);
+}
+
+.article-pagination-card::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  background: linear-gradient(120deg,
+    color-mix(in srgb, var(--accent) 6%, transparent) 0%,
+    transparent 55%);
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.35s cubic-bezier(0.22, 0.61, 0.36, 1);
+}
+
+.article-pagination-card:hover {
+  border-color: var(--fg-base);
+  transform: translateY(-2px);
+}
+
+.article-pagination-card:hover::before {
+  opacity: 1;
+}
+
+.article-pagination-kicker {
+  position: relative;
+  z-index: 1;
+  font-family: var(--font-mono);
+  font-size: 0.65rem;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--fg-soft);
+}
+
+.article-pagination-title {
+  position: relative;
+  z-index: 1;
+  display: inline-flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 0.65rem;
+  font-family: var(--font-serif-display);
+  font-size: 1rem;
+  line-height: 1.35;
+  color: var(--fg-base);
+}
+
+.article-pagination-arrow {
+  color: var(--accent);
+  flex: 0 0 auto;
+}
+
+.article-pagination-date {
+  position: relative;
+  z-index: 1;
+  font-family: var(--font-mono);
+  font-size: 0.7rem;
+  letter-spacing: 0.05em;
+  color: var(--fg-soft);
+  font-variant-numeric: tabular-nums;
+}
+
+.article-pagination-card--next {
+  text-align: right;
+}
+
+.article-pagination-card--next .article-pagination-title {
+  justify-content: flex-end;
+}
+
+html.dark .article-pagination-card {
+  background: rgba(255, 255, 255, 0.03);
+}
+
+html.dark .article-pagination-card:hover {
+  background: rgba(255, 255, 255, 0.06);
+}
+
+@media (max-width: 720px) {
+  .article-pagination-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .article-pagination-card--next,
+  .article-pagination-card--next .article-pagination-title {
+    text-align: left;
+    justify-content: flex-start;
+  }
+}
+
 /* =============================================================================
    相关文章标题
    ============================================================================= */
-.related-articles h2,
-.article-pagination h2 {
+.related-articles h2 {
   font-family: var(--font-serif-display);
   font-weight: 500;
   letter-spacing: 0.08em;

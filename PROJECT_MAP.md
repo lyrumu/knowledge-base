@@ -23,6 +23,8 @@
 | 改 /notes/ 入口展示方式（单列 / 3 列等）| `content/notes/_index.md` frontmatter `cardColumns`（1/2/3） |
 | 改 `notes` 文章的 taxonomy / Edit Link / 上一篇下一篇规则 | [`content/notes/_index.md`](file:///f:/Notes/content/notes/_index.md) 的 `cascade`（只对 `notes` 下文章生效） |
 | 改 `notes` 文章里 tags / categories / series 的维护规范 | [`BLOWFISH_FEATURE_AUDIT.md`](file:///f:/Notes/BLOWFISH_FEATURE_AUDIT.md) 末尾的 `Taxonomies 后续维护约定` |
+| 微调上一篇 / 下一篇的视觉样式 | [`layouts/partials/article-pagination.html`](file:///f:/Notes/layouts/partials/article-pagination.html) + [`assets/css/_02_chrome.css`](file:///f:/Notes/assets/css/_02_chrome.css) |
+| 改网站存在时间 / 静态统计摘要的起点日期 | [`data/site.yaml`](file:///f:/Notes/data/site.yaml) 的 `launch_date` |
 | 换 /life/ 的子模块卡 | [`data/life.yaml`](file:///f:/Notes/data/life.yaml)（加图片 / 读书 / 旅行…都改这里） |
 | 换 /life/music/ 的歌单 | [`data/music.yaml`](file:///f:/Notes/data/music.yaml)（加一首填一个 `- title/artist/cover/src/duration/size/...` 条目） |
 | 换 /life/music/ 的封面/SVG 动画 | [`assets/css/_05_cards.css`](file:///F:/Notes/assets/css/_05_cards.css) 的 `.life-sub-cover-*` 规则 |
@@ -38,6 +40,8 @@
 | 调首页 / about 首屏图片预加载 | [`layouts/partials/head.html`](file:///f:/Notes/layouts/partials/head.html)（按页面条件 preload 关键图片和字体） |
 | 改顶栏的菜单项 | [`hugo.toml`](file:///f:/Notes/hugo.toml) 的 `[[menu.main]]` 段 |
 | 改 Umami 统计配置 | [`hugo.toml`](file:///f:/Notes/hugo.toml) 的 `[params.umamiAnalytics]` |
+| 以后要启用 Blowfish 原生阅读数 / 点赞 | [`hugo.toml`](file:///f:/Notes/hugo.toml) 的 `showViews / showLikes` + `[firebase]`（原生方案推荐 Firebase） |
+| 看 Firebase 安全规则怎么配 | [`FIREBASE_SECURITY.md`](file:///f:/Notes/FIREBASE_SECURITY.md) |
 | 加一篇新文章 | 见下方 §4 |
 | 写 CSS（字体 / 颜色 / 间距） | 见下方 §3 · 选对模块文件 |
 | 改文章内容样式 | [`assets/css/_03_prose.css`](file:///F:/Notes/assets/css/_03_prose.css) |
@@ -55,6 +59,8 @@ f:\Notes\
 ├── hugo.toml                       # 全局 Hugo 配置
 ├── DEPLOY.md                       # 部署与维护指南
 ├── BLOWFISH_FEATURE_AUDIT.md       # Blowfish / Hugo 原生能力审计与 taxonomy 维护约定
+├── FIREBASE_SECURITY.md            # Firebase views / likes 的安全配置说明
+├── data/site.yaml                  # 站点级元数据（当前用于 site-stats 的 launch_date）
 ├── PROJECT_MAP.md                  # ← 你正在看（本地保留）
 │
 ├── assets/
@@ -91,12 +97,13 @@ f:\Notes\
 │   └── about/_index.md             # /about/ 关于（avatar + Now/Focus/Path + 联系方式 + 技术栈 + GitHub 热力图）
 │
 ├── data/                           # ★ 数据驱动（改这里就能改 UI）
-│   ├── cover.yaml                  # 封面基础文案 / 头像 / 调色（Start Here 当前不走数据驱动）
+│   ├── cover.yaml                  # 封面基础文案 / 头像 / 显示开关 / 调色（含 show_stats）
 │   ├── about_timeline.yaml         # ABOUT ME 的 Path so far 里程碑（文字 / 顺序 / 可选图片）
 │   ├── start_here.yaml             # 首页 Start Here 三张卡（文案 / 跳转 / 读取模式）
 │   ├── vault.yaml                  # 旧版 /notes/ 分类卡数据（当前前台未使用，保留作历史参考）
 │   ├── life.yaml                   # /life/ 子模块清单（music / 图片 / 读书…）
 │   ├── music.yaml                  # /life/music/ 歌单
+│   ├── site.yaml                   # 站点 launch_date（供 site-stats 计算在线天数）
 │   ├── works.yaml                  # /works/ 子模块清单（projects / resources / tools…）
 │   ├── projects.yaml               # /works/projects/ 项目清单
 │   └── resources.yaml              # /works/resources/ 资源清单
@@ -109,9 +116,11 @@ f:\Notes\
 │   │   ├── head.html               # ⚠️ [lyrumu 改造] 覆盖 Blowfish 主题版本
 │   │   │                           #  原因：CSS `@import` 在 Hugo Pipes 不展开（详见 §8 踩坑提醒）
 │   │   │                           #  改为：resources.Match "css/_*.css" + Concat
+│   │   ├── article-pagination.html  # 项目级覆写上一篇/下一篇结构（保留逻辑，只改样式挂钩）
 │   │   ├── cover/icon.html         # Lucide SVG icon 字典
 │   │   ├── cover/page-hero.html    # 内页"小封面" partial
 │   │   ├── home/custom.html        # 封面 partial
+│   │   ├── site-stats.html         # 站点统计 partial（供 shortcode 与封面共用）
 │   │   ├── header/components/
 │   │   │   ├── desktop-menu.html   # 加 GitHub 按钮
 │   │   │   └── mobile-menu.html    # 加 GitHub 按钮
@@ -128,6 +137,7 @@ f:\Notes\
 │       ├── resources-list.html     # /works/resources/ 资源列表（瀑布流）
 │       ├── file-tree.html          # 可折叠文件树
 │       ├── about-contact.html      # /about/ 联系方式图标卡（壳）
+│       ├── site-stats.html         # 站点统计 shortcode 壳（实际渲染委托给 partial）
 │       └── section-rule.html       # ✦ 分隔符
 ├── scripts/                        # ★ 运维脚本
 │   └── vault-to-hugo.ps1           # Vault → Hugo 同步（日常使用）

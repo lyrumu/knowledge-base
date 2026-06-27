@@ -127,6 +127,8 @@ enableEmoji = true
     showRelatedContent = true #管理相关近期文章的显示
     relatedContentLimit = 6
     showZenMode = true
+    showViews = false
+    showLikes = false
     # 仅提供编辑入口，真正能否改内容仍由 GitHub 仓库权限决定。
     # 这里先提供基础编辑 URL，是否显示由具体页面/section 控制。
     editURL = 'https://github.com/lyrumu/knowledge-base/edit/master/content'
@@ -165,6 +167,19 @@ enableEmoji = true
     websiteid = '515c1183-2e68-4a62-8fd9-b879507a9f28'
     domain = 'cloud.umami.is'
     enableTrackEvent = true
+
+  # 2026-06-27：接入 Blowfish 原生 Firebase views / likes。
+  # 说明：
+  # - 这些字段会下发到前端，暴露是正常现象
+  # - 真正的安全边界在 Firestore Rules 与 Anonymous Auth 配置
+  [params.firebase]
+    apiKey = 'AIzaSyACFy-CEDyqeBnLmxnaUJwBQvW_wAQ1Rdg'
+    authDomain = 'lyrumu-s-page.firebaseapp.com'
+    projectId = 'lyrumu-s-page'
+    storageBucket = 'lyrumu-s-page.firebasestorage.app'
+    messagingSenderId = '1323464530'
+    appId = '1:1323464530:web:879b7339ed1601f4546c8b'
+    measurementId = 'G-5ZD6M1S9NG'
 
 # =============================================================================
 # 顶部分类导航

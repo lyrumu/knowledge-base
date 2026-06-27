@@ -1,0 +1,38 @@
+{{ if .Params.showPagination | default (.Site.Params.article.showPagination | default true) }}
+  {{ if or .NextInSection .PrevInSection }}
+    {{ $next := .NextInSection }}
+    {{ $prev := .PrevInSection }}
+    {{ if .Params.invertPagination | default (.Site.Params.article.invertPagination | default false) }}
+      {{ $next = .PrevInSection }}
+      {{ $prev = .NextInSection }}
+    {{ end }}
+    <div class="article-pagination">
+      <div class="article-pagination-grid">
+        {{ if $prev }}
+          <a class="article-pagination-card article-pagination-card--prev" href="{{ $prev.RelPermalink }}">
+            <span class="article-pagination-kicker">Previous Note</span>
+            <span class="article-pagination-title">
+              <span class="article-pagination-arrow" aria-hidden="true">&larr;</span>
+              <span>{{ $prev.Title | emojify }}</span>
+            </span>
+            {{ if .Params.showDate | default (.Site.Params.article.showDate | default true) }}
+              <span class="article-pagination-date">{{ partial "meta/date.html" $prev.Date }}</span>
+            {{ end }}
+          </a>
+        {{ end }}
+        {{ if $next }}
+          <a class="article-pagination-card article-pagination-card--next" href="{{ $next.RelPermalink }}">
+            <span class="article-pagination-kicker">Next Note</span>
+            <span class="article-pagination-title">
+              <span>{{ $next.Title | emojify }}</span>
+              <span class="article-pagination-arrow" aria-hidden="true">&rarr;</span>
+            </span>
+            {{ if .Params.showDate | default (.Site.Params.article.showDate | default true) }}
+              <span class="article-pagination-date">{{ partial "meta/date.html" $next.Date }}</span>
+            {{ end }}
+          </a>
+        {{ end }}
+      </div>
+    </div>
+  {{ end }}
+{{ end }}

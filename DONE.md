@@ -4,6 +4,26 @@
 
 ---
 
+## 2026-06-27 · Notes 接入 Firebase 阅读数与点赞
+
+### 改动
+
+| 文件 | 改动 |
+|---|---|
+| [hugo.toml](file:///f:/Notes/hugo.toml) | 新增 `[params.firebase]` 配置，并明确 `article.showViews / article.showLikes` 的站点级默认值 |
+| [content/notes/_index.md](file:///f:/Notes/content/notes/_index.md) | 在 `cascade` 中只给 `notes` 后代文章开启 `showViews / showLikes` |
+| [FIREBASE_SECURITY.md](file:///f:/Notes/FIREBASE_SECURITY.md) | 新增根目录安全说明，记录 Firestore Rules、Anonymous Auth 与上线后检查步骤 |
+| [BLOWFISH_FEATURE_AUDIT.md](file:///f:/Notes/BLOWFISH_FEATURE_AUDIT.md) | 将 `Views / Likes` 标记为已实施，并补充安全说明入口 |
+
+### 结果
+
+- `notes` 单篇文章现在可以使用 Blowfish 原生 `views / likes`
+- `Like` 按钮会出现在文章头部 meta 区
+- `apiKey` 等前端配置虽然会下发到浏览器，但安全边界已明确收口到 Firestore Rules 与 Anonymous Auth
+- 后续若要调整 Firebase 安全策略，不必翻聊天记录，直接看根目录 `FIREBASE_SECURITY.md`
+
+---
+
 ## 2026-06-27 · Notes 开启 Taxonomies / Edit Link / Pagination + 接入 Umami
 
 ### 改动
@@ -23,6 +43,62 @@
 - `notes` 文章的上一篇 / 下一篇由 [`layouts/page.html`](file:///f:/Notes/layouts/page.html) 补回主题原生 `article-pagination`
 - Umami 已按 Blowfish 原生 analytics 配置接入，不需要手写 head 脚本
 - 后续如何维护 `tags / categories / series` 已写入根目录文档，避免后面越写越乱
+
+---
+
+## 2026-06-27 · 微调上一篇/下一篇样式并确认阅读数数据源方向
+
+### 改动
+
+| 文件 | 改动 |
+|---|---|
+| [layouts/partials/article-pagination.html](file:///f:/Notes/layouts/partials/article-pagination.html) | 新增项目级 pagination partial 覆写，保留 Blowfish 原生前后文逻辑，只重做输出结构以便精确控样式 |
+| [assets/css/_02_chrome.css](file:///f:/Notes/assets/css/_02_chrome.css) | 将上一篇/下一篇从“简单文字链接”微调为更贴近全站设计语言的轻卡片样式，补上 serif 标题、mono kicker/date、hover 态与移动端单列适配 |
+
+### 结果
+
+- `notes` 文章底部的上一篇/下一篇现在有更完整的视觉承载，不再只是简单一行链接
+- 视觉语言与现有 module / article card 更接近，但没有引入重组件感
+- 进一步确认：如果后面要启用 Blowfish 原生 `views / likes`，最省事、最原生的方案仍然是 `Firebase`
+- `Umami` 继续适合作为后台分析，不适合作为主题现成的前台阅读数来源
+
+---
+
+## 2026-06-27 · 扩展站点静态统计摘要并记录站龄起点
+
+### 改动
+
+| 文件 | 改动 |
+|---|---|
+| [data/site.yaml](file:///f:/Notes/data/site.yaml) | 新增站点级数据文件，记录网站起始日期 `2026-06-19`，供后续静态统计复用 |
+| [layouts/shortcodes/site-stats.html](file:///f:/Notes/layouts/shortcodes/site-stats.html) | `site-stats` 从 S1 升级到 S2：显示 `notes / tags / days online / last updated`，在线天数按 build 时动态计算 |
+
+### 结果
+
+- `/about/` 与 `/notes/` 中调用的 `site-stats` 现在会显示站龄相关摘要
+- 这部分完全基于 Hugo 构建期计算，无需外部服务
+- 站龄起点不再硬编码在模板里，后续只需改 `data/site.yaml`
+- 动态阅读数仍建议后续走 Blowfish 原生 `Firebase views`
+
+---
+
+## 2026-06-27 · 封面接入可复用的站点统计摘要
+
+### 改动
+
+| 文件 | 改动 |
+|---|---|
+| [layouts/partials/site-stats.html](file:///f:/Notes/layouts/partials/site-stats.html) | 新增可复用 `partial`，承载 `notes / tags / days online / last updated` 的实际渲染逻辑 |
+| [layouts/shortcodes/site-stats.html](file:///f:/Notes/layouts/shortcodes/site-stats.html) | 改成 shortcode 壳，仅转发到 `partial "site-stats.html"`，保持现有内容页调用方式不变 |
+| [layouts/partials/home/custom.html](file:///f:/Notes/layouts/partials/home/custom.html) | 封面新增 `show_stats` 开关位，开启时直接复用站点统计 partial |
+| [data/cover.yaml](file:///f:/Notes/data/cover.yaml) | 新增 `show_stats: true`，由数据层控制封面是否显示统计摘要 |
+| [assets/css/_08_cover.css](file:///f:/Notes/assets/css/_08_cover.css) | 新增封面统计区样式，使 `site-stats` 在首页首屏中居中并沿用封面配色 |
+
+### 结果
+
+- 首页封面现在可以显示与 `/about/`、`/notes/` 同源的站点统计信息
+- 后续若要调整统计文案或计算逻辑，只需要改 `layouts/partials/site-stats.html`
+- 后续若只想隐藏封面统计，无需改模板，只需把 `data/cover.yaml` 的 `show_stats` 改为 `false`
 
 ---
 

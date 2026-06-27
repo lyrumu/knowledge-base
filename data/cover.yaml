@@ -17,6 +17,10 @@ cover:
   # 题词 / 引文（衬线斜体小字，标题与副标题之间）
   epigraph: ""
 
+  # 是否在封面显示站点统计摘要（notes / tags / days online / last updated）
+  # 说明：这里只控制显示开关，实际渲染逻辑在 partial，不要把 {{< site-stats >}} 直接写进 YAML
+  show_stats: true
+
   # --- 装饰（路径可留空 = 不显示） ---------------------------------------
   # 路径相对于 /static/，如 "img/avatar.png" → /static/img/avatar.png
   avatar: "image/melody.png"

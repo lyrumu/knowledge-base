@@ -1,0 +1,37 @@
+{{/*
+  Partial: site-stats
+  ----------------------------------------------------------------
+  统一的站点统计摘要：
+  - 显示 notes / tags / days online / last updated
+  - 供 shortcode 与封面等模板共同复用
+  - 站点起始日期来自 data/site.yaml
+  ----------------------------------------------------------------
+*/}}
+{{ $launchDateRaw := .Site.Data.site.launch_date | default "2026-06-19" }}
+{{ $launchDate := time.AsTime $launchDateRaw }}
+{{ $daysOnline := add (div (sub now.Unix $launchDate.Unix) 86400) 1 }}
+<section class="site-stats not-prose">
+  <span class="site-stats-item">
+    <span class="site-stats-num">{{ len (where .Site.RegularPages "Section" "notes") }}</span>
+    <span class="site-stats-label">notes</span>
+  </span>
+  <span class="site-stats-sep" aria-hidden="true">·</span>
+  <span class="site-stats-item">
+    <span class="site-stats-num">{{ len .Site.Taxonomies.tags }}</span>
+    <span class="site-stats-label">tags</span>
+  </span>
+  <span class="site-stats-sep" aria-hidden="true">·</span>
+  <span class="site-stats-item">
+    <span class="site-stats-num">{{ $daysOnline }}</span>
+    <span class="site-stats-label">days online</span>
+  </span>
+  <span class="site-stats-sep" aria-hidden="true">·</span>
+  <span class="site-stats-item">
+    <span class="site-stats-label">last updated</span>
+    <span class="site-stats-num">
+      {{- range first 1 (where .Site.RegularPages "Section" "notes").ByDate.Reverse -}}
+        {{- .Date.Format "2006-01-02" -}}
+      {{- end -}}
+    </span>
+  </span>
+</section>

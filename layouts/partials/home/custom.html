@@ -13,6 +13,7 @@
   "epigraph" ""
   "avatar" ""
   "background" ""
+  "show_stats" false
   "entrance" (dict "label" "进入" "href" "/about/")
   "social" (slice)
   "decorations" (slice)
@@ -172,6 +173,13 @@
 
     {{ with $cfg.subtitle }}
     <p class="cover-subtitle">{{ . }}</p>
+    {{ end }}
+
+    {{/* 站点统计走 partial 复用，避免把 shortcode 语法塞进 data/cover.yaml。 */}}
+    {{ if $cfg.show_stats }}
+    <div class="cover-stats">
+      {{ partial "site-stats.html" . }}
+    </div>
     {{ end }}
 
     {{/* 古典装饰分隔符 */}}
