@@ -78,7 +78,7 @@ showTableOfContents: true
 
 {{< section-rule >}}
 
-## Path so far(There are multiple timelines listed below)
+## Path so far(There will be multiple timelines listed below)
 
 {{< about-timeline >}}
 

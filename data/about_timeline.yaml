@@ -1,7 +1,7 @@
 groups:
 
   - id: "learn-path"
-    title: "Learn path"
+    title: "Learning path"
     meta: "My Milestone in Computer Learning"
     default_open: false
     items:
@@ -35,39 +35,39 @@ groups:
           So I no longer devoted all my energy to solving algorithm problems.
         open: false
 
-  - id: "bad-morning"
-    title: "Bad morning"
-    meta: "emmm,also bad night"
-    default_open: false
-    items:
-      - id: "find-spirit"
-        mark: "3"
-        title: "Find my spirit"
-        meta: "2026"
-        summary: "Reconnecting with what gives me energy and purpose."
-        image: "/image/westlake.png"
-        image_alt: "Failed to load~"
-        body: |
-          How come I just don’t wanna do my work?
-        open: false
-      - id: "find-happiness"
-        mark: "2"
-        title: "Find my happiness"
-        meta: "2024-2025"
-        summary: "Seeking simple sources of happiness and lightness."
-        image: "/image/bedrock_MC.png"
-        image_alt: "Failed to load~"
-        body: |
-          Who could please talk with me?
-        open: false
-      - id: "find-myself"
-        mark: "1"
-        title: "Find myself"
-        meta: "2023-2024"
-        summary: "Returning to who I am beneath the noise."
-        image: "/image/why.jpg"
-        image_alt: "Failed to load~"
-        body: |
-          Why am I even alive?
-        open: false
+  # - id: "bad-morning"
+  #   title: "Bad morning"
+  #   meta: "emmm,also bad night"
+  #   default_open: false
+  #   items:
+  #     - id: "find-spirit"
+  #       mark: "3"
+  #       title: "Find my spirit"
+  #       meta: "2026"
+  #       summary: "Reconnecting with what gives me energy and purpose."
+  #       image: "/image/westlake.png"
+  #       image_alt: "Failed to load~"
+  #       body: |
+  #         How come I just don’t wanna do my work?
+  #       open: false
+  #     - id: "find-happiness"
+  #       mark: "2"
+  #       title: "Find my happiness"
+  #       meta: "2024-2025"
+  #       summary: "Seeking simple sources of happiness and lightness."
+  #       image: "/image/bedrock_MC.png"
+  #       image_alt: "Failed to load~"
+  #       body: |
+  #         Who could please talk with me?
+  #       open: false
+  #     - id: "find-myself"
+  #       mark: "1"
+  #       title: "Find myself"
+  #       meta: "2023-2024"
+  #       summary: "Returning to who I am beneath the noise."
+  #       image: "/image/why.jpg"
+  #       image_alt: "Failed to load~"
+  #       body: |
+  #         Why am I even alive?
+  #       open: false
 
