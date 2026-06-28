@@ -3,7 +3,58 @@
 > 维护方式：每完成一大阶段，在下方加一段记录。(最新记录写在最上方)
 
 ---
+## 2026-06-28 · 站点统计改为显示项目数与音乐数
 
+### 改动
+
+| 文件 | 改动 |
+|---|---|
+| [layouts/partials/site-stats.html](file:///f:/Notes/layouts/partials/site-stats.html) | 将站点统计中的 `tags` 替换为 `projects` 与 `music`；项目数读取 `data/projects.yaml`，音乐数读取 `data/music.yaml`，继续保持构建时统计 |
+| [PROJECT_MAP.md](file:///f:/Notes/PROJECT_MAP.md) | 补充“改站点统计显示项”的维护入口，并注明 `site-stats` 当前显示项 |
+| [BLOWFISH_FEATURE_AUDIT.md](file:///f:/Notes/BLOWFISH_FEATURE_AUDIT.md) | 补充 `site-stats` 当前统计项的数据来源说明 |
+
+### 结果
+
+- 站点统计现在显示 `notes / projects / music / days online / last updated`
+- `projects` 与 `music` 都只在构建发布时更新，符合当前站点的静态统计思路
+- `days online` 仍然保留前端实时计算；其余项目继续由 Hugo 构建期生成
+
+---
+## 2026-06-28 · 新增 notes 专用 archetype
+
+### 改动
+
+| 文件 | 改动 |
+|---|---|
+| [archetypes/notes.md](file:///f:/Notes/archetypes/notes.md) | 新增 `notes` 专用 archetype，统一 `notes` 新文章的基础 front matter、标签字段、更新时间字段与页面级可选覆写注释 |
+| [BLOWFISH_FEATURE_AUDIT.md](file:///f:/Notes/BLOWFISH_FEATURE_AUDIT.md) | 将 `archetypes` 条目标记为已实施，并补充该 archetype 的定位：只承载文章级字段，分区规则继续交给 `cascade` |
+| [PROJECT_MAP.md](file:///f:/Notes/PROJECT_MAP.md) | 将 `/notes/` 新文章 SOP 改为优先使用 `hugo new content/notes/<slug>/index.md`，并记录 archetype 与后续 page resources 的配合方式 |
+
+### 结果
+
+- 以后新建 `notes` 时不需要再从旧文章复制 front matter
+- `notes` 文章模板和现有 `cascade + site params` 的职责边界更清晰，不会重复堆一堆默认开关
+- 后续若要继续升级 `page resources`，当前 archetype 已预留了说明，不会和未来内容结构冲突
+
+---
+## 2026-06-28 · 站点在线天数改为前端实时计算
+
+### 改动
+
+| 文件 | 改动 |
+|---|---|
+| [layouts/partials/site-stats.html](file:///f:/Notes/layouts/partials/site-stats.html) | `days online` 改为输出带 `data-launch-date` 的占位元素；首屏保留构建期兜底值，加载后交给前端脚本实时校正 |
+| [static/js/site-stats-days.js](file:///f:/Notes/static/js/site-stats-days.js) | 新增轻量脚本，按 `data/site.yaml` 的 `launch_date` 在浏览器端实时计算站点在线天数 |
+| [data/site.yaml](file:///f:/Notes/data/site.yaml) | 继续只维护固定起点 `launch_date`，不再需要为在线天数单独触发部署 |
+
+### 结果
+
+- 即使几天不重新部署，`days online` 也会在用户打开页面时自动更新
+- `launch_date` 仍然是唯一手动维护项，只需在真实站点起始日期变更时改一次
+- `notes / tags / last updated` 仍然保持 Hugo 构建期统计逻辑，不受这次改动影响
+- 同步将 `site-stats` 中遗留的 `.Site.Data` 改为 `hugo.Data`，消除 Hugo v0.163 的 deprecation 警告
+
+---
 ## 2026-06-27 · 首页封面收尾清理与信息对齐
 
 ### 改动
@@ -153,6 +204,8 @@
 - 后续若只想隐藏封面统计，无需改模板，只需把 `data/cover.yaml` 的 `show_stats` 改为 `false`
 
 ---
+
+
 
 ## 2026-06-26 · About Timeline 改为数据驱动并支持多组
 

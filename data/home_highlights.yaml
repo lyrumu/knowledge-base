@@ -1,18 +1,6 @@
 # 首页三组手动精选。
 # 只维护 sections 即可；模板不会再读取旧的 section_kicker / section_title / section_text。
 sections:
-  - id: "daily"
-    kicker: "Slow & Small"
-    title: "Highlights of DAILY"
-    desc: "Collect some high-quality items"
-    cta_label: "Open Daily"
-    cta_path: "/life/"
-    items:
-      - label: "Listening"
-        title: "Current Playlist"
-        desc: "A small playlist page with local tracks and an in-page player."
-        path: "/life/music/"
-        link_text: "Listen now"
 
   - id: "docs"
     kicker: "Reading & Notes"
@@ -45,3 +33,15 @@ sections:
         path: "/works/projects/"
         link_text: "View projects"
       
+  - id: "daily"
+    kicker: "Slow & Small"
+    title: "Highlights of DAILY"
+    desc: "Collect some high-quality items"
+    cta_label: "Open Daily"
+    cta_path: "/life/"
+    items:
+      - label: "Listening"
+        title: "Current Playlist"
+        desc: "A small playlist page with local tracks and an in-page player."
+        path: "/life/music/"
+        link_text: "Listen now"

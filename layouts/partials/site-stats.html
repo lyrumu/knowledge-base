@@ -2,14 +2,17 @@
   Partial: site-stats
   ----------------------------------------------------------------
   统一的站点统计摘要：
-  - 显示 notes / tags / days online / last updated
+  - 显示 notes / projects / music / days online / last updated
   - 供 shortcode 与封面等模板共同复用
   - 站点起始日期来自 data/site.yaml
+  - days online 首屏先输出构建期兜底值，加载后由前端脚本实时校正
   ----------------------------------------------------------------
 */}}
-{{ $launchDateRaw := .Site.Data.site.launch_date | default "2026-06-19" }}
+{{ $launchDateRaw := hugo.Data.site.launch_date | default "2026-06-19" }}
 {{ $launchDate := time.AsTime $launchDateRaw }}
 {{ $daysOnline := add (div (sub now.Unix $launchDate.Unix) 86400) 1 }}
+{{ $projects := hugo.Data.projects.projects | default (slice) }}
+{{ $tracks := hugo.Data.music.tracks | default (slice) }}
 <section class="site-stats not-prose">
   <span class="site-stats-item">
     <span class="site-stats-num">{{ len (where .Site.RegularPages "Section" "notes") }}</span>
@@ -17,12 +20,17 @@
   </span>
   <span class="site-stats-sep" aria-hidden="true">·</span>
   <span class="site-stats-item">
-    <span class="site-stats-num">{{ len .Site.Taxonomies.tags }}</span>
-    <span class="site-stats-label">tags</span>
+    <span class="site-stats-num">{{ len $projects }}</span>
+    <span class="site-stats-label">projects</span>
   </span>
   <span class="site-stats-sep" aria-hidden="true">·</span>
   <span class="site-stats-item">
-    <span class="site-stats-num">{{ $daysOnline }}</span>
+    <span class="site-stats-num">{{ len $tracks }}</span>
+    <span class="site-stats-label">music</span>
+  </span>
+  <span class="site-stats-sep" aria-hidden="true">·</span>
+  <span class="site-stats-item">
+    <span class="site-stats-num" data-site-days data-launch-date="{{ $launchDateRaw }}">{{ $daysOnline }}</span>
     <span class="site-stats-label">days online</span>
   </span>
   <span class="site-stats-sep" aria-hidden="true">·</span>
@@ -35,3 +43,4 @@
     </span>
   </span>
 </section>
+<script defer src="/js/site-stats-days.js"></script>
