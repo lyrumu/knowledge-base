@@ -118,6 +118,32 @@
   </div>
 
   <main class="cover-content">
+    {{/*
+      封面 view_home 数据展示（顶左角）
+      ----------------------------------------------------------------
+      - 由 Firebase 后端自动通过 vendor.html 注入
+        （themes/blowfish/layouts/partials/vendor.html `else if eq .Kind "home"`）
+      - 复用 notes 文章 meta/views.html 的加载骨架与命名约定
+        （id="views_home" → firebase.js 通过 querySelectorAll("span[id^='views_']") 自动接管）
+      - firebase.js 的 toggleLoaders 会**切换**内层 span className 上的所有 class，
+        因此：
+          • 「样式承载」class（cover-views-num）放外层 wrapper，✅ 不被切换
+          • 「加载骨架」class（animate-pulse）单独放内层 span，被切换走后露出数字
+      - 不包卡片、不包边框，仅「数字 + eye 图标」一行
+      - 视觉：仅数字 + eye 图标，淡而克制（绝对定位到封面顶左角）
+    */}}
+    <div class="cover-views-meta" title="home page views">
+      <span class="cover-views-figure">
+        <span class="cover-views-num">
+          <span
+            id="views_home"
+            class="animate-pulse"
+            title="home views">···</span>
+        </span>
+        <span class="cover-views-eye" aria-hidden="true">{{ partial "icon.html" "eye" }}</span>
+      </span>
+    </div>
+
     <section class="cover-masthead">
       {{ with $cfg.kicker }}
       <p class="cover-kicker">{{ . }}</p>

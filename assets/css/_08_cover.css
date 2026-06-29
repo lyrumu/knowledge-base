@@ -635,3 +635,121 @@ html.dark .cover-flower-black {
 html.dark .cover-flower-soft.cover-flower-black {
   filter: brightness(0) invert(1) blur(0.3px) drop-shadow(0 16px 28px rgba(0, 0, 0, 0.16));
 }
+
+/* =============================================================================
+   12. 封面 view_home 数据展示（Firebase 后端驱动 · 顶左角）
+   ----------------------------------------------------------------------------
+   - 数据：Firestore `views/views_home` 文档的 `views` 字段
+   - 注入：themes/blowfish/layouts/partials/vendor.html 自动
+     （kind=home → data-views="views_home"）
+   - 渲染：themes/blowfish/assets/js/firebase.js 读到 views_home id 后
+     用 onSnapshot 实时回写 span 内文本
+   - 加载骨架：复用 notes meta/views.html 的视觉语言（无字 placeholder），
+     但用 cover 同款字体（Fraunces 衬线数字）+ 自定义 placeholder 颜色
+     避免与正文 meta 重复
+   - 不包卡片、不包边框，仅「数字 + eye 图标」一行
+   - 位置：cover-content 的第一个 flex 子元素（顶左角），在 cover-masthead 之前。
+     cover-content 是 flex column + align-items: flex-start，
+     因此元素天然左对齐在内容区最上方 — 即"左上角"。
+     不要再 absolute，避免与 cover-kicker / cover-avatar 重叠。
+   ============================================================================= */
+.cover-views-meta {
+  /* in-flow：第一子元素 = 顶左角（cover-content 是 flex column flex-start） */
+  align-self: flex-start;
+  /* 与 cover-content padding 一致的留白 */
+  margin: 0 0 0.65rem;
+  display: inline-flex;
+  align-items: baseline;
+  line-height: 1;
+  opacity: 0.78;
+}
+
+/* 数字 + eye 图标 的紧凑单元 */
+.cover-views-figure {
+  display: inline-flex;
+  align-items: baseline;
+  gap: 0.35rem;
+}
+
+/* 衬线小字号数字（克制尺寸，不抢标题）
+   - 外层 wrapper 承载"数据加载完成后的最终样式"（firebase.js 的
+     toggleLoaders 不会触碰这一层，所以样式不会被 toggle 走）
+   - 内层 span（id="views_home"）只承载加载骨架（animate-pulse），
+     firebase.js 拉数据后会被 toggleLoaders 自动移除 */
+.cover-views-num {
+  display: inline-block;
+  min-width: 2.4ch;
+  font-family: var(--font-serif-display);
+  font-weight: 400;
+  font-style: italic;
+  font-size: clamp(0.95rem, 1.5vw, 1.15rem);
+  font-variation-settings: "opsz" 60, "SOFT" 50;
+  font-feature-settings: "lnum", "tnum";
+  letter-spacing: 0.005em;
+  line-height: 1;
+  color: color-mix(in srgb, var(--pal-sub, var(--fg-mute)) 88%, var(--pal-title, var(--fg-base)) 12%);
+  text-align: left;
+  vertical-align: baseline;
+}
+.cover-views-num > span {
+  /* 内层加载元素：继承外层字号/字体，自己只管"骨架视觉" */
+  display: inline-block;
+  font: inherit;
+  font-variation-settings: inherit;
+  letter-spacing: inherit;
+  vertical-align: baseline;
+}
+
+/* Firebase 注入数据前的兜底占位
+   - 复用 Tailwind animate-pulse（已通过 theme.css 编译进来）
+   - 内层 span 透明文字 + 浅色背景 = 闪烁骨架
+   - 颜色走项目调色板，不与正文 meta 重复 */
+.cover-views-num > span.animate-pulse {
+  color: transparent;
+  background-color: color-mix(in srgb, var(--pal-kicker, var(--fg-soft)) 32%, transparent);
+  border-radius: 0.3rem;
+  padding: 0 0.15em;
+  height: 0.85em;
+  line-height: 0.85;
+  min-width: 2.2ch;
+  vertical-align: 0.05em;
+  animation: var(--animate-pulse, pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite);
+}
+html.dark .cover-views-num > span.animate-pulse {
+  background-color: color-mix(in srgb, var(--pal-kicker, var(--fg-soft)) 24%, transparent);
+}
+
+/* eye 图标 — 与数字轻微抬升对齐，accent 但更低 opacity */
+.cover-views-eye {
+  display: inline-flex;
+  align-items: center;
+  color: var(--pal-accent, var(--accent));
+  opacity: 0.7;
+  font-size: 0.85em;
+  line-height: 1;
+  transform: translateY(0.05em);
+}
+.cover-views-eye svg {
+  width: 1em;
+  height: 1em;
+  fill: currentColor;
+  stroke: none;
+}
+
+/* reduced-motion：禁用 pulse，直接显示（默认背景色作为占位） */
+@media (prefers-reduced-motion: reduce) {
+  .cover-views-num > span.animate-pulse {
+    animation: none;
+  }
+}
+
+/* 移动端：小屏字号微调 */
+@media (max-width: 720px) {
+  .cover-views-meta {
+    margin-bottom: 0.5rem;
+  }
+  .cover-views-num {
+    font-size: 1rem;
+    min-width: 2.2ch;
+  }
+}
