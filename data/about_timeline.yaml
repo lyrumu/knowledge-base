@@ -45,7 +45,7 @@ groups:
   #       title: "Find my spirit"
   #       meta: "2026"
   #       summary: "Reconnecting with what gives me energy and purpose."
-  #       image: "/image/westlake.png"
+  #       image: "/image/westlake.webp"
   #       image_alt: "Failed to load~"
   #       body: |
   #         How come I just don’t wanna do my work?
@@ -55,7 +55,7 @@ groups:
   #       title: "Find my happiness"
   #       meta: "2024-2025"
   #       summary: "Seeking simple sources of happiness and lightness."
-  #       image: "/image/bedrock_MC.png"
+  #       image: "/image/bedrock_MC.webp"
   #       image_alt: "Failed to load~"
   #       body: |
   #         Who could please talk with me?
@@ -65,7 +65,7 @@ groups:
   #       title: "Find myself"
   #       meta: "2023-2024"
   #       summary: "Returning to who I am beneath the noise."
-  #       image: "/image/why.jpg"
+  #       image: "/image/why.webp"
   #       image_alt: "Failed to load~"
   #       body: |
   #         Why am I even alive?

@@ -24,7 +24,7 @@
         {{ else if eq $style "svg" }}
           <span class="life-sub-cover-svg" aria-hidden="true">{{ $s.cover | safeHTML }}</span>
         {{ else }}
-          {{/* default: image。src 可以是 /image/xxx.png 或 /svg/xxx.svg */}}
+          {{/* default: image。src 可以是 /image/xxx.webp 或 /svg/xxx.svg */}}
           <img class="life-sub-cover-img" src="{{ $s.cover }}" alt="{{ $s.name }}" loading="lazy" />
         {{ end }}
       </div>

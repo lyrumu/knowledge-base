@@ -20,7 +20,7 @@ submodules:
     icon: "music"
     desc: "so keep your ears and brain healthy"
     href: "/life/music/"
-    cover: "/image/musicheart.png"
+    cover: "/image/musicheart.webp"
     cover_style: "image"
     tags: [playlist, lofi, classic]
 

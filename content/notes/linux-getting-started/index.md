@@ -188,7 +188,7 @@ WSL2 默认会**继承 Windows 的 PATH**，会把 Windows 的可执行文件都
 
 #### 优化前（查看现有 PATH）
 
-![优化环境变量](image/优化环境变量.png)
+![优化环境变量](image/优化环境变量.webp)
 *`echo $PATH` 看到的 PATH 列表，可以看出 Windows 的路径混了进来*
 
 #### 关闭继承
@@ -425,7 +425,7 @@ OpenCode 是一款终端 AI 编码 Agent，支持多 LLM Provider，类似 Claud
 curl -fsSL https://opencode.ai/install | bash
 ```
 
-![WSL 内安装 OpenCode](image/WSL内安装opencode.png)
+![WSL 内安装 OpenCode](image/WSL内安装opencode.webp)
 *OpenCode 安装脚本执行中*
 
 安装完成后加载配置并验证：
@@ -514,7 +514,7 @@ opencode
 
 在项目根目录创建 `AGENTS.md`，告诉 Agent 项目约定：
 
-![AGENTS.md 配置示例](image/opencode-AGENTSmd.png)
+![AGENTS.md 配置示例](image/opencode-AGENTSmd.webp)
 *AGENTS.md 的推荐配置方式*
 
 > 不过优先考虑通过**改变工程架构**来提升 Agent 能力，而不是堆指令。
@@ -683,7 +683,7 @@ hermes --tui                            # 推荐：现代 TUI 界面
 
 可以让 Hermes 默认启动 TUI（修改配置）：
 
-![Hermes TUI 配置](image/hermes-tui-config.png)
+![Hermes TUI 配置](image/hermes-tui-config.webp)
 *在 Hermes 配置中默认使用 TUI*
 
 #### Step 4：验证会话持久化
@@ -743,7 +743,7 @@ hermes dashboard                           # 打开网页端（端口见下）
 hermes --tui sessions browse               # TUI 方式选择历史对话
 ```
 
-![Hermes TUI 历史会话浏览](image/hermes-tui-sessions.png)
+![Hermes TUI 历史会话浏览](image/hermes-tui-sessions.webp)
 *`hermes --tui sessions browse` 的界面效果*
 
 ### 7.7 安全加固（生产部署必做）

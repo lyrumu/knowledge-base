@@ -51,7 +51,8 @@
                 src="{{ $item.image | relURL }}"
                 alt="{{ $item.image_alt }}"
                 loading="lazy"
-                decoding="async">
+                decoding="async"
+                fetchpriority="low">
               {{ with $item.image_caption }}
               <p class="about-milestone-caption">{{ . }}</p>
               {{ end }}

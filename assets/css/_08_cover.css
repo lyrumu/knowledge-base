@@ -454,7 +454,7 @@ html.dark .cover-grain {
   height: 56px;
   z-index: 2;
   pointer-events: none;
-  background-image: url("/image/上下填充黑色花.png");
+  background-image: url("/image/上下填充黑色花.webp");
   background-repeat: repeat-x;
   background-size: 177px 56px;
   background-position: 0 50%;

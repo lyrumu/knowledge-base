@@ -18,16 +18,25 @@ tracks:
   - title: "Departures ~あなたにおくるアイの歌~"
     artist: "ryo&&EGOIST"
     album: ""
-    cover: "/image/cover-Departures.jpg"          # ← 占位封面；换成你真实的 /image/life/music/xxx.jpg
+    cover: "/image/cover-Departures.webp"          # ← 占位封面；换成你真实的 /image/life/music/xxx.jpg
     src:   "/life/music/Departures.mp3"                           # ← 把 mp3 放进 static/life/music/ 后填入路径，如 /life/music/xxx.mp3
     duration: "4:15"
     size: "7.9 MB"
     mood: "Melancholy"
 
+  - title: "My Dearest"
+    artist: "ryo&&supercell"
+    album: ""
+    cover: "/image/cover-my-dearest.webp"          
+    src:   "/life/music/My_Dearest.mp3"                           
+    duration: "5:38"
+    size: "5.16 MB"
+    mood: ""
+
   - title: "Unravel"
     artist: "TK from Ling Tosite Sigure"
     album: "《Fantastic Magic》"
-    cover: "/image/cover-unravel.jpg"     
+    cover: "/image/cover-unravel.webp"     
     src:   "/life/music/Unravel.mp3"
     duration: "3:58"
     size: "3.8 MB"
@@ -36,7 +45,7 @@ tracks:
   - title: "黑色幽默"
     artist: "Jay Chou"
     album: "《Jay》"
-    cover: "/image/cover-Blackhumor.png"     
+    cover: "/image/cover-Blackhumor.webp"     
     src:   "/life/music/Blackhumor.mp3"
     duration: "4:43"
     size: "4.32 MB"

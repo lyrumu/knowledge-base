@@ -130,13 +130,13 @@
     - 控制范围要小，避免全站无差别 preload 挤占带宽
   */}}
   {{ if .IsHome }}
-    <link rel="preload" as="image" href="{{ "image/melody.png" | relURL }}" fetchpriority="high">
-    <link rel="preload" as="image" href="{{ "image/上下填充黑色花.png" | relURL }}">
-    <link rel="preload" as="image" href="{{ "image/黑色花.png" | relURL }}">
+    <link rel="preload" as="image" href="{{ "image/melody.webp" | relURL }}" fetchpriority="high">
+    <link rel="preload" as="image" href="{{ "image/上下填充黑色花.webp" | relURL }}" fetchpriority="high">
+    <link rel="preload" as="image" href="{{ "image/黑色花.webp" | relURL }}" fetchpriority="high">
     <link rel="preload" as="font" href="{{ "fonts/fraunces-latin-wght-normal.woff2" | relURL }}" type="font/woff2" crossorigin>
     <link rel="preload" as="font" href="{{ "fonts/newsreader-latin-wght-normal.woff2" | relURL }}" type="font/woff2" crossorigin>
   {{ else if eq .RelPermalink "/about/" }}
-    <link rel="preload" as="image" href="{{ "image/melody.png" | relURL }}" fetchpriority="high">
+    <link rel="preload" as="image" href="{{ "image/melody.webp" | relURL }}" fetchpriority="high">
     <link rel="preload" as="font" href="{{ "fonts/fraunces-latin-wght-normal.woff2" | relURL }}" type="font/woff2" crossorigin>
     <link rel="preload" as="font" href="{{ "fonts/newsreader-latin-wght-normal.woff2" | relURL }}" type="font/woff2" crossorigin>
   {{ end }}

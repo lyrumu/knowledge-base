@@ -14,5 +14,5 @@ cover:
 
   # 这里只控制首页是否显示站点统计；实际统计逻辑在 layouts/partials/site-stats.html
   show_stats: true
-  avatar: "image/melody.png"
+  avatar: "image/melody.webp"
   repo_url: "https://github.com/lyrumu/knowledge-base"

@@ -15,7 +15,7 @@ showTableOfContents: true
   <div class="about-profile-row">
     <img
       class="about-avatar"
-      src="/image/melody.png"
+      src="/image/melody.webp"
       alt="lyrumu"
       width="144"
       height="144"

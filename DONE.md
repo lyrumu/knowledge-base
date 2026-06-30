@@ -3,6 +3,43 @@
 > 维护方式：每完成一大阶段，在下方加一段记录。(最新记录写在最上方)
 
 ---
+## 2026-06-30 · 全站图片转 webp + 加载策略优化
+
+### 改动
+
+| 文件 / 目录 | 改动 |
+|---|---|
+| [scripts/convert-to-webp.ps1](file:///f:/Notes/scripts/convert-to-webp.ps1) | 新增一次性转换脚本：用 `cwebp` 把 `static/image/` 和 `content/notes/*/image/` 下所有 png/jpg 转 webp，质量 80，自动备份原图到 `._backup_originals/` |
+| [scripts/replace-image-refs.ps1](file:///f:/Notes/scripts/replace-image-refs.ps1) | 新增引用替换脚本：扫描 `data/` `layouts/` `content/` `assets/css/` 内 `.png/.jpg` 引用并改成 `.webp` |
+| `static/image/*.png/jpg` | 全部转 webp（原图保留在 `._backup_originals/static/image/`），共 12 张图，3.3MB → 0.7MB |
+| `content/notes/*/image/*.png` | 全部转 webp（原图保留在 `._backup_originals/content/notes/*/image/`），共 7 张图 |
+| [layouts/partials/head.html](file:///f:/Notes/layouts/partials/head.html) | preload 路径自动跟随改为 `.webp`；封面花朵的两条 preload 补上 `fetchpriority="high"` |
+| [layouts/partials/home/custom.html](file:///f:/Notes/layouts/partials/home/custom.html) | `黑色花.png` 引用改 `黑色花.webp`（12 处，Hugo dict 形式） |
+| [layouts/partials/header/basic.html](file:///f:/Notes/layouts/partials/header/basic.html) | logo `<img>` 加 `loading="eager" decoding="async" fetchpriority="high"`（首屏 logo 不应懒加载） |
+| [layouts/shortcodes/about-timeline.html](file:///f:/Notes/layouts/shortcodes/about-timeline.html) | timeline 图补 `fetchpriority="low"` |
+| `data/*.yaml`、`content/notes/*/index.md`、`content/about/_index.md`、`assets/css/_08_cover.css` | 引用路径已由脚本批量改 `.webp` |
+
+### 结果
+
+- **19 张图总计：3.84 MB → 1.07 MB，节省 72%**
+- 转换前后单图对比示例：
+  - `cover-README.png` 746 KB → 42 KB（-94%）
+  - `cover-Blackhumor.png` 325 KB → 15 KB（-95%）
+  - `melody.png` 564 KB → 46 KB（-92%）
+  - `bedrock_MC.png` 287 KB → 119 KB（-59%）
+  - `file-20260609163609280.png` 234 KB → 34 KB（-86%）
+- 加载策略：封面/头像/logo `eager + high`，卡片封面/时间轴 `lazy + low`，全部 `async` 解码
+- 备份目录：`f:\Notes\._backup_originals\`（如需回滚，把文件拷回原位即可）
+
+### 注意事项
+
+- 占位封面 `data/resources.yaml` 的 `minecraft.png` 文件本身不存在，保留原样未替换
+- `data/*.yaml` 里的注释（`<slug>.png` 路径模板）未替换，仅替换实际可加载的引用
+- 文档 `DONE.md` / `PROJECT_MAP.md` / `DEPLOY.md` 中说明性路径未替换
+- `Vault/` 内容源保持只读，未触碰
+- `public/` 是 Hugo 编译产物，下次 `hugo` 会自动重新生成
+
+---
 ## 2026-06-28 · 站点统计改为显示项目数与音乐数
 
 ### 改动
