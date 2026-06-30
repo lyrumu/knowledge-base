@@ -40,7 +40,7 @@ title = "lyrumu's page"
       # 1. 放入 assets/images/ 目录，引用时写相对根目录的路径，例如 'images/avatar.jpg'
       # 2. 放入 static/ 目录，引用时写完整的相对根路径，例如放在 static/images/ 则写 '/images/avatar.jpg'
       # 2. 外部图片：直接填写完整的 CDN/在线图片 URL，例如 'https://example.com/avatar.jpg'
-      image = 'images/melody.png'
+      image = 'image/melody.webp'
 
       headline = 'Recordings'
       bio = ''
@@ -54,7 +54,7 @@ title = "lyrumu's page"
 # =============================================================================
 theme = 'blowfish'
 
-relativeURLs = true
+relativeURLs = false
 disablePathToLower = true
 enableRobotsTXT = true
 
@@ -163,10 +163,11 @@ enableEmoji = true
     hiddenInList = false
 
   # 2026-06-27：接入 Umami（走 Blowfish 原生 analytics partial，而非手写 head script）
-  [params.umamiAnalytics]
-    websiteid = '515c1183-2e68-4a62-8fd9-b879507a9f28'
-    domain = 'cloud.umami.is'
-    enableTrackEvent = true
+  # 2026-06-30：暂时关闭 — cloud.umami.is 在国内有连接开销，影响加载
+  # [params.umamiAnalytics]
+  #   websiteid = '515c1183-2e68-4a62-8fd9-b879507a9f28'
+  #   domain = 'cloud.umami.is'
+  #   enableTrackEvent = true
 
   # 2026-06-27：接入 Blowfish 原生 Firebase views / likes。
   # 说明：

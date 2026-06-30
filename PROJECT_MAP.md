@@ -1,6 +1,6 @@
 # 项目地图 — 个人网站 `f:\Notes\`
 
-> 最后更新：2026-06-27 · 首页封面收尾清理：副标题/站点统计居中，cover/home_highlights 只保留真实在用字段 · Hugo v0.163.2 · Blowfish v2
+> 最后更新：2026-06-30 · Music 播放器新增播放模式（Loop All/One/Shuffle）与音量控制（位于页面列表上方）· Hugo v0.163.2 · Blowfish v2
 
 ---
 
@@ -245,10 +245,11 @@ f:\Notes\
 | 元素 | 数据源 | 模板 |
 |------|--------|------|
 | 歌曲列表 | [`data/music.yaml`](file:///f:/Notes/data/music.yaml) | [`layouts/shortcodes/music-list.html`](file:///f:/Notes/layouts/shortcodes/music-list.html) |
+| 播放模式/音量控制栏 | — | [`layouts/shortcodes/music-list.html`](file:///f:/Notes/layouts/shortcodes/music-list.html) 的 `.music-controls-bar` |
 | 粘性播放器 HTML | — | [`layouts/partials/music-player.html`](file:///f:/Notes/layouts/partials/music-player.html) |
-| 播放器逻辑（点击切歌 / 进度跳转 / 记忆位置 / 键盘 / 关闭清状态） | — | [`static/js/music-player.js`](file:///f:/Notes/static/js/music-player.js) |
+| 播放器逻辑（点击切歌 / 进度跳转 / 记忆位置 / 键盘 / 关闭清状态 / 播放模式 / 音量） | — | [`static/js/music-player.js`](file:///f:/Notes/static/js/music-player.js) |
 | 歌曲下载入口 + 文件信息 | `data/music.yaml` 的 `src / size` | [`layouts/shortcodes/music-list.html`](file:///f:/Notes/layouts/shortcodes/music-list.html) + [`assets/css/_05_cards.css`](file:///F:/Notes/assets/css/_05_cards.css) |
-| 列表样式 + 播放器样式 | — | [`assets/css/_05_cards.css`](file:///F:/Notes/assets/css/_05_cards.css) 的 `.music-item*` + [`_07_music-player.css`](file:///F:/Notes/assets/css/_07_music-player.css) 的 `.music-player` |
+| 列表样式 + 控制栏样式 + 播放器样式 | — | [`assets/css/_05_cards.css`](file:///F:/Notes/assets/css/_05_cards.css) 的 `.music-item*` + `.music-controls-bar` + [`_07_music-player.css`](file:///F:/Notes/assets/css/_07_music-player.css) 的 `.music-player` |
 | 资源存放约定 | `static/life/music/<slug>.mp3` + `static/image/life/music/<slug>.jpg` | — |
 
 ### /about/ 页面内容

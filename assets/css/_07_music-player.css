@@ -198,6 +198,9 @@ html.dark .music-player {
   color: var(--fg-base);
   transform: scale(1.06);
 }
+.music-player-btn.is-active {
+  color: var(--accent);
+}
 .music-player-btn.is-primary {
   width: 2.7rem;
   height: 2.7rem;

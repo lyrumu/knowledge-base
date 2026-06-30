@@ -3,6 +3,34 @@
 > 维护方式：每完成一大阶段，在下方加一段记录。(最新记录写在最上方)
 
 ---
+## 2026-06-30 · Music 播放器新增播放模式与音量控制
+
+### 改动
+
+| 文件 | 改动 |
+|---|---|
+| [layouts/shortcodes/music-list.html](file:///f:/Notes/layouts/shortcodes/music-list.html) | 新增播放模式/音量控制栏 HTML（位于歌曲列表上方） |
+| [layouts/partials/music-player.html](file:///f:/Notes/layouts/partials/music-player.html) | 移除播放模式/音量控件，保持底部播放器简洁 |
+| [static/js/music-player.js](file:///f:/Notes/static/js/music-player.js) | 支持三种播放模式（Loop All / Loop One / Shuffle）、音量控制、静音切换；localStorage 记忆音量与模式 |
+| [assets/css/_05_cards.css](file:///F:/Notes/assets/css/_05_cards.css) | 新增 `.music-controls-bar` 页面控制栏样式（播放模式按钮 + 音量滑块） |
+| [assets/css/_07_music-player.css](file:///F:/Notes/assets/css/_07_music-player.css) | 移除不再需要的音量控件样式 |
+
+### 功能
+
+- **播放模式**：列表循环 / 单曲循环 / 随机播放（点击切换，active 态高亮）
+- **音量控制**：滑块调节 + 静音按钮 + 百分比显示
+- **localStorage 记忆**：音量与模式设置持久保存
+- **UI 位置**：控制栏位于 `/life/music/` 页面歌曲列表上方，不在底部弹出播放器里
+- **界面语言**：全部英文（Mode / Vol / Loop All / Loop One / Shuffle）
+
+### 设计决策
+
+- 控制栏放在页面列表区而非底部播放器，保持播放器简洁易用
+- 随机播放使用 Fisher-Yates 洗牌算法打乱顺序
+- 音量滑块 hover 时显示手柄，图标随音量等级变化（高/低/静音）
+
+---
+
 ## 2026-06-30 · 全站图片转 webp + 加载策略优化
 
 ### 改动
