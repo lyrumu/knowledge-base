@@ -15,6 +15,22 @@
 #   - note     : 一句话小记（可空）
 # =============================================================================
 tracks:
+  - title: "ウィーアー!(We Are!)"
+    artist: "Da-ice"
+    cover: "/image/cover-we-are.webp"
+    src:   "/life/music/we-are.mp3"                  
+    duration: "4:06"
+    size: "3.76 MB"
+    mood: ""
+
+  - title: "Crossing Field"
+    artist: "LiSA"
+    cover: "/image/cover-crossing-field.webp"
+    src:   "/life/music/crossing-field.mp3"                  
+    duration: "4:09"
+    size: "3.81 MB"
+    mood: ""
+
   - title: "Departures ~あなたにおくるアイの歌~"
     artist: "ryo&&EGOIST"
     album: ""
