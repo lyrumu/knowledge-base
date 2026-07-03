@@ -3,6 +3,30 @@
 > 维护方式：每完成一大阶段，在下方加一段记录。(最新记录写在最上方)
 
 ---
+## 2026-07-03 · 首页标题样式重构 + 顶栏品牌徽章
+
+### 改动
+
+| 文件 | 改动 |
+|---|---|
+| [assets/css/_04_hero.css](file:///f:/Notes/assets/css/_04_hero.css) | 重构 page-hero 样式：左对齐、缩小标题（3.75rem→2.25rem）、收紧间距；关键修复：覆写 fixed header 占位高度 `min-h-[148px]` → `3.5rem`，消除顶部空白 |
+| [layouts/partials/header/basic.html](file:///f:/Notes/layouts/partials/header/basic.html) | 新增项目级覆盖：顶栏左侧文字链接改为 `.site-brand-badge` 徽章样式（圆角边框 + 透明背景） |
+| [assets/css/_02_chrome.css](file:///f:/Notes/assets/css/_02_chrome.css) | 新增 `.site-brand-badge` 样式：圆角边框、透明背景、hover 时边框变 accent 色 + 轻微上浮；添加 `text-decoration: none !important` 消除下划线 |
+
+### 结果
+
+- **DOCS / WORKS / DAILY 首页标题**：从居中大标题改为左上角紧凑布局，整体尺寸缩小约 40%
+- **顶部空白消除**：fixed header 占位高度从 148px 缩减到 56px（3.5rem），页面内容紧贴顶栏
+- **顶栏标识**：从纯文字链接改为圆角边框徽章样式，hover 时有视觉反馈
+- **移动端适配**：品牌徽章在移动端自动隐藏图标，保持简洁
+
+### 设计决策
+
+- **hover 下划线**：用 `text-decoration: none !important` 确保链接不出现下划线
+- **占位高度修复**：主题 `header/fixed.html` 使用 `min-h-[148px]` 占位，这是导致顶部空白的主要原因
+
+---
+
 ## 2026-06-30 · Music 播放器新增播放模式与音量控制
 
 ### 改动

@@ -15,9 +15,6 @@
               width="{{ div $logo.Width 2 }}"
               height="{{ div $logo.Height 2 }}"
               class="logo max-h-20 max-w-20 object-scale-down object-left nozoom"
-              loading="eager"
-              decoding="async"
-              fetchpriority="high"
               alt="">
           {{ end }}
         </a>
@@ -25,7 +22,7 @@
     {{ end }}
   {{ end }}
   {{ if not .Site.Params.disableTextInHeader | default true }}
-    <a href="{{ "" | relLangURL }}" class="text-base font-medium truncate min-w-0 shrink">
+    <a href="{{ "" | relLangURL }}" class="site-brand-badge">
       {{ .Site.Title | markdownify }}
     </a>
   {{ end }}

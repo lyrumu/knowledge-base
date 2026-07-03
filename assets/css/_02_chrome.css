@@ -123,6 +123,57 @@
 }
 
 /* =============================================================================
+   品牌徽章样式（顶栏左侧）
+   ----------------------------------------------------------------------------
+   2026-07-03 新增：将纯文字链接改为徽章样式
+   ============================================================================= */
+.site-brand-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.45rem;
+  padding: 0.35rem 0.75rem;
+  border: 1px solid var(--line);
+  border-radius: 9999px;
+  font-family: var(--font-serif-display);
+  font-size: 0.8rem;
+  font-weight: 500;
+  letter-spacing: 0.02em;
+  color: var(--fg-base);
+  background: transparent;
+  text-decoration: none !important;
+  transition: all 0.3s cubic-bezier(0.22, 0.61, 0.36, 1);
+}
+
+.site-brand-badge:hover {
+  border-color: var(--accent);
+  color: var(--accent);
+  background: color-mix(in srgb, var(--accent) 6%, transparent);
+  transform: translateY(-1px);
+}
+
+.site-brand-badge:focus {
+  outline: none;
+  border-color: var(--accent);
+}
+
+/* 暗色模式微调 */
+html.dark .site-brand-badge {
+  background: rgba(255, 255, 255, 0.03);
+}
+
+html.dark .site-brand-badge:hover {
+  background: rgba(255, 255, 255, 0.08);
+}
+
+/* 移动端适配 */
+@media (max-width: 640px) {
+  .site-brand-badge {
+    padding: 0.3rem 0.6rem;
+    font-size: 0.75rem;
+  }
+}
+
+/* =============================================================================
    Scroll-to-top
    ============================================================================= */
 .scroll-to-top {

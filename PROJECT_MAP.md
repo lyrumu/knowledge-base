@@ -1,6 +1,6 @@
 # 项目地图 — 个人网站 `f:\Notes\`
 
-> 最后更新：2026-06-30 · Music 播放器新增播放模式（Loop All/One/Shuffle）与音量控制（位于页面列表上方）· Hugo v0.163.2 · Blowfish v2
+> 最后更新：2026-07-03 · 首页标题样式重构（缩小+左对齐+消除顶部空白）+ 顶栏品牌徽章 · Hugo v0.163.2 · Blowfish v2
 
 ---
 
@@ -39,7 +39,9 @@
 | 改全站分隔符规则 | [`assets/css/_03_prose.css`](file:///f:/Notes/assets/css/_03_prose.css) + [`assets/css/_05_cards.css`](file:///f:/Notes/assets/css/_05_cards.css) + [`assets/css/_04_hero.css`](file:///f:/Notes/assets/css/_04_hero.css) + [`assets/css/_08_cover.css`](file:///f:/Notes/assets/css/_08_cover.css) |
 | 改 /about/ 图标玻璃效果 | [`assets/css/_09_about.css`](file:///F:/Notes/assets/css/_09_about.css)（`.about-contact-glass` / `.about-contact-btn` / `.copy-toast`） |
 | 调首页 / about 首屏图片预加载 | [`layouts/partials/head.html`](file:///f:/Notes/layouts/partials/head.html)（按页面条件 preload 关键图片和字体） |
+| 改顶栏左侧品牌标识样式 | [`layouts/partials/header/basic.html`](file:///f:/Notes/layouts/partials/header/basic.html) + [`assets/css/_02_chrome.css`](file:///f:/Notes/assets/css/_02_chrome.css) 的 `.site-brand-badge` |
 | 改顶栏的菜单项 | [`hugo.toml`](file:///f:/Notes/hugo.toml) 的 `[[menu.main]]` 段 |
+| 改 DOCS/WORKS/DAILY 首页标题样式 | [`assets/css/_04_hero.css`](file:///f:/Notes/assets/css/_04_hero.css) 的 `.page-hero` 系列规则（2026-07-03 重构：左对齐+缩小+消除顶部空白） |
 | 改 Umami 统计配置 | [`hugo.toml`](file:///f:/Notes/hugo.toml) 的 `[params.umamiAnalytics]` |
 | 以后要启用 Blowfish 原生阅读数 / 点赞 | [`hugo.toml`](file:///f:/Notes/hugo.toml) 的 `showViews / showLikes` + `[firebase]`（原生方案推荐 Firebase） |
 | 看 Firebase 安全规则怎么配 | [`FIREBASE_SECURITY.md`](file:///f:/Notes/FIREBASE_SECURITY.md) |
@@ -214,7 +216,14 @@ f:\Notes\
 |------|--------|------|
 | kicker / subtitle / eyebrow | 各 `_index.md` frontmatter | [`layouts/partials/cover/page-hero.html`](file:///f:/Notes/layouts/partials/cover/page-hero.html) |
 | 短代码调用 | — | [`layouts/shortcodes/page-hero.html`](file:///f:/Notes/layouts/shortcodes/page-hero.html) |
-| CSS | — | [`assets/css/_04_hero.css`](file:///F:/Notes/assets/css/_04_hero.css) |
+| CSS | — | [`assets/css/_04_hero.css`](file:///F:/Notes/assets/css/_04_hero.css)（2026-07-03 重构：左对齐 + 紧凑布局 + 标题从 3.75rem 缩小到 2.25rem） |
+
+**说明（2026-07-03 更新）：**
+
+- 当前样式为左上角紧凑布局，标题、kicker、subtitle 全部左对齐
+- 顶部空白已消除：fixed header 占位高度从 148px 缩减到 56px
+- 标题字号：`clamp(1.5rem, 4vw, 2.25rem)`（之前 `clamp(2.25rem, 6vw, 3.75rem)`）
+- 分隔线宽度从 10-16rem 缩减到 4rem
 
 ### /notes/ 文章入口页
 
@@ -319,6 +328,7 @@ f:\Notes\
 
 | 元素 | 数据源 | 模板 |
 |------|--------|------|
+| 左侧品牌标识 | 站点标题 `lyrumu's page` | [`layouts/partials/header/basic.html`](file:///f:/Notes/layouts/partials/header/basic.html) + [`assets/css/_02_chrome.css`](file:///f:/Notes/assets/css/_02_chrome.css) 的 `.site-brand-badge`（圆角边框徽章样式，hover 时边框变 accent 色） |
 | 菜单项 | `hugo.toml` → `[[menu.main]]` | 主题默认 |
 | GitHub 按钮 | `data/cover.yaml` → `repo_url` | [`desktop-menu.html`](file:///f:/Notes/layouts/partials/header/components/desktop-menu.html) / [mobile-menu.html](file:///f:/Notes/layouts/partials/header/components/mobile-menu.html) |
 
