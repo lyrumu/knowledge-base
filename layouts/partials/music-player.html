@@ -6,48 +6,56 @@
     {{ if hugo.Data.music.tracks }}{{ partial "music-player.html" . }}{{ end }}
   或直接调用：
     {{ partial "music-player.html" . }}
-  ----------------------------------------------------------------
-*/}}
-<div class="music-player" id="music-player" aria-label="music player" role="region">
+  模板契约：根节点 [data-music-player] + 子节点 data-role="..."
+  对应绑定：static/js/music-player/dom.js → bindDom()
+----------------------------------------------------------------*/}}
+<div class="music-player" id="music-player" data-music-player aria-label="music player" role="region">
+  <!-- 真正的 audio 元素放在根节点内，供 dom.js 一次 querySelector 拿齐 -->
+  <audio data-role="audio" preload="metadata" hidden></audio>
+
   <div class="music-player-cover">
-    <img id="music-player-cover" src="" alt="" />
+    <img data-role="cover" src="" alt="" />
   </div>
 
   <div class="music-player-meta">
     <div class="music-player-meta-row">
       <span style="min-width:0;display:flex;align-items:baseline;min-width:0">
-        <span class="music-player-title" id="music-player-title">尚未播放</span>
-        <span class="music-player-artist" id="music-player-artist"></span>
+        <span class="music-player-title" data-role="title">尚未播放</span>
+        <span class="music-player-artist" data-role="artist"></span>
       </span>
       <span class="music-player-time">
-        <span id="music-player-current">0:00</span>
+        <span data-role="current">0:00</span>
         <span style="opacity:.5;margin:0 .15rem">/</span>
-        <span id="music-player-duration">0:00</span>
+        <span data-role="duration">0:00</span>
       </span>
     </div>
-    <input type="range" class="music-player-progress" id="music-player-progress"
+    <input type="range" class="music-player-progress" data-role="progress"
            min="0" max="1000" value="0" step="1"
            aria-label="progress" />
   </div>
 
   <div class="music-player-controls">
-    <button class="music-player-btn" id="music-player-prev" type="button" aria-label="prev">
+    <button class="music-player-btn" data-role="prev" type="button" aria-label="prev">
       {{ partial "cover/icon.html" (dict "name" "skip-back" "size" 16) }}
     </button>
-    <button class="music-player-btn is-primary" id="music-player-toggle" type="button" aria-label="play/pause">
+    <button class="music-player-btn is-primary" data-role="toggle" type="button" aria-label="play/pause">
       {{ partial "cover/icon.html" (dict "name" "play" "size" 18) }}
     </button>
-    <button class="music-player-btn" id="music-player-next" type="button" aria-label="next">
+    <button class="music-player-btn" data-role="next" type="button" aria-label="next">
       {{ partial "cover/icon.html" (dict "name" "skip-forward" "size" 16) }}
     </button>
-    <button class="music-player-btn" id="music-player-close" type="button" aria-label="close" style="margin-left:.25rem">
+    <button class="music-player-btn" data-role="close" type="button" aria-label="close" style="margin-left:.25rem">
       {{ partial "cover/icon.html" (dict "name" "x" "size" 14) }}
     </button>
   </div>
 </div>
 
-<!-- 真正的 audio 元素（不在 DOM 里显示样式） -->
-<audio id="music-player-audio" preload="metadata"></audio>
+<!-- 真正的 audio 元素已在根节点内 -->
 
-<!-- JS：播放器控制脚本 -->
+<!-- JS：播放器模块（顺序加载：tools → 适配层 → 业务） -->
+<script defer src="/js/music-player/dom.js"></script>
+<script defer src="/js/music-player/storage.js"></script>
+<script defer src="/js/music-player/store.js"></script>
+<script defer src="/js/music-player/view.js"></script>
+<script defer src="/js/music-player/controller.js"></script>
 <script defer src="/js/music-player.js"></script>

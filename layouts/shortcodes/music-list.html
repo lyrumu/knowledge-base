@@ -5,28 +5,28 @@
   点击每条会触发全局 music-player（layouts/partials/music-player.html）播放
   用法: {{< music-list >}}
   数据源: data/music.yaml -> hugo.Data.music.tracks
-  ----------------------------------------------------------------
-*/}}
+  模板契约：根节点 [data-music-playlist] + 子节点 data-role / data-track
+----------------------------------------------------------------*/}}
 {{ $tracks := hugo.Data.music.tracks }}
-<div class="music-list not-prose my-10">
+<div class="music-list not-prose my-10" data-music-playlist>
   {{/* 播放模式和音量控制栏 */}}
   <div class="music-controls-bar not-prose">
     <div class="music-controls-left">
       <span class="music-controls-label">Mode</span>
-      <button class="music-ctrl-btn" id="music-mode-btn" type="button" aria-label="Play mode">
-        <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m17 2 4 4-4 4"/><path d="M3 11v-1a4 4 0 0 1 4-4h14"/><path d="m7 22-4-4 4-4"/><path d="M21 13v1a4 4 0 0 1-4 4H3"/></svg>
+      <button class="music-ctrl-btn" data-role="mode" type="button" aria-label="Play mode">
+        <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m17 2 4 4-4 4"/><path d="M3 11v-1a4 4 0 0 1 4-4h14"/><path d="m7 22-4 4 4-4"/><path d="M21 13v1a4 4 0 0 1-4 4H3"/></svg>
       </button>
-      <span class="music-mode-label" id="music-mode-label">Loop All</span>
+      <span class="music-mode-label" data-role="mode-label">Loop All</span>
     </div>
     <div class="music-controls-right">
       <span class="music-controls-label">Vol</span>
-      <button class="music-ctrl-btn" id="music-mute-btn" type="button" aria-label="Mute">
+      <button class="music-ctrl-btn" data-role="mute" type="button" aria-label="Mute">
         <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"/><path d="M15.54 8.46a5 5 0 0 1 0 7.07"/><path d="M19.07 4.93a10 10 0 0 1 0 14.14"/></svg>
       </button>
-      <input type="range" class="music-volume-slider" id="music-volume-slider"
+      <input type="range" class="music-volume-slider" data-role="volume"
              min="0" max="100" value="80" step="1"
              aria-label="Volume" />
-      <span class="music-volume-value" id="music-volume-value">80%</span>
+      <span class="music-volume-value" data-role="volume-value">80%</span>
     </div>
   </div>
 
@@ -38,6 +38,7 @@
       {{ $format = upper (replaceRE "^\\." "" (path.Ext .)) }}
     {{ end }}
     <div class="music-item reveal{{ if $isDisabled }} is-disabled{{ end }}"
+         data-track
          data-index="{{ $i }}"
          data-src="{{ $t.src }}"
          data-cover="{{ $t.cover }}"
