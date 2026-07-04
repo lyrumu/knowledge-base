@@ -29,13 +29,17 @@
   </a>
 
   {{ if .Site.Params.enableSearch | default false }}
-    <button
-      id="search-button"
-      aria-label="Search"
-      class="text-base bf-icon-color-hover"
-      title="{{ i18n "search.open_button_title" }}">
-      {{ partial "icon.html" "search" }}
-    </button>
+    <span class="search-button-wrap">
+      <button
+        id="search-button"
+        aria-label="Search (Press / or Ctrl K)"
+        class="text-base bf-icon-color-hover"
+        title="{{ i18n "search.open_button_title" }}">
+        {{ partial "icon.html" "search" }}
+      </button>
+      {{/* 2026-07-04：桌面端 ⌘K 快捷键角标提示；移动端通过 CSS 隐藏 */}}
+      <kbd class="search-key-hint" aria-hidden="true">⌘K</kbd>
+    </span>
   {{ end }}
 
   {{ if .Site.Params.footer.showAppearanceSwitcher | default false }}

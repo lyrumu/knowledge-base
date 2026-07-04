@@ -1,0 +1,9 @@
+# https://www.robotstxt.org/robotstxt.html
+# 2026-07-04：项目级 robots.txt，覆盖 Hugo enableRobotsTXT 自动生成版
+#   - 显式声明 Sitemap（Google / Bing / Feedly 等订阅器都需要）
+#   - 保留全部页面允许抓取
+
+User-agent: *
+Allow: /
+
+Sitemap: https://lyrumu.top/sitemap.xml

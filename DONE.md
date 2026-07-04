@@ -3,6 +3,31 @@
 > 维护方式：每完成一大阶段，在下方加一段记录。(最新记录写在最上方)
 
 ---
+
+## 2026-07-04 · P0-7 RSS / sitemap 入口可见性
+
+| 文件 | 改动 |
+|---|---|
+| [layouts/partials/footer.html](file:///f:/Notes/layouts/partials/footer.html) | 新建项目级覆写，唯一差异：在 copyright 与 powered-by 之间插入 RSS 链接 |
+| [static/robots.txt](file:///f:/Notes/static/robots.txt) | 新建，显式声明 Sitemap |
+| [layouts/partials/extend-head.html](file:///f:/Notes/layouts/partials/extend-head.html) | 撤回：Hugo 在 outputs 含 RSS 时已自动注入 `<link rel="alternate">`，无需手动加 |
+
+构建：45 pages / 168 static / 0 错误。
+
+---
+
+## 2026-07-04 · P0-1 全站搜索快捷键 + ⌘K 角标
+
+| 文件 | 改动 |
+|---|---|
+| [layouts/partials/extend-head.html](file:///f:/Notes/layouts/partials/extend-head.html) | 新增键盘监听：`/` / `Ctrl+K` / `Cmd+K` 触发 `#search-button` click（input/textarea 内不拦截） |
+| [layouts/partials/header/components/desktop-menu.html](file:///f:/Notes/layouts/partials/header/components/desktop-menu.html) | 搜索按钮包一层容器 + 后面加 `<kbd>⌘K</kbd>` 角标；`aria-label` 增强 |
+| [assets/css/_02_chrome.css](file:///f:/Notes/assets/css/_02_chrome.css) | `.search-key-hint` `<kbd>` 样式（移动端隐藏） |
+
+构建：45 pages / 167 static / 0 错误。
+
+---
+
 ## 2026-07-03 · 首页标题样式重构 + 顶栏品牌徽章
 
 ### 改动

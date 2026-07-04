@@ -330,6 +330,49 @@ html.dark .article-pagination-card:hover {
 }
 
 /* =============================================================================
+   搜索快捷键角标（2026-07-04）
+   ----------------------------------------------------------------------------
+   桌面端搜索按钮旁的 ⌘K 提示，激活已有但未被发现的搜索功能。
+   - 移动端通过 @media 隐藏（小屏无键盘，提示无意义）
+   - 用现有 .prose kbd 风格但更紧凑（顶栏字号小）
+   ============================================================================= */
+.search-button-wrap {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+}
+.search-key-hint {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 1.7rem;
+  height: 1.25rem;
+  padding: 0 0.35rem;
+  font-family: var(--font-mono);
+  font-size: 0.65rem;
+  letter-spacing: 0.04em;
+  color: var(--fg-soft);
+  background: transparent;
+  border: 1px solid var(--line);
+  border-bottom-width: 2px;
+  border-radius: 0.25rem;
+  line-height: 1;
+  pointer-events: none; /* 仅装饰，不抢点击事件 */
+  transition: color 0.2s, border-color 0.2s;
+}
+.main-menu a:hover ~ * .search-key-hint,
+.search-button-wrap:hover .search-key-hint {
+  color: var(--fg-base);
+  border-color: var(--fg-base);
+}
+html.dark .search-key-hint {
+  background: rgba(255, 255, 255, 0.03);
+}
+@media (max-width: 720px) {
+  .search-key-hint { display: none; }
+}
+
+/* =============================================================================
    TOC（目录）
    ============================================================================= */
 .toc a,

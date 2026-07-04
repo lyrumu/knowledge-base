@@ -23,6 +23,39 @@
 */}}
 <script>
 window.addEventListener("load", function () {
+  // ---------- 全站搜索快捷键（2026-07-04） ----------
+  // 复用主题原生 search.js：触发 #search-button 的 click
+  // 触发条件：/、Ctrl+K、Cmd+K
+  // guard：输入控件（INPUT / TEXTAREA / contentEditable）内不触发，避免影响搜索框本身
+  (function () {
+    function isEditable(el) {
+      if (!el) return false;
+      var tag = el.tagName;
+      if (tag === "INPUT" || tag === "TEXTAREA" || tag === "SELECT") return true;
+      if (el.isContentEditable) return true;
+      return false;
+    }
+    function openSearch() {
+      var btn = document.getElementById("search-button")
+             || document.getElementById("search-button-mobile");
+      if (btn) btn.click();
+    }
+    document.addEventListener("keydown", function (e) {
+      // 在输入控件里不拦截，让浏览器原生行为生效
+      if (isEditable(e.target)) return;
+      // / 键：仅在非修饰键按下时触发（避免与 Cmd+/ 等冲突）
+      if (e.key === "/" && !e.ctrlKey && !e.metaKey && !e.altKey) {
+        e.preventDefault();
+        openSearch();
+        return;
+      }
+      // Ctrl+K / Cmd+K：现代编辑器通用快捷键
+      if ((e.ctrlKey || e.metaKey) && (e.key === "k" || e.key === "K") && !e.altKey) {
+        e.preventDefault();
+        openSearch();
+      }
+    });
+  })();
   // ---------- AOS ----------
   if (typeof AOS !== "undefined") {
     var reduce = window.matchMedia &&
@@ -69,3 +102,11 @@ window.addEventListener("load", function () {
   }
 });
 </script>
+
+{{/*
+  RSS / Atom feed 自动发现（2026-07-04 撤回）
+  --------------------------------------------------------------------
+  经测试：Hugo 在 [outputs] 含 RSS 时会自动给所有 home / section / 子 section
+  注入 <link rel="alternate" type="application/rss+xml">，无需手动添加。
+  重复注入反而污染 head。保留此注释作为历史记录，不再输出。
+*/}}
