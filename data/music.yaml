@@ -58,6 +58,15 @@ tracks:
     size: "3.8 MB"
     mood: ""
 
+  - title: "比较大的大提琴"
+    artist: "Jay Chou"
+    album: "《十二新作》"
+    cover: "/image/cover-the-big-cello.webp"  
+    src:   "/life/music/The-Giant-Cello.mp3"
+    duration: "4:12"
+    size: "3.85 MB"
+    mood: "哇咧喵"
+
   - title: "黑色幽默"
     artist: "Jay Chou"
     album: "《Jay》"
