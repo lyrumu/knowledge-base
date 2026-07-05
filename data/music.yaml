@@ -65,7 +65,8 @@ tracks:
     src:   "/life/music/The-Giant-Cello.mp3"
     duration: "4:12"
     size: "3.85 MB"
-    mood: "哇咧喵"
+    mood: ""
+    note: "哇咧喵"
 
   - title: "黑色幽默"
     artist: "Jay Chou"

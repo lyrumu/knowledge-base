@@ -70,7 +70,7 @@ html.dark .music-player {
   position: relative;
   width: 2.6rem;
   height: 2.6rem;
-  border-radius: 0.4rem;
+  border-radius: 9999px;
   overflow: hidden;
   flex-shrink: 0;
   background: var(--bg-deep);
@@ -237,7 +237,7 @@ html.dark .music-player {
     padding: 0.55rem 0.7rem;
     bottom: 0.5rem;
   }
-  .music-player-cover { width: 2.1rem; height: 2.1rem; }
+  .music-player-cover { width: 2.1rem; height: 2.1rem; border-radius: 9999px; }
   .music-player-artist { display: none; }
   .music-player-btn { width: 1.8rem; height: 1.8rem; }
   .music-player-btn.is-primary { width: 2.3rem; height: 2.3rem; }

@@ -9,6 +9,12 @@
 
   var MODES = ['list', 'one', 'shuffle'];
 
+  // 随机播放时的历史记录长度（避免连续重复的曲目数）
+  var SHUFFLE_HISTORY_SIZE = 5;
+
+  /**
+   * Fisher-Yates 洗牌算法（纯随机，不含历史排除）
+   */
   function shuffle(indices) {
     var arr = indices.slice();
     for (var i = arr.length - 1; i > 0; i--) {
@@ -16,6 +22,29 @@
       var tmp = arr[i]; arr[i] = arr[j]; arr[j] = tmp;
     }
     return arr;
+  }
+
+  /**
+   * 增强随机选择：从可用曲目中随机选一首，排除 recentHistory 中的曲目
+   * - 当可用曲目足够多时（> SHUFFLE_HISTORY_SIZE），确保不选最近播放过的
+   * - 当曲目数不够时（如歌单很短），退化为普通随机
+   */
+  function smartShufflePick(enabled, recentHistory) {
+    // 过滤掉最近播放过的曲目
+    var historySet = {};
+    for (var k = 0; k < recentHistory.length; k++) {
+      historySet[recentHistory[k]] = true;
+    }
+    var candidates = [];
+    for (var i = 0; i < enabled.length; i++) {
+      if (!historySet[enabled[i]]) {
+        candidates.push(enabled[i]);
+      }
+    }
+    // 如果候选池空了（曲目太少），用全部可用曲目
+    if (!candidates.length) candidates = enabled;
+    // 从候选池随机选一首
+    return candidates[Math.floor(Math.random() * candidates.length)];
   }
 
   /**
@@ -35,19 +64,16 @@
       items: items,
       curIndex: -1,
       mode: initial.mode || 'list',
-      shuffleOrder: [],
-      shufflePos: 0
+      recentHistory: []   // 随机模式历史，用于避免连续重复
     };
 
     function select(i) {
       if (i < 0 || i >= items.length) return false;
       state.curIndex = i;
-      // 进入 shuffle 模式且当前曲不在随机顺序里时，从当前位置重建顺序
-      // —— 避免下次 next() 跳到一首"刚听过"的曲子
-      if (state.mode === 'shuffle' && state.shuffleOrder.indexOf(i) < 0) {
-        state.shuffleOrder = shuffle(enabledIndices(items));
-        state.shufflePos = state.shuffleOrder.indexOf(i);
-        if (state.shufflePos < 0) state.shufflePos = 0;
+      // shuffle 模式：把选中的曲目从历史中移除（避免刚点选的歌马上又被随机到）
+      if (state.mode === 'shuffle') {
+        var hPos = state.recentHistory.indexOf(i);
+        if (hPos >= 0) state.recentHistory.splice(hPos, 1);
       }
       return true;
     }
@@ -72,11 +98,8 @@
       var idx = MODES.indexOf(state.mode);
       state.mode = MODES[(idx + 1) % MODES.length];
       if (state.mode === 'shuffle') {
-        state.shuffleOrder = shuffle(enabledIndices(items));
-        state.shufflePos = state.curIndex >= 0
-          ? state.shuffleOrder.indexOf(state.curIndex)
-          : 0;
-        if (state.shufflePos < 0) state.shufflePos = 0;
+        // 进入/切换到 shuffle 模式：重置历史，确保全新开始
+        state.recentHistory = [];
       }
       return state.mode;
     }
@@ -85,31 +108,22 @@
       var enabled = enabledIndices(items);
       if (!enabled.length) return -1;
       if (state.mode === 'shuffle') {
-        if (!state.shuffleOrder.length) {
-          state.shuffleOrder = enabled;
-          state.shufflePos = state.curIndex >= 0
-            ? state.shuffleOrder.indexOf(state.curIndex)
-            : 0;
-          if (state.shufflePos < 0) state.shufflePos = 0;
+        // 增强随机模式：记录当前曲到历史，再选下一曲
+        if (state.curIndex >= 0) {
+          state.recentHistory.push(state.curIndex);
+          if (state.recentHistory.length > SHUFFLE_HISTORY_SIZE) {
+            state.recentHistory.shift();
+          }
         }
-        var len = state.shuffleOrder.length;
-        state.shufflePos = ((state.shufflePos + delta) % len + len) % len;
-        return state.shuffleOrder[state.shufflePos];
+        return smartShufflePick(enabled, state.recentHistory);
       }
-      // list / one 切歌：在 enabledIndices 数组里循环，禁用曲目直接跳过
-      // —— 比"按 items.length 循环 + 检查 disabled"更直接，因为 enabled 已经过滤过
-      if (!enabled.length) return -1;
+      // list / one 切歌
       if (state.curIndex < 0) {
-        // 还没选过曲时，next/prev 都从首曲开始（与原代码 j=0 起手行为一致）
         state.curIndex = enabled[0];
         return state.curIndex;
       }
       var pos = enabled.indexOf(state.curIndex);
-      if (pos < 0) {
-        // 当前曲被运行时标记为 disabled，回退到第一首
-        state.curIndex = enabled[0];
-        return state.curIndex;
-      }
+      if (pos < 0) { state.curIndex = enabled[0]; return state.curIndex; }
       var nextPos = (pos + (delta > 0 ? 1 : -1) + enabled.length) % enabled.length;
       state.curIndex = enabled[nextPos];
       return state.curIndex;
@@ -118,17 +132,37 @@
     function next() { return _step(1); }
     function prev() { return _step(-1); }
 
-    // peekNext / peekPrev 只读不写 —— 用于预取"下一首要播什么"，不影响 store 状态
-    function peekNext() { return _peek(1); }
-    function peekPrev() { return _peek(-1); }
-    function _peek(delta) {
+    /**
+     * peekNext / peekPrev — 只读预测，不修改状态
+     * 在增强随机模式下，模拟 next() 的历史行为来预测下一曲
+     */
+    function peekNext() {
       var enabled = enabledIndices(items);
       if (!enabled.length) return -1;
+      if (state.mode === 'shuffle') {
+        // 模拟 next() 会产生的历史：把当前曲加入历史
+        var simHistory = state.recentHistory.slice();
+        if (state.curIndex >= 0) {
+          simHistory.push(state.curIndex);
+          if (simHistory.length > SHUFFLE_HISTORY_SIZE) simHistory.shift();
+        }
+        return smartShufflePick(enabled, simHistory);
+      }
       if (state.curIndex < 0) return enabled[0];
       var pos = enabled.indexOf(state.curIndex);
       if (pos < 0) return enabled[0];
-      var p = (pos + (delta > 0 ? 1 : -1) + enabled.length) % enabled.length;
-      return enabled[p];
+      return enabled[(pos + 1 + enabled.length) % enabled.length];
+    }
+
+    function peekPrev() {
+      var enabled = enabledIndices(items);
+      if (!enabled.length) return -1;
+      // prev 语义：当前曲已播 > 3s 时回到开头（由 controller 判断）
+      // peek 只做最简单预测
+      if (state.curIndex < 0) return enabled[enabled.length - 1];
+      var pos = enabled.indexOf(state.curIndex);
+      if (pos < 0) return enabled[enabled.length - 1];
+      return enabled[(pos - 1 + enabled.length) % enabled.length];
     }
 
     function mode() { return state.mode; }

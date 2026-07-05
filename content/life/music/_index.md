@@ -2,7 +2,7 @@
 title: "MUSIC"
 kicker: "LIFE · MUSIC"
 subtitle: ""
-description: "My playlist — Departures, Unravel, 黑色幽默, and more. Irregularly updated"
+description: "My playlist — Japanese Animation Melodies and Jay Chou's Music"
 layout: "page"
 showHero: true
 showBreadcrumbs: true

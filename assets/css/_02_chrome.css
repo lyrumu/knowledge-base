@@ -373,6 +373,39 @@ html.dark .search-key-hint {
 }
 
 /* =============================================================================
+   MUSIC 页标题右侧图片（2026-07-04）
+   ----------------------------------------------------------------------------
+   - h1.page-title 的父 div 已有 position: relative（hero/basic.html）
+   - ::after absolute 浮在 h1 右侧，不撑空白，不影响原有居中
+   - 深色主题：invert(1) grayscale(1) 变白色调
+   ============================================================================= */
+body.is-music-page h1.page-title {
+  position: relative;
+}
+body.is-music-page h1.page-title::after {
+  content: "";
+  position: absolute;
+  right: -220px;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 200px;
+  height: 200px;
+  background-image: url("/life/music/image/cover-music.webp");
+  background-size: contain;
+  background-repeat: no-repeat;
+  background-position: center;
+  border-radius: 0.5rem;
+}
+html.dark body.is-music-page h1.page-title::after {
+  filter: invert(1) grayscale(1);
+}
+@media (max-width: 1024px) {
+  body.is-music-page h1.page-title::after {
+    display: none;
+  }
+}
+
+/* =============================================================================
    TOC（目录）
    ============================================================================= */
 .toc a,
