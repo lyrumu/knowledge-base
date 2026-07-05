@@ -48,6 +48,23 @@ html.dark .music-player {
   opacity: 1;
 }
 
+/* 加载态：切歌/换源期间，封面微微呼吸 + 进度条脉冲。
+   由 controller 在 canplay/error 时移除 .is-loading。 */
+@keyframes mp-loading-cover {
+  0%, 100% { opacity: 0.7; }
+  50%      { opacity: 0.35; }
+}
+@keyframes mp-loading-bar {
+  0%, 100% { opacity: 0.55; }
+  50%      { opacity: 1; }
+}
+.music-player.is-loading .music-player-cover img {
+  animation: mp-loading-cover 1.1s ease-in-out infinite;
+}
+.music-player.is-loading .music-player-progress {
+  animation: mp-loading-bar 1.1s ease-in-out infinite;
+}
+
 /* 播放器封面 */
 .music-player-cover {
   position: relative;

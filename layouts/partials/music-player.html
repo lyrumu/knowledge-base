@@ -11,7 +11,8 @@
 ----------------------------------------------------------------*/}}
 <div class="music-player" id="music-player" data-music-player aria-label="music player" role="region">
   <!-- 真正的 audio 元素放在根节点内，供 dom.js 一次 querySelector 拿齐 -->
-  <audio data-role="audio" preload="metadata" hidden></audio>
+  <!-- preload="none"：用户没点歌时浏览器不发任何 Range 请求，首屏不再预拉 6 个 mp3 的 metadata -->
+  <audio data-role="audio" preload="none" hidden></audio>
 
   <div class="music-player-cover">
     <img data-role="cover" src="" alt="" />

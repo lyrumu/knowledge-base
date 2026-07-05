@@ -118,6 +118,19 @@
     function next() { return _step(1); }
     function prev() { return _step(-1); }
 
+    // peekNext / peekPrev 只读不写 —— 用于预取"下一首要播什么"，不影响 store 状态
+    function peekNext() { return _peek(1); }
+    function peekPrev() { return _peek(-1); }
+    function _peek(delta) {
+      var enabled = enabledIndices(items);
+      if (!enabled.length) return -1;
+      if (state.curIndex < 0) return enabled[0];
+      var pos = enabled.indexOf(state.curIndex);
+      if (pos < 0) return enabled[0];
+      var p = (pos + (delta > 0 ? 1 : -1) + enabled.length) % enabled.length;
+      return enabled[p];
+    }
+
     function mode() { return state.mode; }
 
     function snapshot() {
@@ -133,6 +146,8 @@
       cycleMode: cycleMode,
       next: next,
       prev: prev,
+      peekNext: peekNext,
+      peekPrev: peekPrev,
       mode: mode,
       snapshot: snapshot
     };

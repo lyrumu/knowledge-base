@@ -234,7 +234,7 @@
 
   {{/* Icons */}}
   {{ if templates.Exists "partials/favicons.html" }}
-    {{ partialCached "favicons.html" .Site }}
+    {{ partial "favicons.html" . }}
   {{ else }}
     <link rel="apple-touch-icon" sizes="180x180" href="{{ "apple-touch-icon.png" | relURL }}">
     <link rel="icon" type="image/png" sizes="32x32" href="{{ "favicon-32x32.png" | relURL }}">

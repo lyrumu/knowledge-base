@@ -39,8 +39,14 @@
 
     function show() { player.classList.add('is-visible'); }
     function hide() {
-      player.classList.remove('is-visible', 'is-playing');
+      player.classList.remove('is-visible', 'is-playing', 'is-loading');
       highlight(-1);
+    }
+
+    // 加载态：用于切歌/换源期间给视觉反馈。
+    // on=true  时：播放器根节点加 .is-loading；on=false 时移除
+    function showLoading(on) {
+      player.classList.toggle('is-loading', !!on);
     }
 
     function renderTrack(track, fallbackDuration) {
@@ -109,6 +115,7 @@
     return {
       highlight: highlight,
       show: show, hide: hide,
+      showLoading: showLoading,
       renderTrack: renderTrack,
       setProgress: setProgress,
       setIcon: setIcon,

@@ -19,6 +19,25 @@
     var isMuted = false;
     var prevVol = volume;
 
+    // 预取用的隐藏 audio：浏览器对 src 的 Range 请求会进磁盘缓存，
+    // 切到对应曲目时直接从缓存读，几乎瞬时
+    var prebuffer = document.createElement('audio');
+    prebuffer.preload = 'auto';
+    prebuffer.hidden = true;
+    // 放进 player 根节点外（避免被 view 的 class 操作影响）
+    document.body.appendChild(prebuffer);
+
+    function prefetchNext() {
+      // 用 peekNext 只读不写，避免破坏 store 状态
+      var idx = store.peekNext();
+      if (idx < 0) return;
+      var src = dom.items[idx].dataset.src;
+      if (!src) return;
+      var abs = src;
+      try { abs = new URL(src, window.location.href).href; } catch (e) {}
+      if (prebuffer.src !== abs) prebuffer.src = abs;
+    }
+
     function snapshotForStorage() {
       var cur = store.current();
       return {
@@ -42,6 +61,8 @@
       view.show();
       view.highlight(store.snapshot().index);
 
+      // 切歌期间 UI 给个"加载中"反馈，避免按钮看上去像卡死
+      view.showLoading(true);
       audio.src = track.src;
       audio.addEventListener('loadedmetadata', function once() {
         audio.removeEventListener('loadedmetadata', once);
@@ -49,11 +70,22 @@
           view.setProgress(audio.currentTime, audio.duration, track.duration);
         }
       });
+      audio.addEventListener('canplay', function onceC() {
+        audio.removeEventListener('canplay', onceC);
+        view.showLoading(false);
+      });
+      // 5s 兜底：万一 canplay 不触发（断网/异常），强制解除 loading 避免永久卡住
+      audio.addEventListener('error', function onceE() {
+        audio.removeEventListener('error', onceE);
+        view.showLoading(false);
+      });
 
       if (autoplay) {
         audio.play().then(function () {
           view.setPlaying(true);
           saveState();
+          // 播放开始 1s 后再预取，给当前歌曲的 canplay 留出带宽
+          setTimeout(prefetchNext, 1000);
         }).catch(function () {
           view.setPlaying(false);
         });

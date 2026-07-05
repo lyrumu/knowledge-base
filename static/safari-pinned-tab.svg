@@ -1,23 +1,14 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!-- favicon.svg — Lucide Rose 风格 logo（2026-07-05 切换） -->
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" width="64" height="64"
-     role="img" aria-label="lyrumu">
-  <title>lyrumu</title>
-
-  <rect width="64" height="64" rx="14" fill="#141413" />
-
+<!-- safari-pinned-tab.svg — macOS Safari 固定标签页专用。单色，浏览器自动着色。 -->
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64">
   <g transform="translate(14 14) scale(1.5)"
-     fill="none" stroke="#f76f26"
+     fill="none" stroke="#000"
      stroke-width="2"
      stroke-linecap="round" stroke-linejoin="round">
-
     <path d="M17 10 h-1 a4 4 0 1 1 4 -4 v.534" />
     <path d="M17 6 h1 a4 4 0 0 1 1.42 7.74 l -2.29 .87 a6 6 0 0 1 -5.339 -10.68 l 2.069 -1.31" />
-
     <path d="M4.5 17 c2.8-.5 4.4 0 5.5.8 s1.8 2.2 2.3 3.7 c-2 .4-3.5.4-4.8-.3-1.2-.6-2.3-1.9-3-4.2" />
-
     <path d="M9.77 12C4 15 2 22 2 22" />
-
-    <circle cx="17" cy="8" r="2" fill="#f76f26" />
+    <circle cx="17" cy="8" r="2" fill="#000" />
   </g>
 </svg>

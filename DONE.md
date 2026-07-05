@@ -4,6 +4,72 @@
 
 ---
 
+## 2026-07-05 · Favicon 简化为 Lucide Rose（仅 SVG）
+
+| 文件 | 改动 |
+|---|---|
+| [static/favicon.svg](file:///f:/Notes/static/favicon.svg) | 切换到 Lucide `rose` 原始路径（24×24 → 64×64 viewBox），固定深底 `#141413` + 暖橙 `#f76f26`。删除注释装饰线（XML 不允许连续 `--`，之前刷新后看到"The page contains the following errors"） |
+| [static/safari-pinned-tab.svg](file:///f:/Notes/static/safari-pinned-tab.svg) | 同步切到 Rose 路径，单色 `stroke="#000"`（Safari 自动着色） |
+| [layouts/partials/favicons.html](file:///f:/Notes/layouts/partials/favicons.html) | 极简化：**只保留 SVG + mask-icon 两个 link**。删掉之前的 16/32/48 PNG / apple-touch-icon / manifest / msapplication / favicon.ico 引用。原因：浏览器在 PNG 存在时优先吃 PNG，导致 Rose SVG 被忽略、标签页显示旧 L 字母 |
+| [layouts/partials/head.html](file:///f:/Notes/layouts/partials/head.html) | `partialCached "favicons.html" .Site` → `partial "favicons.html" .`：避免 Hugo 缓存了旧 link 列表。轻微代价：每页构建多跑一次 favicon partial（可忽略） |
+| **清理** [static/](file:///f:/Notes/static/) | 删除过时的 L 字母版 PNG / ICO / manifest / browserconfig：`favicon-16x16.png`（被 hugo 进程占用，待你重启后即可删干净）、`favicon-32x32.png`、`favicon.ico`、`apple-touch-icon.png`、`android-chrome-{192,512}.png`、`mstile-150x150.png`、`site.webmanifest`、`browserconfig.xml` |
+
+决策记录：
+- 你最终选定 **Lucide Rose**（stroke `#f76f26`，浅深色都用同一色）
+- PNG 系列全部下台，iOS 主屏 / Android PWA / Windows tile 暂不覆盖（接受这些设备回退到默认）
+- 下次想换样式：改 [static/favicon.svg](file:///f:/Notes/static/favicon.svg) 一个文件即可，PNG 不需要重生成
+
+---
+
+## 2026-07-05 · 音乐播放器 · 加载速度 + 切歌体验升级
+
+| 文件 | 改动 |
+|---|---|
+| [layouts/partials/music-player.html](file:///f:/Notes/layouts/partials/music-player.html) | `preload="metadata"` → `preload="none"`，首屏不再预拉 6 个 mp3 |
+| [static/js/music-player/controller.js](file:///f:/Notes/static/js/music-player/controller.js) | 新增预取下一首（隐藏 `<audio preload="auto">` + `store.peekNext()`）；`loadIndex` 加 `canplay` / `error` 兜底解除 loading |
+| [static/js/music-player/store.js](file:///f:/Notes/static/js/music-player/store.js) | 新增 `peekNext / peekPrev` 只读接口（预取场景不写状态） |
+| [static/js/music-player/view.js](file:///f:/Notes/static/js/music-player/view.js) | 新增 `showLoading(on)`，切换播放器根节点 `is-loading` class |
+| [assets/css/_07_music-player.css](file:///f:/Notes/assets/css/_07_music-player.css) | 新增 `mp-loading-cover` / `mp-loading-bar` 关键帧，切歌期间封面呼吸 + 进度条脉冲 |
+
+构建：hugo 0 错误；jsdom 端到端烟测通过（点歌→loading→canplay→解除；预取目标稳定）。
+
+---
+
+## 2026-07-05 · 音乐播放器 · 单文件 → 五模块拆分（职责收敛）
+
+| 文件 | 改动 |
+|---|---|
+| [static/js/music-player/dom.js](file:///f:/Notes/static/js/music-player/dom.js) | 新增：模板契约绑定（`data-role` / `data-track`），必要节点缺失打印一次告警 |
+| [static/js/music-player/storage.js](file:///f:/Notes/static/js/music-player/storage.js) | 新增：localStorage 适配层（mode / volume / state 三键），抛错兜底 |
+| [static/js/music-player/store.js](file:///f:/Notes/static/js/music-player/store.js) | 新增：纯逻辑状态机（select / next / prev / cycleMode），Node 单测可跑 |
+| [static/js/music-player/view.js](file:///f:/Notes/static/js/music-player/view.js) | 新增：视图层（renderTrack / setProgress / renderMode / renderVolume） |
+| [static/js/music-player/controller.js](file:///f:/Notes/static/js/music-player/controller.js) | 新增：业务编排（串 store / view / storage / audio 事件） |
+| [static/js/music-player.js](file:///f:/Notes/static/js/music-player.js) | 重写：从 380 行长闭包收敛到 45 行入口，仅做依赖装配 |
+| [layouts/partials/music-player.html](file:///f:/Notes/layouts/partials/music-player.html) | 移除硬编码 ID，子节点全部改为 `data-role`；`<audio>` 移入根节点内 |
+| [layouts/shortcodes/music-list.html](file:///f:/Notes/layouts/shortcodes/music-list.html) | 根节点 `data-music-playlist`；曲目元素 `data-track`；控制栏 `data-role` |
+
+构建：所有旧 ID 选择器（`#music-player-xxx`）已全站 grep 确认无遗留；CSS 仅靠 class；外部 JS 无 `window.MusicPlayer` 引用。
+
+---
+
+## 2026-07-05 · Favicon 全平台覆盖
+
+| 文件 | 改动 |
+|---|---|
+| [static/favicon.svg](file:///f:/Notes/static/favicon.svg) | 主 favicon：衬线首字母 monogram L + 古典 ✦，内嵌 prefers-color-scheme 自动浅深色 |
+| [layouts/partials/favicons.html](file:///f:/Notes/layouts/partials/favicons.html) | 改写：声明 SVG / mask-icon / 多尺寸 PNG / apple-touch-icon / webmanifest / msapplication / ico 全套 link |
+| [static/favicon-16x16.png](file:///f:/Notes/static/favicon-16x16.png) / [static/favicon-32x32.png](file:///f:/Notes/static/favicon-32x32.png) | 旧版浏览器 PNG fallback |
+| [static/favicon.ico](file:///f:/Notes/static/favicon.ico) | 多尺寸 ICO（16/32/48），IE / 旧 Edge / 部分桌面浏览器 fallback |
+| [static/apple-touch-icon.png](file:///f:/Notes/static/apple-touch-icon.png) | iOS Safari 主屏图标 180×180，底部加 "lyrumu" 小字 |
+| [static/android-chrome-192x192.png](file:///f:/Notes/static/android-chrome-192x192.png) / [static/android-chrome-512x512.png](file:///f:/Notes/static/android-chrome-512x512.png) | Android Chrome PWA 入口图标 |
+| [static/mstile-150x150.png](file:///f:/Notes/static/mstile-150x150.png) | Windows Pin-to-Start 磁贴 |
+| [static/site.webmanifest](file:///f:/Notes/static/site.webmanifest) / [static/browserconfig.xml](file:///f:/Notes/static/browserconfig.xml) / [static/safari-pinned-tab.svg](file:///f:/Notes/static/safari-pinned-tab.svg) | PWA / Windows tile / macOS pinned tab 描述 |
+| [scripts/gen_favicons.py](file:///f:/Notes/scripts/gen_favicons.py) | Pillow 生成脚本，0 安装 / 0 联网（用 Windows 自带 Georgia + Segoe UI Symbol）。迁移路径：`.trae/scripts/` → 项目根 `scripts/`，跟同级 `img_info.py` / `convert-to-webp.ps1` 风格保持一致 |
+
+构建：未启动 hugo server 测试 — 你手动起即可。所有文件已落盘。
+
+---
+
 ## 2026-07-04 · P0-7 RSS / sitemap 入口可见性
 
 | 文件 | 改动 |
