@@ -1,6 +1,6 @@
 # 项目地图 — 个人网站 `f:\Notes\`
 
-> 最后更新：2026-07-03 · 首页标题样式重构（缩小+左对齐+消除顶部空白）+ 顶栏品牌徽章 · Hugo v0.163.2 · Blowfish v2
+> 最后更新：2026-07-06 · Giscus 评论系统集成（条件显示 + 深浅主题自动适配）· Hugo v0.163.2 · Blowfish v2
 
 ---
 
@@ -43,6 +43,7 @@
 | 改顶栏的菜单项 | [`hugo.toml`](file:///f:/Notes/hugo.toml) 的 `[[menu.main]]` 段 |
 | 改 DOCS/WORKS/DAILY 首页标题样式 | [`assets/css/_04_hero.css`](file:///f:/Notes/assets/css/_04_hero.css) 的 `.page-hero` 系列规则（2026-07-03 重构：左对齐+缩小+消除顶部空白） |
 | 改 Umami 统计配置 | [`hugo.toml`](file:///f:/Notes/hugo.toml) 的 `[params.umamiAnalytics]` |
+| 配置 Giscus 评论（显示页面/主题/仓库） | [`layouts/partials/extend-footer.html`](file:///f:/Notes/layouts/partials/extend-footer.html) |
 | 以后要启用 Blowfish 原生阅读数 / 点赞 | [`hugo.toml`](file:///f:/Notes/hugo.toml) 的 `showViews / showLikes` + `[firebase]`（原生方案推荐 Firebase） |
 | 看 Firebase 安全规则怎么配 | [`FIREBASE_SECURITY.md`](file:///f:/Notes/FIREBASE_SECURITY.md) |
 | 加一篇新文章 | 见下方 §4 |
@@ -129,6 +130,7 @@ f:\Notes\
 │   │   │   ├── desktop-menu.html   # 加 GitHub 按钮
 │   │   │   └── mobile-menu.html    # 加 GitHub 按钮
 │   │   ├── extend-head.html        # 第三方库（Splitting.js + AOS.js + VanillaTilt.js）
+│   │   ├── extend-footer.html      # Giscus 评论系统（JS 动态注入 + 路径白名单 + 主题自动适配）
 │   │   ├── music-player.html       # 粘性音乐播放器（被 music-list 自动注入）
 │   │   └── about-contact.html      # /about/ 联系方式图标卡 partial（被 about-contact shortcode 调）
 │   └── shortcodes/

@@ -1,0 +1,72 @@
+<script>
+(function() {
+  const path = window.location.pathname.replace(/\/+$/, '') || '/';
+  const pathParts = path.split('/').filter(Boolean);
+
+  // 允许显示评论的页面路径
+  const allowedPaths = [
+    '/',
+    '/about',
+    '/works/projects',
+    '/life/music',
+  ];
+
+  // 允许显示评论的顶层 section（不包含列表页，仅具体文章页）
+  const articleSections = ['notes'];
+
+  // 判断是否在允许的路径列表中
+  const isAllowedPath = allowedPaths.includes(path);
+
+  // 判断是否为具体文章页（section 下的子页面，如 /notes/xxx/）
+  const isArticlePage =
+    pathParts.length >= 2 &&
+    articleSections.includes(pathParts[0]) &&
+    !!document.querySelector('article');
+
+  if (!isArticlePage && !isAllowedPath) return;
+
+  // --- 主题适配 ---
+  function getGiscusTheme() {
+    return document.documentElement.classList.contains('dark') ? 'dark' : 'light';
+  }
+
+  function updateGiscusTheme() {
+    const giscus = document.querySelector('iframe.giscus-frame');
+    if (giscus) {
+      giscus.contentWindow.postMessage(
+        { giscus: { setConfig: { theme: getGiscusTheme() } } },
+        'https://giscus.app'
+      );
+    }
+  }
+
+  // 监听 <html> 的 class 变化（Blowfish 用 dark class 切换主题）
+  const observer = new MutationObserver(function(mutations) {
+    mutations.forEach(function(mutation) {
+      if (mutation.attributeName === 'class') {
+        updateGiscusTheme();
+      }
+    });
+  });
+  observer.observe(document.documentElement, { attributes: true, attributeFilter: ['class'] });
+
+  // --- 加载 giscus ---
+  const script = document.createElement('script');
+  script.src = 'https://giscus.app/client.js';
+  script.setAttribute('data-repo', 'lyrumu/knowledge-base');
+  script.setAttribute('data-repo-id', 'R_kgDOSCENwg');
+  script.setAttribute('data-category', 'Announcements');
+  script.setAttribute('data-category-id', 'DIC_kwDOSCENws4DAnhH');
+  script.setAttribute('data-mapping', 'pathname');
+  script.setAttribute('data-strict', '0');
+  script.setAttribute('data-reactions-enabled', '1');
+  script.setAttribute('data-emit-metadata', '0');
+  script.setAttribute('data-input-position', 'top');
+  script.setAttribute('data-theme', getGiscusTheme());
+  script.setAttribute('data-lang', 'zh-CN');
+  script.setAttribute('data-loading', 'lazy');
+  script.crossOrigin = 'anonymous';
+  script.async = true;
+  document.body.appendChild(script);
+})();
+</script>

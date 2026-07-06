@@ -126,6 +126,7 @@ enableEmoji = true
     showWordCount = true
     showRelatedContent = true #管理相关近期文章的显示
     relatedContentLimit = 6
+    showComments = true
     showZenMode = true
     showViews = false
     showLikes = false

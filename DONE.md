@@ -4,8 +4,34 @@
 
 ---
 
-## 2026-07-05 · Favicon 简化为 Lucide Rose（仅 SVG）
+## 2026-07-06 · Giscus 评论系统集成（条件显示 + 主题自动适配）
 
+### 背景
+需要在站点部分页面开启评论区（首页、About、works/projects、life/music、具体文章页），最初放在 `extend-footer.html` 导致所有页面都显示。尝试 Blowfish 内置 `comments.html` + `showComments` 方案未生效，最终采用客户端 JS 动态注入 + 路径匹配的方式实现。
+
+### 改动
+
+| 文件 | 改动 |
+|---|---|
+| [layouts/partials/extend-footer.html](file:///f:/Notes/layouts/partials/extend-footer.html) | 重写：从纯 giscus script 标签改为 JS 动态注入，支持路径白名单 + 文章页自动识别 + 深浅主题自动切换 |
+
+### 技术方案
+
+**条件显示逻辑：**
+- 直接匹配路径：`/`、`/about`、`/works/projects`、`/life/music`
+- 自动识别文章页：路径 ≥ 2 级 + 属于 `notes` section + 页面有 `<article>` 元素
+- 其他页面（标签页、分类页、/notes/ 列表页等）不显示
+
+**深浅主题自动适配：**
+- 初始化时根据 `<html>.dark` class 决定 giscus theme 为 `'dark'` 或 `'light'`
+- `MutationObserver` 监听 `<html>` 的 class 变化，通过 giscus `postMessage` API 动态切换主题
+- 不再依赖 `preferred_color_scheme`（只认系统偏好，不响应手动切换）
+
+### 说明
+- 使用 `partialCached` 的 `extend-footer.html` 避免了 Hugo 模板条件判断被缓存的问题
+- 所有判断在客户端 JS 完成，不依赖 Hugo 模板条件
+- 
+## 2026-07-05 · Favicon 简化为 Lucide Rose（仅 SVG）
 | 文件 | 改动 |
 |---|---|
 | [static/favicon.svg](file:///f:/Notes/static/favicon.svg) | 切换到 Lucide `rose` 原始路径（24×24 → 64×64 viewBox），固定深底 `#141413` + 暖橙 `#f76f26`。删除注释装饰线（XML 不允许连续 `--`，之前刷新后看到"The page contains the following errors"） |
