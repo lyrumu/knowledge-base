@@ -939,6 +939,74 @@ html.dark .music-item.is-disabled:hover {
   50%      { transform: scaleY(1); }
 }
 
+/* -----------------------------------------------------------------------------
+   Hover 时浮现的「弹琴」SVG 装饰动画（2026-07-06 新增）
+   -----------------------------------------------------------------------------
+   行为：鼠标悬停 .music-item 时，在卡片中央空白处
+         - 从左到右逐帧展开 (clip-path inset)
+         - 从下方往上浮现 (translateY + opacity)
+   主题适配：SVG 是纯黑 (#000)，浅色时与 fg-base 同为深色显示为黑；
+            深色主题 html.dark 下 --fg-base 翻转为 #FAF9F5（米白）→ 视觉反白。
+            之所以不用 filter:invert，是因为 mask + 变量可与全站主题色统一，
+            避免与 accent / fg-base 整体色系割裂。
+   实现约束：
+     - 不修改 HTML，不在 .music-item 内插入任何新节点
+     - 不修改任何既有 CSS 规则，仅追加
+     - ::after 伪元素 + mask-image 完成色彩与主题切换
+   资源引用：站点 static/弹琴.svg → 站点绝对路径 /弹琴.svg
+   --------------------------------------------------------------------------- */
+.music-item::after {
+  content: "";
+  position: absolute;
+  /* 居中点向右偏移到「音乐时长」附近（卡片 right padding ≈ 1.1rem，避开右侧 CTA）
+     left: 73% 是经验值：让 SVG 视觉中心落在 .music-item-duration 列左侧 */
+  left: 73%;
+  top: 50%;
+  width: 9.5rem;
+  height: 9.5rem;
+  margin-left: -4.75rem;
+  margin-top: -4.25rem;
+  /* 默认隐藏：从右侧开始整张图被裁掉 + 向下偏移 + 完全透明
+     inset(top right bottom left) → "上0 右100% 下0 左0" = 右侧 100% 内缩进裁剪框
+     hover 时 right 从 100% → 0%，左侧起点不变 → 视觉上「从左到右逐帧展开」 */
+  opacity: 0;
+  clip-path: inset(0 100% 0 0);
+  transform: translateY(45%) rotate(45deg);
+  background-color: var(--fg-base);
+  -webkit-mask-image: url("/svg/play-the-piano.svg");
+          mask-image: url("/svg/play-the-piano.svg");
+  -webkit-mask-repeat: no-repeat;
+          mask-repeat: no-repeat;
+  -webkit-mask-position: center;
+          mask-position: center;
+  -webkit-mask-size: contain;
+          mask-size: contain;
+  pointer-events: none;
+  /* 浮在卡片背景之上、所有内容（封面/文字/CTA）之下 */
+  z-index: -1;
+  transition: opacity 0.5s cubic-bezier(0.22, 0.61, 0.36, 1),
+              clip-path 0.65s cubic-bezier(0.22, 0.61, 0.36, 1),
+              transform 0.55s cubic-bezier(0.22, 0.61, 0.36, 1),
+              background-color 0.4s;
+}
+.music-item:hover::after {
+  /* hover 时从左到右渐显 + 从下方往上浮现 + 倾斜归位 */
+  opacity: 0.90;
+  clip-path: inset(0 0 0 0);
+  transform: translateY(0) rotate(45deg);
+}
+/* ensure disabled 状态不触发 */
+.music-item.is-disabled::after { display: none; }
+
+/* 减弱动效偏好：直接显示，无渐显/上浮过渡 */
+@media (prefers-reduced-motion: reduce) {
+  .music-item::after {
+    transition: opacity 0.2s;
+    clip-path: inset(0 0 0 0);
+    transform: translateY(0) rotate(45deg);
+  }
+}
+
 @media (max-width: 640px) {
   .music-item {
     grid-template-columns: 3rem 1fr auto;

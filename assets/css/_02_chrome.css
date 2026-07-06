@@ -399,9 +399,20 @@ body.is-music-page h1.page-title::after {
 html.dark body.is-music-page h1.page-title::after {
   filter: invert(1) grayscale(1);
 }
-@media (max-width: 1024px) {
+/* 响应式：手机 - 等比例缩放宽高，保持右侧定位 */
+@media (max-width: 768px) {
   body.is-music-page h1.page-title::after {
-    display: none;
+    width: 120px;
+    height: 200px;
+    right: -140px;
+  }
+}
+/* 响应式：小手机 */
+@media (max-width: 480px) {
+  body.is-music-page h1.page-title::after {
+    width: 80px;
+    height: 200px;
+    right: -95px;
   }
 }
 

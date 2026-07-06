@@ -1,0 +1,316 @@
+/* =============================================================================
+   尝试模仿"月之暗面" 实验性皮肤 — Pink Floyd《The Dark Side of the Moon》
+   仅作用于 .music-list / .music-player，不影响全站其他组件。
+   ⚠️ 一键回滚：删除本文件即可，由 head.html 的 resources.Match 自动失效。
+   ============================================================================= */
+
+/* === §10.1  变量：光谱 + 双主题调色板 === */
+:root {
+  --ds-spectrum: linear-gradient(90deg,
+    #ff3b6b 0%, #ff7a3c 16%, #ffd23f 32%,
+    #5be584 48%, #3aa9ff 64%, #8a5bff 82%, #ff3b6b 100%);
+  --ds-spectrum-soft: linear-gradient(90deg,
+    rgba(255, 59, 107, 0.85) 0%, rgba(255, 122, 60, 0.85) 16%,
+    rgba(255, 210, 63, 0.85) 32%, rgba(91, 229, 132, 0.85) 48%,
+    rgba(58, 169, 255, 0.85) 64%, rgba(138, 91, 255, 0.85) 82%,
+    rgba(255, 59, 107, 0.85) 100%);
+
+  /* 浅色（默认） */
+  --ds-space:         #f5f3ee;
+  --ds-space-card:    #eceae3;
+  --ds-space-card-2:  #e2dfd6;
+  --ds-moon:          rgba(120, 100, 80, 0.05);
+  --ds-noise:         rgba(50, 40, 30, 0.05);
+  --ds-text-bright:   #1f1e1d;
+  --ds-text-dim:      rgba(31, 30, 29, 0.68);
+  --ds-text-dimmer:   rgba(31, 30, 29, 0.48);
+}
+html.dark {
+  --ds-space:         #06060a;
+  --ds-space-card:    #0a0a12;
+  --ds-space-card-2:  #11111c;
+  --ds-moon:          rgba(245, 240, 230, 0.04);
+  --ds-noise:         rgba(255, 255, 255, 0.03);
+  --ds-text-bright:   #fafafa;
+  --ds-text-dim:      rgba(250, 250, 250, 0.65);
+  --ds-text-dimmer:   rgba(250, 250, 250, 0.4);
+}
+
+/* === §10.2  控制栏顶部光谱条 === */
+.music-list .music-controls-bar {
+  position: relative;
+  overflow: hidden;
+  isolation: isolate;
+}
+.music-list .music-controls-bar::before {
+  content: "";
+  position: absolute;
+  top: 0; left: 0; right: 0;
+  height: 2px;
+  background-image: var(--ds-spectrum);
+  background-size: 200% 100%;
+  z-index: 2;
+  pointer-events: none;
+  box-shadow:
+    0 0 6px rgba(255, 122, 60, 0.35),
+    0 0 12px rgba(58, 169, 255, 0.25);
+  animation: ds-spectrum-flow 8s linear infinite;
+}
+@keyframes ds-spectrum-flow {
+  from { background-position: 0% 0%; }
+  to   { background-position: -200% 0%; }
+}
+
+/* === §10.3  歌曲卡片：底色 + 噪点 + 月纹 + 棱镜线 ===
+   .music-item::after 已被 _05_cards.css 占作"弹琴 SVG"动画，
+   故额外装饰只能进 background / box-shadow。 */
+.music-list .music-item {
+  background:
+    radial-gradient(circle at 82% 38%, var(--ds-moon) 0%, transparent 38%),
+    radial-gradient(circle at 12% 22%, var(--ds-noise) 0%, transparent 1.5px),
+    radial-gradient(circle at 67% 81%, var(--ds-noise) 0%, transparent 1px),
+    radial-gradient(circle at 45% 9%, var(--ds-noise) 0%, transparent 1.2px),
+    radial-gradient(circle at 88% 64%, var(--ds-noise) 0%, transparent 1px),
+    radial-gradient(circle at 31% 73%, var(--ds-noise) 0%, transparent 1.4px),
+    radial-gradient(circle at 5% 91%, var(--ds-noise) 0%, transparent 1px),
+    linear-gradient(135deg, var(--ds-space-card) 0%, var(--ds-space-card-2) 100%);
+  color: var(--ds-text-bright);
+  box-shadow:
+    inset 0 -28px 60px -20px rgba(180, 200, 255, 0.06),
+    inset 22px 0 50px -30px rgba(138, 91, 255, 0.05);
+}
+.music-list .music-item:hover {
+  background:
+    radial-gradient(circle at 82% 38%, var(--ds-moon) 0%, transparent 42%),
+    radial-gradient(circle at 12% 22%, var(--ds-noise) 0%, transparent 1.5px),
+    radial-gradient(circle at 67% 81%, var(--ds-noise) 0%, transparent 1px),
+    radial-gradient(circle at 45% 9%, var(--ds-noise) 0%, transparent 1.2px),
+    radial-gradient(circle at 88% 64%, var(--ds-noise) 0%, transparent 1px),
+    radial-gradient(circle at 31% 73%, var(--ds-noise) 0%, transparent 1.4px),
+    radial-gradient(circle at 5% 91%, var(--ds-noise) 0%, transparent 1px),
+    linear-gradient(135deg, var(--ds-space-card-2) 0%, var(--ds-space) 100%);
+}
+
+/* is-current（当前播放）：必须整层覆写 background，单 background-color 无效 */
+html.dark .music-list .music-item.is-current {
+  background:
+    radial-gradient(circle at 82% 38%, rgba(245, 240, 230, 0.10) 0%, transparent 42%),
+    radial-gradient(circle at 12% 22%, var(--ds-noise) 0%, transparent 1.5px),
+    radial-gradient(circle at 67% 81%, var(--ds-noise) 0%, transparent 1px),
+    radial-gradient(circle at 45% 9%, var(--ds-noise) 0%, transparent 1.2px),
+    radial-gradient(circle at 88% 64%, var(--ds-noise) 0%, transparent 1px),
+    radial-gradient(circle at 31% 73%, var(--ds-noise) 0%, transparent 1.4px),
+    radial-gradient(circle at 5% 91%, var(--ds-noise) 0%, transparent 1px),
+    linear-gradient(135deg, var(--ds-space-card-2) 0%, var(--ds-space-card) 100%) !important;
+  box-shadow:
+    inset 0 -28px 60px -20px rgba(180, 200, 255, 0.10),
+    inset 22px 0 50px -30px rgba(138, 91, 255, 0.08),
+    0 0 0 1px rgba(120, 200, 255, 0.18),
+    0 0 24px -6px rgba(58, 169, 255, 0.25) !important;
+}
+/* 浅色：不变深色调色板，整张卡直接落到站点 --line 中深米色阶 */
+:root:not(.dark) .music-list .music-item.is-current {
+  background:
+    radial-gradient(circle at 82% 38%, rgba(80, 90, 200, 0.32) 0%, transparent 45%),
+    radial-gradient(circle at 18% 82%, rgba(217, 119, 87, 0.18) 0%, transparent 50%),
+    radial-gradient(circle at 22% 70%, rgba(60, 50, 35, 0.10) 0%, transparent 1.4px),
+    radial-gradient(circle at 70% 25%, rgba(60, 50, 35, 0.08) 0%, transparent 1.2px),
+    linear-gradient(135deg,
+      var(--ds-line, #c9c7bf) 0%,
+      color-mix(in srgb, var(--ds-line, #c9c7bf) 70%, #a8a49a 30%) 100%) !important;
+  border-color: color-mix(in srgb, var(--accent, #D97757) 55%, var(--ds-line, #c9c7bf) 45%) !important;
+  box-shadow:
+    inset 0 -28px 60px -20px rgba(80, 60, 40, 0.22),
+    inset 22px 0 50px -30px rgba(60, 70, 100, 0.15),
+    0 1px 4px rgba(80, 60, 30, 0.2) !important;
+}
+:root:not(.dark) .music-list .music-item.is-current .music-item-title {
+  color: color-mix(in srgb, var(--fg-base, #1f1e1d) 92%, #fafafa 8%) !important;
+}
+:root:not(.dark) .music-list .music-item.is-current .music-item-artist,
+:root:not(.dark) .music-list .music-item.is-current .music-item-note {
+  color: color-mix(in srgb, var(--fg-mute, #6b6962) 80%, #fafafa 20%) !important;
+}
+
+/* === §10.4  文字与下载按钮 ===
+   卡片底色变深 → 文字切到 var(--ds-text-bright/dim/dimmer) 三档；
+   Download 按钮 hover 用 ::before 铺满光谱。 */
+.music-list .music-item-title         { color: var(--ds-text-bright); }
+.music-list .music-item-artist,
+.music-list .music-item-note          { color: var(--ds-text-dim); }
+.music-list .music-item-album,
+.music-list .music-item-filemeta      { color: var(--ds-text-dimmer); }
+
+.music-list .music-item-download {
+  background-color: rgba(255, 255, 255, 0.04);
+  position: relative;
+  overflow: hidden;
+  z-index: 1;
+  transition: color 0.3s, border-color 0.3s,
+              background-color 0.3s, transform 0.3s,
+              box-shadow 0.5s ease;
+}
+.music-list .music-item-download::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background-image: var(--ds-spectrum);
+  background-size: 200% 100%;
+  opacity: 0;
+  transition: opacity 0.35s ease;
+  z-index: -1;
+  animation: ds-spectrum-flow 6s linear infinite paused;
+}
+.music-list .music-item-download:hover {
+  color: #1a1a22;
+  border-color: transparent;
+  box-shadow:
+    0 0 0 1px rgba(255, 255, 255, 0.15),
+    0 4px 18px -2px rgba(120, 200, 255, 0.5),
+    0 0 30px -4px rgba(255, 122, 60, 0.4);
+}
+.music-list .music-item-download:hover::before {
+  opacity: 1;
+  animation-play-state: running;
+}
+
+/* 控制栏：按钮 + 标签 + 滑块 */
+.music-list .music-controls-label       { color: var(--ds-text-dim); }
+.music-list .music-controls-bar {
+  background: linear-gradient(135deg,
+    rgba(255, 255, 255, 0.025),
+    rgba(255, 255, 255, 0.012) 60%);
+  color: var(--ds-text-bright);
+  border-color: rgba(255, 255, 255, 0.08);
+}
+.music-list .music-ctrl-btn          { color: var(--ds-text-dim); }
+.music-list .music-ctrl-btn:hover    { color: var(--ds-text-bright); border-color: rgba(255, 255, 255, 0.18); }
+/* SVG 的 fill=currentColor 无法被 background-clip:text 裁剪 → 改走 box-shadow 叠层做出"光谱环" */
+.music-list .music-ctrl-btn.is-active {
+  color: var(--ds-text-bright);
+  box-shadow:
+    0 0 0 2px rgba(255, 255, 255, 0.05),
+    0 0 10px -1px rgba(255, 122, 60, 0.3),
+    0 0 18px -2px rgba(58, 169, 255, 0.2);
+}
+.music-list .music-mode-label,
+.music-list .music-volume-value      { color: var(--ds-text-dim); }
+.music-list .music-volume-slider::-webkit-slider-thumb,
+.music-list .music-volume-slider::-moz-range-thumb {
+  border-color: rgba(255, 255, 255, 0.6);
+  background-image: var(--ds-spectrum-soft);
+  background-size: 200% 100%;
+}
+
+/* === §10.5  底部 .music-player 复用同款皮肤 ===
+   用 .music-player.music-player 双类提特异性，避免 !important 滥用。 */
+.music-player.music-player {
+  background:
+    radial-gradient(circle at 20% 110%, var(--ds-moon) 0%, transparent 55%),
+    radial-gradient(circle at 12% 22%, var(--ds-noise) 0%, transparent 1.2px),
+    radial-gradient(circle at 67% 81%, var(--ds-noise) 0%, transparent 1px),
+    radial-gradient(circle at 45% 9%, var(--ds-noise) 0%, transparent 1.1px),
+    radial-gradient(circle at 88% 64%, var(--ds-noise) 0%, transparent 1px),
+    radial-gradient(circle at 31% 73%, var(--ds-noise) 0%, transparent 1.3px),
+    linear-gradient(135deg, var(--ds-space-card) 0%, var(--ds-space) 100%) !important;
+  color: var(--ds-text-bright) !important;
+  border-color: rgba(255, 255, 255, 0.06) !important;
+  box-shadow:
+    0 12px 40px rgba(0, 0, 0, 0.55),
+    0 2px 8px rgba(0, 0, 0, 0.35),
+    inset 0 1px 0 rgba(255, 255, 255, 0.04) !important;
+  backdrop-filter: blur(18px) saturate(160%) !important;
+}
+.music-player.music-player .music-player-title           { color: var(--ds-text-bright) !important; }
+.music-player.music-player .music-player-artist,
+.music-player.music-player .music-player-time            { color: var(--ds-text-dim) !important; }
+
+/* 进度条：第一层光谱按 --progress 宽度渲染，第二层灰底 — 永远贴合进度不溢出 */
+.music-player.music-player .music-player-progress::-webkit-slider-runnable-track {
+  background:
+    var(--ds-spectrum) 0 0 / var(--progress, 0%) 100% no-repeat,
+    rgba(255, 255, 255, 0.08) !important;
+}
+.music-player.music-player .music-player-progress::-webkit-slider-thumb {
+  background: var(--ds-text-bright) !important;
+  border-color: rgba(255, 255, 255, 0.5) !important;
+  box-shadow: 0 0 10px rgba(58, 169, 255, 0.5) !important;
+}
+.music-player.music-player .music-player-progress::-moz-range-progress {
+  background: var(--ds-spectrum) !important;
+  background-size: 100% 100% !important;
+}
+
+.music-player.music-player .music-player-btn             { color: var(--ds-text-dim) !important; }
+.music-player.music-player .music-player-btn:hover {
+  color: var(--ds-text-bright) !important;
+  background-color: rgba(255, 255, 255, 0.04) !important;
+  box-shadow:
+    0 0 0 1px rgba(255, 255, 255, 0.08),
+    0 0 14px -2px rgba(120, 200, 255, 0.45),
+    0 0 26px -6px rgba(255, 122, 60, 0.35) !important;
+}
+/* 同 _07 _按钮_ SVG 限制：保留 color + box-shadow 光谱环 */
+.music-player.music-player .music-player-btn.is-active {
+  color: var(--ds-text-bright) !important;
+  box-shadow:
+    0 0 0 2px rgba(255, 255, 255, 0.04),
+    0 0 0 4px rgba(255, 122, 60, 0.18),
+    0 0 0 6px rgba(58, 169, 255, 0.12) !important;
+}
+.music-player.music-player .music-player-btn.is-primary {
+  border-color: rgba(255, 255, 255, 0.2) !important;
+  background: radial-gradient(circle at 50% 50%,
+    rgba(255, 122, 60, 0.18) 0%, transparent 70%) !important;
+  color: var(--ds-text-bright) !important;
+}
+.music-player.music-player .music-player-btn.is-primary:hover {
+  box-shadow:
+    0 0 0 1px rgba(255, 255, 255, 0.18),
+    0 0 22px -2px rgba(255, 122, 60, 0.55),
+    0 0 40px -6px rgba(138, 91, 255, 0.4) !important;
+}
+/* _07 已有 music-cover-spin 14s，这里加快到 12s */
+.music-player.music-player.is-playing .music-player-cover img {
+  animation-duration: 12s !important;
+}
+
+/* === §10.6  减弱动效 / 移动端 === */
+@media (prefers-reduced-motion: reduce) {
+  .music-list .music-controls-bar::before,
+  .music-list .music-item-download::before,
+  .music-player.music-player .music-player-progress::-webkit-slider-runnable-track,
+  .music-player.music-player .music-player-progress::-moz-range-progress {
+    animation: none !important;
+  }
+}
+@media (max-width: 640px) {
+  /* 移动端噪点层过多显脏，缩到 2 个 */
+  .music-list .music-item {
+    background:
+      radial-gradient(circle at 82% 38%, var(--ds-moon) 0%, transparent 32%),
+      radial-gradient(circle at 22% 70%, var(--ds-noise) 0%, transparent 1px),
+      radial-gradient(circle at 75% 22%, var(--ds-noise) 0%, transparent 1px),
+      linear-gradient(135deg, var(--ds-space-card) 0%, var(--ds-space-card-2) 100%);
+    box-shadow: none;
+  }
+  .music-player.music-player {
+    background:
+      radial-gradient(circle at 82% 38%, var(--ds-moon) 0%, transparent 50%),
+      linear-gradient(135deg, var(--ds-space-card) 0%, var(--ds-space) 100%) !important;
+  }
+}
+
+/* === §10.7  浅色微调 ===
+   :root 已带浅色调色板，此处仅给控制栏、卡片棱镜阴影做轻量适配。 */
+:root:not(.dark) .music-list .music-controls-bar {
+  background: linear-gradient(135deg,
+    color-mix(in srgb, var(--ds-space-card) 85%, transparent),
+    color-mix(in srgb, var(--ds-space-card-2) 70%, transparent) 60%);
+  border-color: color-mix(in srgb, var(--line, #C9C7BF) 65%, transparent);
+}
+:root:not(.dark) .music-list .music-item {
+  box-shadow:
+    inset 0 -28px 60px -20px rgba(120, 100, 170, 0.05),
+    inset 22px 0 50px -30px rgba(80, 80, 200, 0.04);
+}
