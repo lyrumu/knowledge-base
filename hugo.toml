@@ -80,6 +80,8 @@ enableEmoji = true
   enableStructuredBreadcrumbs = true
   highlightCurrentMenuArea = true
   smartTOC = true
+  copyright = "All rights reserved © { year } lyrumu"
+  copyrightStartYear = 2026
 
   # 哪些 section 会出现在"最近更新" / 侧栏 quick links
   mainSections = ['notes', 'life', 'works', 'about']

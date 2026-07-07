@@ -42,13 +42,15 @@
     {{/* Copyright */}}
     {{ if .Site.Params.footer.showCopyright | default true }}
       <p class="text-sm text-neutral-500 dark:text-neutral-400">
-        {{- with replace .Site.Params.copyright "{ year }" now.Year }}
-          {{ . | markdownify }}
+        {{- $copyright := .Site.Params.copyright }}
+        {{- $currentYear := now.Year }}
+        {{- $startYear := .Site.Params.copyrightStartYear | default $currentYear }}
+        {{- if eq $startYear $currentYear }}
+          {{- $copyright = replace $copyright "{ year }" (print $currentYear) }}
         {{- else }}
-          &copy;
-          {{ now.Format "2006" }}
-          {{ .Site.Params.Author.name | markdownify }}
+          {{- $copyright = replace $copyright "{ year }" (print $startYear "-" $currentYear) }}
         {{- end }}
+        {{ $copyright | markdownify }}
       </p>
     {{ end }}
 

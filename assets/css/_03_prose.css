@@ -132,7 +132,6 @@
 .prose pre.chroma code {
   display: block;
   background: transparent;
-  counter-reset: chroma-line;
 }
 .prose pre.chroma .line {
   display: block;
@@ -142,7 +141,7 @@
 .prose pre.chroma .line:hover {
   background: color-mix(in srgb, var(--accent) 4%, transparent);
 }
-/* 行号：紧贴代码左边、用 CSS counter 自增生成 */
+/* 行号：紧贴代码左边 */
 .prose pre.chroma .ln {
   display: inline-block;
   position: absolute;
@@ -156,13 +155,6 @@
   color: color-mix(in srgb, var(--fg-soft) 70%, transparent);
   user-select: none;
   border-right: 1px solid color-mix(in srgb, var(--line) 60%, transparent);
-  counter-increment: chroma-line;
-}
-.prose pre.chroma .ln::before {
-  content: counter(chroma-line);
-}
-.prose pre.chroma .cl {
-  display: inline;
 }
 
 /* ----- 古典分隔符 hr（全站统一为：横线 + ✦ + 横线） ----- */
