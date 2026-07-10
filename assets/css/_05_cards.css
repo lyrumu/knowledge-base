@@ -300,6 +300,78 @@ html.dark .life-sub-card:hover {
   line-height: 1.55 !important;
 }
 
+/* =============================================================================
+   DOCS (notes) 文章列表 — 去掉卡片框样式，变为纯净文章列表
+   ----------------------------------------------------------------------------
+   使用场景：content/notes/_index.md（cardColumns: 1 单列排列文章）
+   设计意图：
+     - 去掉卡片边框 / 圆角 / 背景 / hover 上浮，让文章条目"去容器化"
+     - 底部用一条细分隔线代替卡片边框，形成自上而下的阅读流
+     - 保留卡片内所有元素（缩略图 / 标题 / 元信息）原有样式和位置
+     - 与 life/music 等特化卡片区隔，形成 DOCS 专属的克制、高效列表感
+   ============================================================================= */
+.section-notes .article-link--card {
+  /* 去掉卡片容器样式 */
+  border: none !important;
+  border-radius: 0 !important;
+  background: transparent !important;
+  overflow: visible !important;
+  /* 去掉 hover 上浮和边框变色 */
+  transform: none !important;
+  transition: none !important;
+  /* 底部细线作为列表分隔 */
+  padding-bottom: 0.15rem;
+  border-bottom: 1px solid color-mix(in srgb, var(--line) 50%, transparent) !important;
+  /* min-h-full 强制撑高卡片，去掉以让间距更紧凑 */
+  min-height: 0 !important;
+}
+/* 容器间隙归零，依赖卡片自身的 padding-bottom 和分隔线 */
+.section-notes {
+  gap: 0 !important;
+}
+/* 卡片底部多余的空白 div（仅用于占位）隐藏掉 */
+.section-notes .article-link--card > [class]:empty {
+  display: none;
+}
+.section-notes .article-link--card:last-child {
+  border-bottom: none !important;
+}
+html.dark .section-notes .article-link--card {
+  background: transparent !important;
+}
+
+.section-notes .article-link--card:hover {
+  border-color: transparent !important;
+  transform: none !important;
+}
+html.dark .section-notes .article-link--card:hover {
+  background: transparent !important;
+}
+
+/* 标题 hover 改为更 subtle 的 underline 效果，替代卡片上浮 */
+.section-notes .article-link--card h2 {
+  transition: color 0.3s ease;
+}
+.section-notes .article-link--card:hover h2 {
+  color: var(--accent) !important;
+}
+
+/* 去除暗色模式下对 article-link--card 的背景叠加 */
+html.dark .section-notes .article-link--card,
+html.dark .section-notes .article-link--card:hover {
+  background: transparent !important;
+}
+
+/* 缩减站点统计区域与文章列表之间的间距 */
+section.prose:has(+ .section-notes) {
+  margin-bottom: 0.5rem !important;
+}
+
+/* notes 区：隐藏 page-hero 自带的 ✦ 分隔线，保留文章列表的底部分隔作为唯一分隔 */
+.notes-hero-row .page-divider {
+  display: none;
+}
+
 /* 简单列表卡（左图右文） */
 .article-link--simple {
   border: 1px solid var(--line);

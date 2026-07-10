@@ -17,6 +17,10 @@
        （CSS 用这个 class 隐藏 eyebrow 和 divider 两组装饰线） */}}
   {{ $heroClass := "" }}
   {{ if eq .Section "about" }}{{ $heroClass = "page-hero--no-deco" }}{{ end }}
+  {{ $sectionName := .Section }}
+
+  {{/* notes 区：hero + content 左右并排 */}}
+  {{ if eq $sectionName "notes" }}<div class="notes-hero-row">{{ end }}
 
   {{/* Page Hero（封面风格的小头部） */}}
   {{ partial "cover/page-hero.html" (dict
@@ -38,10 +42,12 @@
 
   {{/* 描述 / Markdown 正文（如 _index.md 中写的） */}}
   {{ if .Content }}
-  <section class="prose dark:prose-invert max-w-none mb-12{{ if eq .Section "about" }} about-page-content{{ end }}">
+  <section class="prose dark:prose-invert max-w-none{{ if eq $sectionName "notes" }} notes-hero-prose{{ end }}{{ if eq .Section "about" }} about-page-content{{ end }}">
     {{ .Content }}
   </section>
   {{ end }}
+
+  {{ if eq $sectionName "notes" }}</div>{{ end }}
 
   {{/* 子页面列表（卡片 / 简单列表）
        默认开启；像 /life/ /works/ 这类已在正文中手写 shortcode 网格的 section，
@@ -80,10 +86,10 @@
           <h2 class="not-prose mt-10 mb-3 text-xl font-semibold text-neutral-700 dark:text-neutral-300">
             {{ .Key }}
           </h2>
-          {{ if eq $cardColumns 1 }}
-          <section class="not-prose w-full flex flex-col gap-4">
+            {{ if eq $cardColumns 1 }}
+          <section class="not-prose w-full flex flex-col gap-4{{ if eq $sectionName "notes" }} section-notes{{ end }}">
           {{ else }}
-          <section class="not-prose w-full grid gap-4 sm:grid-cols-2 md:grid-cols-{{ $cardColumns }}">
+          <section class="not-prose w-full grid gap-4 sm:grid-cols-2 md:grid-cols-{{ $cardColumns }}{{ if eq $sectionName "notes" }} section-notes{{ end }}">
           {{ end }}
             {{ range .Pages }}
               {{ partial "article-link/card.html" . }}
@@ -92,9 +98,9 @@
         {{ end }}
       {{ else }}
         {{ if eq $cardColumns 1 }}
-        <section class="not-prose w-full flex flex-col gap-4">
+        <section class="not-prose w-full flex flex-col gap-4{{ if eq $sectionName "notes" }} section-notes{{ end }}">
         {{ else }}
-        <section class="not-prose w-full grid gap-4 sm:grid-cols-2 md:grid-cols-{{ $cardColumns }}">
+        <section class="not-prose w-full grid gap-4 sm:grid-cols-2 md:grid-cols-{{ $cardColumns }}{{ if eq $sectionName "notes" }} section-notes{{ end }}">
         {{ end }}
           {{ if not $orderByWeight }}
             {{ range (.Paginate (.Pages.GroupByDate "2006")).PageGroups }}

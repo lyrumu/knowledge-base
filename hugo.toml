@@ -2,6 +2,8 @@
 # lyrumu's site — Hugo configuration
 # Theme: Blowfish · 部署 github&&Cloudflare Pages
 #   - 加新模块 = hugo.toml [[menu.main]] 加项 + content/<slug>/_index.md
+# 本地服务启动方式：
+# hugo server --themesDir themes --theme blowfish --config hugo.toml --bind 127.0.0.1 --port 8080
 # =============================================================================
 
 baseURL = 'https://lyrumu.top/'
@@ -80,7 +82,7 @@ enableEmoji = true
   enableStructuredBreadcrumbs = true
   highlightCurrentMenuArea = true
   smartTOC = true
-  copyright = "All rights reserved © { year } lyrumu"
+  copyright = "All Rights Reserved © { year } lyrumu"
   copyrightStartYear = 2026
 
   # 哪些 section 会出现在"最近更新" / 侧栏 quick links

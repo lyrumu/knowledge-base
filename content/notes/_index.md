@@ -18,4 +18,4 @@ cardColumns: 1
 > 其实现在几乎所有问题都可以通过 "搜索引擎 + AI + 花时间实操" 来解决。
 
 {{< section-rule >}}
-{{< site-stats >}}
+<!-- {{< site-stats >}} -->
