@@ -12,6 +12,9 @@
   <img src="https://github-readme-stats.vercel.app/api?username=lyrumu&show_icons=true&hide_title=true&count_private=true&theme=default&hide_rank=true" alt="GitHub Stats" />
 </p>
 
+<p align="center">
+  <a href="https://deepwiki.com/lyrumu/knowledge-base"><img src="https://deepwiki.com/badge.svg" alt="Ask DeepWiki"></a>
+</p>
 ---
 
 This repository powers my personal website built with **[Hugo](https://gohugo.io/)** + the **[Blowfish](https://blowfish.page/)** theme, deployed on **Cloudflare Pages**.

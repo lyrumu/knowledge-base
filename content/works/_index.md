@@ -12,5 +12,3 @@ showChildList: false
 ---
 
 {{< works-grid >}}
-
-{{< section-rule >}}

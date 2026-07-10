@@ -83,7 +83,6 @@ showTableOfContents: true
 {{< about-timeline >}}
 
 {{< section-rule >}}
-
 ## GitHub Contribution
 
 <img

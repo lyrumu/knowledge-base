@@ -14,5 +14,3 @@ showChildList: false
 > Otherwise,what's the point of being alive?
 
 {{< life-grid >}}
-
-{{< section-rule >}}

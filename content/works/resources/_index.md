@@ -12,4 +12,4 @@ showTableOfContents: true
 
 {{< resources-list >}}
 
-{{< section-rule >}}
+

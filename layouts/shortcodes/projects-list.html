@@ -32,9 +32,7 @@
                data-tilt-scale="1.012">
 
         {{/* 封面：默认走 /image/works/projects/<slug>.png */}}
-        <div class="project-card-cover"
-             data-aos="fade-up"
-             data-aos-delay="{{ mul $i 80 }}">
+        <div class="project-card-cover">
           {{ if $p.cover }}
             <img src="{{ $p.cover }}" alt="{{ $p.name }}" loading="lazy"
                  onerror="this.style.opacity='0.18'" />
@@ -50,9 +48,7 @@
         </div>
 
         {{/* 文字区 */}}
-        <div class="project-card-body"
-             data-aos="fade-up"
-             data-aos-delay="{{ mul (add $i 1) 80 }}">
+        <div class="project-card-body">
           <div class="project-card-head">
             {{ with $p.date }}<span class="project-card-date">{{ . }}</span>{{ end }}
             {{ if $p.repo }}

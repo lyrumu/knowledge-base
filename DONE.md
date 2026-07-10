@@ -4,6 +4,60 @@
 
 ---
 
+## 2026-07-10 · 分隔线系统调试 — 确认 CSS 方案无需改动
+
+### 背景
+文章（python-env-setup）中的 `---` 段落分隔线显示为普通线而非星形。先后尝试了拆分 `background` 属性、改用 `::after` 画横线 + `::before` 放 ✦ 两种 CSS 方案，均未解决问题。
+
+### 根因
+纯内容问题：该文章的 `index.md` 中部分段落之间缺少 `---` 分隔符，CSS 样式本身正确，无需修改。
+
+### 改动
+- `assets/css/_03_prose.css` — 用户撤回了所有 AI 的 CSS 改动，恢复原始 `background` 简写方案（现已验证正常工作）
+- `content/notes/python-env-setup/index.md` — 用户自行补回缺失的 `---` 分隔符
+
+### 教训
+- 文章内分隔线显示异常时，应优先检查 markdown 内容是否缺少 `---`，而非直接怀疑 CSS
+- 原始 `background` 简写方案（`linear-gradient(...) left center / calc(...) 1px no-repeat`）在 Hugo 构建中正常工作，不需要改用 `::after`/`::before`
+
+---
+
+## 2026-07-10 · 面包屑视觉重构 + Notes 入口左右并排 + 分隔符实现重构
+
+### 背景
+本轮改动涉及四个独立但互不冲突的方向：面包屑视觉升级、Notes 入口页从纯列表改为"hero + 描述"左右并排、`<hr>` 分隔符改用 `::before/::after` 实现避免 background 简写解析歧义、以及自动生成底部 section-rule 替代手动插入。
+
+### 改动
+
+| 文件 | 改动 |
+|---|---|
+| [assets/css/_02_chrome.css](file:///f:/Notes/assets/css/_02_chrome.css) | 新增面包屑样式：左侧 accent 色竖线 + 浅色背景指示器，hover 变 accent 色 |
+| [assets/css/_03_prose.css](file:///f:/Notes/assets/css/_03_prose.css) | `<hr>` 重构：从 `background` 简写 → `::after` 画横线 + `::before` 放 ✦，避免解析歧义 |
+| [assets/css/_05_cards.css](file:///f:/Notes/assets/css/_05_cards.css) | notes 文章列表：清理暗色叠加规则；新增 `.notes-hero-row` flex 布局（hero 左 + 描述右并排）；隐藏右侧描述的 `section-rule` 避免重复；640px 以下纵向堆叠 |
+| [layouts/_default/list.html](file:///f:/Notes/layouts/_default/list.html) | 面包屑包裹 `<nav aria-label="breadcrumb">`；底部自动生成 `{{< section-rule >}}`，所有 list 页面不再需要手动加 |
+| [layouts/_default/single.html](file:///f:/Notes/layouts/_default/single.html) | 面包屑包裹 `<nav aria-label="breadcrumb">` |
+| [layouts/page.html](file:///f:/Notes/layouts/page.html) | 面包屑包裹 `<nav aria-label="breadcrumb">` |
+| [layouts/shortcodes/projects-list.html](file:///f:/Notes/layouts/shortcodes/projects-list.html) | 移除 project card 的 `data-aos`（AOS 与 VanillaTilt transform 冲突，入场动画改为自然出现） |
+| [content/life/_index.md](file:///f:/Notes/content/life/_index.md) | 移除手动 `{{< section-rule >}}`（底部自动生成） |
+| [content/life/music/_index.md](file:///f:/Notes/content/life/music/_index.md) | 移除手动 `{{< section-rule >}}` |
+| [content/notes/_index.md](file:///f:/Notes/content/notes/_index.md) | 移除手动 `{{< section-rule >}}` |
+| [content/works/_index.md](file:///f:/Notes/content/works/_index.md) | 移除手动 `{{< section-rule >}}` |
+| [content/works/projects/_index.md](file:///f:/Notes/content/works/projects/_index.md) | 移除手动 `{{< section-rule >}}` |
+| [content/works/resources/_index.md](file:///f:/Notes/content/works/resources/_index.md) | 移除手动 `{{< section-rule >}}` |
+| [content/works/tools/_index.md](file:///f:/Notes/content/works/tools/_index.md) | 移除手动 `{{< section-rule >}}` |
+| [content/about/_index.md](file:///f:/Notes/content/about/_index.md) | 移除多余的空白行 |
+| [README.md](file:///f:/Notes/README.md) | 新增 DeepWiki badge 链接 |
+
+### 结果
+
+- 面包屑现在有清晰视觉容器：左竖线 accent 色 + 浅背景，hover 变 accent，适合多级 section 导航
+- Notes 入口现在 hero（标题 + kicker）在左、描述文字在右，移动端自动纵向堆叠
+- `<hr>` 分隔符改用 `::after` 画线，不再依赖 `background` 简写，避免旧实现因 `height: auto` 导致的解析歧义
+- 所有 `_index.md` 不再需要手动写 `{{< section-rule >}}` 作底部装饰，list.html 自动生成
+- Projects 卡片去掉了 AOS fade-up 入场动画（与 VanillaTilt 的 transform 冲突），现在直接自然出现
+
+---
+
 ## 2026-07-06 · Giscus 评论系统集成（条件显示 + 主题自动适配）
 
 ### 背景
@@ -1968,14 +2022,6 @@ HTML 不允许 `<a>` 嵌套 `<a>`，所以必须重构。
 
 ### 文档更新
 
-- 新增 [DEPLOY.md](file:///f:/Notes/DEPLOY.md) — 部署与维护指南（日常更新流程、架构速查、故障排查）
 - [README.md](file:///f:/Notes/README.md) — 追加 Website 章节，描述网站部署信息
 - [PROJECT_MAP.md](file:///f:/Notes/PROJECT_MAP.md) — 更新部署方式和文件结构
 
-### 后续
-
-- 零配置 vault-to-hugo 脚本编写（自动发现 Vault 中所有 .md 文件）
-- GitHub Actions 全自动化部署
-- /works/ /life/ 内容填充
-- 中英切换（i18n）
-- 高级感 UI（Phase B）

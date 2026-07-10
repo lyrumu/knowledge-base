@@ -33,7 +33,7 @@
 
   {{/* 面包屑（仅多级时显示） */}}
   {{ if gt (len .Ancestors) 1 }}
-  <nav class="not-prose text-sm text-neutral-500 dark:text-neutral-400 mb-6 print:hidden" aria-label="breadcrumb">
+  <nav class="not-prose text-sm mb-6 print:hidden" aria-label="breadcrumb">
     <ol class="flex flex-wrap items-center gap-1">
       {{ template "list-crumb" (dict "p1" . "p2" .) }}
     </ol>
@@ -47,7 +47,7 @@
   </section>
   {{ end }}
 
-  {{ if eq $sectionName "notes" }}</div>{{ end }}
+  {{ if eq $sectionName "notes" }}</div>{{ end }} {{/* /.notes-hero-row */}}
 
   {{/* 子页面列表（卡片 / 简单列表）
        默认开启；像 /life/ /works/ 这类已在正文中手写 shortcode 网格的 section，
@@ -127,6 +127,9 @@
     </section>
     {{ end }}
   {{ end }}
+
+  {{/* 底部星形分隔线 — 所有使用 list layout 的 section 页面自动生成 */}}
+  <div class="section-rule not-prose" aria-hidden="true">✦</div>
 {{ end }}
 
 {{ define "list-crumb" }}

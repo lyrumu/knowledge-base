@@ -23,7 +23,7 @@
     {{/* Header */}}
     <header id="single_header" class="mt-0 max-w-prose">
       {{ if .Params.showBreadcrumbs | default (site.Params.article.showBreadcrumbs | default false) }}
-        {{ partial "breadcrumbs.html" . }}
+        <nav aria-label="breadcrumb">{{ partial "breadcrumbs.html" . }}</nav>
       {{ end }}
       <h1 class="mt-0 text-4xl font-extrabold text-neutral-900 dark:text-neutral">
         {{ .Title | emojify }}

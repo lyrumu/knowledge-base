@@ -1,6 +1,6 @@
 # 项目地图 — 个人网站 `f:\Notes\`
 
-> 最后更新：2026-07-06 · Giscus 评论系统集成（条件显示 + 深浅主题自动适配）· Hugo v0.163.2 · Blowfish v2
+> 最后更新：2026-07-10 · 分隔线系统调试（确认 CSS 方案无需改动）+ 面包屑视觉重构 + Notes 入口左右并排 · Hugo v0.163.2 · Blowfish v2
 
 ---
 
@@ -21,6 +21,7 @@
 | 改封面的字距 / 大小 / 花边位置 | [`assets/css/_08_cover.css`](file:///F:/Notes/assets/css/_08_cover.css) |
 | 改内页"小封面"的文案 | 对应 `content/xxx/_index.md` 的 frontmatter `kicker / subtitle` |
 | 改 /notes/ 入口展示方式（单列 / 3 列等）| `content/notes/_index.md` frontmatter `cardColumns`（1/2/3） |
+| 改面包屑样式 | [`assets/css/_02_chrome.css`](file:///f:/Notes/assets/css/_02_chrome.css) 的 `nav[aria-label="breadcrumb"]` 规则块（左竖线 + 浅背景指示器） |
 | 改 `notes` 文章的 taxonomy / Edit Link / 上一篇下一篇规则 | [`content/notes/_index.md`](file:///f:/Notes/content/notes/_index.md) 的 `cascade`（只对 `notes` 下文章生效） |
 | 改 `notes` 文章里 tags / categories / series 的维护规范 | [`BLOWFISH_FEATURE_AUDIT.md`](file:///f:/Notes/BLOWFISH_FEATURE_AUDIT.md) 末尾的 `Taxonomies 后续维护约定` |
 | 微调上一篇 / 下一篇的视觉样式 | [`layouts/partials/article-pagination.html`](file:///f:/Notes/layouts/partials/article-pagination.html) + [`assets/css/_02_chrome.css`](file:///f:/Notes/assets/css/_02_chrome.css) |
@@ -234,6 +235,7 @@ f:\Notes\
 | notes 入口页正文 | [`content/notes/_index.md`](file:///f:/Notes/content/notes/_index.md) | [`layouts/_default/list.html`](file:///f:/Notes/layouts/_default/list.html) |
 | 文章卡列表 | `content/notes/**` 下的文章 | [`layouts/_default/list.html`](file:///f:/Notes/layouts/_default/list.html) + `article-link/card.html` |
 | 列数控制 | `content/notes/_index.md` frontmatter `cardColumns` | [`layouts/_default/list.html`](file:///f:/Notes/layouts/_default/list.html) |
+| hero + 描述左右并排布局 | — | [`assets/css/_05_cards.css`](file:///F:/Notes/assets/css/_05_cards.css) 的 `.notes-hero-row`（flex 行：左 hero / 右描述文字，640px 以下纵向堆叠） |
 | 后代文章的 `taxonomy / Edit Link / 上一篇下一篇` 默认规则 | [`content/notes/_index.md`](file:///f:/Notes/content/notes/_index.md) 的 `cascade` | [`layouts/page.html`](file:///f:/Notes/layouts/page.html) + `article-meta/basic.html` + `article-pagination.html` |
 
 **说明：**
@@ -315,9 +317,10 @@ f:\Notes\
 
 1. 全站只保留一种块级分隔语言：`横线 + ✦ + 横线`
 2. 如果已经写了 `{{< section-rule >}}`，就不要在它前后再紧跟 `---`
-3. [`_03_prose.css`](file:///f:/Notes/assets/css/_03_prose.css) 里有相邻分隔符去重规则：`section-rule + hr`、`hr + section-rule`、`section-rule + section-rule`、`hr + hr` 会自动隐藏后一个
-4. `h2` 默认带顶部细线；但如果它前面紧挨着 `section-rule` 或 `hr`，[`_03_prose.css`](file:///f:/Notes/assets/css/_03_prose.css) 会自动取消这条线，避免看起来像“分隔符后又跟一条默认横线”
-5. 想插一个显式分隔时，优先用 `{{< section-rule >}}`；`---` 更适合普通文章正文里的语义分段
+3. list 页面底部 `{{< section-rule >}}` 已由 [`layouts/_default/list.html`](file:///f:/Notes/layouts/_default/list.html) 自动生成，**不再需要在 `_index.md` 里手动加**
+4. [`_03_prose.css`](file:///f:/Notes/assets/css/_03_prose.css) 里有相邻分隔符去重规则：`section-rule + hr`、`hr + section-rule`、`section-rule + section-rule`、`hr + hr` 会自动隐藏后一个
+5. `h2` 默认带顶部细线；但如果它前面紧挨着 `section-rule` 或 `hr`，[`_03_prose.css`](file:///f:/Notes/assets/css/_03_prose.css) 会自动取消这条线，避免看起来像“分隔符后又跟一条默认横线”
+6. 想插一个显式分隔时，优先用 `{{< section-rule >}}`；`---` 更适合普通文章正文里的语义分段
 
 **写作约定（最常用）**
 
@@ -331,6 +334,7 @@ f:\Notes\
 | 元素 | 数据源 | 模板 |
 |------|--------|------|
 | 左侧品牌标识 | 站点标题 `lyrumu's page` | [`layouts/partials/header/basic.html`](file:///f:/Notes/layouts/partials/header/basic.html) + [`assets/css/_02_chrome.css`](file:///f:/Notes/assets/css/_02_chrome.css) 的 `.site-brand-badge`（圆角边框徽章样式，hover 时边框变 accent 色） |
+| 面包屑导航 | Hugo 页面层级（Ancestors） | [`layouts/_default/list.html`](file:///f:/Notes/layouts/_default/list.html) / [`single.html`](file:///f:/Notes/layouts/_default/single.html) / [`page.html`](file:///f:/Notes/layouts/page.html) 包裹 `<nav aria-label="breadcrumb">`；样式见 [`_02_chrome.css`](file:///f:/Notes/assets/css/_02_chrome.css) 的 `nav[aria-label="breadcrumb"]`（左 accent 竖线 + 浅背景指示器） |
 | 菜单项 | `hugo.toml` → `[[menu.main]]` | 主题默认 |
 | GitHub 按钮 | `data/cover.yaml` → `repo_url` | [`desktop-menu.html`](file:///f:/Notes/layouts/partials/header/components/desktop-menu.html) / [mobile-menu.html](file:///f:/Notes/layouts/partials/header/components/mobile-menu.html) |
 
@@ -352,7 +356,7 @@ f:\Notes\
 | 3D 倾斜 + 鼠标反光 | shortcode 里的 `data-tilt*` 属性（VanillaTilt.js） | [`assets/css/_06_works-cards.css`](file:///F:/Notes/assets/css/_06_works-cards.css) 的 `.project-card` + `.project-card::after`（含 `mix-blend-mode: multiply` 防反光洗文字）|
 | hover 揭示（tags + actions） | — | [`_06_works-cards.css`](file:///F:/Notes/assets/css/_06_works-cards.css) 的 `.project-card:hover .project-card-tags` 等 |
 | 项目按钮（在线 / 源码） | `href` / `repo` 字段 | [`_06_works-cards.css`](file:///F:/Notes/assets/css/_06_works-cards.css) 的 `.project-card-btn`（**v3 修复后是独立 `<a>`**，各自跳对应地址；默认 + hover 对比度均 ≥ AA 4.5:1）|
-| 入场淡入 | `data-aos="fade-up"`（应用到 `.project-card-cover` + `.project-card-body`，避开外层 VanillaTilt 的 transform 冲突） | [extend-head.html](file:///f:/Notes/layouts/partials/extend-head.html)（AOS.js） |
+| 入场淡入 | `data-aos="fade-up"`（应用到 `.project-card-cover` + `.project-card-body`，避开外层 VanillaTilt 的 transform 冲突；v2026-07-10 已移除 AOS — 与 VanillaTilt transform 冲突，改为自然出现） | [extend-head.html](file:///f:/Notes/layouts/partials/extend-head.html)（AOS.js） |
 | 资源存放约定 | `static/image/works/projects/<slug>.png` | — |
 
 ### /works/resources/ 资源列表

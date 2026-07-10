@@ -11,4 +11,4 @@ showTableOfContents: true
 Recently Listen to(Irregular updates)
 {{< music-list >}}
 
-{{< section-rule >}}
+

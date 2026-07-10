@@ -436,3 +436,48 @@ html.dark body.is-music-page h1.page-title::after {
   color: var(--fg-base);
   border-left-color: var(--accent);
 }
+
+/* =============================================================================
+   面包屑 — 左竖线 + 浅背景指示器
+   ============================================================================= */
+nav[aria-label="breadcrumb"] {
+  font-family: var(--font-serif-display);
+  font-size: 0.82rem;
+  color: var(--fg-mute);
+  padding: 0.4rem 0.75rem;
+  border-left: 2px solid var(--accent);
+  background: color-mix(in srgb, var(--accent) 5%, transparent);
+  border-radius: 0 0.35rem 0.35rem 0;
+  width: fit-content;
+}
+nav[aria-label="breadcrumb"] a {
+  color: var(--fg-base);
+  font-weight: 500;
+  text-decoration: none;
+  transition: color 0.25s;
+}
+nav[aria-label="breadcrumb"] a:hover {
+  color: var(--accent);
+}
+nav[aria-label="breadcrumb"] ol {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.25rem;
+}
+/* 面包屑链接前的 ← 装饰（仅第一个可见项） */
+nav[aria-label="breadcrumb"] li:not(.hidden) a::before {
+  content: "← ";
+  color: var(--accent);
+  font-family: var(--font-serif-display);
+}
+/* 后续可见项不再重复显示 ←（防止 "← A / ← B"） */
+nav[aria-label="breadcrumb"] li:not(.hidden) ~ li:not(.hidden) a::before {
+  content: none;
+}
+html.dark nav[aria-label="breadcrumb"] {
+  background: color-mix(in srgb, var(--accent) 10%, transparent);
+}

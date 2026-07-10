@@ -301,14 +301,9 @@ html.dark .life-sub-card:hover {
 }
 
 /* =============================================================================
-   DOCS (notes) 文章列表 — 去掉卡片框样式，变为纯净文章列表
+   notes 文章列表 — 去卡片框 → 纯净列表
    ----------------------------------------------------------------------------
-   使用场景：content/notes/_index.md（cardColumns: 1 单列排列文章）
-   设计意图：
-     - 去掉卡片边框 / 圆角 / 背景 / hover 上浮，让文章条目"去容器化"
-     - 底部用一条细分隔线代替卡片边框，形成自上而下的阅读流
-     - 保留卡片内所有元素（缩略图 / 标题 / 元信息）原有样式和位置
-     - 与 life/music 等特化卡片区隔，形成 DOCS 专属的克制、高效列表感
+   单列排列，底部细分隔线代替卡片边框；保留内部元素不变。
    ============================================================================= */
 .section-notes .article-link--card {
   /* 去掉卡片容器样式 */
@@ -336,16 +331,9 @@ html.dark .life-sub-card:hover {
 .section-notes .article-link--card:last-child {
   border-bottom: none !important;
 }
-html.dark .section-notes .article-link--card {
-  background: transparent !important;
-}
-
 .section-notes .article-link--card:hover {
   border-color: transparent !important;
   transform: none !important;
-}
-html.dark .section-notes .article-link--card:hover {
-  background: transparent !important;
 }
 
 /* 标题 hover 改为更 subtle 的 underline 效果，替代卡片上浮 */
@@ -356,7 +344,7 @@ html.dark .section-notes .article-link--card:hover {
   color: var(--accent) !important;
 }
 
-/* 去除暗色模式下对 article-link--card 的背景叠加 */
+/* 暗色模式下统一去除 .section-notes 内 card 的背景叠加 */
 html.dark .section-notes .article-link--card,
 html.dark .section-notes .article-link--card:hover {
   background: transparent !important;
@@ -367,9 +355,32 @@ section.prose:has(+ .section-notes) {
   margin-bottom: 0.5rem !important;
 }
 
-/* notes 区：隐藏 page-hero 自带的 ✦ 分隔线，保留文章列表的底部分隔作为唯一分隔 */
-.notes-hero-row .page-divider {
+/* notes hero + 描述文本左(auto) 右(1fr) 并排 */
+.notes-hero-row {
+  display: flex;
+  flex-direction: row;
+  gap: 2rem;
+  align-items: flex-start;
+}
+.notes-hero-row .page-hero {
+  flex: 0 0 auto;
+  margin-bottom: 0;
+}
+.notes-hero-prose {
+  flex: 1 1 0;
+  min-width: 0;
+  margin-top: 0;
+  margin-bottom: 0 !important;
+}
+/* notes 区右侧的描述文本中隐藏内部的 section-rule 分隔符（避免与左侧 page-hero 的 ✦ 重复） */
+.notes-hero-prose .section-rule {
   display: none;
+}
+@media (max-width: 640px) {
+  .notes-hero-row {
+    flex-direction: column;
+    gap: 1rem;
+  }
 }
 
 /* 简单列表卡（左图右文） */

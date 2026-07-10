@@ -11,7 +11,7 @@ showTableOfContents: true
 
 > 🧰 Under construction...
 
-{{< section-rule >}}
+
 
 ### Planned to include
 - Scripts,Skills
