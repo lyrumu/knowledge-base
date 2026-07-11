@@ -15,6 +15,14 @@
 #   - note     : 一句话小记（可空）
 # =============================================================================
 tracks:
+  - title: "Crossing Field"
+    artist: "LiSA"
+    cover: "/image/cover-crossing-field.webp"
+    src:   "/life/music/crossing-field.mp3"                  
+    duration: "4:09"
+    size: "3.81 MB"
+    mood: ""
+
   - title: "ウィーアー!(We Are!)"
     artist: "Da-ice"
     cover: "/image/cover-we-are.webp"
@@ -23,13 +31,23 @@ tracks:
     size: "3.76 MB"
     mood: ""
 
-  - title: "Crossing Field"
-    artist: "LiSA"
-    cover: "/image/cover-crossing-field.webp"
-    src:   "/life/music/crossing-field.mp3"                  
-    duration: "4:09"
-    size: "3.81 MB"
-    mood: ""
+  - title: "床边故事"
+    artist: "Jay Chou"
+    album: "《床边故事》"
+    cover: "/image/cover-Bedtime-story.webp"
+    src:   "/life/music/Bedtime-story.mp3"                  
+    duration: "3:45"
+    size: "3.44 MB"
+    mood: ""    
+
+  - title: "鞋子特大号"
+    artist: "Jay Chou"
+    album: "《哎呦不错哦》"
+    cover: "/image/cover-Extra-large-shoes.webp"
+    src:   "/life/music/Extra-large-shoes.mp3"                  
+    duration: "3:41"
+    size: "3.37 MB"
+    mood: ""      
 
   - title: "Departures ~あなたにおくるアイの歌~"
     artist: "ryo&&EGOIST"
