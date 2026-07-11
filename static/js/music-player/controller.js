@@ -4,6 +4,7 @@
    把 store / view / storage / audio 串起来：
    - 接收 UI 事件 → 推进 store → 渲染 view → 写 storage
    - 不再同时直接读写 DOM 与 localStorage
+   优化：事件委托 + 分页加载
    ============================================================================= */
 (function (global) {
   'use strict';
@@ -26,6 +27,34 @@
     prebuffer.hidden = true;
     // 放进 player 根节点外（避免被 view 的 class 操作影响）
     document.body.appendChild(prebuffer);
+
+    // ========== 分页加载逻辑 ==========
+    var pageSize = parseInt(dom.playlistRoot.dataset.pageSize, 10) || 7;
+    var total = parseInt(dom.playlistRoot.dataset.total, 10) || dom.items.length;
+    var currentLoaded = pageSize;
+    var loadMoreBtn = dom.playlistRoot.querySelector('[data-role="load-more"]');
+    var loadMoreCount = dom.playlistRoot.querySelector('[data-role="load-more-count"]');
+
+    function updateLoadMoreBtn() {
+      var remaining = total - currentLoaded;
+      if (remaining <= 0) {
+        loadMoreBtn.hidden = true;
+        return;
+      }
+      loadMoreBtn.hidden = false;
+      loadMoreCount.textContent = '(' + remaining + ')';
+    }
+
+    function loadMore() {
+      var count = 0;
+      for (var i = currentLoaded; i < Math.min(currentLoaded + pageSize, total); i++) {
+        dom.items[i].classList.add('is-revealed');
+        dom.items[i].hidden = false;
+        count++;
+      }
+      currentLoaded += count;
+      updateLoadMoreBtn();
+    }
 
     function prefetchNext() {
       // 用 peekNext 只读不写，避免破坏 store 状态
@@ -229,8 +258,19 @@ function onKey(e) {
       audio.addEventListener('ended', onEnded);
       audio.addEventListener('error', onAudioError);
 
-      dom.items.forEach(function (el, i) {
-        el.addEventListener('click', function (e) { onItemClick(i, e); });
+      // ========== 事件委托（替代 forEach 监听器）==========
+      dom.playlistRoot.addEventListener('click', function (e) {
+        // 加载更多按钮
+        if (e.target.closest('[data-role="load-more"]')) {
+          loadMore();
+          return;
+        }
+        // 歌曲项点击
+        var item = e.target.closest('[data-track]');
+        if (item) {
+          var idx = parseInt(item.dataset.index, 10);
+          if (!isNaN(idx)) onItemClick(idx, e);
+        }
       });
 
       document.addEventListener('keydown', onKey);
@@ -240,6 +280,19 @@ function onKey(e) {
       view.renderMode(store.mode());
       view.renderVolume(volume, false);
       bind();
+
+      // ========== 初始化分页状态 ==========
+      // 初始只显示第一页
+      for (var i = 0; i < dom.items.length; i++) {
+        if (i >= pageSize) {
+          dom.items[i].classList.add('is-revealed');
+          dom.items[i].hidden = true;
+        } else {
+          dom.items[i].classList.add('is-revealed');
+          dom.items[i].hidden = false;
+        }
+      }
+      updateLoadMoreBtn();
     }
 
     // 恢复上次播放位置：按 src 匹配（而不是按 index）—— 歌单顺序变了也不会错播。

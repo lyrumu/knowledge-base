@@ -6,9 +6,13 @@
   用法: {{< music-list >}}
   数据源: data/music.yaml -> hugo.Data.music.tracks
   模板契约：根节点 [data-music-playlist] + 子节点 data-role / data-track
+  分页：JS 根据 data-page-size 控制显示数量
 ----------------------------------------------------------------*/}}
 {{ $tracks := hugo.Data.music.tracks }}
-<div class="music-list not-prose my-10" data-music-playlist>
+{{ $pageSize := 7 }}
+<div class="music-list not-prose my-10" data-music-playlist
+     data-page-size="{{ $pageSize }}"
+     data-total="{{ len $tracks }}">
   {{/* 播放模式和音量控制栏 */}}
   <div class="music-controls-bar not-prose">
     <div class="music-controls-left">
@@ -49,7 +53,9 @@
          style="animation-delay: {{ mul $i 0.06 }}s;">
 
       <div class="music-item-cover">
-        <img src="{{ $t.cover }}" alt="{{ $t.title }}" loading="lazy"
+        <img src="{{ $t.cover }}" alt="{{ $t.title }}"
+             width="56" height="56"
+             loading="lazy" decoding="async"
              onerror="this.style.opacity='0.15'" />
         <span class="music-item-play-overlay" aria-hidden="true">
           {{ partial "cover/icon.html" (dict "name" "play" "size" 18) }}
@@ -90,6 +96,15 @@
       </span>
     </div>
     {{ end }}
+
+    {{/* 分页加载更多按钮（JS 控制显隐） */}}
+    <div class="music-load-more" data-role="load-more" hidden>
+      <button class="music-load-more-btn" type="button">
+        <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 5v14"/><path d="m19 12-7 7-7-7"/></svg>
+        <span>LoadMore</span>
+        <span class="music-load-more-count" data-role="load-more-count"></span>
+      </button>
+    </div>
   {{ else }}
     <div class="music-empty">
       <strong>歌单还是空的</strong>

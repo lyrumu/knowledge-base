@@ -1,6 +1,6 @@
 # 项目地图 — 个人网站 `f:\Notes\`
 
-> 最后更新：2026-07-10 · 分隔线系统调试（确认 CSS 方案无需改动）+ 面包屑视觉重构 + Notes 入口左右并排 · Hugo v0.163.2 · Blowfish v2
+> 最后更新：2026-07-11 · /life/music/ 性能优化（分页加载 + 事件委托 + content-visibility） · Hugo v0.163.2 · Blowfish v2
 
 ---
 
@@ -258,12 +258,14 @@ f:\Notes\
 | 元素 | 数据源 | 模板 |
 |------|--------|------|
 | 歌曲列表 | [`data/music.yaml`](file:///f:/Notes/data/music.yaml) | [`layouts/shortcodes/music-list.html`](file:///f:/Notes/layouts/shortcodes/music-list.html) |
-| 播放模式/音量控制栏 | — | [`layouts/shortcodes/music-list.html`](file:///f:/Notes/layouts/shortcodes/music-list.html) 的 `.music-controls-bar` |
+| 播放模式/音量控制栏（sticky） | — | [`layouts/shortcodes/music-list.html`](file:///f:/Notes/layouts/shortcodes/music-list.html) 的 `.music-controls-bar` |
 | 粘性播放器 HTML | — | [`layouts/partials/music-player.html`](file:///f:/Notes/layouts/partials/music-player.html) |
-| 播放器逻辑（点击切歌 / 进度跳转 / 记忆位置 / 键盘 / 关闭清状态 / 播放模式 / 音量） | — | [`static/js/music-player.js`](file:///f:/Notes/static/js/music-player.js) |
+| 播放器逻辑（点击切歌 / 进度跳转 / 记忆位置 / 键盘 / 关闭清状态 / 播放模式 / 音量） | — | [`static/js/music-player/controller.js`](file:///f:/Notes/static/js/music-player/controller.js) |
 | 歌曲下载入口 + 文件信息 | `data/music.yaml` 的 `src / size` | [`layouts/shortcodes/music-list.html`](file:///f:/Notes/layouts/shortcodes/music-list.html) + [`assets/css/_05_cards.css`](file:///F:/Notes/assets/css/_05_cards.css) |
 | 列表样式 + 控制栏样式 + 播放器样式 | — | [`assets/css/_05_cards.css`](file:///F:/Notes/assets/css/_05_cards.css) 的 `.music-item*` + `.music-controls-bar` + [`_07_music-player.css`](file:///F:/Notes/assets/css/_07_music-player.css) 的 `.music-player` |
 | 资源存放约定 | `static/life/music/<slug>.mp3` + `static/image/life/music/<slug>.jpg` | — |
+
+**分页配置**：歌单超过 `$pageSize`（默认 7 首）时显示「加载更多」按钮。在 [`music-list.html`](file:///f:/Notes/layouts/shortcodes/music-list.html) 修改 `$pageSize` 变量即可调整每页数量。
 
 ### /about/ 页面内容
 

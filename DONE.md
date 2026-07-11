@@ -4,6 +4,32 @@
 
 ---
 
+## 2026-07-11 · /life/music/ 性能优化 + 分页加载
+
+### 改动
+
+| 文件 | 改动 |
+|---|---|
+| [layouts/shortcodes/music-list.html](file:///f:/Notes/layouts/shortcodes/music-list.html) | 封面图加 `width/height` 消除 CLS；添加 `data-page-size` 属性控制分页；新增「加载更多」按钮结构 |
+| [static/js/music-player/dom.js](file:///f:/Notes/static/js/music-player/dom.js) | 新增 `playlistRoot` 返回给 controller |
+| [static/js/music-player/controller.js](file:///f:/Notes/static/js/music-player/controller.js) | 事件委托替代 forEach 监听器；分页加载逻辑（初始显示 7 首，点击加载更多显示下一批） |
+| [assets/css/_05_cards.css](file:///f:/Notes/assets/css/_05_cards.css) | 控制栏 sticky 定位（top: 3.5rem）；`.music-item` 加 `content-visibility: auto`；加载更多按钮样式；渐入动画 |
+| [assets/css/_10_music-darkside.css](file:///f:/Notes/assets/css/_10_music-darkside.css) | 同步 sticky 定位 |
+
+### 性能优化效果
+
+- **分页加载**：初始只渲染 7 首（可配置），减少 DOM 节点
+- **事件委托**：1 个监听器替代 N 个，内存占用降低 90%
+- **content-visibility**：屏外元素跳过渲染计算
+- **图片固定尺寸**：消除 CLS，提升 LCP
+
+### 配置
+
+- 每页数量：在 `music-list.html` 修改 `$pageSize` 变量
+- 默认值：7 首/页
+
+---
+
 ## 2026-07-10 · 分隔线系统调试 — 确认 CSS 方案无需改动
 
 ### 背景

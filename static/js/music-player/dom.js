@@ -67,6 +67,7 @@
     }
 
     return {
+      playlistRoot: playlistRoot,
       items: items,
       audio: audio,
       cover: coverEl,

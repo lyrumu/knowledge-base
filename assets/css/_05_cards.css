@@ -822,6 +822,18 @@ html.dark .life-sub-cover {
   text-align: right;
 }
 
+/* ========== 分页优化 ========== */
+/* 控制栏 sticky 定位（在站点顶栏下方） */
+.music-controls-bar {
+  position: sticky;
+  top: 3.5rem;
+  z-index: 10;
+  margin-bottom: 0.75rem;
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+}
+
+/* content-visibility 跳过屏外渲染计算 */
 .music-item {
   position: relative;
   display: grid;
@@ -838,6 +850,61 @@ html.dark .life-sub-cover {
   transition: border-color 0.4s, background 0.4s,
               transform 0.4s cubic-bezier(0.22, 0.61, 0.36, 1);
   isolation: isolate;
+  /* 性能优化：屏外元素跳过渲染 */
+  content-visibility: auto;
+  contain-intrinsic-size: 0 5.5rem;
+}
+
+/* 渐入动画（用于 JS 动态显示） */
+@keyframes music-item-reveal {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+.music-item.is-revealed {
+  animation: music-item-reveal 0.4s cubic-bezier(0.22, 0.61, 0.36, 1) forwards;
+}
+
+/* ========== 加载更多按钮 ========== */
+.music-load-more {
+  display: flex;
+  justify-content: center;
+  padding: 1.5rem 0 0.5rem;
+}
+.music-load-more-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.6rem 1.4rem;
+  border: 1px solid color-mix(in srgb, var(--accent) 40%, var(--line));
+  border-radius: 9999px;
+  background: color-mix(in srgb, var(--accent) 8%, transparent);
+  color: var(--accent);
+  font-family: var(--font-serif-body);
+  font-size: 0.85rem;
+  cursor: pointer;
+  transition: all 0.3s cubic-bezier(0.22, 0.61, 0.36, 1);
+}
+.music-load-more-btn:hover {
+  background: color-mix(in srgb, var(--accent) 14%, transparent);
+  border-color: color-mix(in srgb, var(--accent) 60%, var(--line));
+  transform: translateY(-1px);
+}
+.music-load-more-btn svg {
+  transition: transform 0.3s cubic-bezier(0.22, 0.61, 0.36, 1);
+}
+.music-load-more-btn:hover svg {
+  transform: translateY(3px);
+}
+.music-load-more-count {
+  font-family: var(--font-mono);
+  font-size: 0.72rem;
+  opacity: 0.7;
 }
 .music-item:hover {
   border-color: var(--fg-base);
