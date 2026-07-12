@@ -4,6 +4,39 @@
 
 ---
 
+## 2026-07-12 · 主题切换动画迭代 — DeepWiki 风格斜向擦除 + 节奏优化
+
+### 背景
+
+经过 3 轮迭代，把主题切换动画从 `clip-path polygon` 上下擦除升级到 View Transition API + `mask-image` 硬斜线版本，节奏从中等到轻快，最终落定为「硬斜线 + 900ms」。
+
+### 改动
+
+| 文件 | 改动 |
+|---|---|
+| [assets/css/_11_theme-transition.css](file:///f:/Notes/assets/css/_11_theme-transition.css) | 3 轮迭代：① clip-path polygon 上下擦除 → ② mask-image + linear-gradient 135°/315° 斜向擦除（带过渡） → ③ 硬斜线版本（49%/51% 硬边，900ms，`mask-size: 200% 200%`） |
+| [static/js/theme-transition.js](file:///f:/Notes/static/js/theme-transition.js) | capture 阶段拦截 `#appearance-switcher` / `#appearance-switcher-mobile` 的 click；`transitioning` 锁防止动画期间重复点击；用 `transition.finished.catch.finally` 统一清理方向 class 和锁；不支持 View Transition API 时降级为直接 toggle |
+
+### 最终参数（硬斜线版）
+
+| 参数 | 值 | 说明 |
+|---|---|---|
+| `animation-duration` | `900ms` | 中等节奏，扫描过程明显 |
+| `animation-timing-function` | `cubic-bezier(0.4, 0, 0.2, 1)` | Material 标准曲线 |
+| `mask-image` | `linear-gradient(135deg/315deg, black 49%, transparent 51%)` | 硬斜线，无过渡模糊 |
+| `mask-size` | `200% 200%` | 渐变区域足够大，斜线不会过早饱和 |
+| `mask-position` | `0% 0%` → `100% 100%`（forward）<br>`100% 100%` → `0% 0%`（reverse） | 扫描线移动 |
+| `prefers-reduced-motion` | `animation: none` | 无障碍降级 |
+
+### 视觉行为
+
+- 深色 → 浅色：扫描线 135°，从左上 → 右下
+- 浅色 → 深色：扫描线 315°，从右下 → 左上（与方向 1 镜像）
+- 不支持 View Transition API（Firefox / 旧 Safari）：`::view-transition-*` 不会生成，无副作用
+- 动画期间重复点击：被 `transitioning` 锁挡住，避免叠加
+
+---
+
 ## 2026-07-11 · /life/music/ 性能优化 + 分页加载
 
 ### 改动

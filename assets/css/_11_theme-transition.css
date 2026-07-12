@@ -1,0 +1,113 @@
+/* =============================================================================
+   _11_theme-transition.css — DeepWiki 风格「斜向擦除」主题切换动画
+   -----------------------------------------------------------------------------
+   原理：
+     - 原生 CSS View Transitions API
+     - ::view-transition-old(root) 全屏铺底，通过 mask-image + linear-gradient
+       模拟一条 135° / 315° 的硬斜线移动
+     - ::view-transition-new(root) 在 old 之下铺底，无动画
+     - JS 在 <html> 上加 .vt-down / .vt-up 切换擦除方向
+
+   参数（硬斜线版）：
+     - 时长 900ms
+     - easing cubic-bezier(0.4, 0, 0.2, 1)
+     - mask 区间 black 49% → transparent 51%，硬边斜线
+     - mask-size: 200% 200%
+
+   兼容性：Firefox / 旧 Safari 不支持 View Transition API 时无副作用；
+           prefers-reduced-motion 时禁用擦除动画。
+   ============================================================================= */
+
+/* -----------------------------------------------------------------------------
+   View Transition 基础
+   ----------------------------------------------------------------------------- */
+
+/* group 必须显式撑满 viewport；否则 mask-position 的 % 基准不是全屏 */
+::view-transition-group(root) {
+  width: 100%;
+  height: 100%;
+}
+
+/* 关闭默认 crossfade */
+::view-transition-old(root),
+::view-transition-new(root) {
+  animation: none;
+  mix-blend-mode: normal;
+}
+
+::view-transition-image-pair(root) {
+  isolation: auto;
+}
+
+/* 层级：old 在上做擦除，new 在下铺底 */
+::view-transition-old(root) {
+  z-index: 2;
+}
+
+::view-transition-new(root) {
+  z-index: 1;
+}
+
+
+/* -----------------------------------------------------------------------------
+   方向 1：深色 → 浅色（html.vt-down）
+   扫描线 135°，左上 → 右下
+   ----------------------------------------------------------------------------- */
+.vt-down::view-transition-old(root) {
+  mask-image: linear-gradient(
+    135deg,
+    black 49%,
+    transparent 51%
+  );
+
+  mask-size: 200% 200%;
+
+  mask-position: 0% 0%;
+
+  animation: diagonal-wipe-forward 900ms cubic-bezier(0.4, 0, 0.2, 1) forwards;
+}
+
+
+/* -----------------------------------------------------------------------------
+   方向 2：浅色 → 深色（html.vt-up）
+   扫描线 315°，右下 → 左上，与方向 1 完全镜像
+   ----------------------------------------------------------------------------- */
+.vt-up::view-transition-old(root) {
+  mask-image: linear-gradient(
+    315deg,
+    black 49%,
+    transparent 51%
+  );
+
+  mask-size: 200% 200%;
+
+  mask-position: 100% 100%;
+
+  animation: diagonal-wipe-reverse 900ms cubic-bezier(0.4, 0, 0.2, 1) forwards;
+}
+
+
+/* -----------------------------------------------------------------------------
+   动画 keyframes
+   ----------------------------------------------------------------------------- */
+
+@keyframes diagonal-wipe-forward {
+  from { mask-position: 0% 0%; }
+  to   { mask-position: 100% 100%; }
+}
+
+@keyframes diagonal-wipe-reverse {
+  from { mask-position: 100% 100%; }
+  to   { mask-position: 0% 0%; }
+}
+
+
+/* -----------------------------------------------------------------------------
+   无障碍
+   ----------------------------------------------------------------------------- */
+@media (prefers-reduced-motion: reduce) {
+  .vt-down::view-transition-old(root),
+  .vt-up::view-transition-old(root) {
+    animation: none;
+  }
+}

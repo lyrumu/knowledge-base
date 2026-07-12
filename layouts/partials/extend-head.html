@@ -16,6 +16,16 @@
 <script src="/js/vanilla-tilt.min.js" defer></script>
 
 {{/*
+  主题切换斜向擦除动画（DeepWiki 风格，2026-07-12）
+  - 必须在 appearance.js 之后加载（appearance.js 在 head.html 中以普通 script 加载），
+    所以这里用 defer 即可保证执行顺序在 appearance.js 之后。
+  - 通过 cloneNode(true) 替换 #appearance-switcher 按钮，清掉 appearance.js 绑定的
+    原 click 监听器，再用 document.startViewTransition 包裹 toggle。
+  - 不支持 View Transition API 的浏览器（Firefox / 旧 Safari）自动降级为普通切换。
+*/}}
+<script src="/js/theme-transition.js" defer></script>
+
+{{/*
   统一管理动画库的初始化：
   - 全部包装在 window.load 里，确保所有 defer 脚本加载完成
   - AOS.init()：检测 prefers-reduced-motion

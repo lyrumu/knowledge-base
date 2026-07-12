@@ -33,9 +33,14 @@
    ├─ 全局浮层
    │  _07_music-player.css  — 全局音乐播放器 + copy-toast
    │
-   └─ 页面专属
-      _08_cover.css         — 封面页（首页全屏 + 装饰花边 + 字符入场）
-      _09_about.css         — About 页（profile + 标签 + 液态玻璃联系方式）
+   └─├─ 页面专属
+   │  _08_cover.css         — 封面页（首页全屏 + 装饰花边 + 字符入场）
+   │  _09_about.css         — About 页（profile + 标签 + 液态玻璃联系方式）
+
+   ├─ 交互增强
+   │  _11_theme-transition.css — DeepWiki 风格斜向擦除主题切换动画（CSS View Transitions）
+   │                              JS 见 static/js/theme-transition.js
+   │                              通过 extend-head.html 引入
 
    添加新文件：
      1. 在 assets/css/ 下创建 _NN_xxx.css（NN = 下一个序号）

@@ -39,7 +39,7 @@
 | 改 /about/ 联系方式图标 / 邮箱 | [`content/about/_index.md`](file:///f:/Notes/content/about/_index.md) + [`layouts/partials/about-contact.html`](file:///f:/Notes/layouts/partials/about-contact.html)（base64 邮箱解码 + Toast） |
 | 改全站分隔符规则 | [`assets/css/_03_prose.css`](file:///f:/Notes/assets/css/_03_prose.css) + [`assets/css/_05_cards.css`](file:///f:/Notes/assets/css/_05_cards.css) + [`assets/css/_04_hero.css`](file:///f:/Notes/assets/css/_04_hero.css) + [`assets/css/_08_cover.css`](file:///f:/Notes/assets/css/_08_cover.css) |
 | 改 /about/ 图标玻璃效果 | [`assets/css/_09_about.css`](file:///F:/Notes/assets/css/_09_about.css)（`.about-contact-glass` / `.about-contact-btn` / `.copy-toast`） |
-| 调首页 / about 首屏图片预加载 | [`layouts/partials/head.html`](file:///f:/Notes/layouts/partials/head.html)（按页面条件 preload 关键图片和字体） |
+| 调主题切换动画节奏 / 斜线角度 / 时长 | [`assets/css/_11_theme-transition.css`](file:///f:/Notes
 | 改顶栏左侧品牌标识样式 | [`layouts/partials/header/basic.html`](file:///f:/Notes/layouts/partials/header/basic.html) + [`assets/css/_02_chrome.css`](file:///f:/Notes/assets/css/_02_chrome.css) 的 `.site-brand-badge` |
 | 改顶栏的菜单项 | [`hugo.toml`](file:///f:/Notes/hugo.toml) 的 `[[menu.main]]` 段 |
 | 改 DOCS/WORKS/DAILY 首页标题样式 | [`assets/css/_04_hero.css`](file:///f:/Notes/assets/css/_04_hero.css) 的 `.page-hero` 系列规则（2026-07-03 重构：左对齐+缩小+消除顶部空白） |
@@ -608,10 +608,11 @@ hugo new content/notes/<slug>/index.md
 
 **序号规则**：
 - `_01_` ~ `_09_` 已分配给现有模块（详见 §3）
-- 新文件用下一个两位数 `_10_xxx.css` / `_11_xxx.css`
+- `_10_` 当前未用（跳号保留位），`_11_` 已分配给主题切换动画
+- 新文件用下一个两位数 `_12_xxx.css`
 - **序号大的在后面加载**（能覆盖前面的）
 - 如果新文件依赖前面文件的变量（如 `--accent`），序号必须比被依赖的文件大
-- 不要跳号（`_10_` 用完才能用 `_11_`，不能直接跳到 `_20_`）
+- 不要跳号（`_12_` 用完才能用 `_13_`，不能直接跳到 `_20_`）
 
 **是否要拆 `_05_cards.css`**：
 当前 1041 行包含 6 类卡片（module / vault / article-link / life / music-list / works-sub / file-tree / section-rule），review 价值仍可接受。**只在行数超过 1500 或某个子模块独立维护时才拆**，届时建议按"使用场景"再拆：`cards-list.css`（列表型） + `cards-grid.css`（瀑布流） + `shortcodes.css`（file-tree / section-rule 这种工具型）。
