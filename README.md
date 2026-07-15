@@ -15,6 +15,7 @@
 <p align="center">
   <a href="https://deepwiki.com/lyrumu/knowledge-base"><img src="https://deepwiki.com/badge.svg" alt="Ask DeepWiki"></a>
 </p>
+
 ---
 
 This repository powers my personal website built with **[Hugo](https://gohugo.io/)** + the **[Blowfish](https://blowfish.page/)** theme, deployed on **Cloudflare Pages**.
