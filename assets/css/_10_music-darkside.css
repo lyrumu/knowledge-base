@@ -137,46 +137,28 @@ html.dark .music-list .music-item.is-current {
   color: color-mix(in srgb, var(--fg-mute, #6b6962) 80%, #fafafa 20%) !important;
 }
 
-/* === §10.4  文字与下载按钮 ===
+/* === §10.4  文字与下载按钮/外链（深色主题专属） ===
    卡片底色变深 → 文字切到 var(--ds-text-bright/dim/dimmer) 三档；
-   Download 按钮 hover 用 ::before 铺满光谱。 */
+   Download 按钮 / 音乐外链的 hover 光谱特效由 _05_cards.css 跨主题提供，
+   本节只覆盖默认底色为深色玻璃质感、hover 调弱外发光避免光污染叠加。 */
 .music-list .music-item-title         { color: var(--ds-text-bright); }
 .music-list .music-item-artist,
 .music-list .music-item-note          { color: var(--ds-text-dim); }
-.music-list .music-item-album,
-.music-list .music-item-filemeta      { color: var(--ds-text-dimmer); }
+.music-list .music-item-album         { color: var(--ds-text-dimmer); }
 
-.music-list .music-item-download {
+/* 深色主题下默认底色：白 4% 透明（深灰玻璃质感）+ 白 8% 细边 */
+html.dark .music-list .music-item-download,
+html.dark .music-list .music-item-link {
   background-color: rgba(255, 255, 255, 0.04);
-  position: relative;
-  overflow: hidden;
-  z-index: 1;
-  transition: color 0.3s, border-color 0.3s,
-              background-color 0.3s, transform 0.3s,
-              box-shadow 0.5s ease;
+  border-color: rgba(255, 255, 255, 0.08);
 }
-.music-list .music-item-download::before {
-  content: "";
-  position: absolute;
-  inset: 0;
-  background-image: var(--ds-spectrum);
-  background-size: 200% 100%;
-  opacity: 0;
-  transition: opacity 0.35s ease;
-  z-index: -1;
-  animation: ds-spectrum-flow 6s linear infinite paused;
-}
-.music-list .music-item-download:hover {
-  color: #1a1a22;
-  border-color: transparent;
+/* 深色主题下 hover 时外发光更弱一些，避免光污染叠加光谱本身 */
+html.dark .music-list .music-item-download:hover,
+html.dark .music-list .music-item-link:hover {
   box-shadow:
     0 0 0 1px rgba(255, 255, 255, 0.15),
     0 4px 18px -2px rgba(120, 200, 255, 0.5),
     0 0 30px -4px rgba(255, 122, 60, 0.4);
-}
-.music-list .music-item-download:hover::before {
-  opacity: 1;
-  animation-play-state: running;
 }
 
 /* 控制栏：按钮 + 标签 + 滑块 */
@@ -290,6 +272,7 @@ html.dark .music-list .music-item.is-current {
 @media (prefers-reduced-motion: reduce) {
   .music-list .music-controls-bar::before,
   .music-list .music-item-download::before,
+  .music-list .music-item-link::before,
   .music-player.music-player .music-player-progress::-webkit-slider-runnable-track,
   .music-player.music-player .music-player-progress::-moz-range-progress {
     animation: none !important;

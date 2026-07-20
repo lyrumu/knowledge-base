@@ -7,9 +7,19 @@
   数据源: data/music.yaml -> hugo.Data.music.tracks
   模板契约：根节点 [data-music-playlist] + 子节点 data-role / data-track
   分页：JS 根据 data-page-size 控制显示数量
+
+  合规说明：
+    - src 仅放 ≤30s 试听片段
+    - 全曲收听请走 links 列表里的官方平台
 ----------------------------------------------------------------*/}}
 {{ $tracks := hugo.Data.music.tracks }}
 {{ $pageSize := 7 }}
+
+{{/* 平台 label → 显示名映射（用于 title / aria-label） */}}
+{{ $platformName := dict
+     "spotify"  "Spotify"
+     "apple"    "Apple Music"
+}}
 <div class="music-list not-prose my-10" data-music-playlist
      data-page-size="{{ $pageSize }}"
      data-total="{{ len $tracks }}">
@@ -37,10 +47,6 @@
   {{ if $tracks }}
     {{ range $i, $t := $tracks }}
     {{ $isDisabled := not $t.src }}
-    {{ $format := "" }}
-    {{ with $t.src }}
-      {{ $format = upper (replaceRE "^\\." "" (path.Ext .)) }}
-    {{ end }}
     <div class="music-item reveal{{ if $isDisabled }} is-disabled{{ end }}"
          data-track
          data-index="{{ $i }}"
@@ -68,23 +74,27 @@
         {{ with $t.album }}
         <div class="music-item-album">{{ . }}</div>
         {{ end }}
-        {{ if or $format $t.size $t.src }}
-        <div class="music-item-meta-row">
-          {{ if or $format $t.size }}
-          <div class="music-item-filemeta">
-            {{ with $format }}<span>{{ . }}</span>{{ end }}
-            {{ with $t.size }}<span aria-hidden="true">·</span><span>{{ . }}</span>{{ end }}
-          </div>
+
+        {{/* 外链白名单：只渲染 apple / spotify（写在 yaml 里的其它平台会被静默忽略） */}}
+        {{ $picked := slice }}
+        {{ range $l := $t.links }}
+          {{ if in (slice "apple" "spotify") $l.label }}
+            {{ $picked = $picked | append $l }}
           {{ end }}
-          {{ with $t.src }}
-          <a class="music-item-download"
-             href="{{ . | safeURL }}"
-             download
-             aria-label="Download {{ $t.title }}"
-             title="Download {{ $t.title }}{{ if $format }} ({{ $format }}{{ with $t.size }} · {{ . }}{{ end }}){{ end }}">
-            {{ partial "cover/icon.html" (dict "name" "download" "size" 13 "stroke" 1.9) }}
-            <span>Download</span>
-          </a>
+        {{ end }}
+        {{ with $picked }}
+        <div class="music-item-links">
+          {{ range $l := . }}
+            {{ $label := $l.label }}
+            {{ $pname := index $platformName $label }}
+            <a class="music-item-link"
+               href="{{ $l.url | safeURL }}"
+               target="_blank" rel="noopener noreferrer"
+               title="{{ $t.title }} · {{ $pname }}"
+               aria-label="{{ $pname }} 上收听 {{ $t.title }}">
+              {{ partial "cover/icon.html" (dict "name" $label "size" 16) }}
+              <span>{{ $pname }}</span>
+            </a>
           {{ end }}
         </div>
         {{ end }}

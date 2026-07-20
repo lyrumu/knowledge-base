@@ -4,6 +4,51 @@
 
 ---
 
+## 2026-07-20 · /life/music/ 侵权防护收紧 + 视觉重塑
+
+### 背景
+
+`/life/music/` 是本站唯一可能触发版权争议的页面（有第三方曲目、封面、艺人名）。此前的链接是 5 个平台的站内搜索页（netease/qq/spotify/apple/youtube），不精确、未登录态用户体验差、且缺乏合规声明。本轮目标：**精确跳转 + 简化视觉 + 加上法律声明**。
+
+### 改动
+
+| 文件 | 改动 |
+|---|---|
+| [content/life/music/_index.md](file:///f:/Notes/content/life/music/_index.md) | 去掉 `30s 试听` 这行英文；删除卡片内 meta-row 整段（试听 tag + 外链组），改用模板控制；末尾追加一行版权声明 blockquote（fair use + 全曲走外链 + 下架通道） |
+| [layouts/shortcodes/music-list.html](file:///f:/Notes/layouts/shortcodes/music-list.html) | 外链只保留 apple + spotify 两个平台（白名单过滤）；删掉 `30s 试听` tag 渲染；外链渲染样式改为「icon + 文字」无胶囊 |
+| [data/music.yaml](file:///f:/Notes/data/music.yaml) | 每首歌的 `links` 精简为 `apple` + `spotify` 两条；Apple URL 全部换成 iTunes Search API 返回的精确 `trackViewUrl`（`/us/album/<slug>/<albumId>?i=<trackId>` 形式，点进去直达歌曲页）；Spotify URL 保留为 `open.spotify.com/search/<query>`（登录态有效） |
+| [assets/css/_05_cards.css](file:///f:/Notes/assets/css/_05_cards.css) | 浅色主题外链：默认淡灰白底 + 1px 灰边 + 深字 → "按钮感" 视觉锚点；hover 时 accent 浅底 + accent 边 + accent 字 + 三层外发光；跨主题共享 hover 光谱特效（`::before` 铺满 + `animation: ds-spectrum-flow`） |
+| [assets/css/_10_music-darkside.css](file:///f:/Notes/assets/css/_10_music-darkside.css) | 深色主题专属：默认白 4% 透明底 + 白 8% 细边；hover 调弱外发光防光谱光污染 |
+| [static/js/music-player/controller.js](file:///f:/Notes/static/js/music-player/controller.js) | `onItemClick` 拦截选择器从 `.music-item-download` 扩展为 `.music-item-download, .music-item-link` — 避免点外链时同时触发切歌 |
+
+### 关键决策
+
+- **Apple 走精确 URL，Spotify 走搜索 URL**：iTunes Search API 免费 + 跨域开放，精确 `trackViewUrl` 点进去直达歌曲页；Spotify Web API 要 OAuth token 不适合 SSR，所以保留 search URL（用户未登录是用户自己的事）
+- **白名单写死在 shortcode 而不是配置项**：避免 yaml 里写错 label 仍渲染出意外图标；hard fail（未识别 label 被静默忽略）比 soft fail（渲染个通用图标）更安全
+- **试听片段保留**：30s 试听是 fair use 抗辩（identification + commentary），不动；版权声明里明确"Full tracks not hosted"避免和事实冲突
+- **hover 光谱跨主题共享**：原本是 darkside 专属，搬到 _05_cards.css 让浅色也能用——亮光谱在两主题下都好看
+- **未识别 Spotify URL 不强行伪装**：避免给一个"看起来对"但实际是 404 的 URL（增加风险而非降低）
+
+### 结果
+
+- `/life/music/` 视觉更克制：每个外链只是「icon + 文字」，没有五连胶囊轰炸；浅色下淡底+边框有"按钮感"，深色下玻璃质感 + hover 流动光谱
+- Apple 外链点击直达歌曲页，Spotify 登录态命中搜索结果（未登录态被引导登录，符合官方预期）
+- 末尾一行合规声明覆盖：所有权归属 / fair use 抗辩 / 全曲走外链 / 下架通道
+- 试听片段保留（30s fair use），播放器交互完全不受影响
+
+### 验证
+
+- CSS 权重核查：`_05_cards.css` 选择器 0,1,0；`_10_music-darkside.css` 选择器 `html.dark .music-list ...` = 0,3,0 → 深色主题下 darkside 覆盖基础；hover 状态下 darkside 只覆盖 box-shadow，其余字段由基础样式接管
+- 模板渲染路径：所有 `$t.*` 字段访问合法；`safeURL` 防 JS 注入；白名单与 `index $platformName $label` dict 严格一致
+- JS 事件流：事件委托在 `[data-music-playlist]` 根节点；外链 `<a target="_blank">` 默认行为（新标签页）不被阻止，`.closest('.music-item-link')` 在冒泡阶段拦截切歌
+
+### 后续
+
+- 当前 Spotify 仍是搜索 URL，未来如果想用精确 track URI，需维护一份 `spotify_id` 表（按歌维护）
+- 试听片段 mp3 未来若想替换为本地编码版，可统一改名（不要有空格、中文）
+
+---
+
 ## 2026-07-12 · 主题切换动画迭代 — DeepWiki 风格斜向擦除 + 节奏优化
 
 ### 背景

@@ -8,89 +8,117 @@
 #   - artist   : 歌手（可空）
 #   - album    : 专辑（可空）
 #   - cover    : 封面图 url（推荐放到 /image/life/music/<slug>.jpg）
-#   - src      : 音频 url（推荐放到 /life/music/<slug>.mp3）
+#   - src      : 30s 试听片段 url（推荐放到 /life/music/preview/<slug>.mp3）
 #   - duration : 时长（mm:ss），可空（前端会等 audio 加载后自动补上）
-#   - size     : 下载文件大小提示（如 3.8 MB），可空
 #   - mood     : 心情标签（可空）
 #   - note     : 一句话小记（可空）
+#   - links    : 外链列表，每条 { label, url }
+#                label 可选值：spotify / apple
+#                模板只渲染这两个平台，多写也不会显示（白名单在 shortcode 里）
+#                Apple Music：建议填精确 trackViewUrl（从 iTunes Search API 拿），
+#                            点进去直达歌曲页
+#                Spotify：无免费精确接口，使用 search URL，
+#                         未登录态会被引导登录，登录态直接进搜索结果
+#
+# 合规说明：
+#   - src 仅放 ≤30s 试听片段，不提供下载
+#   - 全曲收听请走 links 列表里的官方平台
 # =============================================================================
 tracks:
   - title: "Crossing Field"
     artist: "LiSA"
     cover: "/image/cover-crossing-field.webp"
-    src:   "/life/music/crossing-field.mp3"                  
+    src:   "/life/music/preview/crossing-field.mp3"
     duration: "4:09"
-    size: "3.81 MB"
     mood: ""
+    links:
+      - { label: "apple",    url: "https://music.apple.com/us/album/crossing-field/1537785961?i=1537785962" }
+      - { label: "spotify",  url: "https://open.spotify.com/search/Crossing%20Field%20LiSA" }
 
   - title: "ウィーアー!(We Are!)"
     artist: "Da-ice"
     cover: "/image/cover-we-are.webp"
-    src:   "/life/music/we-are.mp3"                  
+    src:   "/life/music/preview/we-are.mp3"
     duration: "4:06"
-    size: "3.76 MB"
     mood: ""
+    links:
+      - { label: "apple",    url: "https://music.apple.com/us/album/we-are/1525236533?i=1525236537" }
+      - { label: "spotify",  url: "https://open.spotify.com/search/We%20Are%20Da-ice" }
 
   - title: "床边故事"
     artist: "Jay Chou"
     album: "《床边故事》"
     cover: "/image/cover-Bedtime-story.webp"
-    src:   "/life/music/Bedtime-story.mp3"                  
+    src:   "/life/music/preview/Bedtime-story.mp3"
     duration: "3:45"
-    size: "3.44 MB"
-    mood: ""    
+    mood: ""
+    links:
+      - { label: "apple",    url: "https://music.apple.com/us/album/bedtime-stories/1721456244?i=1721456252" }
+      - { label: "spotify",  url: "https://open.spotify.com/search/床边故事%20Jay%20Chou" }
 
   - title: "鞋子特大号"
     artist: "Jay Chou"
     album: "《哎呦不错哦》"
     cover: "/image/cover-Extra-large-shoes.webp"
-    src:   "/life/music/Extra-large-shoes.mp3"                  
+    src:   "/life/music/preview/Extra-large-shoes.mp3"
     duration: "3:41"
-    size: "3.37 MB"
-    mood: ""      
+    mood: ""
+    links:
+      - { label: "apple",    url: "https://music.apple.com/us/album/extra-large-shoes/1721457634?i=1721458226" }
+      - { label: "spotify",  url: "https://open.spotify.com/search/鞋子特大号%20Jay%20Chou" }
 
   - title: "Departures ~あなたにおくるアイの歌~"
     artist: "ryo&&EGOIST"
     album: ""
-    cover: "/image/cover-Departures.webp"          # ← 占位封面；换成你真实的 /image/life/music/xxx.jpg
-    src:   "/life/music/Departures.mp3"                           # ← 把 mp3 放进 static/life/music/ 后填入路径，如 /life/music/xxx.mp3
+    cover: "/image/cover-Departures.webp"
+    src:   "/life/music/preview/Departures.mp3"
     duration: "4:15"
-    size: "7.9 MB"
     mood: "Melancholy"
+    links:
+      - { label: "apple",    url: "https://music.apple.com/us/album/departures-anata-ni-okuru-ai-no-uta/1463200943?i=1463201068" }
+      - { label: "spotify",  url: "https://open.spotify.com/search/Departures%20EGOIST" }
 
   - title: "My Dearest"
     artist: "ryo&&supercell"
     album: ""
-    cover: "/image/cover-my-dearest.webp"          
-    src:   "/life/music/My_Dearest.mp3"                           
+    cover: "/image/cover-my-dearest.webp"
+    src:   "/life/music/preview/My_Dearest.mp3"
     duration: "5:38"
-    size: "5.16 MB"
     mood: ""
+    links:
+      - { label: "apple",    url: "https://music.apple.com/us/album/my-dearest/1539323018?i=1539323019" }
+      - { label: "spotify",  url: "https://open.spotify.com/search/My%20Dearest%20supercell" }
 
   - title: "Unravel"
     artist: "TK from Ling Tosite Sigure"
     album: "《Fantastic Magic》"
-    cover: "/image/cover-unravel.webp"     
-    src:   "/life/music/Unravel.mp3"
+    cover: "/image/cover-unravel.webp"
+    src:   "/life/music/preview/Unravel.mp3"
     duration: "3:58"
-    size: "3.8 MB"
     mood: ""
+    links:
+      - { label: "apple",    url: "https://music.apple.com/us/album/unravel/1538098092?i=1538098094" }
+      - { label: "spotify",  url: "https://open.spotify.com/search/Unravel%20TK" }
 
   - title: "比较大的大提琴"
     artist: "Jay Chou"
     album: "《十二新作》"
-    cover: "/image/cover-the-big-cello.webp"  
-    src:   "/life/music/The-Giant-Cello.mp3"
+    cover: "/image/cover-the-big-cello.webp"
+    src:   "/life/music/preview/The-Giant-Cello.mp3"
     duration: "4:12"
-    size: "3.85 MB"
     mood: ""
     note: "哇咧喵"
+    links:
+      - { label: "apple",    url: "https://music.apple.com/us/album/a-larger-cello/1721467014?i=1721467259" }
+      - { label: "spotify",  url: "https://open.spotify.com/search/比较大的大提琴%20Jay%20Chou" }
 
   - title: "黑色幽默"
     artist: "Jay Chou"
     album: "《Jay》"
-    cover: "/image/cover-Blackhumor.webp"     
-    src:   "/life/music/Blackhumor.mp3"
+    cover: "/image/cover-Blackhumor.webp"
+    src:   "/life/music/preview/Blackhumor.mp3"
     duration: "4:43"
-    size: "4.32 MB"
     mood: ""
+    links:
+      - { label: "apple",    url: "https://music.apple.com/us/album/black-humor/1721459212?i=1721459229" }
+      - { label: "spotify",  url: "https://open.spotify.com/search/黑色幽默%20Jay%20Chou" }

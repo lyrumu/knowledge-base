@@ -166,7 +166,11 @@
   {{ if not .Site.Params.disableImageZoom | default true }}
     {{ $cssResources = $cssResources | append (resources.Get "lib/zoom/style.css") }}
   {{ end }}
-  {{ $bundleCSS := $cssResources | resources.Concat "css/main.bundle.css" | resources.Minify | resources.Fingerprint $alg }}
+  {{ $validCSS := slice }}
+  {{ range $cssResources }}
+    {{ if . }}{{ $validCSS = $validCSS | append . }}{{ end }}
+  {{ end }}
+  {{ $bundleCSS := $validCSS | resources.Concat "css/main.bundle.css" | resources.Minify | resources.Fingerprint $alg }}
   <link
     type="text/css"
     rel="stylesheet"

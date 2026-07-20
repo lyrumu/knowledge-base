@@ -1005,55 +1005,74 @@ html.dark .music-item.is-disabled:hover {
   color: var(--fg-soft);
   white-space: nowrap;
 }
-.music-item-meta-row {
-  display: flex;
+.music-item-links {
+  display: inline-flex;
   align-items: center;
-  gap: 0.6rem;
   flex-wrap: wrap;
+  gap: 0.25rem;
   margin-top: 0.15rem;
 }
-.music-item-filemeta {
+/* 外链按钮：默认淡底 + 边框（"按钮感"锚点），hover 铺流动光谱
+   --ds-spectrum / @keyframes ds-spectrum-flow 在 _10_music-darkside.css :root 定义，跨主题共享
+   深色主题下由 _10_music-darkside.css 进一步覆盖默认底色 + hover 发光阴影
+   最小可点击高度 ≥ 32px，符合移动端舒适命中区
+   position/overflow/z-index 给 ::before 伪元素铺光谱用 */
+.music-item-link {
   display: inline-flex;
   align-items: center;
-  gap: 0.35rem;
-  font-family: var(--font-mono);
-  font-size: 0.62rem;
-  letter-spacing: 0.14em;
-  text-transform: uppercase;
-  color: var(--fg-soft);
-  white-space: nowrap;
-}
-.music-item-download {
-  display: inline-flex;
-  align-items: center;
-  gap: 0.38rem;
-  padding: 0.28rem 0.72rem;
-  border: 1px solid color-mix(in srgb, var(--accent) 34%, var(--line));
-  border-radius: 999px;
-  background: color-mix(in srgb, var(--accent) 7%, transparent);
-  color: var(--accent);
+  gap: 0.4rem;
+  min-height: 32px;
+  padding: 0.4rem 0.65rem;
+  border: 1px solid var(--line);
+  border-radius: 0.4rem;
+  background: color-mix(in srgb, var(--fg-base) 4%, transparent);
+  color: var(--fg-base);
   text-decoration: none !important;
   font-family: var(--font-sans);
-  font-size: 0.72rem;
+  font-size: 0.78rem;
   letter-spacing: 0.02em;
   line-height: 1;
-  transition: transform 0.3s cubic-bezier(0.22, 0.61, 0.36, 1),
-              border-color 0.3s,
-              background 0.3s,
-              color 0.3s;
+  position: relative;
+  overflow: hidden;
+  z-index: 1;
+  transition: color 0.3s, border-color 0.3s,
+              background 0.3s, box-shadow 0.5s ease;
 }
-.music-item-download:hover {
-  transform: translateY(-1px);
-  border-color: color-mix(in srgb, var(--accent) 54%, var(--line));
-  background: color-mix(in srgb, var(--accent) 13%, transparent);
-  color: var(--fg-base);
+.music-item-link::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background-image: var(--ds-spectrum);
+  background-size: 200% 100%;
+  opacity: 0;
+  transition: opacity 0.35s ease;
+  z-index: -1;
+  animation: ds-spectrum-flow 6s linear infinite paused;
 }
-.music-item-download:focus-visible {
-  outline: 2px solid color-mix(in srgb, var(--accent) 45%, transparent);
+.music-item-link:hover {
+  color: #1a1a22;
+  border-color: transparent;
+  /* 三层 box-shadow：
+     - 内描边 1px 用主品牌色（accent 50%）保证浅底深底都可见
+     - 中层冷色蓝光晕
+     - 外层暖色橙光晕（与光谱配色呼应） */
+  box-shadow:
+    0 0 0 1px color-mix(in srgb, var(--accent) 50%, transparent),
+    0 4px 14px -2px rgba(58, 169, 255, 0.35),
+    0 0 28px -4px rgba(255, 122, 60, 0.4);
+}
+.music-item-link:hover::before {
+  opacity: 1;
+  animation-play-state: running;
+}
+.music-item-link:focus-visible {
+  outline: 2px solid color-mix(in srgb, var(--accent) 55%, transparent);
   outline-offset: 2px;
 }
-.music-item-download svg {
+.music-item-link svg {
   flex-shrink: 0;
+  position: relative;  /* 让 svg 始终在 ::before 之上 */
+  z-index: 1;
 }
 
 /* 时长 + 当前播放状态指示 */
@@ -1165,12 +1184,11 @@ html.dark .music-item.is-disabled:hover {
   }
   .music-item-cover { width: 3rem; height: 3rem; }
   .music-item-album { display: none; }
-  .music-item-meta-row { gap: 0.45rem; }
-  .music-item-download {
-    padding: 0.28rem 0.5rem;
-  }
-  .music-item-download span {
-    display: none;
+  /* 移动端外链：padding 略压缩但保持可点击高度 ≥32px（icon + 文字均显示） */
+  .music-item-link {
+    padding: 0.35rem 0.4rem;
+    min-height: 32px;
+    font-size: 0.75rem;
   }
 }
 

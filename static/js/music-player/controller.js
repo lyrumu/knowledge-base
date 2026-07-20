@@ -213,8 +213,8 @@
     }
 
     function onItemClick(i, e) {
-      // 点击下载按钮时不切歌（事件冒泡时拦截）
-      if (e && e.target && e.target.closest('.music-item-download')) return;
+      // 点击下载按钮 / 音乐外链时不切歌（事件冒泡时拦截，让 a 标签默认行为触发新标签页）
+      if (e && e.target && e.target.closest('.music-item-download, .music-item-link')) return;
       // 没有 src 的占位项不响应
       var el = dom.items[i];
       if (el && el.classList.contains('is-disabled')) return;

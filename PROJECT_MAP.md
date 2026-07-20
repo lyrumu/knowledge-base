@@ -1,6 +1,6 @@
 # 项目地图 — 个人网站 `f:\Notes\`
 
-> 最后更新：2026-07-11 · /life/music/ 性能优化（分页加载 + 事件委托 + content-visibility） · Hugo v0.163.2 · Blowfish v2
+> 最后更新：2026-07-20 · /life/music/ 侵权防护收紧（精确外链 + 视觉重塑 + 合规声明） · Hugo v0.163.2 · Blowfish v2
 
 ---
 
@@ -29,6 +29,8 @@
 | 改站点统计里显示哪些数字 | [`layouts/partials/site-stats.html`](file:///f:/Notes/layouts/partials/site-stats.html) |
 | 换 /life/ 的子模块卡 | [`data/life.yaml`](file:///f:/Notes/data/life.yaml)（加图片 / 读书 / 旅行…都改这里） |
 | 换 /life/music/ 的歌单 | [`data/music.yaml`](file:///f:/Notes/data/music.yaml)（加一首填一个 `- title/artist/cover/src/duration/size/...` 条目） |
+| 改 /life/music/ 的外链平台 / 精确 URL | [`data/music.yaml`](file:///f:/Notes/data/music.yaml) 的 `links[].url`；白名单是 `apple` + `spotify`（写在 [`music-list.html`](file:///f:/Notes/layouts/shortcodes/music-list.html)）；**Apple 推荐用 iTunes Search API 返回的精确 trackViewUrl** |
+| 改 /life/music/ 的合规声明 | [`content/life/music/_index.md`](file:///f:/Notes/content/life/music/_index.md) 末尾的 blockquote |
 | 换 /life/music/ 的封面/SVG 动画 | [`assets/css/_05_cards.css`](file:///F:/Notes/assets/css/_05_cards.css) 的 `.life-sub-cover-*` 规则 |
 | 换 /works/ 的子模块卡 | [`data/works.yaml`](file:///f:/Notes/data/works.yaml)（projects / resources / tools…） |
 | 换 /works/projects/ 的项目卡 | [`data/projects.yaml`](file:///f:/Notes/data/projects.yaml)（加一条填 `- name/title/desc/cover/href/repo/tags/date/featured`） |
@@ -163,7 +165,7 @@ f:\Notes\
 │   │   └── works/                  # /works/ 子模块封面
 │   │       ├── projects/           # /works/projects/ 项目封面（用户自行放入）
 │   │       └── resources/          # /works/resources/ 资源封面（用户自行放入）
-│   ├── life/music/                 # /life/music/ 音频文件（用户自行放入）
+│   ├── life/music/                 # /life/music/ 30s 试听片段（fair use 抗辩）
 │   ├── works-resources/            # /works/resources/ 下载文件（用户自行放入）
 │   └── notes-assets/               # 可下载资源（aipython, minecraft, tools）
 │
@@ -259,9 +261,12 @@ f:\Notes\
 |------|--------|------|
 | 歌曲列表 | [`data/music.yaml`](file:///f:/Notes/data/music.yaml) | [`layouts/shortcodes/music-list.html`](file:///f:/Notes/layouts/shortcodes/music-list.html) |
 | 播放模式/音量控制栏（sticky） | — | [`layouts/shortcodes/music-list.html`](file:///f:/Notes/layouts/shortcodes/music-list.html) 的 `.music-controls-bar` |
+| 外链按钮（仅 apple + spotify） | `data/music.yaml` → `links[]`（白名单在 shortcode 里 hard-coded） | [`layouts/shortcodes/music-list.html`](file:///f:/Notes/layouts/shortcodes/music-list.html) 的 `.music-item-link` |
+| 外链按钮视觉（浅色：淡底+边框；深色：玻璃质感；hover：跨主题流动光谱 + 三层外发光） | — | [`assets/css/_05_cards.css`](file:///F:/Notes/assets/css/_05_cards.css) 的 `.music-item-link*` + [`assets/css/_10_music-darkside.css`](file:///F:/Notes/assets/css/_10_music-darkside.css) 的 `html.dark .music-list .music-item-link` |
 | 粘性播放器 HTML | — | [`layouts/partials/music-player.html`](file:///f:/Notes/layouts/partials/music-player.html) |
 | 播放器逻辑（点击切歌 / 进度跳转 / 记忆位置 / 键盘 / 关闭清状态 / 播放模式 / 音量） | — | [`static/js/music-player/controller.js`](file:///f:/Notes/static/js/music-player/controller.js) |
-| 歌曲下载入口 + 文件信息 | `data/music.yaml` 的 `src / size` | [`layouts/shortcodes/music-list.html`](file:///f:/Notes/layouts/shortcodes/music-list.html) + [`assets/css/_05_cards.css`](file:///F:/Notes/assets/css/_05_cards.css) |
+| 外链点击不切歌（事件拦截） | — | [`static/js/music-player/controller.js`](file:///f:/Notes/static/js/music-player/controller.js) 的 `onItemClick`（`.closest('.music-item-link')` 拦截） |
+| 版权声明（fair use + 全曲走外链 + 下架通道） | — | [`content/life/music/_index.md`](file:///f:/Notes/content/life/music/_index.md) 末尾的 blockquote |
 | 列表样式 + 控制栏样式 + 播放器样式 | — | [`assets/css/_05_cards.css`](file:///F:/Notes/assets/css/_05_cards.css) 的 `.music-item*` + `.music-controls-bar` + [`_07_music-player.css`](file:///F:/Notes/assets/css/_07_music-player.css) 的 `.music-player` |
 | 资源存放约定 | `static/life/music/<slug>.mp3` + `static/image/life/music/<slug>.jpg` | — |
 
@@ -494,8 +499,24 @@ hugo new content/notes/<slug>/index.md
      duration: "4:12"
      mood: "lofi"
      note: "一句话小记"
+     links:
+       - { label: "apple",   url: "https://music.apple.com/us/album/.../1538284651?i=1538284654" }
+       - { label: "spotify", url: "https://open.spotify.com/search/<query>" }
    ```
 4. `hugo server` 刷新就能看到
+
+**外链 URL 取值约定（2026-07-20 更新）**：
+
+- **Apple Music**：用 [iTunes Search API](https://itunes.apple.com/search?term=<query>&entity=song&limit=1) 查精确 `trackViewUrl`（点进去直达歌曲页，未登录也能命中）
+- **Spotify**：官方 Web API 要 OAuth token 不适合 SSR；当前用 `open.spotify.com/search/<query>` 兜底，登录态能命中搜索结果（未登录态被引导登录）
+- **白名单**：只有 `apple` 和 `spotify` 会在页面渲染；yaml 里写其它 label 会被静默忽略（在 [`music-list.html`](file:///f:/Notes/layouts/shortcodes/music-list.html) hard-coded）
+
+### 改 /life/music/ 的版权声明
+
+[`content/life/music/_index.md`](file:///f:/Notes/content/life/music/_index.md) 末尾的 blockquote。当前措辞覆盖：所有权归属 + ≤30s fair use 抗辩 + 全曲走外链 + 下架通道。改时保留"事实正确"原则：
+
+- **不要**写"no audio files are hosted"——30s 试听片段是托管在本服务器的（30s 是 fair use 抗辩，不需要说"没托管"）
+- **应该说**"full tracks are not hosted"——全曲确实没有托管
 
 ---
 
