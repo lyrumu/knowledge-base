@@ -43,4 +43,6 @@
     </span>
   </span>
 </section>
-<script defer src="/js/site-stats-days.js"></script>
+{{/* 2026-07-22 起从 static/js 迁入 assets/js，Minify + Fingerprint 防旧缓存 */}}
+{{ $siteStatsDays := resources.Get "js/site-stats-days.js" | resources.Minify | resources.Fingerprint "sha512" }}
+<script defer src="{{ $siteStatsDays.RelPermalink }}" integrity="{{ $siteStatsDays.Data.Integrity }}"></script>

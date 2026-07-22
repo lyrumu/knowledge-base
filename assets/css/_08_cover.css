@@ -446,6 +446,11 @@ html.dark .cover-grain {
    ----------------------------------------------------------------------------
    上下黑色花边 — 固定高度 56px（等比缩放原图 800×253）
    → 单 tile = 177×56px；动画 -177px 一周期无缝循环
+
+   2026-07-22 优化：改为 transform 滚动（走合成器线程，不再每帧 paint）。
+   原理：strip 本体只做裁剪框（overflow:hidden），真正的纹理挪到 ::before 上，
+   宽度 = 视口 + 1 个 tile，用 translateX 在 0 → -tile 之间循环（一个 tile 宽的位移
+   配合 repeat-x 即无缝）。bottom strip 的父级 scaleY(-1) 只翻 Y 轴，不影响 X 平移。
    ============================================================================= */
 .cover-flower-strip {
   position: absolute;
@@ -454,20 +459,31 @@ html.dark .cover-grain {
   height: 56px;
   z-index: 2;
   pointer-events: none;
-  background-image: url("/image/上下填充黑色花.webp");
-  background-repeat: repeat-x;
-  background-size: 177px 56px;
-  background-position: 0 50%;
   opacity: 1;
-  animation: flower-flow 38s linear infinite;
+  overflow: hidden;
 }
 .cover-flower-strip-top    { top: -14px; }
 .cover-flower-strip-bottom { bottom: -14px; transform: scaleY(-1); }
 
-/* 横向滚动关键帧 */
+.cover-flower-strip::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: calc(100% + 177px);
+  height: 100%;
+  background-image: url("/image/上下填充黑色花.webp");
+  background-repeat: repeat-x;
+  background-size: 177px 56px;
+  background-position: 0 50%;
+  animation: flower-flow 38s linear infinite;
+  will-change: transform;
+}
+
+/* 横向滚动关键帧（transform 版，可上合成器线程） */
 @keyframes flower-flow {
-  from { background-position-x: 0; }
-  to   { background-position-x: -177px; }
+  from { transform: translateX(0); }
+  to   { transform: translateX(-177px); }
 }
 
 /* 背景花朵（左右两侧分层花束） */
@@ -584,6 +600,9 @@ html.dark .cover-grain {
   }
   .cover-flower-strip {
     height: 44px;
+  }
+  .cover-flower-strip::before {
+    width: calc(100% + 139px);
     background-size: 139px 44px;
   }
   .cover-flower-strip-top {
@@ -617,8 +636,8 @@ html.dark .cover-grain {
     filter: drop-shadow(0 8px 18px rgba(0, 0, 0, 0.06));
   }
   @keyframes flower-flow {
-    from { background-position-x: 0; }
-    to   { background-position-x: -139px; }
+    from { transform: translateX(0); }
+    to   { transform: translateX(-139px); }
   }
 }
 
@@ -736,10 +755,14 @@ html.dark .cover-views-num > span.animate-pulse {
   stroke: none;
 }
 
-/* reduced-motion：禁用 pulse，直接显示（默认背景色作为占位） */
+/* reduced-motion：禁用 pulse + 花边滚动，直接显示（默认背景色作为占位） */
 @media (prefers-reduced-motion: reduce) {
   .cover-views-num > span.animate-pulse {
     animation: none;
+  }
+  .cover-flower-strip::before {
+    animation: none;
+    will-change: auto;
   }
 }
 

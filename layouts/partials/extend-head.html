@@ -23,7 +23,14 @@
     原 click 监听器，再用 document.startViewTransition 包裹 toggle。
   - 不支持 View Transition API 的浏览器（Firefox / 旧 Safari）自动降级为普通切换。
 */}}
-<script src="/js/theme-transition.js" defer></script>
+{{/*
+  theme-transition.js（2026-07-22 起从 static/js 迁入 assets/js）
+  - 走 Hugo Pipes：Minify + Fingerprint → 内容变化自动生成新 URL，解决
+    static 固定 URL 的浏览器/CDN 旧缓存问题
+  - 回滚：git restore static/js + 把本段改回 <script src="/js/theme-transition.js" defer>
+*/}}
+{{ $themeTransition := resources.Get "js/theme-transition.js" | resources.Minify | resources.Fingerprint "sha512" }}
+<script src="{{ $themeTransition.RelPermalink }}" integrity="{{ $themeTransition.Data.Integrity }}" defer></script>
 
 {{/*
   统一管理动画库的初始化：

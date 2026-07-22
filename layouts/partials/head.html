@@ -40,7 +40,7 @@
     <meta name="description" content="{{ . | plainify }}">
   {{ end }}
   {{ with  .Params.Tags | default .Site.Params.keywords }}
-    <meta name="keywords" content="{{ range . }}{{ . }},{{ end }}">
+    <meta name="keywords" content="{{ delimit . "," }}">
   {{ end }}
   {{ with .Site.Params.robots }}
     <meta name="robots" content="{{ . }}">
@@ -199,7 +199,13 @@
   {{ end }}
   {{ if not .Site.Params.disableImageZoom | default true }}
     {{ $zoomJS := resources.Get "lib/zoom/zoom.min.umd.js" | resources.Fingerprint $alg }}
-    <script src="{{ $zoomJS.RelPermalink }}" integrity="{{ $zoomJS.Data.Integrity }}"></script>
+    {{/*
+      [lyrumu 改造] 加 defer 解除渲染阻塞。
+      ⚠️ 必须与 layouts/partials/footer.html 的 DOMContentLoaded 包裹成对存在：
+      defer 脚本在 DOMContentLoaded 之前执行完毕（HTML 规范保证），
+      footer 里的 mediumZoom() 初始化才能拿到已加载的全局函数。
+    */}}
+    <script defer src="{{ $zoomJS.RelPermalink }}" integrity="{{ $zoomJS.Data.Integrity }}"></script>
   {{ end }}
 
   {{/* JS deferred */}}

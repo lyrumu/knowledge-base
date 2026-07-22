@@ -53,44 +53,26 @@
   <div class="cover-flower-strip cover-flower-strip-top" aria-hidden="true"></div>
   <div class="cover-flower-strip cover-flower-strip-bottom" aria-hidden="true"></div>
 
-  {{/* 背景花朵（只保留黑花，避免色彩抢正文） */}}
+  {{/*
+    背景花朵（只保留黑花，避免色彩抢正文）
+    2026-07-22：4 个角的 items 完全相同（右侧靠 CSS scaleX(-1) 镜像），
+    提取成 $flowerItems 一份坐标，只循环 4 个 clusterClass 位置 →
+    改坐标只需改一处（原写法要改 4 份易漏改）。
+  */}}
   <div class="cover-flowers" aria-hidden="true">
-    {{ range $cluster := slice
-      (dict
-        "clusterClass" "cover-flower-cluster--top-left"
-        "items" (slice
-          (dict "file" "黑色花.webp" "class" "cover-flower-black" "w" 242 "x" 18 "y" 4  "r" -11 "o" 0.35)
-          (dict "file" "黑色花.webp" "class" "cover-flower-black" "w" 308 "x" -4 "y" 34 "r" 9 "o" 0.48)
-          (dict "file" "黑色花.webp" "class" "cover-flower-black cover-flower-soft" "w" 168 "x" 30 "y" 80 "r" -3 "o" 0.27)
-        )
-      )
-      (dict
-        "clusterClass" "cover-flower-cluster--top-right"
-        "items" (slice
-          (dict "file" "黑色花.webp" "class" "cover-flower-black" "w" 242 "x" 18 "y" 4  "r" -11 "o" 0.35)
-          (dict "file" "黑色花.webp" "class" "cover-flower-black" "w" 308 "x" -4 "y" 34 "r" 9 "o" 0.48)
-          (dict "file" "黑色花.webp" "class" "cover-flower-black cover-flower-soft" "w" 168 "x" 30 "y" 80 "r" -3 "o" 0.27)
-        )
-      )
-      (dict
-        "clusterClass" "cover-flower-cluster--bottom-left"
-        "items" (slice
-          (dict "file" "黑色花.webp" "class" "cover-flower-black" "w" 242 "x" 18 "y" 4  "r" -11 "o" 0.35)
-          (dict "file" "黑色花.webp" "class" "cover-flower-black" "w" 308 "x" -4 "y" 34 "r" 9 "o" 0.48)
-          (dict "file" "黑色花.webp" "class" "cover-flower-black cover-flower-soft" "w" 168 "x" 30 "y" 80 "r" -3 "o" 0.27)
-        )
-      )
-      (dict
-        "clusterClass" "cover-flower-cluster--bottom-right"
-        "items" (slice
-          (dict "file" "黑色花.webp" "class" "cover-flower-black" "w" 242 "x" 18 "y" 4  "r" -11 "o" 0.35)
-          (dict "file" "黑色花.webp" "class" "cover-flower-black" "w" 308 "x" -4 "y" 34 "r" 9 "o" 0.48)
-          (dict "file" "黑色花.webp" "class" "cover-flower-black cover-flower-soft" "w" 168 "x" 30 "y" 80 "r" -3 "o" 0.27)
-        )
-      )
+    {{ $flowerItems := slice
+      (dict "file" "黑色花.webp" "class" "cover-flower-black" "w" 242 "x" 18 "y" 4  "r" -11 "o" 0.35)
+      (dict "file" "黑色花.webp" "class" "cover-flower-black" "w" 308 "x" -4 "y" 34 "r" 9 "o" 0.48)
+      (dict "file" "黑色花.webp" "class" "cover-flower-black cover-flower-soft" "w" 168 "x" 30 "y" 80 "r" -3 "o" 0.27)
     }}
-      <div class="cover-flower-cluster {{ $cluster.clusterClass }}">
-        {{ range $cluster.items }}
+    {{ range $posClass := slice
+      "cover-flower-cluster--top-left"
+      "cover-flower-cluster--top-right"
+      "cover-flower-cluster--bottom-left"
+      "cover-flower-cluster--bottom-right"
+    }}
+      <div class="cover-flower-cluster {{ $posClass }}">
+        {{ range $flowerItems }}
         <img
           src="/image/{{ .file }}"
           alt=""

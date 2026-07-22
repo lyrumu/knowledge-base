@@ -4,6 +4,35 @@
 
 ---
 
+## 2026-07-23 · 前端性能与可维护性优化（6 项）
+
+### 改动
+
+| 文件 | 改动 |
+|---|---|
+| [layouts/partials/head.html](file:///f:/Notes/layouts/partials/head.html) | `zoom.min.umd.js` 加 `defer` 解除渲染阻塞；keywords meta 尾逗号用 `delimit` 消除 |
+| [layouts/partials/footer.html](file:///f:/Notes/layouts/partials/footer.html) | `mediumZoom(...)` 包进 `DOMContentLoaded`（与 zoom.js 的 defer 成对，保证库已就绪再初始化） |
+| [layouts/partials/vendor.html](file:///f:/Notes/layouts/partials/vendor.html) | 新增项目级覆写：Firebase 加载范围从全站收紧为「首页 + notes 区 + term 页」，about/works/life/taxonomy 列表页/404 不再加载 SDK 也不再白写 Firestore view；顺带修了 404 页原来的 Console 报错 |
+| [static/js → assets/js](file:///f:/Notes/assets/js/) | 7 个项目脚本迁入 assets：`theme-transition.js` / `site-stats-days.js` 走 Minify+Fingerprint；music-player 6 个模块 Concat 成 1 个 bundle（请求数 6→1），同样 Fingerprint |
+| [layouts/partials/extend-head.html](file:///f:/Notes/layouts/partials/extend-head.html) + [site-stats.html](file:///f:/Notes/layouts/partials/site-stats.html) + [music-player.html](file:///f:/Notes/layouts/partials/music-player.html) | 引用方式从 `/js/xxx.js` 固定 URL 改为 Hugo Pipes 指纹 URL（上述迁移的配套） |
+| [assets/css/_08_cover.css](file:///f:/Notes/assets/css/_08_cover.css) | 封面花边滚动从 `background-position-x`（每帧 paint）改为 `::before` 上 `transform: translateX`（走合成器线程）；补全 `prefers-reduced-motion` 禁用花边滚动 |
+| [layouts/partials/home/custom.html](file:///f:/Notes/layouts/partials/home/custom.html) | 四角花朵 4 套重复 dict 提取为 `$flowerItems` 一份坐标 + 循环 4 位置类（改坐标只改一处） |
+| [PROJECT_MAP.md](file:///f:/Notes/PROJECT_MAP.md) | 登记 vendor.html 为主题覆写例外 3；更新 assets/js 结构、static/js 精简为第三方库、播放器路径改指 assets |
+
+### 收益
+
+- 首屏少阻塞 8.6KB 同步 JS（zoom.js）；约 12 个页面不再加载 Firebase SDK + 停止每次访问白写一次 Firestore view
+- 项目 JS 全部获得内容指纹（内容变更自动生成新 URL，破 CDN/浏览器旧缓存）；music 页 JS 请求数 6→1
+- 花边滚动从 paint 线程移到合成器线程 + reduced-motion a11y 覆盖
+- 回滚成本低：JS 迁移 `git restore static/js`；vendor.html 覆写内带主题原文与 `[lyrumu 改造]` 标记
+
+### 备注
+
+- `public/` 历史残留（旧指纹 bundle / 孤儿 webm / livereload）由用户手动删文件夹清理，构建命令不变
+- 跳过项（用户决定不做）：页面专属 JS 条件加载、首页 fetchpriority 通胀、字体 preload 调整
+
+---
+
 ## 2026-07-20 · /life/music/ 侵权防护收紧 + 视觉重塑
 
 ### 背景

@@ -84,7 +84,13 @@ f:\Notes\
 │   │   ├── _07_music-player.css    # ★ 全局音乐播放器 + copy-toast
 │   │   ├── _08_cover.css           # ★ 首页封面（真 header + masthead + highlights + 花边）
 │   │   └── _09_about.css           # ★ About 页（profile + Now/Focus/Path + 标签 + 液态玻璃联系方式）
-│   └── icons/                      # Simple Icons 品牌色 SVG（github/gmail/qq 等联系方式图标）
+│   ├── icons/                      # Simple Icons 品牌色 SVG（github/gmail/qq 等联系方式图标）
+│   └── js/                         # ★ 项目级 JS（2026-07-22 从 static/js 迁入，走 Pipes Minify+Fingerprint）
+│       ├── theme-transition.js     # 主题切换斜向擦除（extend-head.html 引用）
+│       ├── site-stats-days.js      # 站点在线天数前端校正（site-stats.html 引用）
+│       ├── music-player.js         # 播放器入口（装配依赖）
+│       └── music-player/           # 播放器模块（dom/storage/store/view/controller）
+│                                   #   ↳ music-player.html 里 Concat 成 1 个 bundle 引用
 │
 ├── archetypes/
 │   └── default.md                  # `hugo new` 模板
@@ -154,12 +160,10 @@ f:\Notes\
 ├── static/                         # 静态资源
 │   ├── fonts/                      # 字体文件（本地化）
 │   ├── css/aos.css                 # ★ AOS.js 样式（2026-06-25 本地化，原 jsDelivr CDN）
-│   ├── js/                         # ★ 第三方 JS + 项目级轻交互脚本
+│   ├── js/                         # ★ 仅第三方 JS（版本固定，无需指纹）
 │   │   ├── aos.js                  # AOS.js 滚动入场
 │   │   ├── splitting.min.js        # Splitting.js 字符分割
-│   │   ├── vanilla-tilt.min.js     # VanillaTilt.js 3D 倾斜
-│   │   ├── music-player.js         # 音乐播放器逻辑
-│   │   └── site-stats-days.js      # 站点在线天数前端实时计算
+│   │   └── vanilla-tilt.min.js     # VanillaTilt.js 3D 倾斜
 │   ├── image/                      # 装饰 PNG（花边 / 花朵 / musicheart）
 │   │   ├── life/music/             # /life/music/ 封面（用户自行放入）
 │   │   └── works/                  # /works/ 子模块封面
@@ -176,6 +180,10 @@ f:\Notes\
 │                                # ⚠️ 例外 2：layouts/partials/head.html
 │                                # 被项目级 layouts/partials/head.html 覆盖（改 CSS 加载方式）
 │                                # 升级主题时优先看 [lyrumu 改造] 段，对比后再决定
+│                                # ⚠️ 例外 3：layouts/partials/vendor.html
+│                                # 被项目级 layouts/partials/vendor.html 覆盖（Firebase 加载范围
+│                                # 收紧为：首页 + notes 区 + term 页；2026-07-22）
+│                                # 升级主题时 diff 主题版，保留末尾 Firebase 段的 $firebaseNeeded 条件
 │
 ├── DONE.md                         # 开发日志
 └── .trae/rules/个人网站开发规则.md   # 项目宪法
@@ -264,8 +272,8 @@ f:\Notes\
 | 外链按钮（仅 apple + spotify） | `data/music.yaml` → `links[]`（白名单在 shortcode 里 hard-coded） | [`layouts/shortcodes/music-list.html`](file:///f:/Notes/layouts/shortcodes/music-list.html) 的 `.music-item-link` |
 | 外链按钮视觉（浅色：淡底+边框；深色：玻璃质感；hover：跨主题流动光谱 + 三层外发光） | — | [`assets/css/_05_cards.css`](file:///F:/Notes/assets/css/_05_cards.css) 的 `.music-item-link*` + [`assets/css/_10_music-darkside.css`](file:///F:/Notes/assets/css/_10_music-darkside.css) 的 `html.dark .music-list .music-item-link` |
 | 粘性播放器 HTML | — | [`layouts/partials/music-player.html`](file:///f:/Notes/layouts/partials/music-player.html) |
-| 播放器逻辑（点击切歌 / 进度跳转 / 记忆位置 / 键盘 / 关闭清状态 / 播放模式 / 音量） | — | [`static/js/music-player/controller.js`](file:///f:/Notes/static/js/music-player/controller.js) |
-| 外链点击不切歌（事件拦截） | — | [`static/js/music-player/controller.js`](file:///f:/Notes/static/js/music-player/controller.js) 的 `onItemClick`（`.closest('.music-item-link')` 拦截） |
+| 播放器逻辑（点击切歌 / 进度跳转 / 记忆位置 / 键盘 / 关闭清状态 / 播放模式 / 音量） | — | [`assets/js/music-player/controller.js`](file:///f:/Notes/assets/js/music-player/controller.js) |
+| 外链点击不切歌（事件拦截） | — | [`assets/js/music-player/controller.js`](file:///f:/Notes/assets/js/music-player/controller.js) 的 `onItemClick`（`.closest('.music-item-link')` 拦截） |
 | 版权声明（fair use + 全曲走外链 + 下架通道） | — | [`content/life/music/_index.md`](file:///f:/Notes/content/life/music/_index.md) 末尾的 blockquote |
 | 列表样式 + 控制栏样式 + 播放器样式 | — | [`assets/css/_05_cards.css`](file:///F:/Notes/assets/css/_05_cards.css) 的 `.music-item*` + `.music-controls-bar` + [`_07_music-player.css`](file:///F:/Notes/assets/css/_07_music-player.css) 的 `.music-player` |
 | 资源存放约定 | `static/life/music/<slug>.mp3` + `static/image/life/music/<slug>.jpg` | — |

@@ -72,7 +72,7 @@ enableEmoji = true
 # 站点参数
 # =============================================================================
 [params]
-  colorScheme = 'blowfish' #初始为blowfish
+  colorScheme = 'blowfish' 
   defaultAppearance = 'dark'
   autoSwitchAppearance = true
   enableSearch = true

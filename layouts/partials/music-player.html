@@ -7,7 +7,7 @@
   或直接调用：
     {{ partial "music-player.html" . }}
   模板契约：根节点 [data-music-player] + 子节点 data-role="..."
-  对应绑定：static/js/music-player/dom.js → bindDom()
+  对应绑定：assets/js/music-player/dom.js → bindDom()（2026-07-22 迁入 assets）
 ----------------------------------------------------------------*/}}
 <div class="music-player" id="music-player" data-music-player aria-label="music player" role="region">
   <!-- 真正的 audio 元素放在根节点内，供 dom.js 一次 querySelector 拿齐 -->
@@ -20,7 +20,7 @@
 
   <div class="music-player-meta">
     <div class="music-player-meta-row">
-      <span style="min-width:0;display:flex;align-items:baseline;min-width:0">
+      <span style="display:flex;align-items:baseline;min-width:0">
         <span class="music-player-title" data-role="title">尚未播放</span>
         <span class="music-player-artist" data-role="artist"></span>
       </span>
@@ -53,10 +53,21 @@
 
 <!-- 真正的 audio 元素已在根节点内 -->
 
-<!-- JS：播放器模块（顺序加载：tools → 适配层 → 业务） -->
-<script defer src="/js/music-player/dom.js"></script>
-<script defer src="/js/music-player/storage.js"></script>
-<script defer src="/js/music-player/store.js"></script>
-<script defer src="/js/music-player/view.js"></script>
-<script defer src="/js/music-player/controller.js"></script>
-<script defer src="/js/music-player.js"></script>
+{{/*
+  JS：播放器模块（2026-07-22 起从 static/js 迁入 assets/js）
+  - 6 个模块按依赖顺序 Concat 成 1 个 bundle（dom → storage → store → view → controller → 入口），
+    再 Minify + Fingerprint：请求数 6 → 1，且内容变化自动生成新 URL 防旧缓存
+  - 各模块均为挂 window.MusicPlayer 命名空间的 IIFE，Concat 顺序即原 <script> 顺序，行为等价
+  - 回滚：git restore static/js + 恢复 6 个 <script defer src="/js/music-player/*.js">
+*/}}
+{{ $mpBundle := slice
+  (resources.Get "js/music-player/dom.js")
+  (resources.Get "js/music-player/storage.js")
+  (resources.Get "js/music-player/store.js")
+  (resources.Get "js/music-player/view.js")
+  (resources.Get "js/music-player/controller.js")
+  (resources.Get "js/music-player.js")
+  | resources.Concat "js/music-player.bundle.js"
+  | resources.Minify
+  | resources.Fingerprint "sha512" }}
+<script defer src="{{ $mpBundle.RelPermalink }}" integrity="{{ $mpBundle.Data.Integrity }}"></script>

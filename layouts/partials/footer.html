@@ -93,10 +93,18 @@
 
   {{ if not .Site.Params.disableImageZoom | default true }}
     <script>
-      mediumZoom(document.querySelectorAll("img:not(.nozoom)"), {
-        margin: 24,
-        background: "rgba(0,0,0,0.5)",
-        scrollOffset: 0,
+      /*
+        包 DOMContentLoaded：zoom.min.umd.js 在 head 里是 defer 加载，
+        defer 脚本保证在 DOMContentLoaded 之前执行完毕，
+        所以这里拿到的一定是已就绪的全局 mediumZoom。
+        （若去掉 head 里的 defer，此包裹也可去掉恢复同步调用）
+      */
+      document.addEventListener("DOMContentLoaded", function () {
+        mediumZoom(document.querySelectorAll("img:not(.nozoom)"), {
+          margin: 24,
+          background: "rgba(0,0,0,0.5)",
+          scrollOffset: 0,
+        });
       });
     </script>
   {{ end }}
