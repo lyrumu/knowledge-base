@@ -1,4 +1,6 @@
 {
   "cssTheme": "GitHub Theme",
-  "accentColor": "#eb57ff"
+  "baseFontSize": 14,
+  "baseFontSizeAction": true,
+  "translucency": true
 }

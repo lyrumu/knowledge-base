@@ -1,12 +1,4 @@
 {
-  "editor:save-file": [
-    {
-      "modifiers": [
-        "Mod"
-      ],
-      "key": "S"
-    }
-  ],
   "editor:insert-codeblock": [
     {
       "modifiers": [
@@ -23,14 +15,6 @@
       "key": "-"
     }
   ],
-  "editor:insert-mathblock": [
-    {
-      "modifiers": [
-        "Alt"
-      ],
-      "key": "M"
-    }
-  ],
   "editor:toggle-highlight": [
     {
       "modifiers": [
@@ -39,12 +23,12 @@
       "key": "L"
     }
   ],
-  "editor:toggle-bold": [
+  "editor:toggle-strikethrough": [
     {
       "modifiers": [
         "Alt"
       ],
-      "key": "B"
+      "key": "D"
     }
   ]
 }

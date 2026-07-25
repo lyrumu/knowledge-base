@@ -1,13 +1,7 @@
 {
-  "newLinkFormat": "relative",
-  "showUnsupportedFiles": true,
-  "newFileLocation": "folder",
-  "spellcheck": false,
-  "useMarkdownLinks": true,
+  "attachmentFolderPath": "./assets",
   "alwaysUpdateLinks": true,
-  "attachmentFolderPath": "image",
-  "userIgnoreFilters": [
-    "site/",
-    "static/"
-  ]
+  "showUnsupportedFiles": true,
+  "trashOption": "system",
+  "promptDelete": false
 }

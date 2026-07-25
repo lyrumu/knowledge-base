@@ -1,6 +1,3 @@
 [
-  "vscode-editor",
-  "obsidian-custom-attachment-location",
-  "obsidian-git",
-  "copilot"
+  "vscode-editor"
 ]
