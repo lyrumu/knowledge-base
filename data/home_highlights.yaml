@@ -9,6 +9,11 @@ sections:
     cta_label: "Open Docs"
     cta_path: "/notes/"
     items:
+      - label: "Agent Config"
+        title: "For Agents"
+        desc: "My agents config."
+        path: "/notes/for-agents/"
+        link_text: "Read config"
       - label: "Git Basics"
         title: "Personal Project Git Management"
         desc: "My experience in managing personal project Git repositories."

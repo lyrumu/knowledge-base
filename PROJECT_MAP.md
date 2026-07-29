@@ -138,8 +138,8 @@ f:\Notes\
 │   │   ├── header/components/
 │   │   │   ├── desktop-menu.html   # 加 GitHub 按钮
 │   │   │   └── mobile-menu.html    # 加 GitHub 按钮
-│   │   ├── extend-head.html        # 第三方库（Splitting.js + AOS.js + VanillaTilt.js）
-│   │   ├── extend-footer.html      # Giscus 评论系统（JS 动态注入 + 路径白名单 + 主题自动适配）
+│   │   ├── extend-head.html        # 第三方库（Splitting.js + VanillaTilt.js）+ IO reveal（AOS 已删）
+│   │   ├── extend-footer.html      # Giscus 评论系统（assets/js/giscus-loader.js 指纹化 + 路径白名单 + 主题自动适配）
 │   │   ├── music-player.html       # 粘性音乐播放器（被 music-list 自动注入）
 │   │   └── about-contact.html      # /about/ 联系方式图标卡 partial（被 about-contact shortcode 调）
 │   └── shortcodes/
@@ -159,9 +159,7 @@ f:\Notes\
 │
 ├── static/                         # 静态资源
 │   ├── fonts/                      # 字体文件（本地化）
-│   ├── css/aos.css                 # ★ AOS.js 样式（2026-06-25 本地化，原 jsDelivr CDN）
 │   ├── js/                         # ★ 仅第三方 JS（版本固定，无需指纹）
-│   │   ├── aos.js                  # AOS.js 滚动入场
 │   │   ├── splitting.min.js        # Splitting.js 字符分割
 │   │   └── vanilla-tilt.min.js     # VanillaTilt.js 3D 倾斜
 │   ├── image/                      # 装饰 PNG（花边 / 花朵 / musicheart）
@@ -371,7 +369,7 @@ f:\Notes\
 | 3D 倾斜 + 鼠标反光 | shortcode 里的 `data-tilt*` 属性（VanillaTilt.js） | [`assets/css/_06_works-cards.css`](file:///F:/Notes/assets/css/_06_works-cards.css) 的 `.project-card` + `.project-card::after`（含 `mix-blend-mode: multiply` 防反光洗文字）|
 | hover 揭示（tags + actions） | — | [`_06_works-cards.css`](file:///F:/Notes/assets/css/_06_works-cards.css) 的 `.project-card:hover .project-card-tags` 等 |
 | 项目按钮（在线 / 源码） | `href` / `repo` 字段 | [`_06_works-cards.css`](file:///F:/Notes/assets/css/_06_works-cards.css) 的 `.project-card-btn`（**v3 修复后是独立 `<a>`**，各自跳对应地址；默认 + hover 对比度均 ≥ AA 4.5:1）|
-| 入场淡入 | `data-aos="fade-up"`（应用到 `.project-card-cover` + `.project-card-body`，避开外层 VanillaTilt 的 transform 冲突；v2026-07-10 已移除 AOS — 与 VanillaTilt transform 冲突，改为自然出现） | [extend-head.html](file:///f:/Notes/layouts/partials/extend-head.html)（AOS.js） |
+| 入场淡入 | v2026-07-10 已移除 AOS（与 VanillaTilt transform 冲突）— 改为自然出现，无外部库 | — |
 | 资源存放约定 | `static/image/works/projects/<slug>.png` | — |
 
 ### /works/resources/ 资源列表
@@ -381,17 +379,15 @@ f:\Notes\
 | 资源卡列表 | [`data/resources.yaml`](file:///f:/Notes/data/resources.yaml) | [`layouts/shortcodes/resources-list.html`](file:///f:/Notes/layouts/shortcodes/resources-list.html) |
 | 瀑布流（CSS columns） | — | [`assets/css/_06_works-cards.css`](file:///F:/Notes/assets/css/_06_works-cards.css) 的 `.resources-masonry` |
 | 格式徽章 / 元信息 / 下载按钮 | `resources.yaml` → `format / size / date / file` | [`_06_works-cards.css`](file:///F:/Notes/assets/css/_06_works-cards.css) 的 `.resource-card-*` |
-| 入场淡入 | `data-aos="fade-up"`（应用到 `.resource-card`） | extend-head.html（AOS.js） |
+| 入场淡入 | `data-aos="fade-up"` + `data-aos-delay`（应用到 `.resource-card`） | `extend-head.html` 里的 IntersectionObserver reveal（AOS 已删） |
 | 资源存放约定 | `static/works-resources/<file>` + `static/image/works/resources/<slug>.png` | — |
 
-### 第三方动画库（works 用）
+### 第三方动画库与滚动入场（works 用）
 
-| 库 | 版本 | 用途 | 初始化 |
-|---|---|---|---|
-| AOS.js + aos.css | 2.3.4 | 滚动入场淡入 | `extend-head.html` 的 `window.load` 回调里 `AOS.init()`，prefers-reduced-motion 时自动禁用 |
-| VanillaTilt.js | 1.8.1 | 项目卡 3D 鼠标倾斜 | `extend-head.html` 的 `window.load` 回调里，IntersectionObserver 延迟挂载 |
-| AOS 与 VanillaTilt 冲突规避 | — | AOS 应用于卡片内部子元素，VanillaTilt 管外层 transform | — |
-| AOS `transition` 接管 hover 修复 | — | `aos:in` 后 1s 清除 inline transition | extend-head.html |
+| 元素 | 来源 | 说明 |
+|---|---|---|
+| 资源卡入场 fade-up + stagger | `assets/css/_06_works-cards.css` 的 `.resource-card[data-aos]` + `.aos-animate` | IntersectionObserver 内联实现；支持 `data-aos` / `data-aos-delay` / `prefers-reduced-motion`（AOS 已删除） |
+| 项目卡 3D 倾斜 | VanillaTilt.js 1.8.1 | `extend-head.html` 的 `window.load` 回调里，IntersectionObserver 延迟挂载 |
 
 ---
 
@@ -595,7 +591,7 @@ hugo new content/notes/<slug>/index.md
 | 想调什么 | 改哪里 |
 |---|---|
 | 3D 倾斜角度 / 反光 / 缩放 | [layouts/shortcodes/projects-list.html](file:///f:/Notes/layouts/shortcodes/projects-list.html) 里的 `data-tilt-*` 属性 |
-| AOS 入场动画时长 / 触发距离 | [layouts/partials/extend-head.html](file:///f:/Notes/layouts/partials/extend-head.html) 的 `AOS.init({...})` |
+| 资源卡入场动画时长 / 触发距离 | `assets/css/_06_works-cards.css` 的 `.resource-card[data-aos]` transition + `extend-head.html` 的 IntersectionObserver `rootMargin` |
 | 卡片整体间距 / 圆角 / 边框 | [assets/css/_06_works-cards.css](file:///F:/Notes/assets/css/_06_works-cards.css) (projects / resources 共用) |
 | 瀑布流列数 | [`_06_works-cards.css`](file:///F:/Notes/assets/css/_06_works-cards.css) 的 `.resources-masonry { column-count: ... }` |
 | 加新 Lucide icon | [layouts/partials/cover/icon.html](file:///f:/Notes/layouts/partials/cover/icon.html) 加 `else if` 分支 |
@@ -607,7 +603,7 @@ hugo new content/notes/<slug>/index.md
 - **date 格式**：`YYYY-MM`（如 `2026-05`）
 - **空数据**：`resources` / `projects` 为空时短代码会显示空态文案（"还没有项目" / "资源还在路上"），不会报错
 - **图片加载失败**：shortcode 用 `onerror` 兜底（封面图变淡显示），但建议还是补上正确路径
-- **a11y**：用户开启 `prefers-reduced-motion` 时 AOS 自动禁用，但 3D 倾斜仍是 hover 触发（用户主动操作，合理）
+- **a11y**：用户开启 `prefers-reduced-motion` 时资源卡 reveal 直接显示、不再有位移动画；3D 倾斜仍是 hover 触发（用户主动操作，合理）
 
 ---
 

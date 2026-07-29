@@ -3,16 +3,13 @@
   --------------------------------------------------------------------------
   Blowfish 的官方扩展点：在 <head> 末尾插入内容。
   - 字体：本地化到 static/fonts/*（避免 Google Fonts CDN 不稳）
-  - Splitting.js / AOS.js / VanillaTilt.js / aos.css：本地化到 static/（2026-06-25）
+  - Splitting.js / VanillaTilt.js：本地化到 static/（2026-06-25）
     原 jsDelivr CDN + SRI 已弃用，避免 npm republish 时 hash 失效 → CDN 拒载
+  - AOS.js + aos.css 已于 2026-07-25 删除，改用 IntersectionObserver 内联实现
   --------------------------------------------------------------------------
 */}}
 
-{{/* AOS 样式表（必须，否则 aos.js 无视觉效果） */}}
-<link rel="stylesheet" href="/css/aos.css" />
-
 <script src="/js/splitting.min.js" defer></script>
-<script src="/js/aos.js" defer></script>
 <script src="/js/vanilla-tilt.min.js" defer></script>
 
 {{/*
@@ -73,29 +70,35 @@ window.addEventListener("load", function () {
       }
     });
   })();
-  // ---------- AOS ----------
-  if (typeof AOS !== "undefined") {
-    var reduce = window.matchMedia &&
-                window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-    AOS.init({
-      duration: 900,
-      easing: "ease-out-cubic",
-      once: true,
-      offset: 80,
-      disable: reduce
-    });
-
-    /*
-      AOS 会在 [data-aos] 元素上注入 inline transition: ...;
-      动画完成后 inline style 不会自动清理，会覆盖 .resource-card 自身的
-      transition（如 hover 时 transform 上浮 0.5s → 被接管成 0.9s，hover 变迟钝）。
-      修法：动画结束后清掉 inline transition，让原本 CSS 的 transition 接管。
-    */
-    document.addEventListener("aos:in", function (e) {
-      var el = e.target;
-      // duration 略大于 AOS duration（900ms），确保动画完成
-      setTimeout(function () { el.style.transition = ""; }, 1000);
-    });
+  // ---------- reveal (replaces AOS for [data-aos] elements) ----------
+  if ("IntersectionObserver" in window) {
+    var revealEls = document.querySelectorAll("[data-aos]");
+    if (revealEls.length) {
+      var reduceMotion = window.matchMedia &&
+        window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+      var revealObserver = new IntersectionObserver(function (entries) {
+        entries.forEach(function (e) {
+          if (e.isIntersecting) {
+            var el = e.target;
+            if (reduceMotion) {
+              el.classList.add("aos-animate");
+              revealObserver.unobserve(el);
+              return;
+            }
+            var delay = parseInt(el.getAttribute("data-aos-delay") || "0", 10);
+            if (delay) el.style.transitionDelay = delay + "ms";
+            el.classList.add("aos-animate");
+            revealObserver.unobserve(el);
+            // 动画结束后移除 data-aos，让 .resource-card 自身的 hover 过渡接管
+            setTimeout(function () {
+              el.style.transitionDelay = "";
+              el.removeAttribute("data-aos");
+            }, 900 + delay + 50);
+          }
+        });
+      }, { rootMargin: "80px", threshold: 0.1 });
+      revealEls.forEach(function (el) { revealObserver.observe(el); });
+    }
   }
 
   // ---------- VanillaTilt ----------

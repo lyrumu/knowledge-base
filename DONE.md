@@ -4,6 +4,35 @@
 
 ---
 
+## 2026-07-25 · 删除 AOS + Giscus 外置（进一步去依赖）
+
+### 改动
+
+| 文件 | 改动 |
+|---|---|
+| [layouts/partials/extend-head.html](file:///f:/Notes/layouts/partials/extend-head.html) | 删除 aos.css / aos.js 引用；AOS.init 与 `aos:in` 补丁替换为 IntersectionObserver reveal 实现（约 25 行），支持 `data-aos-delay` stagger 与 `prefers-reduced-motion` |
+| [assets/css/_06_works-cards.css](file:///F:/Notes/assets/css/_06_works-cards.css) | 新增 `.resource-card[data-aos]` / `.aos-animate` / `prefers-reduced-motion` 规则，接管原 AOS fade-up 初始态与入场态 |
+| [layouts/shortcodes/resources-list.html](file:///f:/Notes/layouts/shortcodes/resources-list.html) | 不动：仍输出 `data-aos="fade-up"` + `data-aos-delay`，新 IO 直接消费这些属性 |
+| static/css/aos.css / static/js/aos.js | 删除，站点不再依赖 AOS 库 |
+| [assets/js/giscus-loader.js](file:///f:/Notes/assets/js/giscus-loader.js) | 新建：从 extend-footer.html 提取的 Giscus 路径白名单 + 主题监听 + 异步加载逻辑 |
+| [layouts/partials/extend-footer.html](file:///f:/Notes/layouts/partials/extend-footer.html) | 1.8KB 内联脚本改为引用指纹化的 `giscus-loader.js`，行为完全一致 |
+
+### 收益
+
+- 全站每页少加载 **aos.css 26KB（渲染阻塞）+ aos.js 14.7KB**，同时去掉一条外部样式表请求
+- /works/resources/ 的卡片 fade-up + stagger 效果保留；reduced-motion 下直接可见
+- Giscus 内联逻辑外置后，每页 HTML 减少 ~1.8KB 内联脚本，脚本可跨页缓存，主题切换逻辑不变
+- 少维护一个 vendored 动画库及其版本 / SRI
+
+### 验证
+
+- `hugo --minify --themesDir themes --theme blowfish --config hugo.toml` 0 错误
+- `public/` 中不再出现 `/css/aos.css` 与 `/js/aos.js` 引用
+- /works/resources/ 构建产物中 `.resource-card` 仍保留 `data-aos` / `data-aos-delay` 属性，且出现 `.aos-animate` 相关样式
+- Giscus 仍只在 `/`、`/about`、`/works/projects`、`/life/music` 与 notes 文章页注入
+
+---
+
 ## 2026-07-23 · 前端性能与可维护性优化（6 项）
 
 ### 改动

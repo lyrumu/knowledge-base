@@ -37,12 +37,16 @@
    │  _08_cover.css         — 封面页（首页全屏 + 装饰花边 + 字符入场）
    │  _09_about.css         — About 页（profile + 标签 + 液态玻璃联系方式）
 
-   ├─ 交互增强
-   │  _11_theme-transition.css — DeepWiki 风格斜向擦除主题切换动画（CSS View Transitions）
-   │                              JS 见 static/js/theme-transition.js
-   │                              通过 extend-head.html 引入
+    ├─ 交互增强
+    │  _11_theme-transition.css — DeepWiki 风格斜向擦除主题切换动画（CSS View Transitions）
+    │                              JS 见 assets/js/theme-transition.js（已迁移）
+    │                              通过 extend-head.html 引入
 
-   添加新文件：
+    2026-07-25 更新：
+    - AOS.js + aos.css 已删除，资源卡入场改用 extend-head.html 内 IntersectionObserver
+    - Giscus 评论逻辑移到 assets/js/giscus-loader.js，由 extend-footer.html 指纹化加载
+
+    添加新文件：
      1. 在 assets/css/ 下创建 _NN_xxx.css（NN = 下一个序号）
      2. head.html 的 resources.Match 会自动发现并按文件名字母序加载
      3. 本文件追加一行记录即可

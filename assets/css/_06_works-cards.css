@@ -384,6 +384,29 @@ html.dark .resource-card:hover {
   background: rgba(255, 255, 255, 0.06);
 }
 
+/* 滚动入场动画 —— 原 AOS fade-up 的精简内联版
+   只服务 [data-aos] 元素（当前仅 .resource-card），不再依赖外部库 */
+.resource-card[data-aos] {
+  opacity: 0;
+  transform: translate3d(0, 80px, 0);
+  transition:
+    opacity 0.9s cubic-bezier(0.4, 0, 0.2, 1),
+    transform 0.9s cubic-bezier(0.4, 0, 0.2, 1);
+  will-change: opacity, transform;
+}
+.resource-card[data-aos].aos-animate {
+  opacity: 1;
+  transform: translate3d(0, 0, 0);
+}
+@media (prefers-reduced-motion: reduce) {
+  .resource-card[data-aos],
+  .resource-card[data-aos].aos-animate {
+    opacity: 1;
+    transform: none;
+    transition: none;
+  }
+}
+
 .resource-card-link {
   display: block;
   text-decoration: none !important;
