@@ -42,6 +42,12 @@
         {{- partial "search.html" . -}}
       {{ end }}
     </div>
+    {{/*
+      [lyrumu 改造] 在 body 末尾注入自定义光标 partial。
+      光标的实际启用由 JS 根据设备与偏好自行判断。
+      ⚠️ 升级 blowfish 时如果本行被覆盖，重新加这一段即可。
+    */}}
+    {{- partial "custom-cursor.html" . -}}
   </body>
   {{ if site.Params.buymeacoffee.globalWidget | default false }}
     <script

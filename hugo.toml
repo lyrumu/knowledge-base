@@ -4,6 +4,7 @@
 #   - 加新模块 = hugo.toml [[menu.main]] 加项 + content/<slug>/_index.md
 # 本地服务启动方式：
 # hugo server --themesDir themes --theme blowfish --config hugo.toml --bind 127.0.0.1 --port 8080（端口可选）
+# 本项目除了存在通过创建同名文件覆写部分themes外 还对themes文件本身做过改写 升级主题时要注意备份
 # =============================================================================
 
 baseURL = 'https://lyrumu.top/'

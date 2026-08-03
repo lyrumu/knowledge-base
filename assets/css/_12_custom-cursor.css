@@ -1,0 +1,106 @@
+/* =============================================================================
+   _12_custom-cursor.css — 自定义光标：古典细环 + 延迟跟随
+   ----------------------------------------------------------------------------
+   仅对非触摸设备、未开启减弱动画、且视口大于 720px 的访客启用。
+   移动端 / reduced-motion 下完全回退到系统默认光标。
+   ============================================================================= */
+
+/* 仅在激活时隐藏默认光标 */
+html.custom-cursor-active,
+html.custom-cursor-active *,
+html.custom-cursor-active *::before,
+html.custom-cursor-active *::after {
+  cursor: none !important;
+}
+
+.custom-cursor {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 0;
+  height: 0;
+  z-index: 9999;
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 0.25s ease;
+
+  /* 鼠标坐标变量，由 JS 每帧更新 */
+  --cursor-x: -100;
+  --cursor-y: -100;
+  --ring-x: -100;
+  --ring-y: -100;
+}
+
+html.custom-cursor-active .custom-cursor {
+  opacity: 1;
+}
+
+.cursor-dot-wrapper,
+.cursor-ring-wrapper {
+  position: absolute;
+  top: 0;
+  left: 0;
+  will-change: transform;
+}
+
+.cursor-dot-wrapper {
+  transform: translate3d(calc(var(--cursor-x) * 1px), calc(var(--cursor-y) * 1px), 0);
+}
+
+.cursor-ring-wrapper {
+  transform: translate3d(calc(var(--ring-x) * 1px), calc(var(--ring-y) * 1px), 0);
+}
+
+.cursor-dot {
+  width: 8px;
+  height: 8px;
+  margin-top: -4px;
+  margin-left: -4px;
+  border-radius: 50%;
+  background: var(--accent);
+  box-shadow: 0 0 8px 2px color-mix(in srgb, var(--accent) 45%, transparent);
+  transition: transform 0.2s ease, opacity 0.2s ease;
+}
+
+.cursor-ring {
+  width: 32px;
+  height: 32px;
+  margin-top: -16px;
+  margin-left: -16px;
+  border-radius: 50%;
+  border: 2px solid var(--accent);
+  opacity: 0.55;
+  box-shadow: 0 0 10px 2px color-mix(in srgb, var(--accent) 30%, transparent),
+              inset 0 0 8px 1px color-mix(in srgb, var(--accent) 18%, transparent);
+  transition: transform 0.25s ease, opacity 0.25s ease;
+}
+
+/* hover 状态：外环放大、中心点收缩 */
+html.custom-cursor-hover .cursor-dot {
+  transform: scale(0.55);
+  opacity: 0.9;
+}
+
+html.custom-cursor-hover .cursor-ring {
+  transform: scale(1.45);
+  opacity: 0.75;
+  box-shadow: 0 0 14px 4px color-mix(in srgb, var(--accent) 40%, transparent),
+              inset 0 0 10px 2px color-mix(in srgb, var(--accent) 22%, transparent);
+}
+
+/* 点击状态：短暂收紧 */
+html.custom-cursor-click .cursor-dot {
+  transform: scale(0.35);
+}
+
+html.custom-cursor-click .cursor-ring {
+  transform: scale(1.15);
+  opacity: 0.85;
+  box-shadow: 0 0 10px 3px color-mix(in srgb, var(--accent) 50%, transparent),
+              inset 0 0 8px 2px color-mix(in srgb, var(--accent) 28%, transparent);
+}
+
+/* 鼠标离开视口时淡出 —— 由 JS 控制 opacity，此处不再用 html:hover 探测 */
+html.custom-cursor-active .custom-cursor.is-hidden {
+  opacity: 0;
+}

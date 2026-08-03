@@ -4,6 +4,33 @@
 
 ---
 
+## 2026-08-04 · 自定义光标：古典细环 + 延迟跟随
+
+### 改动
+
+| 文件 | 改动 |
+|---|---|
+| [assets/css/_12_custom-cursor.css](file:///f:/Notes/assets/css/_12_custom-cursor.css) | 新增自定义光标样式：6px accent 实心点 + 28px 极细延迟跟随外环；hover 外环放大 / 中心点收缩；点击收紧；CSS 变量驱动坐标 |
+| [assets/js/custom-cursor.js](file:///f:/Notes/assets/js/custom-cursor.js) | 新增光标逻辑：检测 `(pointer: coarse)` / `prefers-reduced-motion` / `max-width: 720px`，任一命中则不启用；`requestAnimationFrame` + lerp(0.15) 更新外环位置；事件委托监听 hover/click/mouseleave |
+| [layouts/partials/custom-cursor.html](file:///f:/Notes/layouts/partials/custom-cursor.html) | 新增 partial：注入光标 DOM 并引用指纹化的 JS |
+| [themes/blowfish/layouts/_default/baseof.html](file:///f:/Notes/themes/blowfish/layouts/_default/baseof.html) | body 结束标签前注入 `custom-cursor.html`，加 `[lyrumu 改造]` 注释 |
+
+### 设计决策
+
+- **方案 A 落地**：中心点直接跟随保证点击精度；外环延迟跟随制造丝绸拖尾感；色调用 `--accent`，与全站强调色同源。
+- **只在桌面启用**：触摸设备、reduced-motion、小视口自动回退到系统默认光标，避免移动端误触与可访问性问题。
+- **不破坏现有输入体验**：未启用时无任何额外 DOM 与样式；启用后通过 `html.custom-cursor-active` 统一隐藏默认光标。
+- **JS 走 Hugo Pipes**：`custom-cursor.js` 经 Minify + Fingerprint 后引用，与现有项目 JS 规范一致。
+- **CSS 模块序号 `_12`**：按 `_01` ~ `_09` 已用完、`_11` 被主题切换动画占用的规则，新文件用下一个序号 `_12`。
+
+### 验证
+
+- 未启动 Hugo 服务（按项目规则由用户本机手动运行 `hugo server` 测试）
+- 文件 `git diff --check` 无空白错误
+- 升级 Blowfish 主题时只需重贴 baseof.html 末尾的 `[lyrumu 改造]` 段
+
+---
+
 ## 2026-08-02 · 新增 ChatGPT Plus Apple 内购指南
 
 ### 改动
