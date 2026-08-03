@@ -9,6 +9,11 @@ sections:
     cta_label: "Open Docs"
     cta_path: "/notes/"
     items:
+      - label: "Chatgpt"
+        title: "Codex Plus订阅指南(ios)"
+        desc: "ios上如何订阅官方gpt plus"
+        path: "notes/Codex-Plus"
+        link_text: "Read guide"
       - label: "Agent Config"
         title: "For Agents"
         desc: "My agents config."
@@ -19,11 +24,7 @@ sections:
         desc: "My experience in managing personal project Git repositories."
         path: "/notes/git-guide/"
         link_text: "Read guide"
-      - label: "Python"
-        title: "make a python package"
-        desc: "A shorter entry around Python packaging, environment setup, and local workflow."
-        path: "/notes/python-env-setup/"
-        link_text: "Open note"
+      
 
   - id: "works"
     kicker: "Built & Shared"

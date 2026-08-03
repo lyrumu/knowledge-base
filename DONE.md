@@ -4,6 +4,29 @@
 
 ---
 
+## 2026-08-02 · 新增 ChatGPT Plus Apple 内购指南
+
+### 改动
+
+| 文件 | 改动 |
+|---|---|
+| `content/notes/chatgpt-plus-with-apple/index.md` | 根据 `Vault/Chatgpt Plus For Apple.md` 与 `archetypes/notes.md` 整理为可发布文章；补全 Apple 购买账户与 ChatGPT 账户关系、礼品卡兑换、iOS 订阅、Codex 登录、续费取消及故障排查 |
+
+### 内容校准
+
+- 使用 2026-08-02 的 OpenAI 与 Apple 官方文档核对订阅入口、礼品卡地区限制、恢复购买与取消订阅流程
+- 修正“Codex 必须订阅 Plus 才可使用”的旧表述：Codex 已包含在各 ChatGPT 套餐中，具体额度随套餐变化
+- 明确 Apple 内购只处理付款，不改变 OpenAI 支持地区政策；付款价格以 Apple 最终确认页为准
+- 保留 Vault 原文为只读内容源，未修改原始 Markdown
+
+### 验证
+
+- frontmatter 字段与 `archetypes/notes.md` 对齐，文章为 `draft: false`
+- `git diff --check` 无空白错误
+- 按项目规则未启动 Hugo 服务，由用户本机手动预览
+
+---
+
 ## 2026-07-25 · 删除 AOS + Giscus 外置（进一步去依赖）
 
 ### 改动
@@ -2186,4 +2209,3 @@ HTML 不允许 `<a>` 嵌套 `<a>`，所以必须重构。
 
 - [README.md](file:///f:/Notes/README.md) — 追加 Website 章节，描述网站部署信息
 - [PROJECT_MAP.md](file:///f:/Notes/PROJECT_MAP.md) — 更新部署方式和文件结构
-
