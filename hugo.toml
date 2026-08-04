@@ -31,7 +31,7 @@ title = "lyrumu's page"
     rtl = false
     dateFormat = '2006-01-02'
     logo = ''
-    description = ''
+    description = "lyrumu's personal website — a collection of learning notes, projects, resources, and daily records."
 
     [languages.en.params.author]
       name = 'lyrumu'
@@ -48,8 +48,7 @@ title = "lyrumu's page"
       headline = 'Recordings'
       bio = ''
       links = [
-        { github = 'https://github.com/' },
-        { email = 'mailto:' },
+        { github = 'https://github.com/lyrumu' },
       ]
 
 # =============================================================================

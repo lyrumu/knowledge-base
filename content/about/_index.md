@@ -1,13 +1,12 @@
-<!-- ---
+---
 title: "ABOUT ME"
 kicker: "ABOUT ME · MODULE 04"
-subtitle: "Some info about me"
-description: ""
+description: "Personal profile of lyrumu — a student and beginner developer in Hangzhou, China, sharing the technical stack, current focus, and learning path."
 layout: "page"
-showHero: true
+showHero: false
 showBreadcrumbs: true
 showTableOfContents: true
---- --首页不想要这个东西了 因此注释掉>
+---
 
 <!-- ===== 头像 + 个人信息 + 联系方式 ===== -->
 

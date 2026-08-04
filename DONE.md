@@ -4,6 +4,54 @@
 
 ---
 
+## 2026-08-04 · 基础 SEO 与搜索引擎收录信息优化
+
+### 改动
+
+| 文件 | 改动 |
+|---|---|
+| [content/about/_index.md](content/about/_index.md) | 恢复被注释的 YAML frontmatter：`title: "ABOUT ME"`、`description`、布局开关；将 `showHero` 设为 `false`，保留无 Hero 的 About 页视觉效果 |
+| [hugo.toml](hugo.toml) | 填充 `languages.en.params.description` 作为站点级英文描述；将作者链接中的占位 GitHub/`mailto:` 替换为真实 GitHub Profile，移除无效空链接 |
+| [content/notes/python-env-setup/index.md](content/notes/python-env-setup/index.md) | 补充文章级英文 `description`，基于现有 VSCode + Python 环境配置内容 |
+| [layouts/partials/schema.html](layouts/partials/schema.html) | 新建主题 partial 覆写，在首页 WebSite JSON-LD 中增加 `alternateName: ["lyrumu", "lyrumu.top"]`，不重复创建第二个 WebSite 节点 |
+
+### 修复的 SEO 问题
+
+- **About 页标题丢失**：原 frontmatter 被 HTML 注释，导致标题渲染为空，线上出现 `<title>· lyrumu's page</title>`；恢复后标题为 `ABOUT ME · lyrumu's page`。
+- **站点级 description 缺失**：`languages.en.params.description` 为空，导致 Open Graph / Twitter Card / JSON-LD 缺少备用描述；已补充简洁英文描述。
+- **文章 description 缺失**：`content/notes/python-env-setup/index.md` 的 `description` 为空；已根据文章内容补充。
+- **无效作者链接**：原 `https://github.com/` 和 `mailto:` 占位链接已移除，GitHub 改为可确认的 `https://github.com/lyrumu`。
+- **WebSite 结构化数据缺少 alternateName**：首页 JSON-LD 已增加 `alternateName`，帮助搜索引擎识别站点实体。
+
+### 验证
+
+- `hugo --renderToMemory --themesDir themes --theme blowfish --config hugo.toml` 构建通过（73 pages / 0 errors）。
+- `hugo list all` 确认 About 页标题恢复为 `ABOUT ME`。
+- 临时构建产物检查：
+  - 首页 `<meta name=description>` 与 Open Graph / Twitter Card 描述正常。
+  - About 页标题、描述、OG/Twitter 描述正常。
+  - `/notes/python-env-setup/` 标题与描述正常。
+  - 全站仅首页存在 1 个 `@type: WebSite` JSON-LD 节点。
+  - `/sitemap.xml` 包含 `/`、`/about/`、`/notes/`、`/works/`、`/life/`、`/life/music/`、`/works/projects/`、`/works/resources/`、`/works/tools/` 等主要页面。
+- `git diff --check` 无空白错误。
+- 未修改 `/Vault` 只读内容源。
+- 未启动 Hugo 服务。
+
+### 待用户提供
+
+- 如需在作者链接中保留邮箱（`mailto:`），请提供希望公开的邮箱地址；当前已移除无效 `mailto:` 占位。
+
+### 部署后建议操作
+
+1. 在 [Google Search Console](https://search.google.com/search-console) 添加并验证 `lyrumu.top` 网域资源。
+2. 提交 `https://lyrumu.top/sitemap.xml`。
+3. 使用“网址检查”检查首页、About、Docs、Works、Daily 及重要 notes 文章。
+4. 对修复后的重要页面点击“请求编入索引”。
+5. 在“网页索引”和“Sitemap”报告中观察收录情况。
+
+> 说明：Google 站点链接（Sitelinks）由 Google 自动生成，无法通过代码强制开启。本次优化旨在让页面标题、摘要、内部链接和站点实体信息更完整，从而提高正确收录及未来出现站点链接的可能性。
+
+---
 ## 2026-08-04 · 自定义光标：古典细环 + 延迟跟随
 
 ### 改动
