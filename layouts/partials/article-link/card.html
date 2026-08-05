@@ -18,6 +18,11 @@
 {{ $page := .Page }}
 {{ $featured := "" }}
 {{ $featuredURL := "" }}
+{{ $imgLQIP := "" }}     {{/* 极小模糊占位（data URI），空 = 无占位 */}}
+{{ $imgSrc := "" }}      {{/* 实际展示图（600px WebP）*/}}
+{{ $imgSrcset := "" }}   {{/* Retina 2x srcset */}}
+{{ $cardIndex := .Scratch.Get "listCardIndex" | default 0 }}
+{{ $isFirst := eq $cardIndex 0 }}
 
 {{/* ---- 1. 读取 data/notes.yaml 配置 ---- */}}
 {{ $notesData := hugo.Data.notes | default (dict) }}
@@ -71,14 +76,25 @@
         {{ end }}
       {{ end }}
 
-      {{ if not $featuredURL }}
-        {{ with $featured }}
-          {{ $featuredURL = .RelPermalink }}
-          {{ if not (or $disableImageOptimization (eq .MediaType.SubType "svg")) }}
-            {{ $featuredURL = (.Resize "600x").RelPermalink }}
-          {{ end }}
-        {{ end }}
+    {{ end }}
+  {{ end }}
+{{ end }}
+
+{{/* ---- 5. 生成展示图 + LQIP：$featured 是 Hugo 资源时，缩放为 WebP 并产出模糊占位。
+       注意：必须放在上面「未找到图才进入」的守卫块之外，否则 data 图一旦被
+       resources.Get 命中（assets/ 迁移后），整段会被跳过 → src 为空。 ---- */}}
+{{ if not $featuredURL }}
+  {{ with $featured }}
+    {{ $featuredURL = .RelPermalink }}
+    {{ if and (not $disableImageOptimization) (ne .MediaType.SubType "svg") }}
+      {{ $img1x := .Resize "600x webp" }}
+      {{ $imgSrc = $img1x.RelPermalink }}
+      {{ $img2x := .Resize "1200x webp" }}
+      {{ if ne $img2x.RelPermalink $img1x.RelPermalink }}
+        {{ $imgSrcset = printf "%s 1x, %s 2x" $img1x.RelPermalink $img2x.RelPermalink }}
       {{ end }}
+      {{ $tiny := .Resize "24x webp" }}
+      {{ $imgLQIP = printf "data:image/webp;base64,%s" (base64Encode $tiny.Content) | safeURL }}
     {{ end }}
   {{ end }}
 {{ end }}
@@ -105,6 +121,9 @@
   {{ end }}
 {{ end }}
 
+{{/* 无 Hugo 可处理资源（远程 URL / SVG / 关闭优化）时，展示图回退到原始 URL */}}
+{{ if eq $imgSrc "" }}{{ $imgSrc = $featuredURL }}{{ end }}
+
 {{ $hasMedia := or $featuredURL $featured $iconName }}
 {{ $hasImage := or $featuredURL $featured }}
 {{ $isNotes := eq $page.Section "notes" }}
@@ -118,18 +137,21 @@
   <div class="cover-card__bg" aria-hidden="true">
     {{ if $hasImage }}
       <img
-        src="{{ $featuredURL }}"
+        class="cover-card__bg-img"
+        src="{{ if $imgLQIP }}{{ $imgLQIP }}{{ else }}{{ $imgSrc }}{{ end }}"
+        data-full-src="{{ $imgSrc }}"
+        {{ with $imgSrcset }}srcset="{{ . }}"{{ end }}
+        {{ if $imgLQIP }}data-lqip="1"{{ end }}
         alt=""
         role="presentation"
-        loading="lazy"
+        loading="{{ if and $isNotes $isFirst }}eager{{ else }}lazy{{ end }}"
         decoding="async"
-        fetchpriority="low"
-        class="cover-card__bg-img">
-    {{ else }}
-      <span class="cover-card__icon-fallback">
-        {{ partial "cover/icon.html" (dict "name" $iconName "size" 64) }}
-      </span>
+        fetchpriority="{{ if and $isNotes $isFirst }}high{{ else }}low{{ end }}">
     {{ end }}
+    {{/* 降级图标：有图时默认隐藏，图片加载失败时由 JS 显示 */}}
+    <span class="cover-card__icon-fallback"{{ if $hasImage }} hidden{{ end }}>
+      {{ partial "cover/icon.html" (dict "name" $iconName "size" 64) }}
+    </span>
   </div>
 
   {{/* 文字内容层 */}}

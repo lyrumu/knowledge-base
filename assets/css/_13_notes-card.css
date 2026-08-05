@@ -55,6 +55,12 @@
   z-index: 0;
   overflow: hidden;
   border-radius: 0.75rem;
+  /* 图片就绪前的底色兜底：避免白屏（与 icon-fallback 同款渐变） */
+  background:
+    radial-gradient(120% 90% at 30% 20%,
+      color-mix(in srgb, var(--accent) 14%, var(--bg-deep)) 0%,
+      var(--bg-deep) 60%),
+    var(--bg-deep);
 }
 
 .cover-card__bg-img {
@@ -63,6 +69,24 @@
   object-fit: cover;
   display: block;
   transition: transform 0.6s cubic-bezier(0.22, 0.61, 0.36, 1);
+}
+
+/* -----------------------------------------------------------------------------
+   Blur-up：LQIP 模糊占位 → 清晰过渡
+   - 仅在 html.js-blurup（JS 已激活）下生效，无 JS 时图片照常显示
+   - .is-loaded 由 notes-card.js 在 srcset 主图加载完成后加上
+   -------------------------------------------------------------------------- */
+html.js-blurup .cover-card__bg-img[data-lqip] {
+  filter: blur(16px);
+  opacity: 0.8;
+  transition: transform 0.6s cubic-bezier(0.22, 0.61, 0.36, 1),
+              filter 0.55s ease,
+              opacity 0.55s ease;
+}
+
+html.js-blurup .cover-card__bg-img[data-lqip].is-loaded {
+  filter: blur(0);
+  opacity: 1;
 }
 
 /* 无图降级：渐变底 + 居中图标 */
@@ -94,6 +118,16 @@ html.dark .cover-card__icon-fallback {
   width: 4rem;
   height: 4rem;
   display: block;
+}
+
+/* 有图时图标降级默认隐藏（hidden 属性）；图片加载失败时由 JS 显示 */
+.cover-card__icon-fallback[hidden] {
+  display: none;
+}
+
+/* 图片加载失败：隐藏坏图，露出渐变底 + 图标 */
+.cover-card__bg-img.is-broken {
+  display: none;
 }
 
 /* 草稿态：去饱和 */
@@ -353,6 +387,7 @@ html.dark .cover-card__icon-fallback {
 @media (prefers-reduced-motion: reduce) {
   .article-link--cover-card,
   .cover-card__bg-img,
+  html.js-blurup .cover-card__bg-img[data-lqip],
   .cover-card__icon-fallback,
   .cover-card__title {
     transition: none !important;

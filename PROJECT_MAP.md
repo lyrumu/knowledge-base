@@ -1,6 +1,6 @@
 # 项目地图 — 个人网站 `f:\Notes\`
 
-> 最后更新：2026-08-05 · /notes/ 卡片重构为影像阴影式封面卡（双列网格 + 全背景图 + 底部实心面板） · Hugo v0.163.2 · Blowfish v2
+> 最后更新：2026-08-05 · DOCS 卡片图加载优化（图片迁入 assets/ + Hugo WebP 缩放 + blur-up 模糊占位） · Hugo v0.163.2 · Blowfish v2
 
 ---
 
@@ -21,7 +21,7 @@
 | 改封面的字距 / 大小 / 花边位置 | [`assets/css/_08_cover.css`](file:///F:/Notes/assets/css/_08_cover.css) |
 | 改内页"小封面"的文案 | 对应 `content/xxx/_index.md` 的 frontmatter `kicker / subtitle` |
 | 改 /notes/ 入口展示方式（单列 / 3 列等）| `content/notes/_index.md` frontmatter `cardColumns`（1/2/3） |
-| 改 /notes/ 文章封面图或降级图标 | [`data/notes.yaml`](data/notes.yaml) 的 `items[]`（每篇 `image` / `icon` / `fallback_tag`）+ `tag_icons` 映射 |
+| 改 /notes/ 文章封面图或降级图标 | [`data/notes.yaml`](data/notes.yaml) 的 `items[]`（每篇 `image` / `icon` / `fallback_tag`）+ `tag_icons` 映射（**图片放 `assets/image/notes/`，写 `image/notes/xxx`，Hugo 才能缩放/转 WebP/生成占位**） |
 | 改面包屑样式 | [`assets/css/_02_chrome.css`](file:///f:/Notes/assets/css/_02_chrome.css) 的 `nav[aria-label="breadcrumb"]` 规则块（左竖线 + 浅背景指示器） |
 | 改 `notes` 文章的 taxonomy / Edit Link / 上一篇下一篇规则 | [`content/notes/_index.md`](file:///f:/Notes/content/notes/_index.md) 的 `cascade`（只对 `notes` 下文章生效） |
 | 改 `notes` 文章里 tags / categories / series 的维护规范 | [`BLOWFISH_FEATURE_AUDIT.md`](file:///f:/Notes/BLOWFISH_FEATURE_AUDIT.md) 末尾的 `Taxonomies 后续维护约定` |
@@ -88,10 +88,12 @@ f:\Notes\
 │   │   ├── _10_music-darkside.css  # ★ /life/music/ 暗主题外链玻璃质感
 │   │   ├── _11_theme-transition.css # ★ 主题切换斜向擦除（View Transition API）
 │   │   ├── _12_custom-cursor.css   # ★ 自定义光标（细环 + 延迟跟随）
-│   │   └── _13_notes-card.css      # ★ /notes/ 影像阴影式封面卡（全背景图 + 底部面板）
+│   │   └── _13_notes-card.css      # ★ /notes/ 影像阴影式封面卡（全背景图 + 底部面板）+ blur-up 模糊占位
 │   ├── icons/                      # Simple Icons 品牌色 SVG（github/gmail/qq 等联系方式图标）
+│   ├── image/notes/                # ★ /notes/ 卡片封面图（assets 目录 → Hugo 可缩放/转 WebP/生成 LQIP）
 │   └── js/                         # ★ 项目级 JS（2026-07-22 从 static/js 迁入，走 Pipes Minify+Fingerprint）
 │       ├── theme-transition.js     # 主题切换斜向擦除（extend-head.html 引用）
+│       ├── notes-card.js           # DOCS 卡片图 blur-up 切换 + 失败降级（extend-head.html 引用）
 │       ├── site-stats-days.js      # 站点在线天数前端校正（site-stats.html 引用）
 │       ├── music-player.js         # 播放器入口（装配依赖）
 │       └── music-player/           # 播放器模块（dom/storage/store/view/controller）
@@ -126,7 +128,7 @@ f:\Notes\
 │   ├── works.yaml                  # /works/ 子模块清单（projects / resources / tools…）
 │   ├── projects.yaml               # /works/projects/ 项目清单
 │   ├── resources.yaml              # /works/resources/ 资源清单
-│   └── notes.yaml                  # /notes/ 每篇文章的封面图 / 降级图标配置 + tag_icons 映射
+│   └── notes.yaml                  # /notes/ 每篇文章的封面图 / 降级图标配置 + tag_icons 映射（图片在 assets/image/notes/）
 │
 ├── layouts/                        # ★ 自定义模板（覆写主题）
 │   ├── _default/list.html          # section 主页 → page-hero + 正文 + 子页面列表（notes/about 当前走这里）
@@ -170,6 +172,7 @@ f:\Notes\
 │   │   ├── splitting.min.js        # Splitting.js 字符分割
 │   │   └── vanilla-tilt.min.js     # VanillaTilt.js 3D 倾斜
 │   ├── image/                      # 装饰 PNG（花边 / 花朵 / musicheart）
+│   │   │                           # 注：/notes/ 卡片封面图已迁到 assets/image/notes/（2026-08-05）
 │   │   ├── life/music/             # /life/music/ 封面（用户自行放入）
 │   │   └── works/                  # /works/ 子模块封面
 │   │       ├── projects/           # /works/projects/ 项目封面（用户自行放入）

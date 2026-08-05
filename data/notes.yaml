@@ -10,9 +10,10 @@
 #   4. 按 fallback_tag 或文章首个 tag 在 tag_icons 中匹配图标
 #   5. 默认图标（notebook）
 # -----------------------------------------------------------------------------
-# 图片存放建议：
-#   - 真实图片可放在 static/image/notes/<slug>.png，然后写 /image/notes/<slug>.png
-#   - 也可以放在 assets/images/ 下，模板会用 resources.Get 处理
+# 图片存放约定（2026-08-05 起）：
+#   - 真实图片放在 assets/image/notes/<slug>.<ext>，然后写 image/notes/<slug>.<ext>
+#     （resources.Get 只会处理 assets/ 下的文件，才能走 Hugo 缩放 → WebP → 模糊占位管线）
+#   - 封面转 WebP 时：把 assets/image/notes/<slug>.png 替换为同名的 .webp，并同步改下面的扩展名
 # =============================================================================
 
 # tag → Lucide 图标名 的自动映射（用于无图无 icon 时的降级）
@@ -50,31 +51,31 @@ tag_icons:
 # 每篇文章的独立配置
 items:
   - slug: Codex-Plus
-    image: "/image/notes/Codex-Plus.png"
+    image: "image/notes/Codex-Plus.png"
     icon: brain
     fallback_tag: ai
 
   - slug: for-agents
-    image: "/image/notes/for-agent.png"
+    image: "image/notes/for-agent.png"
     icon: brain
     fallback_tag: agent
 
   - slug: git-guide
-    image: "/image/notes/git.png"
+    image: "image/notes/git.png"
     icon: code-2
     fallback_tag: git
 
   - slug: good-tools
-    image: "/image/notes/good-tools.png"
+    image: "image/notes/good-tools.png"
     icon: hammer
     fallback_tag: tools
 
   - slug: linux-getting-started
-    image: "/image/notes/linux.png"
+    image: "image/notes/linux.png"
     icon: wrench
     fallback_tag: linux
 
   - slug: python-env-setup
-    image: "/image/notes/python-package.png"
+    image: "image/notes/python-package.png"
     icon: package
     fallback_tag: python

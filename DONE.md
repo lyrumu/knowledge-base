@@ -4,6 +4,47 @@
 
 ---
 
+## 2026-08-05 · DOCS 卡片图加载优化（blur-up 模糊占位 + 图片管线）
+
+### 背景
+
+DOCS 页（/notes/）卡片背景图是 1920px 的 1.5–2.4MB PNG 直出，慢网络下加载慢 / 失败后卡片白板。
+
+### 改动
+
+| 文件 | 改动 |
+|---|---|
+| [data/notes.yaml](data/notes.yaml) | 封面图路径改为 `assets/` 相对路径（去掉前导 `/`），并更新存放约定注释 |
+| [layouts/partials/article-link/card.html](layouts/partials/article-link/card.html) | ① 修复潜伏 bug：resize 块原在「未找到图才进入」守卫块内，data 图被 `resources.Get` 命中后整段跳过 → src 空；已移出守卫。② Hugo 生成 600x/1200x WebP + srcset + 24px LQIP（data URI，`base64Encode` + `safeURL`）。③ 首卡 eager + fetchpriority=high，其余 lazy+low。④ 图标降级 span 常驻（有图时 `hidden`），失败时 JS 显示 |
+| [layouts/_default/list.html](layouts/_default/list.html) | card 循环里 `$p.Scratch.Set "listCardIndex" $i`，供 card.html 判定首卡 |
+| [assets/js/notes-card.js](assets/js/notes-card.js) | 新建：`html` 加 `js-blurup`（无 JS 时图片照常显示）；LQIP→主图切换（`.is-loaded`）；主图加载失败 → 显示渐变底 + 图标。走 Hugo Pipes Minify + Fingerprint |
+| [layouts/partials/extend-head.html](layouts/partials/extend-head.html) | 加载 notes-card.js |
+| [assets/css/_13_notes-card.css](assets/css/_13_notes-card.css) | 新增 blur 过渡态（`.js-blurup img[data-lqip]`）、`.is-broken` 隐藏坏图、`.icon-fallback[hidden]`、`.cover-card__bg` 底色兜底（渐变），reduced-motion 覆盖 |
+| 图片文件 | 6 张 PNG 从 `static/image/notes/` 迁到 `assets/image/notes/`（git mv，保留历史） |
+
+### 设计决策
+
+- **迁移到 assets/ 是根因修复**：`resources.Get` 只处理 `assets/` 下文件，static/ 下图片全部绕过 Hugo → 浏览器直下原图。迁移后 600x WebP 缩略图 2.8–53KB（原 2MB），差约 50 倍
+- **LQIP 走 data URI**：24px WebP 内联，零额外请求；`.js-blurup` 作用域保证无 JS 不永久模糊（srcset 照常加载主图）
+- **首卡 eager**：视口内第一张卡立即加载，其余才 lazy
+- **失败降级**：网络失败时从「模糊图」切到渐变底 + Lucide 图标，不再白板
+- **WebP 可用**：本地 Hugo 0.164+extended、Cloudflare Pages（Extended）都支持编码
+- **用户的 PNG→WebP 转换仍值得做**（减少仓库体积/构建时长），但页面提速已由缩放管线达成，非必需
+
+### 验证
+
+- `hugo --minify` 构建通过，`Processed images: 34`（6 图 × 3 变体），无新增告警
+- 渲染 HTML 抽查：6 卡均有 LQIP data URI（base64 解码为合法 WebP）、srcset 1x/2x、图标降级 `hidden`、首卡 eager
+- notes-card.js 已指纹化加载；blur CSS 规则已进 bundle
+- 未启动 Hugo 服务（由用户本机 `hugo server` 手动验证视觉效果）
+
+### 已知小项
+
+- `static/image/notes/chatgpt订阅.png` 未被任何配置引用（孤儿文件），未迁移；后续确认无用可删
+- 若之后把 works/life 卡片图也迁移到 assets/，同一套管线可直接复用
+
+---
+
 ## 2026-08-05 · DOCS 页卡片样式重构（影像阴影式封面卡）
 
 ### 改动

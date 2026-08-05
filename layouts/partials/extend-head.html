@@ -30,6 +30,14 @@
 <script src="{{ $themeTransition.RelPermalink }}" integrity="{{ $themeTransition.Data.Integrity }}" defer></script>
 
 {{/*
+  notes-card.js（2026-08-05 新增）— DOCS 卡片图 blur-up 模糊占位 + 失败降级
+   - 与 theme-transition.js 同套路：Minify + Fingerprint
+   - 无卡片时 querySelectorAll 落空，对其它页面零副作用
+*/}}
+{{ $notesCard := resources.Get "js/notes-card.js" | resources.Minify | resources.Fingerprint "sha512" }}
+<script src="{{ $notesCard.RelPermalink }}" integrity="{{ $notesCard.Data.Integrity }}" defer></script>
+
+{{/*
   统一管理动画库的初始化：
   - 全部包装在 window.load 里，确保所有 defer 脚本加载完成
   - AOS.init()：检测 prefers-reduced-motion
