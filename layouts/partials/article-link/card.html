@@ -1,111 +1,264 @@
-{{/* Used by
-  1. list.html and term.html (when the cardView option is enabled)
-  2. Recent articles template (when the cardView option is enabled)
-  3. Shortcode list.html
-
-  项目级覆写（2026-06-25）：
-  - 删除 .article-link__summary（不再显示摘要，全局生效）
-  - 其他结构与主题版本保持一致
+{{/*
+  项目级 article-link/card.html
+  ----------------------------------------------------------------
+  覆写 Blowfish 主题默认卡片，改为“左侧文字 + 右侧图片/图标”的横向布局。
+  图片读取优先级：
+    1. data/notes.yaml 中 items[].image
+    2. 文章 frontmatter featureimage / 页面资源 *cover* / *thumbnail*
+    3. 站点默认 featured image（site.Store.defaultFeaturedImage）
+  无图片时降级为图标：
+    1. data/notes.yaml 中 items[].icon
+    2. items[].fallback_tag 或文章首个 tag 在 tag_icons 中匹配
+    3. 默认 file-text 图标
+  ----------------------------------------------------------------
 */}}
+
 {{ $disableImageOptimization := site.Store.Get "disableImageOptimization" }}
 
 {{ $page := .Page }}
 {{ $featured := "" }}
 {{ $featuredURL := "" }}
-{{ $thumbnailAspectRatio := site.Params.thumbnailAspectRatio | default "1.5" }}
-{{ $thumbnailAspectRatio = replaceRE "[^0-9.]" "" $thumbnailAspectRatio }}
-{{ if eq $thumbnailAspectRatio "" }}{{ $thumbnailAspectRatio = "1.5" }}{{ end }}
-{{ if not .Params.hideFeatureImage }}
-  {{/* frontmatter */}}
-  {{ with $page }}
-    {{ with .Params.featureimage }}
-      {{ if or (strings.HasPrefix . "http:") (strings.HasPrefix . "https:") }}
-        {{ if site.Params.hotlinkFeatureImage }}
-          {{ $featuredURL = . }}
+
+{{/* ---- 1. 读取 data/notes.yaml 配置 ---- */}}
+{{ $notesData := hugo.Data.notes | default (dict) }}
+{{ $notesItems := $notesData.items | default slice }}
+{{ $notesTagIcons := $notesData.tag_icons | default (dict) }}
+{{ $pageSlug := .File.ContentBaseName }}
+{{ $notesMatches := where $notesItems "slug" $pageSlug }}
+{{ $notesItem := (dict) }}
+{{ if gt (len $notesMatches) 0 }}{{ $notesItem = index $notesMatches 0 }}{{ end }}
+
+{{/* ---- 2. 解析真实图片（data image 优先） ---- */}}
+{{ with $notesItem.image }}
+  {{ if strings.HasPrefix . "http" }}
+    {{ $featuredURL = . }}
+  {{ else }}
+    {{ $clean := strings.TrimPrefix "/" . }}
+    {{ $featured = resources.Get $clean }}
+    {{ if not $featured }}{{ $featuredURL = . }}{{ end }}
+  {{ end }}
+{{ end }}
+
+{{/* ---- 3. 其次读取页面 frontmatter / 页面资源 ---- */}}
+{{ if not (or $featured $featuredURL) }}
+  {{ if not .Params.hideFeatureImage }}
+    {{ with $page }}
+      {{ with .Params.featureimage }}
+        {{ if or (strings.HasPrefix . "http:") (strings.HasPrefix . "https:") }}
+          {{ if site.Params.hotlinkFeatureImage }}
+            {{ $featuredURL = . }}
+          {{ else }}
+            {{ $featured = resources.GetRemote . }}
+          {{ end }}
         {{ else }}
-          {{ $featured = resources.GetRemote . }}
+          {{ $featured = resources.Get . }}
         {{ end }}
-      {{ else }}
-        {{ $featured = resources.Get . }}
       {{ end }}
-    {{ end }}
 
-    {{/* page resources */}}
-    {{ if not (or $featured $featuredURL) }}
-      {{ $images := .Resources.ByType "image" }}
-      {{ range slice "*feature*" "*cover*" "*thumbnail*" }}
-        {{ if not $featured }}{{ $featured = $images.GetMatch . }}{{ end }}
+      {{ if not (or $featured $featuredURL) }}
+        {{ $images := .Resources.ByType "image" }}
+        {{ range slice "*feature*" "*cover*" "*thumbnail*" }}
+          {{ if not $featured }}{{ $featured = $images.GetMatch . }}{{ end }}
+        {{ end }}
       {{ end }}
-    {{ end }}
 
-    {{/* fallback to default */}}
-    {{ if not (or $featured $featuredURL) }}
-      {{ $default := site.Store.Get "defaultFeaturedImage" }}
-      {{ if $default.url }}
-        {{ $featuredURL = $default.url }}
-      {{ else if $default.obj }}
-        {{ $featured = $default.obj }}
+      {{ if not (or $featured $featuredURL) }}
+        {{ $default := site.Store.Get "defaultFeaturedImage" }}
+        {{ if $default.url }}
+          {{ $featuredURL = $default.url }}
+        {{ else if $default.obj }}
+          {{ $featured = $default.obj }}
+        {{ end }}
       {{ end }}
-    {{ end }}
 
-    {{/* generate image URL if not hotlink */}}
-    {{ if not $featuredURL }}
-      {{ with $featured }}
-        {{ $featuredURL = .RelPermalink }}
-        {{ if not (or $disableImageOptimization (eq .MediaType.Subtype "svg")) }}
-          {{ $featuredURL = (.Resize "600x").RelPermalink }}
+      {{ if not $featuredURL }}
+        {{ with $featured }}
+          {{ $featuredURL = .RelPermalink }}
+          {{ if not (or $disableImageOptimization (eq .MediaType.SubType "svg")) }}
+            {{ $featuredURL = (.Resize "600x").RelPermalink }}
+          {{ end }}
         {{ end }}
       {{ end }}
     {{ end }}
   {{ end }}
 {{ end }}
 
+{{/* ---- 4. 无图片时解析图标 ---- */}}
+{{ $iconName := "" }}
+{{ if not (or $featuredURL $featured) }}
+  {{ with $notesItem.icon }}
+    {{ $iconName = . }}
+  {{ end }}
 
-<article
-  class="article-link--card relative min-h-full min-w-full overflow-hidden rounded-lg border border-neutral-300 dark:border-neutral-600">
-  {{ with $featuredURL }}
-    <div class="flex-none relative overflow-hidden thumbnail_card" style="--thumbnail-aspect-ratio: {{ $thumbnailAspectRatio }}">
+  {{ if not $iconName }}
+    {{ $fallbackTag := $notesItem.fallback_tag | default "" }}
+    {{ if not $fallbackTag }}
+      {{ with .Params.tags }}{{ $fallbackTag = index . 0 }}{{ end }}
+    {{ end }}
+    {{ if $fallbackTag }}
+      {{ $iconName = index $notesTagIcons $fallbackTag | default "" }}
+    {{ end }}
+  {{ end }}
+
+  {{ if not $iconName }}
+    {{ $iconName = "notebook" }}
+  {{ end }}
+{{ end }}
+
+{{ $hasMedia := or $featuredURL $featured $iconName }}
+{{ $hasImage := or $featuredURL $featured }}
+{{ $isNotes := eq $page.Section "notes" }}
+
+{{/* ============================================================
+   notes section：影像阴影式封面卡片（全背景图 + 底部蒙层文字）
+   ============================================================ */}}
+{{ if $isNotes }}
+<article class="article-link--cover-card{{ if .Draft }} is-draft{{ end }}">
+  {{/* 背景图（铺满卡片，z-index -1）；无图时容器只放渐变底 */}}
+  <div class="cover-card__bg" aria-hidden="true">
+    {{ if $hasImage }}
       <img
-        src="{{ . }}"
+        src="{{ $featuredURL }}"
+        alt=""
         role="presentation"
         loading="lazy"
         decoding="async"
         fetchpriority="low"
-        {{ with $featured }}
-          {{ with .Width }}width="{{ . }}"{{ end }}
-          {{ with .Height }}height="{{ . }}"{{ end }}
+        class="cover-card__bg-img">
+    {{ else }}
+      <span class="cover-card__icon-fallback">
+        {{ partial "cover/icon.html" (dict "name" $iconName "size" 64) }}
+      </span>
+    {{ end }}
+  </div>
+
+  {{/* 文字内容层 */}}
+  <div class="cover-card__content">
+    {{ if and .Draft .Site.Params.article.showDraftLabel }}
+      <span class="cover-card__draft">
+        {{ partial "badge.html" (i18n "article.draft" | emojify) }}
+      </span>
+    {{ end }}
+
+    <div class="cover-card__top">
+      {{/* meta 行：仅渲染日期/字数/时长/views/likes，跳过 tags
+           （tags 由下方 cover-card__tags 单独用圆圈样式渲染，避免与
+            basic.html 输出的蓝边 badge 重复） */}}
+      <div class="cover-card__meta">
+        {{ $showDate := .Params.showDate | default (.Site.Params.article.showDate | default true) }}
+        {{ if $showDate }}
+          <span class="cover-card__meta-item">{{ partial "meta/date.html" .Date }}</span>
+          <span class="cover-card__meta-sep">·</span>
         {{ end }}
-        class="not-prose absolute inset-0 w-full h-full object-cover">
+        {{ if and (.Params.showWordCount | default (.Site.Params.article.showWordCount | default false)) (ne .WordCount 0) }}
+          <span class="cover-card__meta-item">{{ partial "meta/word-count.html" . }}</span>
+          <span class="cover-card__meta-sep">·</span>
+        {{ end }}
+        {{ if and (.Params.showReadingTime | default (.Site.Params.article.showReadingTime | default true)) (ne .ReadingTime 0) }}
+          <span class="cover-card__meta-item">{{ partial "meta/reading-time.html" . }}</span>
+          <span class="cover-card__meta-sep">·</span>
+        {{ end }}
+        {{ if and (not .Params.externalURL) (.Params.showViews | default (.Site.Params.article.showViews | default false)) }}
+          <span class="cover-card__meta-item">{{ partial "meta/views.html" . }}</span>
+          <span class="cover-card__meta-sep">·</span>
+        {{ end }}
+        {{ if and (not .Params.externalURL) (.Params.showLikes | default (.Site.Params.article.showLikes | default false)) }}
+          <span class="cover-card__meta-item">{{ partial "meta/likes.html" . }}</span>
+          <span class="cover-card__meta-sep">·</span>
+        {{ end }}
+      </div>
+      {{ if .Params.showTaxonomies | default (.Site.Params.article.showTaxonomies | default false) }}
+      <div class="cover-card__tags">
+        {{ range $page.GetTerms "tags" }}
+          <a class="cover-card__tag" href="{{ .RelPermalink }}">{{ .LinkTitle }}</a>
+        {{ end }}
+      </div>
+      {{ end }}
     </div>
-  {{ end }}
-  {{ if and .Draft .Site.Params.article.showDraftLabel }}
-    <span class="absolute top-0 right-0 m-2">
-      {{ partial "badge.html" (i18n "article.draft" | emojify) }}
-    </span>
-  {{ end }}
-  <div class="p-4">
-    <header>
-      <a
-        {{ with $page.Params.externalUrl }}
-          href="{{ . }}" target="_blank" rel="external"
-        {{ else }}
-          href="{{ $page.RelPermalink }}"
-        {{ end }}
-        class="not-prose before:absolute before:inset-0 decoration-primary-500 dark:text-neutral text-xl font-bold text-neutral-800 hover:underline hover:underline-offset-2">
-        <h2>
+
+    <div class="cover-card__bottom">
+      <div class="cover-card__text">
+        <h2 class="cover-card__title">
           {{ .Title | emojify }}
           {{ if .Params.externalUrl }}
-            <span class="cursor-default align-top text-xs text-neutral-400 dark:text-neutral-500">
-              <span class="rtl:hidden">&#8599;</span>
-              <span class="ltr:hidden">&#8598;</span>
-            </span>
+            <span class="cover-card__ext">&#8599;</span>
           {{ end }}
         </h2>
-      </a>
-    </header>
-    <div class="text-sm text-neutral-500 dark:text-neutral-400">
-      {{ partial "article-meta/basic.html" . }}
+      </div>
     </div>
+
+    {{/* 整卡可点击层（stretch link）：覆盖整张卡片，点任意处进文章 */}}
+    <a
+      {{ with $page.Params.externalUrl }}
+        href="{{ . }}" target="_blank" rel="external"
+      {{ else }}
+        href="{{ $page.RelPermalink }}"
+      {{ end }}
+      class="cover-card__clickable"
+      aria-label="{{ .Title }}"
+      tabindex="0"></a>
   </div>
-  <div class="px-6 pt-4 pb-2"></div>
 </article>
+
+{{/* ============================================================
+   其他 section：保留原有「左文字 + 右媒体」列表卡
+   ============================================================ */}}
+{{ else }}
+<article
+  class="article-link--card relative min-h-full min-w-full overflow-hidden rounded-lg border border-neutral-300 dark:border-neutral-600{{ if $hasMedia }} has-media{{ end }}">
+  <div class="article-link__inner">
+    {{/* 左侧：标题、meta、摘要 */}}
+    <div class="article-link__body">
+      {{ if and .Draft .Site.Params.article.showDraftLabel }}
+        <span class="article-link__draft absolute top-0 right-0 m-2">
+          {{ partial "badge.html" (i18n "article.draft" | emojify) }}
+        </span>
+      {{ end }}
+      <div class="article-link__text p-4">
+        <header>
+          <a
+            {{ with $page.Params.externalUrl }}
+              href="{{ . }}" target="_blank" rel="external"
+            {{ else }}
+              href="{{ $page.RelPermalink }}"
+            {{ end }}
+            class="not-prose before:absolute before:inset-0 decoration-primary-500 dark:text-neutral text-xl font-bold text-neutral-800 hover:underline hover:underline-offset-2">
+            <h2>
+              {{ .Title | emojify }}
+              {{ if .Params.externalUrl }}
+                <span class="cursor-default align-top text-xs text-neutral-400 dark:text-neutral-500">
+                  <span class="rtl:hidden">&#8599;</span>
+                  <span class="ltr:hidden">&#8598;</span>
+                </span>
+              {{ end }}
+            </h2>
+          </a>
+        </header>
+        <div class="text-sm text-neutral-500 dark:text-neutral-400">
+          {{ partial "article-meta/basic.html" . }}
+        </div>
+      </div>
+    </div>
+
+    {{/* 右侧：图片或图标 */}}
+    {{ if $hasMedia }}
+    <div class="article-link__media">
+      {{ if $featuredURL }}
+        <img
+          src="{{ $featuredURL }}"
+          alt=""
+          role="presentation"
+          loading="lazy"
+          decoding="async"
+          fetchpriority="low"
+          class="article-link__image not-prose">
+      {{ else }}
+        <span class="article-link__icon" aria-hidden="true">
+          {{ partial "cover/icon.html" (dict "name" $iconName "size" 28) }}
+        </span>
+      {{ end }}
+    </div>
+    {{ end }}
+  </div>
+</article>
+{{ end }}

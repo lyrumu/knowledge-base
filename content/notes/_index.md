@@ -12,8 +12,8 @@ cascade:
     showPagination: true
     showViews: true
     showLikes: true
-# 列表用单列（一行一张卡）
-cardColumns: 1
+# 列表用双列网格（影像阴影式卡片）
+cardColumns: 2
 ---
 
 > 不过现在几乎所有问题 都可以通过 "搜索引擎 + AI + 花时间实践" 解决

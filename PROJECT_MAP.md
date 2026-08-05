@@ -1,6 +1,6 @@
 # 项目地图 — 个人网站 `f:\Notes\`
 
-> 最后更新：2026-07-20 · /life/music/ 侵权防护收紧（精确外链 + 视觉重塑 + 合规声明） · Hugo v0.163.2 · Blowfish v2
+> 最后更新：2026-08-05 · /notes/ 卡片重构为影像阴影式封面卡（双列网格 + 全背景图 + 底部实心面板） · Hugo v0.163.2 · Blowfish v2
 
 ---
 
@@ -21,6 +21,7 @@
 | 改封面的字距 / 大小 / 花边位置 | [`assets/css/_08_cover.css`](file:///F:/Notes/assets/css/_08_cover.css) |
 | 改内页"小封面"的文案 | 对应 `content/xxx/_index.md` 的 frontmatter `kicker / subtitle` |
 | 改 /notes/ 入口展示方式（单列 / 3 列等）| `content/notes/_index.md` frontmatter `cardColumns`（1/2/3） |
+| 改 /notes/ 文章封面图或降级图标 | [`data/notes.yaml`](data/notes.yaml) 的 `items[]`（每篇 `image` / `icon` / `fallback_tag`）+ `tag_icons` 映射 |
 | 改面包屑样式 | [`assets/css/_02_chrome.css`](file:///f:/Notes/assets/css/_02_chrome.css) 的 `nav[aria-label="breadcrumb"]` 规则块（左竖线 + 浅背景指示器） |
 | 改 `notes` 文章的 taxonomy / Edit Link / 上一篇下一篇规则 | [`content/notes/_index.md`](file:///f:/Notes/content/notes/_index.md) 的 `cascade`（只对 `notes` 下文章生效） |
 | 改 `notes` 文章里 tags / categories / series 的维护规范 | [`BLOWFISH_FEATURE_AUDIT.md`](file:///f:/Notes/BLOWFISH_FEATURE_AUDIT.md) 末尾的 `Taxonomies 后续维护约定` |
@@ -83,7 +84,11 @@ f:\Notes\
 │   │   ├── _06_works-cards.css     # ★ projects (3D 倾斜) + resources (瀑布流)
 │   │   ├── _07_music-player.css    # ★ 全局音乐播放器 + copy-toast
 │   │   ├── _08_cover.css           # ★ 首页封面（真 header + masthead + highlights + 花边）
-│   │   └── _09_about.css           # ★ About 页（profile + Now/Focus/Path + 标签 + 液态玻璃联系方式）
+│   │   ├── _09_about.css           # ★ About 页（profile + Now/Focus/Path + 标签 + 液态玻璃联系方式）
+│   │   ├── _10_music-darkside.css  # ★ /life/music/ 暗主题外链玻璃质感
+│   │   ├── _11_theme-transition.css # ★ 主题切换斜向擦除（View Transition API）
+│   │   ├── _12_custom-cursor.css   # ★ 自定义光标（细环 + 延迟跟随）
+│   │   └── _13_notes-card.css      # ★ /notes/ 影像阴影式封面卡（全背景图 + 底部面板）
 │   ├── icons/                      # Simple Icons 品牌色 SVG（github/gmail/qq 等联系方式图标）
 │   └── js/                         # ★ 项目级 JS（2026-07-22 从 static/js 迁入，走 Pipes Minify+Fingerprint）
 │       ├── theme-transition.js     # 主题切换斜向擦除（extend-head.html 引用）
@@ -120,7 +125,8 @@ f:\Notes\
 │   ├── site.yaml                   # 站点 launch_date（只填一次；site-stats 用它计算在线天数）
 │   ├── works.yaml                  # /works/ 子模块清单（projects / resources / tools…）
 │   ├── projects.yaml               # /works/projects/ 项目清单
-│   └── resources.yaml              # /works/resources/ 资源清单
+│   ├── resources.yaml              # /works/resources/ 资源清单
+│   └── notes.yaml                  # /notes/ 每篇文章的封面图 / 降级图标配置 + tag_icons 映射
 │
 ├── layouts/                        # ★ 自定义模板（覆写主题）
 │   ├── _default/list.html          # section 主页 → page-hero + 正文 + 子页面列表（notes/about 当前走这里）
@@ -131,6 +137,7 @@ f:\Notes\
 │   │   │                           #  原因：CSS `@import` 在 Hugo Pipes 不展开（详见 §8 踩坑提醒）
 │   │   │                           #  改为：resources.Match "css/_*.css" + Concat
 │   │   ├── article-pagination.html  # 项目级覆写上一篇/下一篇结构（保留逻辑，只改样式挂钩）
+│   │   ├── article-link/card.html  # 项目级覆写文章卡：notes 走影像阴影式封面卡，其他 section 走左文字+右媒体横向卡
 │   │   ├── cover/icon.html         # Lucide SVG icon 字典
 │   │   ├── cover/page-hero.html    # 内页"小封面" partial
 │   │   ├── home/custom.html        # 封面 partial
@@ -242,6 +249,7 @@ f:\Notes\
 |------|--------|------|
 | notes 入口页正文 | [`content/notes/_index.md`](file:///f:/Notes/content/notes/_index.md) | [`layouts/_default/list.html`](file:///f:/Notes/layouts/_default/list.html) |
 | 文章卡列表 | `content/notes/**` 下的文章 | [`layouts/_default/list.html`](file:///f:/Notes/layouts/_default/list.html) + `article-link/card.html` |
+| 文章封面卡（影像阴影式：全背景图+底部面板） | `data/notes.yaml` `items[].image` → frontmatter `featureimage` → 页面资源 → 站点默认图；无图降级 Lucide 图标 | [`layouts/partials/article-link/card.html`](file:///f:/Notes/layouts/partials/article-link/card.html) + [`assets/css/_13_notes-card.css`](file:///f:/Notes/assets/css/_13_notes-card.css) |
 | 列数控制 | `content/notes/_index.md` frontmatter `cardColumns` | [`layouts/_default/list.html`](file:///f:/Notes/layouts/_default/list.html) |
 | hero + 描述左右并排布局 | — | [`assets/css/_05_cards.css`](file:///F:/Notes/assets/css/_05_cards.css) 的 `.notes-hero-row`（flex 行：左 hero / 右描述文字，640px 以下纵向堆叠） |
 | 后代文章的 `taxonomy / Edit Link / 上一篇下一篇` 默认规则 | [`content/notes/_index.md`](file:///f:/Notes/content/notes/_index.md) 的 `cascade` | [`layouts/page.html`](file:///f:/Notes/layouts/page.html) + `article-meta/basic.html` + `article-pagination.html` |
@@ -633,8 +641,8 @@ hugo new content/notes/<slug>/index.md
 
 **序号规则**：
 - `_01_` ~ `_09_` 已分配给现有模块（详见 §3）
-- `_10_` 当前未用（跳号保留位），`_11_` 已分配给主题切换动画
-- 新文件用下一个两位数 `_12_xxx.css`
+- `_10_` music 暗主题、`_11_` 主题切换动画、`_12_` 自定义光标、`_13_` notes 封面卡 均已占用
+- 新文件用下一个两位数 `_14_xxx.css`
 - **序号大的在后面加载**（能覆盖前面的）
 - 如果新文件依赖前面文件的变量（如 `--accent`），序号必须比被依赖的文件大
 - 不要跳号（`_12_` 用完才能用 `_13_`，不能直接跳到 `_20_`）

@@ -1,0 +1,363 @@
+/* =============================================================================
+   _13_notes-card.css — DOCS 页影像阴影式封面卡片
+   ----------------------------------------------------------------------------
+   配合 layouts/partials/article-link/card.html 的 .article-link--cover-card，
+   在 /notes/ 列表以双列网格展示：全背景图 + 底部实心文字面板。
+   设计参考：user-tmp/blog-card(1)（实心 box-shadow + 底部 text-overlay）。
+   ----------------------------------------------------------------------------
+   设计原则：
+     - 真实图片：铺满卡片作背景，底部叠实心半透明面板承载文字。
+     - 无图文章：渐变底 + Lucide 图标降级。
+     - 顶部 meta 行保留所有 article-meta 数据（日期/阅读/views/likes）。
+     - 底部：标题（限制 2 行）+ tags。
+     - 投影：实心 box-shadow（仿 blog-card(1)），hover 上抬 + 阴影加深。
+   ============================================================================= */
+
+/* -----------------------------------------------------------------------------
+   网格容器
+   -------------------------------------------------------------------------- */
+.section-notes {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 2.5rem 2rem;
+  margin-top: 2.5rem;
+}
+
+@media (max-width: 640px) {
+  .section-notes {
+    grid-template-columns: 1fr;
+    gap: 2rem;
+  }
+}
+
+/* -----------------------------------------------------------------------------
+   cover-card 基础布局
+   -------------------------------------------------------------------------- */
+.article-link--cover-card {
+  position: relative;
+  height: 16rem;
+  border-radius: 0.75rem;
+  overflow: hidden;
+  isolation: isolate;
+  color: #fff;
+  /* 仿 blog-card(1)：实心深色投影，hover 时加深下沉 */
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.45);
+  transition: box-shadow 0.4s cubic-bezier(0.22, 0.61, 0.36, 1),
+              transform 0.4s cubic-bezier(0.22, 0.61, 0.36, 1);
+}
+
+/* -----------------------------------------------------------------------------
+   背景层
+   -------------------------------------------------------------------------- */
+.cover-card__bg {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  overflow: hidden;
+  border-radius: 0.75rem;
+}
+
+.cover-card__bg-img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+  transition: transform 0.6s cubic-bezier(0.22, 0.61, 0.36, 1);
+}
+
+/* 无图降级：渐变底 + 居中图标 */
+.cover-card__icon-fallback {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background:
+    radial-gradient(120% 90% at 30% 20%,
+      color-mix(in srgb, var(--accent) 16%, var(--bg-deep)) 0%,
+      var(--bg-deep) 60%),
+    var(--bg-deep);
+  color: color-mix(in srgb, var(--fg-base) 75%, transparent);
+  transition: transform 0.6s cubic-bezier(0.22, 0.61, 0.36, 1);
+}
+
+html.dark .cover-card__icon-fallback {
+  background:
+    radial-gradient(120% 90% at 30% 20%,
+      color-mix(in srgb, var(--accent) 14%, var(--bg-deep)) 0%,
+      var(--bg-deep) 60%),
+    var(--bg-deep);
+  color: color-mix(in srgb, var(--fg-base) 60%, transparent);
+}
+
+.cover-card__icon-fallback svg {
+  width: 4rem;
+  height: 4rem;
+  display: block;
+}
+
+/* 草稿态：去饱和 */
+.article-link--cover-card.is-draft {
+  filter: grayscale(35%);
+  opacity: 0.85;
+}
+
+/* -----------------------------------------------------------------------------
+   影像阴影：实心 box-shadow（仿 blog-card(1)），hover 加深
+   - 由 .article-link--cover-card 本体承担，无同图模糊层。
+   -------------------------------------------------------------------------- */
+
+/* -----------------------------------------------------------------------------
+   内容层
+   ----------------------------------------------------------------------------
+   不对整张图压暗；只在顶部、底部文字所在区各垫一层局部阴影托板，
+   让文字可读的同时保留图片中部的原色与层次感。
+   -------------------------------------------------------------------------- */
+.cover-card__content {
+  position: relative;
+  z-index: 1;
+  height: 100%;
+  padding: 1.1rem 1.25rem;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  background: transparent;
+  /* 让点击穿透到下方 .cover-card__clickable；交互子元素再单独 auto */
+  pointer-events: none;
+}
+
+/* 草稿标签靠右上 */
+.cover-card__draft {
+  position: absolute;
+  top: 0.75rem;
+  right: 0.75rem;
+  z-index: 2;
+}
+
+/* 顶部文字托板：贴合顶部内容高度的局部阴影 */
+.cover-card__top {
+  margin: -1.1rem -1.25rem 0;
+  padding: 0.85rem 1.25rem 0.7rem;
+  background: linear-gradient(
+    to bottom,
+    rgba(0, 0, 0, 0.55) 0%,
+    rgba(0, 0, 0, 0.2) 70%,
+    transparent 100%
+  );
+  border-radius: 0.75rem 0.75rem 0 0;
+}
+
+/* 顶部 meta 行 */
+.cover-card__top .cover-card__meta {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.5rem;
+  font-family: var(--font-serif-display);
+  font-size: 0.7rem;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: rgba(255, 255, 255, 0.95);
+  text-shadow: 0 1px 4px rgba(0, 0, 0, 0.5);
+}
+
+/* meta 里各 partial 的分隔点/图标颜色统一为透明白 */
+.cover-card__meta :is(span, div) {
+  color: inherit;
+}
+.cover-card__meta .text-primary-500 {
+  color: rgba(255, 255, 255, 0.95) !important;
+}
+.cover-card__meta svg {
+  width: 0.85rem;
+  height: 0.85rem;
+  opacity: 0.95;
+}
+
+/* meta 各小项：去掉 partial 自带的 pulse 占位影响，统一可读 */
+.cover-card__meta-item {
+  display: inline-flex;
+  align-items: center;
+}
+.cover-card__meta-sep {
+  opacity: 0.6;
+  margin: 0 0.1rem;
+}
+/* views/likes 的 loading 占位条在卡片白字下不可见，统一底色为半透白 */
+.cover-card__meta-item .bg-neutral-300,
+.cover-card__meta-item .dark\:bg-neutral-400 {
+  background: rgba(255, 255, 255, 0.6) !important;
+}
+
+/* tags 行（顶部 meta 下方） — 重新启用点击 */
+.cover-card__tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.3rem;
+  margin-top: 0.5rem;
+  position: relative;
+  z-index: 4;
+  pointer-events: auto;
+}
+
+.cover-card__tag {
+  font-family: var(--font-mono);
+  font-size: 0.6rem;
+  padding: 0.1rem 0.5rem;
+  border-radius: 9999px;
+  border: 1px solid rgba(255, 255, 255, 0.4);
+  color: rgba(255, 255, 255, 0.92);
+  background: rgba(0, 0, 0, 0.25);
+  letter-spacing: 0.04em;
+  text-transform: lowercase;
+  text-decoration: none;
+  backdrop-filter: blur(2px);
+  -webkit-backdrop-filter: blur(2px);
+  position: relative;
+  z-index: 4;
+  transition: background 0.25s, border-color 0.25s, color 0.25s;
+}
+
+.cover-card__tag:hover {
+  background: rgba(0, 0, 0, 0.45);
+  border-color: rgba(255, 255, 255, 0.7);
+  color: #fff;
+  text-decoration: none;
+}
+
+/* -----------------------------------------------------------------------------
+   底部：实心半透黑面板（仿 blog-card(1) 的 text-overlay）
+   - 面板向上投出实心阴影，让"面板"从图片上分层浮起
+   - 标题限制 2 行，超出省略，防止小卡片溢出
+   -------------------------------------------------------------------------- */
+.cover-card__bottom {
+  position: relative;
+  z-index: 4; /* 高于 clickable，标题区点击交给整卡层 */
+  margin: 0 -1.25rem -1.1rem;
+  padding: 1.1rem 1.25rem 1rem;
+  /* 实心半透黑面板，上沿极轻渐变过渡避免硬边 */
+  background: linear-gradient(
+    to bottom,
+    rgba(0, 0, 0, 0.55) 0%,
+    rgba(0, 0, 0, 0.82) 40%,
+    rgba(0, 0, 0, 0.88) 100%
+  );
+  /* 仿 blog-card(1)：面板向上投出实心阴影，形成"浮起"分层 */
+  box-shadow: 0 -4px 14px rgba(0, 0, 0, 0.35);
+  border-radius: 0 0 0.75rem 0.75rem;
+}
+
+.cover-card__text {
+  min-width: 0;
+  position: relative;
+  z-index: 1;
+}
+
+.cover-card__title {
+  font-family: var(--font-serif-display);
+  font-size: 1.3rem;
+  font-weight: 500;
+  letter-spacing: -0.01em;
+  line-height: 1.2;
+  font-variation-settings: "opsz" 60;
+  color: #fff;
+  margin: 0;
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
+  line-clamp: 2;
+  overflow: hidden;
+  text-shadow: 0 1px 4px rgba(0, 0, 0, 0.6);
+  transition: color 0.3s ease;
+}
+
+.cover-card__ext {
+  font-size: 0.8em;
+  opacity: 0.85;
+}
+
+/* -----------------------------------------------------------------------------
+   整卡可点击层（stretch link）
+   覆盖整张卡片，置于内容之上但 pointer-events 只让点击穿透到链接；
+   草稿标签等需要独立交互的元素用更高 z-index + pointer-events:auto 提前。
+   -------------------------------------------------------------------------- */
+.cover-card__clickable {
+  position: absolute;
+  inset: 0;
+  z-index: 3;
+  color: transparent;
+  text-decoration: none;
+  /* 父级 .cover-card__content 设了 pointer-events:none 让点击穿透；
+     这里必须重新启用，否则链接本身不接收点击，事件落到底层 <img> 上会把背景图打开 */
+  pointer-events: auto;
+}
+
+/* 让链接能接收键盘聚焦并带走默认 outline */
+.cover-card__clickable:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: -3px;
+  border-radius: 0.75rem;
+}
+
+/* -----------------------------------------------------------------------------
+   Hover 状态（仿 blog-card(1)：上抬 + 实心阴影加深）
+   -------------------------------------------------------------------------- */
+.article-link--cover-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 12px 32px rgba(0, 0, 0, 0.55);
+}
+
+.article-link--cover-card:hover .cover-card__bg-img,
+.article-link--cover-card:hover .cover-card__icon-fallback {
+  transform: scale(1.05);
+}
+
+.article-link--cover-card:hover .cover-card__title {
+  color: var(--accent);
+}
+
+/* 草稿态：禁用上浮和效果 */
+.article-link--cover-card.is-draft:hover {
+  transform: none;
+}
+.article-link--cover-card.is-draft:hover .cover-card__title {
+  color: #fff;
+}
+
+/* -----------------------------------------------------------------------------
+   响应式
+   -------------------------------------------------------------------------- */
+@media (max-width: 640px) {
+  .article-link--cover-card {
+    height: 14rem;
+  }
+  .cover-card__content {
+    padding: 0.9rem 1rem;
+  }
+  .cover-card__top {
+    margin: -0.9rem -1rem 0;
+    padding: 0.7rem 1rem 0.6rem;
+  }
+  .cover-card__bottom {
+    margin: 0 -1rem -0.9rem;
+    padding: 0.9rem 1rem 0.8rem;
+  }
+  .cover-card__title {
+    font-size: 1.1rem;
+  }
+}
+
+/* -----------------------------------------------------------------------------
+   减弱动效偏好
+   -------------------------------------------------------------------------- */
+@media (prefers-reduced-motion: reduce) {
+  .article-link--cover-card,
+  .cover-card__bg-img,
+  .cover-card__icon-fallback,
+  .cover-card__title {
+    transition: none !important;
+  }
+  .article-link--cover-card:hover {
+    transform: none;
+  }
+}

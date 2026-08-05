@@ -301,59 +301,12 @@ html.dark .life-sub-card:hover {
 }
 
 /* =============================================================================
-   notes 文章列表 — 去卡片框 → 纯净列表
+   notes 文章列表 — 影像阴影式封面卡片（_13_notes-card.css 接管）
    ----------------------------------------------------------------------------
-   单列排列，底部细分隔线代替卡片边框；保留内部元素不变。
+   原「去卡片框 → 纯净列表」的 section-notes 压平规则已删除，避免覆盖
+   _13_notes-card.css 的 cover-card 样式。其他 article-link 共享样式
+   （边框、hover 上浮、标题字体）继续沿用本文件 §23 规则。
    ============================================================================= */
-.section-notes .article-link--card {
-  /* 去掉卡片容器样式 */
-  border: none !important;
-  border-radius: 0 !important;
-  background: transparent !important;
-  overflow: visible !important;
-  /* 去掉 hover 上浮和边框变色 */
-  transform: none !important;
-  transition: none !important;
-  /* 底部细线作为列表分隔 */
-  padding-bottom: 0.15rem;
-  border-bottom: 1px solid color-mix(in srgb, var(--line) 50%, transparent) !important;
-  /* min-h-full 强制撑高卡片，去掉以让间距更紧凑 */
-  min-height: 0 !important;
-}
-/* 容器间隙归零，依赖卡片自身的 padding-bottom 和分隔线 */
-.section-notes {
-  gap: 0 !important;
-}
-/* 卡片底部多余的空白 div（仅用于占位）隐藏掉 */
-.section-notes .article-link--card > [class]:empty {
-  display: none;
-}
-.section-notes .article-link--card:last-child {
-  border-bottom: none !important;
-}
-.section-notes .article-link--card:hover {
-  border-color: transparent !important;
-  transform: none !important;
-}
-
-/* 标题 hover 改为更 subtle 的 underline 效果，替代卡片上浮 */
-.section-notes .article-link--card h2 {
-  transition: color 0.3s ease;
-}
-.section-notes .article-link--card:hover h2 {
-  color: var(--accent) !important;
-}
-
-/* 暗色模式下统一去除 .section-notes 内 card 的背景叠加 */
-html.dark .section-notes .article-link--card,
-html.dark .section-notes .article-link--card:hover {
-  background: transparent !important;
-}
-
-/* 缩减站点统计区域与文章列表之间的间距 */
-section.prose:has(+ .section-notes) {
-  margin-bottom: 0.5rem !important;
-}
 
 /* notes hero + 描述文本左(auto) 右(1fr) 并排 */
 .notes-hero-row {

@@ -4,6 +4,39 @@
 
 ---
 
+## 2026-08-05 · DOCS 页卡片样式重构（影像阴影式封面卡）
+
+### 改动
+
+| 文件 | 改动 |
+|---|---|
+| [data/notes.yaml](data/notes.yaml) | 新建：每篇 notes 文章的封面图 / 降级图标配置 + tag→Lucide 图标映射 |
+| [layouts/partials/article-link/card.html](layouts/partials/article-link/card.html) | 新建项目级覆写：notes section 走「全背景图 + 底部实心文字面板」封面卡；其他 section 保留原「左文字+右媒体」横向卡。图片读取优先级：`data/notes.yaml` image → frontmatter featureimage → 页面资源 → 站点默认图；无图降级为 Lucide 图标 |
+| [assets/css/_13_notes-card.css](assets/css/_13_notes-card.css) | 新建：双列网格 + 背景图铺满 + 顶部局部阴影托板（meta）+ 底部实心半透黑面板（标题，2 行 line-clamp）+ 实心 box-shadow（仿 blog-card(1)）+ hover 上抬阴影加深 + 毛玻璃药丸 tags + 整卡 stretch-link 可点击层 |
+| [content/notes/_index.md](content/notes/_index.md) | 新增 `cardColumns: 2` 启用双列网格 |
+| [layouts/_default/list.html](layouts/_default/list.html) | `cardColumns` 控制 + notes section 加 `.section-notes` 类 |
+| [assets/css/_05_cards.css](assets/css/_05_cards.css) | 清理 notes 旧压平规则 |
+
+### 设计决策
+
+- **风格选定**：参考 `user-tmp/blog-card(1)`（实心 box-shadow + 底部 text-overlay 面板）而非 blog-card(2) 的同图模糊投影——更稳重、文字承载更清晰
+- **数据驱动**：每篇文章的封面图走 `data/notes.yaml`，未来补图只改 yaml 不动模板；无图时按 `fallback_tag` 自动匹配 Lucide 图标，再退到默认 `notebook`
+- **指针分层解点击冲突**：父级 `pointer-events: none` 让点击穿透到整卡 stretch-link，tags 单独 `auto` 重新启用——点卡进文章、点 tag 跳 tag 页互不干扰；stretch-link 自身必须显式 `auto` 否则点击落到背景 `<img>` 上会打开图片
+- **标题溢出**：`-webkit-line-clamp: 2` 防止小卡片标题撑出面板
+- **CSS 序号 `_13`**：按 SOP 取下一个序号，自动被 `resources.Match` 加载
+
+### 验证
+
+- 文件审查通过：指针分层、z-index 堆叠、line-clamp、响应式、reduced-motion 均正确
+- 未启动 Hugo 服务（按项目规则由用户本机手动 `hugo server` 验证）
+- 未修改 `/Vault` 只读内容源
+
+### 已知小项（不影响运行）
+
+- `card.html` 顶部注释仍描述"左文字+右图片横向布局"，只适用于非 notes 分支；notes 分支已是全背景图卡。注释略陈旧但代码正确，未改
+
+---
+
 ## 2026-08-04 · 基础 SEO 与搜索引擎收录信息优化
 
 ### 改动

@@ -1,0 +1,80 @@
+# =============================================================================
+# /notes/ 文章封面 / 图标配置
+# -----------------------------------------------------------------------------
+# 作用：为 DOCS 页每篇文章右侧提供自定义图片或降级图标。
+#
+# 读取优先级（在 layouts/partials/article-link/card.html 中实现）：
+#   1. items[].image（真实图片路径）
+#   2. 文章 frontmatter 中的 featureimage / *cover* / *thumbnail* 页面资源
+#   3. items[].icon（Lucide 图标名）
+#   4. 按 fallback_tag 或文章首个 tag 在 tag_icons 中匹配图标
+#   5. 默认图标（notebook）
+# -----------------------------------------------------------------------------
+# 图片存放建议：
+#   - 真实图片可放在 static/image/notes/<slug>.png，然后写 /image/notes/<slug>.png
+#   - 也可以放在 assets/images/ 下，模板会用 resources.Get 处理
+# =============================================================================
+
+# tag → Lucide 图标名 的自动映射（用于无图无 icon 时的降级）
+tag_icons:
+  ai: brain
+  agent: brain
+  chatgpt: brain
+  codex: brain
+  openai: brain
+  tools: hammer
+  software: hammer
+  resources: hammer
+  development: code-2
+  devops: wrench
+  git: code-2
+  github: code-2
+  linux: wrench
+  wsl2: wrench
+  ubuntu: wrench
+  python: package
+  vscode: code-2
+  venv: package
+  pip: package
+  setuptools: package
+  browser: wrench
+  website: wrench
+  terminal: wrench
+  plugin: wrench
+  tips: notebook
+  config: notebook
+  skill: notebook
+  mcp: notebook
+  subscription: notebook
+
+# 每篇文章的独立配置
+items:
+  - slug: Codex-Plus
+    image: "/image/notes/Codex-Plus.png"
+    icon: brain
+    fallback_tag: ai
+
+  - slug: for-agents
+    image: "/image/notes/for-agent.png"
+    icon: brain
+    fallback_tag: agent
+
+  - slug: git-guide
+    image: "/image/notes/git.png"
+    icon: code-2
+    fallback_tag: git
+
+  - slug: good-tools
+    image: "/image/notes/good-tools.png"
+    icon: hammer
+    fallback_tag: tools
+
+  - slug: linux-getting-started
+    image: "/image/notes/linux.png"
+    icon: wrench
+    fallback_tag: linux
+
+  - slug: python-env-setup
+    image: "/image/notes/python-package.png"
+    icon: package
+    fallback_tag: python
