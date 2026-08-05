@@ -11,12 +11,17 @@
   function markLoaded(img) {
     var cur = img.currentSrc || img.src || "";
     if (cur.indexOf("data:image") === 0) {
-      // 无 srcset 支持的浏览器：currentSrc 仍是 LQIP，直接换成主图
-      var full = img.getAttribute("data-full-src");
-      if (full && img.src !== full) img.src = full;
+      // LQIP 仍在显示：高清图通常由 srcset 异步加载完成，不立即切换 src，
+      // 保持背景模糊占位始终可见。只在无 srcset 支持的环境才手动降级到主图。
+      if (!img.getAttribute("srcset")) {
+        var full = img.getAttribute("data-full-src");
+        if (full && img.src !== full) img.src = full;
+      }
       return;
     }
     img.classList.add("is-loaded");
+    var bg = img.closest(".cover-card__bg");
+    if (bg) bg.classList.add("is-loaded");
   }
 
   function init() {

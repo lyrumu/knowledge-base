@@ -56,11 +56,34 @@
   overflow: hidden;
   border-radius: 0.75rem;
   /* 图片就绪前的底色兜底：避免白屏（与 icon-fallback 同款渐变） */
-  background:
+  background-color: var(--bg-deep);
+  background-image:
+    var(--card-bg-image, none),
     radial-gradient(120% 90% at 30% 20%,
       color-mix(in srgb, var(--accent) 14%, var(--bg-deep)) 0%,
-      var(--bg-deep) 60%),
-    var(--bg-deep);
+      var(--bg-deep) 60%);
+  background-size: cover;
+  background-position: center;
+}
+
+/* 独立的 LQIP 模糊层：确保图片加载前就有模糊占位，且不依赖 img 是否已加载 */
+.cover-card__bg::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  background-image: var(--card-bg-image, none);
+  background-size: cover;
+  background-position: center;
+  filter: blur(16px);
+  opacity: 0.8;
+  transition: opacity 0.55s ease;
+  pointer-events: none;
+}
+
+/* 主图加载完成后隐藏模糊占位层，让清晰的 img 单独呈现 */
+.cover-card__bg.is-loaded::before {
+  opacity: 0;
 }
 
 .cover-card__bg-img {
@@ -68,7 +91,11 @@
   height: 100%;
   object-fit: cover;
   display: block;
-  transition: transform 0.6s cubic-bezier(0.22, 0.61, 0.36, 1);
+  position: relative;
+  z-index: 1;
+  transition: transform 0.6s cubic-bezier(0.22, 0.61, 0.36, 1),
+              filter 0.55s ease,
+              opacity 0.55s ease;
 }
 
 /* -----------------------------------------------------------------------------
@@ -260,8 +287,8 @@ html.dark .cover-card__icon-fallback {
 }
 
 /* -----------------------------------------------------------------------------
-   底部：实心半透黑面板（仿 blog-card(1) 的 text-overlay）
-   - 面板向上投出实心阴影，让"面板"从图片上分层浮起
+   底部：白色半透明遮罩面板（与 blog-card(1) 的 text-overlay 一致）
+   - 白底 + 黑字 + 向上投影，hover 时面板变亮
    - 标题限制 2 行，超出省略，防止小卡片溢出
    -------------------------------------------------------------------------- */
 .cover-card__bottom {
@@ -269,16 +296,16 @@ html.dark .cover-card__icon-fallback {
   z-index: 4; /* 高于 clickable，标题区点击交给整卡层 */
   margin: 0 -1.25rem -1.1rem;
   padding: 1.1rem 1.25rem 1rem;
-  /* 实心半透黑面板，上沿极轻渐变过渡避免硬边 */
-  background: linear-gradient(
-    to bottom,
-    rgba(0, 0, 0, 0.55) 0%,
-    rgba(0, 0, 0, 0.82) 40%,
-    rgba(0, 0, 0, 0.88) 100%
-  );
-  /* 仿 blog-card(1)：面板向上投出实心阴影，形成"浮起"分层 */
-  box-shadow: 0 -4px 14px rgba(0, 0, 0, 0.35);
+  background: rgba(255, 255, 255, 0.6);
+  box-shadow: 0 -2px 12px rgba(0, 0, 0, 0.3);
   border-radius: 0 0 0.75rem 0.75rem;
+  transition: background 0.45s ease;
+  backdrop-filter: blur(2px);
+  -webkit-backdrop-filter: blur(2px);
+}
+
+.article-link--cover-card:hover .cover-card__bottom {
+  background: rgba(255, 255, 255, 0.8);
 }
 
 .cover-card__text {
@@ -294,20 +321,21 @@ html.dark .cover-card__icon-fallback {
   letter-spacing: -0.01em;
   line-height: 1.2;
   font-variation-settings: "opsz" 60;
-  color: #fff;
+  color: rgba(0, 0, 0, 0.85);
   margin: 0;
   display: -webkit-box;
   -webkit-box-orient: vertical;
   -webkit-line-clamp: 2;
   line-clamp: 2;
   overflow: hidden;
-  text-shadow: 0 1px 4px rgba(0, 0, 0, 0.6);
+  text-shadow: none;
   transition: color 0.3s ease;
 }
 
 .cover-card__ext {
   font-size: 0.8em;
-  opacity: 0.85;
+  opacity: 0.6;
+  color: rgba(0, 0, 0, 0.85);
 }
 
 /* -----------------------------------------------------------------------------
@@ -355,7 +383,7 @@ html.dark .cover-card__icon-fallback {
   transform: none;
 }
 .article-link--cover-card.is-draft:hover .cover-card__title {
-  color: #fff;
+  color: rgba(0, 0, 0, 0.85);
 }
 
 /* -----------------------------------------------------------------------------

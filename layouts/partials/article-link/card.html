@@ -134,7 +134,7 @@
 {{ if $isNotes }}
 <article class="article-link--cover-card{{ if .Draft }} is-draft{{ end }}">
   {{/* 背景图（铺满卡片，z-index -1）；无图时容器只放渐变底 */}}
-  <div class="cover-card__bg" aria-hidden="true">
+  <div class="cover-card__bg" aria-hidden="true"{{ if $imgLQIP }} style="--card-bg-image: url('{{ $imgLQIP }}')"{{ end }}>
     {{ if $hasImage }}
       <img
         class="cover-card__bg-img"

@@ -53,8 +53,8 @@
       rafId = null;
       return;
     }
-    ringX = lerp(ringX, mouseX, 0.28);
-    ringY = lerp(ringY, mouseY, 0.28);
+    ringX = lerp(ringX, mouseX, 0.43);
+    ringY = lerp(ringY, mouseY, 0.43);
     updateVars();
     rafId = requestAnimationFrame(tick);
   };
