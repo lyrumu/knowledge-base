@@ -5,7 +5,7 @@ draft: false
 description: "日常使用的软件、插件和网站推荐"
 slug: ""
 weight: 0
-tags: [resources, tools, software, macos, windows, browser, website, terminal, plugin]
+tags: [tools, website, os]
 categories: [tools]
 topics: []
 series: []

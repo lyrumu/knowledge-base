@@ -16,7 +16,7 @@ weight: 0
 # =============================================================================
 # 分类与标签
 # =============================================================================
-tags: [linux, wsl2, ubuntu, opencode, hermes, agent]
+tags: [linux, wsl2, agent, opencode]
 categories: [development, devops]
 topics: []
 series: [wsl2]

@@ -16,7 +16,7 @@ weight: 0
 # =============================================================================
 # 分类与标签
 # =============================================================================
-tags: [git, github, version-control, tips]
+tags: [git, project]
 categories: [development, devops]
 topics: []
 series: []

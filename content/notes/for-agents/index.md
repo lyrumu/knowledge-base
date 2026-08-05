@@ -6,7 +6,7 @@ description: "我常用的 AI Agent 工具配置分享 —— OpenCode、AGENTS.
 slug: ""
 aliases: []
 weight: 0
-tags: [agent, opencode, ai, mcp, config, skill]
+tags: [agent, skills, mcp, opencode]
 categories: [tools]
 topics: []
 series: []
