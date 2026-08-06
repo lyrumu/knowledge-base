@@ -1,5 +1,5 @@
 /* =============================================================================
-   custom-cursor.js — 古典细环 + 延迟跟随光标
+   custom-cursor.js — 光晕圆环 + 延迟跟随光标
    ----------------------------------------------------------------------------
    仅在满足以下条件时启用：
      - 非触摸主输入设备 (pointer: fine)
@@ -27,8 +27,7 @@
   container.className = 'custom-cursor';
   container.setAttribute('aria-hidden', 'true');
   container.innerHTML =
-    '<div class="cursor-ring-wrapper"><div class="cursor-ring"></div></div>' +
-    '<div class="cursor-dot-wrapper"><div class="cursor-dot"></div></div>';
+    '<div class="cursor-ring-wrapper"><div class="cursor-ring"></div></div>';
   document.body.appendChild(container);
 
   let mouseX = -100;
@@ -42,8 +41,6 @@
   const lerp = (a, b, n) => (1 - n) * a + n * b;
 
   const updateVars = () => {
-    container.style.setProperty('--cursor-x', mouseX.toFixed(2));
-    container.style.setProperty('--cursor-y', mouseY.toFixed(2));
     container.style.setProperty('--ring-x', ringX.toFixed(2));
     container.style.setProperty('--ring-y', ringY.toFixed(2));
   };

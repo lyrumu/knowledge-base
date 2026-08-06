@@ -6,7 +6,6 @@
 */}}
 <div class="custom-cursor" aria-hidden="true">
   <div class="cursor-ring-wrapper"><div class="cursor-ring"></div></div>
-  <div class="cursor-dot-wrapper"><div class="cursor-dot"></div></div>
 </div>
 {{ $alg := .Site.Params.fingerprintAlgorithm | default "sha512" }}
 {{ $js := resources.Get "js/custom-cursor.js" | resources.Minify | resources.Fingerprint $alg }}
