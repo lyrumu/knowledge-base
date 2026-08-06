@@ -6,7 +6,7 @@ description: "国内订阅 ChatGPT Plus 官方套餐（20 美元）流程：美�
 slug: ""
 aliases: []
 weight: 0
-tags: [chatgpt, codex, agent, subscription]
+tags: [chatgpt, agent, subscription]
 categories: [tools, ai]
 topics: []
 series: []

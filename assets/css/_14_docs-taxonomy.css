@@ -1,0 +1,47 @@
+/* =============================================================================
+   _14_docs-taxonomy.css — DOCS 页 taxonomy 聚合入口（Tags / Categories chip）
+   ----------------------------------------------------------------------------
+   位置：layouts/_default/list.html 的 notes 区段 hero 下方
+   形态：复用 _13_notes-card.css 的 .cover-card__tag 圆角胶囊气质，
+        但为浅底亮色区适配（非暗卡），使用 _01_tokens.css 设计 token。
+   ============================================================================= */
+
+.docs-taxonomy {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.6rem;
+  margin: 0 0 1.5rem;
+}
+
+.docs-taxonomy-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.45rem;
+  font-family: var(--font-mono);
+  font-size: 0.72rem;
+  letter-spacing: 0.04em;
+  text-transform: lowercase;
+  text-decoration: none;
+  padding: 0.3rem 0.85rem;
+  border-radius: 9999px;
+  border: 1px solid var(--line);
+  color: var(--fg-base);
+  background: transparent;
+  transition: border-color 0.25s, background 0.25s, color 0.25s;
+}
+
+.docs-taxonomy-chip:hover {
+  border-color: var(--accent);
+  color: var(--accent);
+  background: var(--selection-bg);
+}
+
+.docs-taxonomy-chip__count {
+  font-size: 0.62rem;
+  line-height: 1;
+  padding: 0.2rem 0.45rem;
+  border-radius: 9999px;
+  background: var(--bg-deep);
+  color: var(--fg-mute);
+  border: 1px solid var(--line);
+}

@@ -109,7 +109,7 @@ git remote add origin https://github.com/YOUR_NAME/YOUR_REPO_NAME.git
 
 ### 2.1 确认同步状态
 
-首先在终端进入项目目录，执行 `git status`：
+首先在终端进入项目目录，执行 `git fetch && git status`：(先拉取github 防止多设备提交时漏掉状态不一致)
 
 | 输出 | 含义 | 操作 |
 |------|------|------|

@@ -49,6 +49,20 @@
 
   {{ if eq $sectionName "notes" }}</div>{{ end }} {{/* /.notes-hero-row */}}
 
+  {{/* notes 区：taxonomy 聚合入口（Hugo 自动生成的全站 tags / categories 聚合页） */}}
+  {{ if eq $sectionName "notes" }}
+  <nav class="docs-taxonomy not-prose" aria-label="Filter by taxonomy">
+    <a class="docs-taxonomy-chip" href="{{ "tags/" | relLangURL }}">
+      <span class="docs-taxonomy-chip__label">Tags</span>
+      <span class="docs-taxonomy-chip__count">{{ len .Site.Taxonomies.tags }}</span>
+    </a>
+    <a class="docs-taxonomy-chip" href="{{ "categories/" | relLangURL }}">
+      <span class="docs-taxonomy-chip__label">Categories</span>
+      <span class="docs-taxonomy-chip__count">{{ len .Site.Taxonomies.categories }}</span>
+    </a>
+  </nav>
+  {{ end }}
+
   {{/* 子页面列表（卡片 / 简单列表）
        默认开启；像 /life/ /works/ 这类已在正文中手写 shortcode 网格的 section，
        可在 frontmatter 里设 showChildList: false 关闭自动重复渲染。 */}}
