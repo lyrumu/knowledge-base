@@ -47,21 +47,49 @@
   {{ if $tracks }}
     {{ range $i, $t := $tracks }}
     {{ $isDisabled := not $t.src }}
+    {{/* 封面：使用 Hugo 资源处理，生成 LQIP + srcset blur-up
+         cover 值形如 image/music/xxx.webp（位于 assets/image/music/ 下）；
+         resources.Get 失败时回退原 cover 值直出，避免白屏 */}}
+    {{ $coverPath := strings.TrimPrefix "/" $t.cover }}
+    {{ $img := resources.Get $coverPath }}
+    {{ $imgLQIP := "" }}
+    {{ $imgSrc := "" }}
+    {{ $imgSrcset := "" }}
+    {{ if $img }}
+      {{ $img1x := $img.Resize "600x webp" }}
+      {{ $imgSrc = $img1x.RelPermalink }}
+      {{ $img2x := $img.Resize "1200x webp" }}
+      {{ if ne $img2x.RelPermalink $img1x.RelPermalink }}
+        {{ $imgSrcset = printf "%s 1x, %s 2x" $img1x.RelPermalink $img2x.RelPermalink }}
+      {{ end }}
+      {{ $tiny := $img.Resize "24x webp" }}
+      {{ $imgLQIP = printf "data:image/webp;base64,%s" (base64Encode $tiny.Content) | safeURL }}
+    {{ else }}
+      {{ $imgSrc = $t.cover }}
+    {{ end }}
+
     <div class="music-item reveal{{ if $isDisabled }} is-disabled{{ end }}"
          data-track
          data-index="{{ $i }}"
          data-src="{{ $t.src }}"
          data-cover="{{ $t.cover }}"
+         {{ with $imgLQIP }}data-cover-lqip="{{ . }}"{{ end }}
+         {{ with $imgSrcset }}data-cover-srcset="{{ . }}"{{ end }}
          data-title="{{ $t.title }}"
          data-artist="{{ $t.artist }}"
          data-album="{{ $t.album }}"
          data-duration="{{ $t.duration }}"
          style="animation-delay: {{ mul $i 0.06 }}s;">
 
-      <div class="music-item-cover">
-        <img src="{{ $t.cover }}" alt="{{ $t.title }}"
+      <div class="music-item-cover blur-img-wrapper"{{ if $imgLQIP }} style="--blur-img: url('{{ $imgLQIP }}')"{{ end }}>
+        <img src="{{ if $imgLQIP }}{{ $imgLQIP }}{{ else }}{{ $imgSrc }}{{ end }}"
+             data-full-src="{{ $imgSrc }}"
+             {{ with $imgSrcset }}srcset="{{ . }}"{{ end }}
+             {{ if $imgLQIP }}data-lqip="1"{{ end }}
+             alt="{{ $t.title }}"
              width="56" height="56"
              loading="lazy" decoding="async"
+             class="blur-img"
              onerror="this.style.opacity='0.15'" />
         <span class="music-item-play-overlay" aria-hidden="true">
           {{ partial "cover/icon.html" (dict "name" "play" "size" 18) }}

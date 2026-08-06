@@ -87,6 +87,8 @@
         el: el,
         src: el.dataset.src || '',
         cover: el.dataset.cover || '',
+        coverLqip: el.dataset.coverLqip || '',
+        coverSrcset: el.dataset.coverSrcset || '',
         title: el.dataset.title || '',
         artist: el.dataset.artist || '',
         album: el.dataset.album || '',

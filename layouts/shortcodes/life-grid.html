@@ -17,17 +17,47 @@
        style="animation-delay: {{ mul $i 0.08 }}s;"
        {{ if $isDraft }}aria-disabled="true" data-draft="true"{{ end }}>
 
-      <div class="life-sub-cover">
-        {{ $style := $s.cover_style | default "image" }}
-        {{ if eq $style "emoji" }}
+      {{ $style := $s.cover_style | default "image" }}
+      {{ if eq $style "emoji" }}
+        <div class="life-sub-cover">
           <span class="life-sub-cover-emoji" aria-hidden="true">{{ $s.cover }}</span>
-        {{ else if eq $style "svg" }}
+        </div>
+      {{ else if eq $style "svg" }}
+        <div class="life-sub-cover">
           <span class="life-sub-cover-svg" aria-hidden="true">{{ $s.cover | safeHTML }}</span>
+        </div>
+      {{ else }}
+        {{/* image 封面：使用 Hugo 资源处理，生成 LQIP + srcset blur-up
+             cover 值形如 image/life/xxx.webp（位于 assets/image/ 下）；
+             resources.Get 失败时回退原 cover 值直出，避免白屏 */}}
+        {{ $coverPath := strings.TrimPrefix "/" $s.cover }}
+        {{ $img := resources.Get $coverPath }}
+        {{ $imgLQIP := "" }}
+        {{ $imgSrc := "" }}
+        {{ $imgSrcset := "" }}
+        {{ if $img }}
+          {{ $img1x := $img.Resize "600x webp" }}
+          {{ $imgSrc = $img1x.RelPermalink }}
+          {{ $img2x := $img.Resize "1200x webp" }}
+          {{ if ne $img2x.RelPermalink $img1x.RelPermalink }}
+            {{ $imgSrcset = printf "%s 1x, %s 2x" $img1x.RelPermalink $img2x.RelPermalink }}
+          {{ end }}
+          {{ $tiny := $img.Resize "24x webp" }}
+          {{ $imgLQIP = printf "data:image/webp;base64,%s" (base64Encode $tiny.Content) | safeURL }}
         {{ else }}
-          {{/* default: image。src 可以是 /image/xxx.webp 或 /svg/xxx.svg */}}
-          <img class="life-sub-cover-img" src="{{ $s.cover }}" alt="{{ $s.name }}" loading="lazy" />
+          {{ $imgSrc = $s.cover }}
         {{ end }}
-      </div>
+
+        <div class="life-sub-cover blur-img-wrapper"{{ if $imgLQIP }} style="--blur-img: url('{{ $imgLQIP }}')"{{ end }}>
+          <img class="life-sub-cover-img blur-img"
+               src="{{ if $imgLQIP }}{{ $imgLQIP }}{{ else }}{{ $imgSrc }}{{ end }}"
+               data-full-src="{{ $imgSrc }}"
+               {{ with $imgSrcset }}srcset="{{ . }}"{{ end }}
+               {{ if $imgLQIP }}data-lqip="1"{{ end }}
+               alt="{{ $s.name }}"
+               loading="lazy" />
+        </div>
+      {{ end }}
 
       <div class="life-sub-body">
         <div class="life-sub-head">

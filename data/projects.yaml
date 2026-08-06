@@ -17,7 +17,7 @@ projects:
   - name: "LINEAR ALGEBRA CALCULATOR"
     title: "Linear Algebra Calculator"
     desc: "A Very simple linear algebra calculation for static website"
-    cover: "/image/linear-algebra-cover.webp"
+    cover: "image/projects/linear-algebra-cover.webp"
     href: "https://lyrumu.github.io/linear_algebra_calculator/"
     repo: "https://github.com/lyrumu/linear_algebra_calculator"
     tags: [linear-algebra,static website,algorithm]

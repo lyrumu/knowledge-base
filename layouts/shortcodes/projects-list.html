@@ -31,10 +31,34 @@
                data-tilt-speed="600"
                data-tilt-scale="1.012">
 
-        {{/* 封面：默认走 /image/works/projects/<slug>.png */}}
-        <div class="project-card-cover">
+        {{/* 封面：assets/image/ 资源 → LQIP blur-up；resources.Get 失败回退原 cover 直出 */}}
+        {{ $coverPath := strings.TrimPrefix "/" $p.cover }}
+        {{ $img := resources.Get $coverPath }}
+        {{ $imgLQIP := "" }}
+        {{ $imgSrc := "" }}
+        {{ $imgSrcset := "" }}
+        {{ if $img }}
+          {{ $img1x := $img.Resize "600x webp" }}
+          {{ $imgSrc = $img1x.RelPermalink }}
+          {{ $img2x := $img.Resize "1200x webp" }}
+          {{ if ne $img2x.RelPermalink $img1x.RelPermalink }}
+            {{ $imgSrcset = printf "%s 1x, %s 2x" $img1x.RelPermalink $img2x.RelPermalink }}
+          {{ end }}
+          {{ $tiny := $img.Resize "24x webp" }}
+          {{ $imgLQIP = printf "data:image/webp;base64,%s" (base64Encode $tiny.Content) | safeURL }}
+        {{ else }}
+          {{ $imgSrc = $p.cover }}
+        {{ end }}
+
+        <div class="project-card-cover blur-img-wrapper"{{ if $imgLQIP }} style="--blur-img: url('{{ $imgLQIP }}')"{{ end }}>
           {{ if $p.cover }}
-            <img src="{{ $p.cover }}" alt="{{ $p.name }}" loading="lazy"
+            <img src="{{ if $imgLQIP }}{{ $imgLQIP }}{{ else }}{{ $imgSrc }}{{ end }}"
+                 data-full-src="{{ $imgSrc }}"
+                 {{ with $imgSrcset }}srcset="{{ . }}"{{ end }}
+                 {{ if $imgLQIP }}data-lqip="1"{{ end }}
+                 alt="{{ $p.name }}"
+                 loading="lazy"
+                 class="blur-img"
                  onerror="this.style.opacity='0.18'" />
           {{ else }}
             <span class="project-card-cover-fallback" aria-hidden="true">

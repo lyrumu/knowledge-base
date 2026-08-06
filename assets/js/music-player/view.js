@@ -54,8 +54,37 @@
       if (text.title)  text.title.textContent  = track.title  || '未知曲目';
       if (text.artist) text.artist.textContent = track.artist ? '· ' + track.artist : '';
       if (cover) {
-        cover.src = track.cover || '';
+        var wrapper = cover.closest('.blur-img-wrapper');
+        if (wrapper) wrapper.classList.remove('is-loaded');
+        cover.classList.remove('is-loaded', 'is-broken');
+
+        // data-cover 在 data/music.yaml 里是相对路径（image/music/xxx.webp），
+        // 播放器只挂在 /life/music/ 下，相对解析会 404，统一补前导斜杠；
+        // 已是绝对路径（/ 开头）或完整 URL（http(s)://）则原样保留。
+        var coverSrc = track.cover || '';
+        if (coverSrc && coverSrc.charAt(0) !== '/' && !/^https?:/.test(coverSrc)) {
+          coverSrc = '/' + coverSrc;
+        }
+
+        if (track.coverLqip) {
+          cover.src = track.coverLqip;
+          // HTML 压缩器会把无引号 data-* 属性里的空格转成 %20，而 dataset 不会还原；
+          // 若直接赋给 srcset，1x/2x 描述符会粘进 URL 导致封面加载失败，故先还原空格。
+          cover.srcset = (track.coverSrcset || '').replace(/%20/g, ' ');
+          cover.setAttribute('data-lqip', '1');
+          cover.setAttribute('data-full-src', coverSrc);
+        } else {
+          cover.src = coverSrc;
+          cover.srcset = '';
+          cover.removeAttribute('data-lqip');
+          cover.removeAttribute('data-full-src');
+        }
         cover.alt = track.title || '';
+
+        // 缓存命中时 load 事件可能不再触发，手动收尾
+        if (cover.complete && window.BlurImage) {
+          window.BlurImage.markLoaded(cover);
+        }
       }
       if (text.duration) text.duration.textContent = fallbackDuration || track.duration || '0:00';
       if (text.current)  text.current.textContent  = '0:00';
