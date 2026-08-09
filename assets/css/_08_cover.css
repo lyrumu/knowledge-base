@@ -132,12 +132,12 @@ html.dark .cover-page {
   width: min(82vw, 66rem);
   aspect-ratio: 1.55;
   pointer-events: none;
-  opacity: 0.5;
+  opacity: 0.62;
   transform: translate(-50%, -50%);
 }
 
 html.dark .cover-music-field {
-  opacity: 0.44;
+  opacity: 0.62;
 }
 
 .cover-content > :not(.cover-music-field) {
@@ -170,7 +170,7 @@ html.dark .cover-music-field {
 .cover-music-field__disc::after {
   position: absolute;
   inset: 10%;
-  background: url("/image/cover-violin-engraving.png") center / contain no-repeat;
+  background: url("/image/cover-violin-engraving.webp") center / contain no-repeat;
   content: "";
   filter: grayscale(1) sepia(0.28) contrast(1.08);
   mix-blend-mode: multiply;
@@ -418,10 +418,10 @@ html.dark .cover-music-field__disc::after {
     left: 64%;
     top: 38%;
     width: 135vw;
-    opacity: 0.4;
+    opacity: 0.5;
   }
   html.dark .cover-music-field {
-    opacity: 0.36;
+    opacity: 0.5;
   }
   .cover-music-field__disc {
     width: 18rem;

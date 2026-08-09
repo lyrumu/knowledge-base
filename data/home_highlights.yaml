@@ -16,15 +16,15 @@ sections:
       kind: "docs-stack"
       alt: "Selected covers from the documentation archive"
       assets:
-        - "image/notes/Codex-Plus.png"
-        - "image/notes/for-agent.png"
-        - "image/notes/git.png"
+        - "image/notes/Codex-Plus.webp"
+        - "image/notes/for-agent.webp"
+        - "image/notes/git.webp"
 
   - id: "works"
     kicker: "Built & Shared"
     desc: "Projects and things made to be opened, tested, or downloaded rather than only read about."
     cta_label: "Open Works"
-    cta_path: "/works/"
+    cta_path: "/works/projects/"
     meta:
       - "Projects"
     visual:
@@ -37,7 +37,7 @@ sections:
     kicker: "Slow & Small"
     desc: "Collect some high-quality items"
     cta_label: "Open Daily"
-    cta_path: "/life/"
+    cta_path: "/life/music/"
     meta:
       - "Listening"
     visual:

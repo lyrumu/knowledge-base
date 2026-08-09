@@ -67,8 +67,18 @@ showLikes: true
 
 ## Website & Project
 
+### To learn
+
 - [HelloGithub](https://hellogithub.com/) - 每月提供丰富的优质项目推荐
 - [Vibehub](https://vibe-hub.org/) - 提供Vibecoding学习资源
+
+### Resources
+
 - [Sweeezy Cursors](https://sweezy-cursors.com/) - 提供丰富鼠标指针样式资源
 - [Openflac](https://www.openflac.com/) - 音频资源
+- [OpenClipart](https://openclipart.org/) - 丰富优质的svg图像资源
+
+### Tools
+
 - [SoniqTools](https://soniqtools.com/zh/) - 音频处理工具在线网站
+- [FreeConvert](https://www.freeconvert.com/zh-CN) - 把图片转换为webp 让你的网站加载更快 负载更低

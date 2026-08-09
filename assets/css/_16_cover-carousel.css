@@ -447,6 +447,16 @@ a.cover-carousel-card-surface:focus-visible .cover-carousel-cta span {
 
 /* Desktop progressive enhancement：整个封面固定，滚动只驱动三卡顺序显现。 */
 @media (min-width: 721px) {
+  /*
+    cover-carousel.js 使用 defer：在它添加 .is-enhanced 前，基础三卡布局会
+    短暂完成绘制，露出 LQIP 模糊占位图。仅对已确认可执行 JavaScript 的页面
+    预先隐藏卡片区；无 JavaScript 时没有 html 标记，保留原有静态降级内容。
+  */
+  html.has-cover-carousel-js .cover-carousel-scene:not(.is-enhanced) .cover-carousel-intro,
+  html.has-cover-carousel-js .cover-carousel-scene:not(.is-enhanced) .cover-carousel-visual-clip {
+    visibility: hidden;
+  }
+
   .cover-page.is-carousel-enhanced {
     height: 320svh;
     padding-block: 0;

@@ -51,31 +51,31 @@ tag_icons:
 # 每篇文章的独立配置
 items:
   - slug: Codex-Plus
-    image: "image/notes/Codex-Plus.png"
+    image: "image/notes/Codex-Plus.webp"
     icon: brain
     fallback_tag: ai
 
   - slug: for-agents
-    image: "image/notes/for-agent.png"
+    image: "image/notes/for-agent.webp"
     icon: brain
     fallback_tag: agent
 
   - slug: git-guide
-    image: "image/notes/git.png"
+    image: "image/notes/git.webp"
     icon: code-2
     fallback_tag: git
 
   - slug: good-tools
-    image: "image/notes/good-tools.png"
+    image: "image/notes/good-tools.webp"
     icon: hammer
     fallback_tag: tools
 
   - slug: linux-getting-started
-    image: "image/notes/linux.png"
+    image: "image/notes/linux.webp"
     icon: wrench
     fallback_tag: linux
 
   - slug: python-env-setup
-    image: "image/notes/python-package.png"
+    image: "image/notes/python-package.webp"
     icon: package
     fallback_tag: python

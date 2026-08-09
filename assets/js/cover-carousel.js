@@ -178,8 +178,10 @@
 
     measure();
     const targetScroll = state.measurements.start + state.measurements.distance * cardsReadyProgress;
-    window.scrollTo({ top: targetScroll, behavior: "auto" });
-    applyVerticalProgress(cardsReadyProgress);
+
+    // 平滑滚动本身驱动 updateFromScroll → applyVerticalProgress。
+    // 不在点击瞬间把三卡设为最终状态，避免成品画面先闪出、页面才开始滑动。
+    window.scrollTo({ top: targetScroll, behavior: "smooth" });
   }
 
   window.addEventListener("scroll", scheduleScrollUpdate, { passive: true });

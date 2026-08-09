@@ -29,10 +29,15 @@ sharingLinks: []
 
 ***
 
-## Skill
+## Skills && Plugins
 
+### Skills管理工具
 - [Vercel官网提供的skill管理工具](https://www.skills.sh/)
 - [SkillHub](https://www.skillhub.cn/)
+
+### Great Skills && Plugins
+- [Ponytail(Plugin)](https://github.com/DietrichGebert/ponytail) - 节省你的tokens
+
 
 
 ***
@@ -217,4 +222,8 @@ mkdir -p ~/.config/opencode && cp opencode.jsonc ~/.config/opencode/
 
 ***
 
-## AGENTS.md
+## AGENTS.md && Claude.md
+
+### 第一性原理
+
+### 对抗性审查
