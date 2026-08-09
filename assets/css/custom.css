@@ -36,6 +36,7 @@
    └─├─ 页面专属
    │  _08_cover.css         — 封面页（首页全屏 + 装饰花边 + 字符入场）
    │  _09_about.css         — About 页（profile + 标签 + 液态玻璃联系方式）
+   │  _16_cover-carousel.css — 首页整体 sticky + Vertical 三卡顺序显现 + mobile rail
 
     ├─ 交互增强
     │  _11_theme-transition.css — DeepWiki 风格斜向擦除主题切换动画（CSS View Transitions）

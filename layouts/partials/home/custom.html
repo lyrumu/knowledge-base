@@ -1,17 +1,17 @@
 {{/*
   Home cover layout — v4
   ----------------------------------------------------------------
-  设计语言：暖白衬线 · 古典花边 · 首页式导览
+  设计语言：暖白衬线 · 音乐底片 · 首页式导览
   数据来源：data/cover.yaml + data/home_highlights.yaml
   ----------------------------------------------------------------
 */}}
 {{ $cfg := index hugo.Data "cover" "cover" }}
 {{ $cfg = default (dict
-  "title" "lyrumu"
-  "subtitle" ""
   "kicker" ""
   "epigraph" ""
-  "avatar" ""
+  "headline" "lyrumu"
+  "description" ""
+  "explore_label" "Scroll to explore"
   "show_stats" false
 ) $cfg }}
 {{ $highlights := index hugo.Data "home_highlights" }}
@@ -37,136 +37,62 @@
     --pal-kicker:  var(--fg-soft);
     --pal-line:    var(--line);
     --pal-epi:     var(--fg-soft);
-    --pal-btn-bd:  var(--fg-base);
-    --pal-btn-fg:  var(--fg-base);
-    --pal-btn-hbg: var(--fg-base);
-    --pal-btn-hfg: var(--bg-base);
     --pal-accent:  var(--accent);
   }
 </style>
 
 <div class="cover-page">
-  {{/* 噪点叠加 */}}
-  <div class="cover-grain" aria-hidden="true"></div>
-
-  {{/* 顶部 / 底部 黑色花边（无缝拼接 + 横向滚动） */}}
-  <div class="cover-flower-strip cover-flower-strip-top" aria-hidden="true"></div>
-  <div class="cover-flower-strip cover-flower-strip-bottom" aria-hidden="true"></div>
-
-  {{/*
-    背景花朵（只保留黑花，避免色彩抢正文）
-    2026-07-22：4 个角的 items 完全相同（右侧靠 CSS scaleX(-1) 镜像），
-    提取成 $flowerItems 一份坐标，只循环 4 个 clusterClass 位置 →
-    改坐标只需改一处（原写法要改 4 份易漏改）。
-  */}}
-  <div class="cover-flowers" aria-hidden="true">
-    {{ $flowerItems := slice
-      (dict "file" "黑色花.webp" "class" "cover-flower-black" "w" 242 "x" 18 "y" 4  "r" -11 "o" 0.35)
-      (dict "file" "黑色花.webp" "class" "cover-flower-black" "w" 308 "x" -4 "y" 34 "r" 9 "o" 0.48)
-      (dict "file" "黑色花.webp" "class" "cover-flower-black cover-flower-soft" "w" 168 "x" 30 "y" 80 "r" -3 "o" 0.27)
-    }}
-    {{ range $posClass := slice
-      "cover-flower-cluster--top-left"
-      "cover-flower-cluster--top-right"
-      "cover-flower-cluster--bottom-left"
-      "cover-flower-cluster--bottom-right"
-    }}
-      <div class="cover-flower-cluster {{ $posClass }}">
-        {{ range $flowerItems }}
-        <img
-          src="/image/{{ .file }}"
-          alt=""
-          loading="eager"
-          decoding="async"
-          fetchpriority="high"
-          class="cover-flower-sprite {{ .class }}"
-          style="
-            width: {{ .w }}px;
-            left: {{ .x }}%;
-            top: {{ .y }}%;
-            opacity: {{ .o }};
-            --rot: {{ .r }}deg;
-          ">
-        {{ end }}
-      </div>
-    {{ end }}
+  {{/* 独立裁剪装饰层：避免 cover-page 的 overflow 破坏后续 sticky carousel */}}
+  <div class="cover-ornaments" aria-hidden="true">
+    {{/* 噪点叠加 */}}
+    <div class="cover-grain"></div>
   </div>
 
-  {{/* 顶部细线 + 罗马式时间戳 */}}
-  <div class="cover-eyebrow reveal">
-    <span class="cover-eyebrow-rule"></span>
-    <span class="cover-eyebrow-text">{{ now.Format "MMVI · MMXXVI" }}</span>
-    <span class="cover-eyebrow-rule"></span>
-  </div>
-
-  <main class="cover-content">
-    {{/*
-      封面 view_home 数据展示（顶左角）
-      ----------------------------------------------------------------
-      - 由 Firebase 后端自动通过 vendor.html 注入
-        （themes/blowfish/layouts/partials/vendor.html `else if eq .Kind "home"`）
-      - 复用 notes 文章 meta/views.html 的加载骨架与命名约定
-        （id="views_home" → firebase.js 通过 querySelectorAll("span[id^='views_']") 自动接管）
-      - firebase.js 的 toggleLoaders 会**切换**内层 span className 上的所有 class，
-        因此：
-          • 「样式承载」class（cover-views-num）放外层 wrapper，✅ 不被切换
-          • 「加载骨架」class（animate-pulse）单独放内层 span，被切换走后露出数字
-      - 不包卡片、不包边框，仅「数字 + eye 图标」一行
-      - 视觉：仅数字 + eye 图标，淡而克制（绝对定位到封面顶左角）
-    */}}
-    <div class="cover-views-meta" title="home page views">
-      <span class="cover-views-figure">
-        <span class="cover-views-num">
-          <span
-            id="views_home"
-            class="animate-pulse"
-            title="home views">···</span>
-        </span>
-        <span class="cover-views-eye" aria-hidden="true">{{ partial "icon.html" "eye" }}</span>
-      </span>
+  <div class="cover-content">
+    {{/* 原型完整音乐底片：唱片、五线谱、双轨道与四个漂浮音符。 */}}
+    <div class="cover-music-field" aria-hidden="true">
+      <span class="cover-music-field__disc"></span>
+      <span class="cover-music-field__staff cover-music-field__staff--one"></span>
+      <span class="cover-music-field__staff cover-music-field__staff--two"></span>
+      <span class="cover-music-field__orbit cover-music-field__orbit--one"></span>
+      <span class="cover-music-field__orbit cover-music-field__orbit--two"></span>
+      <span class="cover-floating-note cover-floating-note--one">♪</span>
+      <span class="cover-floating-note cover-floating-note--two">♩</span>
+      <span class="cover-floating-note cover-floating-note--three">♫</span>
+      <span class="cover-floating-note cover-floating-note--four">♬</span>
     </div>
 
     <section class="cover-masthead">
-      {{ with $cfg.kicker }}
-      <p class="cover-kicker">{{ . }}</p>
-      {{ else }}
-      <p class="cover-kicker">PRO TEMPLUM</p>
-      {{ end }}
-
-      <div class="cover-identity">
-        {{ with $cfg.avatar }}
-        <img
-          class="cover-avatar"
-          src="{{ . | relURL }}"
-          alt="lyrumu"
-          width="88"
-          height="88"
-          loading="eager"
-          decoding="async"
-          fetchpriority="high" />
-        {{ end }}
-
-        <div class="cover-identity-copy">
-          <h1 class="cover-title">{{ $cfg.title }}</h1>
-
-          {{ with $cfg.epigraph }}
-          <p class="cover-epigraph">{{ . }}</p>
+      <div class="cover-header-rail">
+        <div class="cover-masthead-meta">
+          {{ with $cfg.kicker }}
+          <p class="cover-kicker">{{ . }}</p>
+          {{ else }}
+          <p class="cover-kicker">PRO TEMPLUM</p>
           {{ end }}
 
-          {{ if or $cfg.subtitle $cfg.show_stats }}
-          <div class="cover-info-island">
-            {{ with $cfg.subtitle }}
-            <p class="cover-subtitle">{{ . }}</p>
-            {{ end }}
-
-            {{ if $cfg.show_stats }}
-            <div class="cover-stats">
-              {{ partial "site-stats.html" . }}
-            </div>
-            {{ end }}
+          {{/* view_home 仍由 Firebase 原逻辑接管，只移动视觉位置。 */}}
+          <div class="cover-views-meta" title="home page views">
+            <span class="cover-views-figure">
+              <span class="cover-views-num">
+                <span
+                  id="views_home"
+                  class="animate-pulse"
+                  title="home views">···</span>
+              </span>
+              <span class="cover-views-eye" aria-hidden="true">{{ partial "icon.html" "eye" }}</span>
+            </span>
           </div>
-          {{ end }}
         </div>
+
+        {{ with $cfg.epigraph }}<p class="cover-epigraph">{{ . }}</p>{{ end }}
+
+        {{/* 保留 site-stats 原有数据与实时天数逻辑。 */}}
+        {{ if $cfg.show_stats }}
+        <div class="cover-stats">
+          {{ partial "site-stats.html" . }}
+        </div>
+        {{ end }}
       </div>
     </section>
 
@@ -177,74 +103,11 @@
       <span class="cover-divider-rule"></span>
     </div>
 
-    <section class="cover-highlights" aria-label="Home highlights">
-      {{/* 手动精选：只读 data/home_highlights.yaml 的 sections */}}
-      <div class="cover-highlights-grid">
-        {{ range $section := $highlights.sections }}
-          {{ $sectionHref := $section.cta_path }}
-          {{ $sectionExternal := or (strings.HasPrefix $sectionHref "http://") (strings.HasPrefix $sectionHref "https://") }}
-          {{ $sectionPage := "" }}
-          {{ if and $sectionHref (not $sectionExternal) }}
-            {{ with site.GetPage $sectionHref }}{{ $sectionPage = . }}{{ end }}
-          {{ end }}
-          <section class="cover-highlight-column cover-highlight-column--{{ $section.id }}">
-            <div class="cover-highlight-head">
-              <div class="cover-highlight-heading">
-                {{ with $section.kicker }}
-                <p class="cover-highlight-kicker">{{ . }}</p>
-                {{ end }}
-                <h3 class="cover-highlight-title">{{ $section.title }}</h3>
-              </div>
-            </div>
-
-            {{ with $section.desc }}
-            <p class="cover-highlight-text">{{ . }}</p>
-            {{ end }}
-
-            <div class="cover-highlight-items">
-              {{ range $item := $section.items }}
-                {{ $href := $item.path }}
-                {{ $isExternal := or (strings.HasPrefix $href "http://") (strings.HasPrefix $href "https://") }}
-                {{ $targetPage := "" }}
-                {{ if and $href (not $isExternal) }}
-                  {{ with site.GetPage $href }}{{ $targetPage = . }}{{ end }}
-                {{ end }}
-                {{ if or $isExternal $targetPage }}
-                  {{ $badge := or $item.label $item.tag }}
-                  {{ $title := $item.title }}
-                  {{ if and (not $title) $targetPage }}{{ $title = $targetPage.Title }}{{ end }}
-                  {{ $desc := $item.desc }}
-                  {{ if and (not $desc) $targetPage }}{{ $desc = ($targetPage.Params.description | default $targetPage.Description) }}{{ end }}
-                  <a
-                    href="{{ if $targetPage }}{{ $targetPage.RelPermalink }}{{ else }}{{ $href | safeURL }}{{ end }}"
-                    class="cover-highlight-item"
-                    {{ if $isExternal }}target="_blank" rel="noopener noreferrer"{{ end }}>
-                    {{ with $badge }}
-                    <span class="cover-highlight-item-label">{{ . }}</span>
-                    {{ end }}
-                    <strong class="cover-highlight-item-title">{{ $title }}</strong>
-                    {{ with $desc }}
-                    <span class="cover-highlight-item-desc">{{ . }}</span>
-                    {{ end }}
-                    <span class="cover-highlight-item-link">{{ $item.link_text | default "Open" }} →</span>
-                  </a>
-                {{ end }}
-              {{ end }}
-            </div>
-
-            {{ if or $sectionExternal $sectionPage }}
-            <div class="cover-highlight-footer">
-              <a
-                href="{{ if $sectionPage }}{{ $sectionPage.RelPermalink }}{{ else }}{{ $sectionHref | safeURL }}{{ end }}"
-                class="cover-highlight-footer-link"
-                {{ if $sectionExternal }}target="_blank" rel="noopener noreferrer"{{ end }}>
-                {{ $section.cta_label | default (printf "Open %s" $section.title) }} →
-              </a>
-            </div>
-            {{ end }}
-          </section>
-        {{ end }}
-      </div>
-    </section>
-  </main>
+    {{/* 三个现有入口的语义化封面轮播；无 JS 时仍是普通可访问卡片列表。 */}}
+    {{ partial "home/cover-carousel.html" (dict
+      "Page" .
+      "Sections" $highlights.sections
+      "Cover" $cfg
+    ) }}
+  </div>
 </div>

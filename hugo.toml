@@ -218,9 +218,8 @@ enableEmoji = true
 # 输出格式（2026-06-24 修正两个 WARN）
 # - 加 page = ['HTML']：消除 "no layout file for html for kind page" 警告
 #   （不写 page 时 Hugo 用默认 _default/single.html 也能渲染，但会发 WARN）
-# - JSON 保留：home 的 JSON 输出由 layouts/home.json 提供，消除
-#   "no layout file for json for layout background for kind home" 警告
-#   （主题的 _default/index.json 仍作为其它 kind 的 catch-all）
+# - JSON 保留：home 直接复用主题的 _default/index.json；旧 background
+#   frontmatter 与重复 layouts/home.json 已在首页封面收尾时移除
 # =============================================================================
 [outputs]
   home = ['HTML', 'RSS', 'JSON']

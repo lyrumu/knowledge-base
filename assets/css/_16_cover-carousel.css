@@ -1,0 +1,920 @@
+/* =============================================================================
+   _16_cover-carousel.css — 首页三入口档案展柜
+   ----------------------------------------------------------------------------
+   基线为普通三卡列表；JS 在桌面增强为整体 sticky 的 Vertical 顺序显现。
+   颜色、字体全部复用 _01_tokens.css，不建立第二套主题。
+   ============================================================================= */
+
+.cover-carousel-scene {
+  --cover-header-offset: 0rem;
+  --cover-card-width: clamp(16.5rem, 27.5vw, 26rem);
+  --cover-card-height: clamp(23.5rem, 48vh, 29.5rem);
+  --cover-carousel-ease: cubic-bezier(0.16, 1, 0.3, 1);
+  position: relative;
+  width: 100%;
+  margin-top: 0.25rem;
+}
+
+/* 无 JS / 脚本失败：三条真实入口始终可读、可点击。 */
+.cover-carousel-stage {
+  position: relative;
+  width: 100%;
+}
+
+/* 首帧卷首语：左侧说明本站，右侧继续留给 _08_cover.css 的音乐底片。 */
+.cover-home-intro {
+  display: grid;
+  gap: clamp(0.9rem, 1.6vw, 1.25rem);
+  width: min(100%, 44rem);
+  min-width: 0;
+  padding: clamp(1.5rem, 4vw, 3.5rem) 0 clamp(2.75rem, 6vw, 5rem);
+  color: var(--pal-title, var(--fg-base));
+}
+
+.cover-home-intro h1,
+.cover-home-intro p {
+  margin: 0;
+}
+
+.cover-home-intro h1 {
+  max-width: 100%;
+  min-width: 0;
+  font-family: var(--font-serif-display);
+  font-size: clamp(2.75rem, 8vw, 5.25rem);
+  font-style: normal;
+  font-weight: 440;
+  letter-spacing: -0.055em;
+  line-height: 0.98;
+  overflow-wrap: anywhere;
+  white-space: pre-line;
+}
+
+.cover-home-intro__description {
+  max-width: 52ch;
+  color: color-mix(in srgb, var(--pal-sub, var(--fg-mute)) 74%, var(--pal-title, var(--fg-base)) 26%);
+  font-family: var(--font-serif-body);
+  font-size: clamp(1rem, 1.25vw, 1.12rem);
+  line-height: 1.58;
+}
+
+.cover-home-intro__index ul {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.15rem 0.9rem;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.cover-home-intro__index li {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.9rem;
+  margin: 0;
+}
+
+.cover-home-intro__index li:not(:last-child)::after {
+  color: var(--pal-accent, var(--accent));
+  content: "·";
+  font-family: var(--font-serif-body);
+}
+
+.cover-home-intro__index a,
+.cover-home-intro__index span {
+  display: inline-flex;
+  align-items: center;
+  min-height: 2.75rem;
+  color: var(--pal-title, var(--fg-base));
+  font-family: var(--font-sans);
+  font-size: 0.68rem;
+  font-weight: 720;
+  letter-spacing: 0.14em;
+  text-decoration-color: transparent;
+  text-decoration-line: underline;
+  text-decoration-thickness: 1px;
+  text-underline-offset: 0.32rem;
+  text-transform: uppercase;
+  white-space: nowrap;
+}
+
+.cover-home-intro__index a {
+  transition: color 220ms var(--cover-carousel-ease), text-decoration-color 220ms var(--cover-carousel-ease);
+}
+
+.cover-home-intro__index a:hover {
+  color: var(--pal-accent, var(--accent));
+  text-decoration-color: currentColor;
+}
+
+.cover-home-intro__index a:focus-visible {
+  outline: 2px solid var(--pal-accent, var(--accent));
+  outline-offset: 0.25rem;
+  text-decoration-color: currentColor;
+}
+
+.cover-carousel-intro {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 1rem;
+  margin-bottom: 1rem;
+  color: var(--pal-sub, var(--fg-mute));
+}
+
+.cover-carousel-intro p,
+.cover-carousel-intro span {
+  margin: 0;
+}
+
+.cover-carousel-intro p {
+  font-family: var(--font-serif-display);
+  font-size: 0.78rem;
+  font-style: italic;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+}
+
+.cover-carousel-intro span {
+  font-family: var(--font-sans);
+  font-size: 0.62rem;
+  font-weight: 650;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+
+.cover-carousel-visual-clip {
+  position: relative;
+  width: 100%;
+}
+
+.cover-carousel-deck {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: clamp(0.8rem, 1.5vw, 1.2rem);
+  width: 100%;
+}
+
+.cover-carousel-card {
+  position: relative;
+  min-width: 0;
+  height: clamp(28rem, 58vw, 35rem);
+}
+
+.cover-carousel-card-surface {
+  position: relative;
+  display: grid;
+  grid-template-rows: minmax(0, 1.65fr) minmax(13rem, auto);
+  width: 100%;
+  height: 100%;
+  overflow: clip;
+  border: 1px solid color-mix(in srgb, var(--pal-line, var(--line)) 82%, transparent);
+  border-radius: 1.1rem;
+  background:
+    linear-gradient(180deg,
+      color-mix(in srgb, var(--pal-bg-from, var(--bg-base)) 94%, transparent),
+      var(--pal-bg-from, var(--bg-base)));
+  color: inherit;
+  box-shadow: 0 1.8rem 4rem -2.6rem color-mix(in srgb, var(--fg-base) 30%, transparent);
+  text-decoration: none !important;
+  transform-style: preserve-3d;
+}
+
+a.cover-carousel-card-surface {
+  cursor: pointer;
+  transition: border-color 260ms var(--cover-carousel-ease), box-shadow 260ms var(--cover-carousel-ease);
+}
+
+a.cover-carousel-card-surface:hover {
+  border-color: color-mix(in srgb, var(--pal-accent, var(--accent)) 58%, var(--pal-line, var(--line)));
+  box-shadow: 0 2rem 4.2rem -2.35rem color-mix(in srgb, var(--fg-base) 38%, transparent);
+}
+
+a.cover-carousel-card-surface:focus-visible {
+  outline: 2px solid var(--pal-accent, var(--accent));
+  outline-offset: -3px;
+}
+
+.cover-carousel-art {
+  position: relative;
+  min-height: 0;
+  overflow: clip;
+  border-bottom: 1px solid color-mix(in srgb, var(--pal-line, var(--line)) 72%, transparent);
+  background:
+    radial-gradient(circle at 65% 22%, color-mix(in srgb, var(--pal-accent, var(--accent)) 13%, transparent), transparent 48%),
+    linear-gradient(145deg,
+      color-mix(in srgb, var(--pal-bg-to, var(--bg-deep)) 72%, var(--pal-bg-from, var(--bg-base))),
+      var(--pal-bg-to, var(--bg-deep)));
+}
+
+/* 图片只承担视觉展示：点击由整卡链接接管，并禁止拖拽或长按打开原图。 */
+.cover-carousel-art,
+.cover-carousel-art * {
+  pointer-events: none;
+  user-select: none;
+  -webkit-touch-callout: none;
+}
+
+.cover-carousel-art img {
+  -webkit-user-drag: none;
+}
+
+.cover-carousel-art::after {
+  position: absolute;
+  right: 0.9rem;
+  top: 0.85rem;
+  z-index: 8;
+  display: grid;
+  width: 1.9rem;
+  height: 1.9rem;
+  place-items: center;
+  border: 1px solid color-mix(in srgb, var(--pal-accent, var(--accent)) 40%, transparent);
+  border-radius: 50%;
+  background: color-mix(in srgb, var(--pal-bg-from, var(--bg-base)) 82%, transparent);
+  color: var(--pal-accent, var(--accent));
+  content: "✦";
+  font-family: var(--font-serif-display);
+  font-size: 0.75rem;
+}
+
+.cover-carousel-image {
+  display: block;
+}
+
+.cover-carousel-image--fallback {
+  display: grid;
+  place-items: center;
+  background: var(--pal-bg-to, var(--bg-deep));
+  color: var(--pal-accent, var(--accent));
+  font-family: var(--font-serif-display);
+}
+
+.cover-carousel-art-layer {
+  position: absolute;
+  overflow: clip;
+  border: 1px solid color-mix(in srgb, var(--pal-line, var(--line)) 88%, transparent);
+  background: var(--pal-bg-from, var(--bg-base));
+  box-shadow: 0 1rem 2.7rem -1.45rem color-mix(in srgb, var(--fg-base) 36%, transparent);
+}
+
+.cover-carousel-art-layer .blur-img {
+  object-fit: cover;
+}
+
+/* DOCS：真实笔记封面的三层档案堆叠。 */
+.cover-carousel-art--docs-stack .cover-carousel-art-layer {
+  left: 50%;
+  top: 50%;
+  width: 78%;
+  aspect-ratio: 16 / 9;
+}
+
+.cover-carousel-art--docs-stack .cover-carousel-art-layer--1 {
+  z-index: 5;
+  transform: translate(-55%, -28%) rotate(-2deg);
+}
+
+.cover-carousel-art--docs-stack .cover-carousel-art-layer--2 {
+  z-index: 3;
+  transform: translate(-34%, -56%) rotate(8deg);
+}
+
+.cover-carousel-art--docs-stack .cover-carousel-art-layer--3 {
+  z-index: 1;
+  transform: translate(-70%, -77%) rotate(-9deg);
+}
+
+/* WORKS：只呈现作品平面，不模拟浏览器窗口。 */
+.cover-carousel-art--project-stage .cover-carousel-art-layer {
+  inset: clamp(0.7rem, 1.4vw, 1.15rem);
+  transform: rotate(-1.5deg);
+  transition: transform 800ms var(--cover-carousel-ease);
+}
+
+.cover-carousel-card[data-state="active"] .cover-carousel-art--project-stage .cover-carousel-art-layer {
+  transform: rotate(0deg) scale(1.015);
+}
+
+.cover-carousel-art--project-stage .blur-img {
+  filter: saturate(0.9) contrast(1.04);
+}
+
+/* DAILY：三张真实唱片封面构成扇面。 */
+.cover-carousel-art--music-fan .cover-carousel-art-layer {
+  left: 50%;
+  top: 50%;
+  width: 60%;
+  aspect-ratio: 1;
+}
+
+.cover-carousel-art--music-fan .cover-carousel-art-layer--1 {
+  z-index: 1;
+  transform: translate(-96%, -47%) rotate(-14deg);
+}
+
+.cover-carousel-art--music-fan .cover-carousel-art-layer--2 {
+  z-index: 4;
+  transform: translate(-50%, -55%);
+}
+
+.cover-carousel-art--music-fan .cover-carousel-art-layer--3 {
+  z-index: 1;
+  transform: translate(-4%, -47%) rotate(14deg);
+}
+
+.cover-carousel-copy {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  min-width: 0;
+  padding: clamp(1rem, 2.1vw, 1.45rem) clamp(1rem, 2.2vw, 1.55rem) 1.1rem;
+}
+
+.cover-carousel-copy p,
+.cover-carousel-copy h2 {
+  margin: 0;
+}
+
+.cover-carousel-kicker {
+  color: var(--pal-accent, var(--accent));
+  font-family: var(--font-sans);
+  font-size: 0.58rem;
+  font-weight: 720;
+  letter-spacing: 0.13em;
+  text-transform: uppercase;
+}
+
+.cover-carousel-kicker span {
+  margin-right: 0.35rem;
+  font-family: var(--font-serif-body);
+  font-style: italic;
+  font-weight: 500;
+}
+
+.cover-carousel-copy h2 {
+  width: 100%;
+  margin-top: 0.3rem;
+  color: var(--pal-title, var(--fg-base));
+  font-family: var(--font-serif-display);
+  font-size: clamp(2.45rem, 4.2vw, 3.9rem);
+  font-weight: 440;
+  letter-spacing: -0.055em;
+  line-height: 0.92;
+}
+
+.cover-carousel-copy h2::after {
+  display: block;
+  width: 100%;
+  height: 1px;
+  margin-top: 0.55rem;
+  background: linear-gradient(90deg, color-mix(in srgb, var(--pal-line, var(--line)) 90%, transparent), transparent);
+  content: "";
+}
+
+.cover-carousel-description {
+  margin-top: 0.7rem !important;
+  color: color-mix(in srgb, var(--pal-sub, var(--fg-mute)) 80%, var(--pal-title, var(--fg-base)) 20%);
+  font-family: var(--font-serif-body);
+  font-size: 0.94rem;
+  line-height: 1.35;
+}
+
+.cover-carousel-meta {
+  margin-top: 0.45rem !important;
+  color: var(--pal-sub, var(--fg-mute));
+  font-family: var(--font-sans);
+  font-size: 0.59rem;
+  font-weight: 620;
+  letter-spacing: 0.075em;
+  line-height: 1.4;
+  text-transform: uppercase;
+}
+
+.cover-carousel-cta {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.55rem;
+  min-height: 2.75rem;
+  margin-top: auto;
+  color: var(--pal-title, var(--fg-base));
+  font-family: var(--font-sans);
+  font-size: 0.68rem;
+  font-weight: 730;
+  letter-spacing: 0.08em;
+  text-decoration: none !important;
+  text-transform: uppercase;
+}
+
+.cover-carousel-cta span {
+  color: var(--pal-accent, var(--accent));
+  font-size: 0.95rem;
+  transition: transform 260ms var(--cover-carousel-ease);
+}
+
+a.cover-carousel-card-surface:hover .cover-carousel-cta span,
+a.cover-carousel-card-surface:focus-visible .cover-carousel-cta span {
+  transform: translate(0.16rem, -0.16rem);
+}
+
+/* 首屏底部探索提示：仅在桌面 Vertical 增强态出现。 */
+.cover-explore-prompt {
+  display: none;
+  text-decoration: none !important;
+}
+
+.cover-explore-prompt__arrows {
+  display: grid;
+  justify-items: center;
+  gap: 0;
+}
+
+@keyframes cover-explore-arrow {
+  0% {
+    opacity: 0.22;
+    transform: translate3d(0, -0.14rem, 0) rotate(45deg);
+  }
+
+  45%,
+  70% {
+    opacity: 1;
+  }
+
+  100% {
+    opacity: 0.16;
+    transform: translate3d(0, 0.34rem, 0) rotate(45deg);
+  }
+}
+
+/* Desktop progressive enhancement：整个封面固定，滚动只驱动三卡顺序显现。 */
+@media (min-width: 721px) {
+  .cover-page.is-carousel-enhanced {
+    height: 320svh;
+    padding-block: 0;
+  }
+
+  .cover-page.is-carousel-enhanced .cover-content {
+    position: sticky;
+    top: var(--cover-header-height, 5.1rem);
+    height: calc(100svh - var(--cover-header-height, 5.1rem));
+    min-height: 0;
+    margin-top: 0;
+    padding-top: clamp(0.85rem, 2.2vh, 1.5rem);
+    padding-bottom: clamp(0.7rem, 1.2vh, 1rem);
+    overflow: visible;
+  }
+
+  .cover-page.is-carousel-enhanced .cover-header-rail {
+    gap: clamp(0.9rem, 2vw, 2.2rem);
+  }
+
+  .cover-page.is-carousel-enhanced .cover-masthead-meta .cover-views-meta {
+    padding-left: 0.65rem;
+  }
+
+  .cover-page.is-carousel-enhanced .cover-kicker {
+    font-size: 0.66rem;
+    letter-spacing: 0.34em;
+  }
+
+  .cover-page.is-carousel-enhanced .cover-views-num {
+    min-width: 2.1ch;
+    font-size: 0.86rem;
+  }
+
+  .cover-page.is-carousel-enhanced .cover-epigraph {
+    margin: 0;
+    font-size: 0.92rem;
+    line-height: 1.25;
+  }
+
+  .cover-page.is-carousel-enhanced .cover-stats .site-stats {
+    gap: 0.25rem clamp(0.4rem, 1vw, 0.72rem);
+    font-size: clamp(0.66rem, 0.8vw, 0.76rem);
+  }
+
+  .cover-page.is-carousel-enhanced .cover-divider {
+    flex: 0 0 auto;
+    margin: clamp(0.35rem, 0.65vh, 0.55rem) 0 clamp(0.2rem, 0.5vh, 0.4rem);
+  }
+
+  .cover-carousel-scene.is-enhanced {
+    flex: 1 1 auto;
+    min-height: 0;
+    margin-top: 0;
+  }
+
+  .cover-carousel-scene.is-enhanced .cover-home-intro {
+    position: absolute;
+    left: clamp(0.5rem, 4vw, 4.75rem);
+    top: 47%;
+    z-index: 20;
+    width: min(42rem, 49vw);
+    padding: 0;
+    opacity: var(--cover-intro-opacity, 1);
+    /* 透明后的介绍层不能遮住卡片；仅下方仍可见的索引链接恢复交互。 */
+    pointer-events: none;
+    transform: translate3d(0, calc(-50% + var(--cover-intro-y, 0rem)), 0);
+    will-change: transform, opacity;
+  }
+
+  .cover-carousel-scene.is-enhanced .cover-home-intro__index a:not([inert]) {
+    pointer-events: auto;
+  }
+
+  .cover-carousel-scene.is-enhanced .cover-home-intro h1 {
+    font-size: clamp(3.3rem, 5.4vw, 5.25rem);
+  }
+
+  .cover-carousel-scene.is-enhanced .cover-explore-prompt {
+    position: absolute;
+    left: 50%;
+    bottom: clamp(2.8rem, 4.5vh, 3.6rem);
+    z-index: 6;
+    display: grid;
+    justify-items: center;
+    gap: 0.22rem;
+    color: var(--pal-sub, var(--fg-mute));
+    cursor: pointer;
+    font-family: var(--font-sans);
+    opacity: var(--cover-explore-opacity, 1);
+    pointer-events: auto;
+    transform: translate3d(-50%, var(--cover-explore-y, 0rem), 0);
+    transition: opacity 180ms linear, transform 180ms var(--cover-carousel-ease);
+  }
+
+  .cover-carousel-scene.is-enhanced .cover-explore-prompt[inert] {
+    pointer-events: none;
+  }
+
+  .cover-carousel-scene.is-enhanced .cover-explore-prompt:focus-visible {
+    outline: 2px solid var(--pal-accent, var(--accent));
+    outline-offset: 0.45rem;
+  }
+
+  .cover-carousel-scene.is-enhanced .cover-explore-prompt:hover .cover-explore-prompt__label {
+    color: var(--pal-accent, var(--accent));
+  }
+
+  .cover-explore-prompt__label {
+    font-size: 0.68rem;
+    font-weight: 720;
+    letter-spacing: 0.18em;
+    white-space: nowrap;
+    text-transform: uppercase;
+    transition: color 180ms var(--cover-carousel-ease);
+  }
+
+  .cover-explore-prompt__arrow {
+    display: block;
+    width: 0.66rem;
+    height: 0.66rem;
+    margin-top: -0.08rem;
+    border-right: 1px solid var(--pal-accent, var(--accent));
+    border-bottom: 1px solid var(--pal-accent, var(--accent));
+    transform: rotate(45deg);
+    animation: cover-explore-arrow 1.15s var(--cover-carousel-ease) infinite;
+  }
+
+  .cover-explore-prompt__arrow:nth-child(2) {
+    margin-top: -0.2rem;
+    animation-delay: 0.16s;
+  }
+
+  .cover-carousel-scene.is-enhanced .cover-carousel-stage {
+    position: relative;
+    height: 100%;
+    min-height: 0;
+    overflow: visible;
+    isolation: isolate;
+  }
+
+  .cover-carousel-scene.is-enhanced .cover-carousel-intro {
+    position: absolute;
+    left: 0;
+    right: 0;
+    top: 0;
+    z-index: 24;
+    margin: 0;
+    padding-inline: clamp(0rem, 2vw, 1rem);
+    opacity: var(--cover-fields-opacity, 0);
+    pointer-events: none;
+    transform: translate3d(0, var(--cover-fields-y, 0.5rem), 0);
+    will-change: transform, opacity;
+  }
+
+  .cover-carousel-scene.is-enhanced .cover-carousel-visual-clip {
+    position: absolute;
+    inset: 0;
+    overflow: clip;
+  }
+
+  .cover-carousel-scene.is-enhanced .cover-carousel-deck {
+    position: absolute;
+    inset: 0;
+    display: block;
+  }
+
+  .cover-carousel-scene.is-enhanced .cover-carousel-card-surface {
+    grid-template-rows: minmax(0, 1fr) minmax(10.5rem, auto);
+  }
+
+  .cover-carousel-scene.is-enhanced .cover-carousel-copy {
+    padding: 0.75rem 0.95rem 0.7rem;
+  }
+
+  .cover-carousel-scene.is-enhanced .cover-carousel-copy h2 {
+    margin-top: 0.2rem;
+    font-size: clamp(2rem, 3vw, 2.8rem);
+  }
+
+  .cover-carousel-scene.is-enhanced .cover-carousel-copy h2::after {
+    margin-top: 0.35rem;
+  }
+
+  .cover-carousel-scene.is-enhanced .cover-carousel-description {
+    margin-top: 0.45rem !important;
+    font-size: 0.84rem;
+    line-height: 1.28;
+  }
+
+  .cover-carousel-scene.is-enhanced .cover-carousel-meta {
+    display: none;
+  }
+
+  .cover-carousel-scene.is-enhanced .cover-carousel-card {
+    position: absolute;
+    left: 50%;
+    top: 48%;
+    width: var(--cover-card-width);
+    height: var(--cover-card-height);
+    z-index: var(--cover-reveal-layer, 1);
+    opacity: var(--cover-reveal-opacity, 0);
+    filter: saturate(var(--cover-reveal-saturation, 0.7));
+    transform:
+      translate3d(
+        calc(-50% + var(--cover-reveal-x, 72vw)),
+        -50%,
+        0
+      )
+      scale(var(--cover-reveal-scale, 0.965));
+    transition: none;
+    will-change: transform, opacity;
+  }
+
+  /* 尚未出现的卡片不拦截下层点击；进入画面后由整卡链接接管。 */
+  .cover-carousel-scene.is-enhanced .cover-carousel-card[data-state="pending"] {
+    pointer-events: none;
+  }
+
+}
+
+/* Tablet：继续横排，但进一步收紧文字和卡片高度。 */
+@media (min-width: 721px) and (max-width: 980px) {
+  .cover-header-rail {
+    grid-template-columns: max-content minmax(0, 1fr);
+    row-gap: 0.35rem;
+  }
+
+  .cover-stats {
+    grid-column: 1 / -1;
+  }
+
+  .cover-stats .site-stats {
+    justify-content: flex-start;
+    text-align: left;
+  }
+
+  .cover-carousel-scene {
+    --cover-card-width: clamp(13.5rem, 25vw, 16rem);
+    --cover-card-height: clamp(21.5rem, 44vh, 25rem);
+  }
+
+  .cover-carousel-scene.is-enhanced .cover-home-intro {
+    left: 0.5rem;
+    width: min(44vw, 25rem);
+  }
+
+  .cover-carousel-scene.is-enhanced .cover-home-intro h1 {
+    font-size: clamp(2.85rem, 5.8vw, 4rem);
+  }
+
+  .cover-carousel-scene.is-enhanced .cover-home-intro__description {
+    font-size: 0.98rem;
+  }
+
+  .cover-carousel-description {
+    font-size: 0.88rem;
+  }
+
+  .cover-carousel-meta {
+    display: none;
+  }
+}
+
+/* Mobile：不设高 runway、不 sticky、不接管触摸，使用原生 horizontal rail。 */
+@media (max-width: 720px) {
+  .cover-carousel-scene {
+    width: calc(100% + 1.9rem);
+    margin-inline: -0.95rem;
+  }
+
+  .cover-carousel-stage {
+    height: auto;
+  }
+
+  .cover-home-intro {
+    width: 100%;
+    padding: 1.65rem 0.95rem 2.75rem;
+  }
+
+  .cover-home-intro h1 {
+    font-size: clamp(2.3rem, 10.2vw, 3.35rem);
+  }
+
+  .cover-home-intro__description {
+    max-width: 38ch;
+    font-size: 1rem;
+  }
+
+  .cover-home-intro__index ul {
+    gap: 0 0.7rem;
+  }
+
+  .cover-home-intro__index li {
+    gap: 0.7rem;
+  }
+
+  .cover-carousel-intro {
+    padding-inline: 0.95rem;
+  }
+
+  .cover-carousel-intro span {
+    font-size: 0;
+  }
+
+  .cover-carousel-intro span::after {
+    content: "Swipe to explore";
+    font-size: 0.58rem;
+  }
+
+  .cover-carousel-deck,
+  .cover-carousel-scene.is-enhanced .cover-carousel-deck {
+    display: flex;
+    gap: 0.9rem;
+    width: 100%;
+    overflow-x: auto;
+    padding: 0.15rem 9vw 1.4rem;
+    scroll-padding-inline: 9vw;
+    scroll-snap-type: x mandatory;
+    scrollbar-width: none;
+    touch-action: pan-x pan-y;
+  }
+
+  .cover-carousel-deck::-webkit-scrollbar {
+    display: none;
+  }
+
+  .cover-carousel-card,
+  .cover-carousel-scene.is-enhanced .cover-carousel-card,
+  .cover-carousel-scene.is-enhanced .cover-carousel-card[data-state="active"],
+  .cover-carousel-scene.is-enhanced .cover-carousel-card[data-state="previous"],
+  .cover-carousel-scene.is-enhanced .cover-carousel-card[data-state="next"] {
+    position: relative;
+    left: auto;
+    top: auto;
+    z-index: auto;
+    flex: 0 0 min(82vw, 22.5rem);
+    width: min(82vw, 22.5rem);
+    height: min(33rem, 67svh);
+    min-height: 29rem;
+    opacity: 1;
+    filter: none;
+    transform: none;
+    transition: none;
+    scroll-snap-align: center;
+  }
+
+  .cover-carousel-card-surface {
+    grid-template-rows: minmax(0, 1.55fr) minmax(13.5rem, auto);
+  }
+
+  .cover-carousel-copy h2 {
+    font-size: clamp(2.4rem, 12vw, 3.3rem);
+  }
+}
+
+@media (max-width: 360px) {
+  .cover-carousel-deck,
+  .cover-carousel-scene.is-enhanced .cover-carousel-deck {
+    padding-inline: 7vw;
+    scroll-padding-inline: 7vw;
+  }
+
+  .cover-carousel-card,
+  .cover-carousel-scene.is-enhanced .cover-carousel-card {
+    flex-basis: 86vw;
+    width: 86vw;
+  }
+}
+
+/* Reduced motion：完全取消 sticky sequence，三条入口静态呈现。 */
+@media (prefers-reduced-motion: reduce) {
+  .cover-page.is-carousel-enhanced {
+    height: auto;
+    padding-bottom: clamp(4rem, 5vw, 5.3rem);
+  }
+
+  .cover-page.is-carousel-enhanced .cover-content {
+    position: relative;
+    top: auto;
+    height: auto;
+    min-height: 100svh;
+    margin-top: 0;
+    padding-top: calc(var(--cover-header-height, 5.1rem) + clamp(1.1rem, 2.4vh, 1.8rem));
+    padding-bottom: clamp(1.1rem, 2.4vh, 1.8rem);
+  }
+
+  .cover-carousel-scene,
+  .cover-carousel-scene.is-enhanced {
+    height: auto;
+  }
+
+  .cover-carousel-scene .cover-carousel-stage,
+  .cover-carousel-scene.is-enhanced .cover-carousel-stage {
+    position: relative;
+    top: auto;
+    height: auto;
+    min-height: 0;
+  }
+
+  .cover-carousel-scene .cover-carousel-intro,
+  .cover-carousel-scene.is-enhanced .cover-carousel-intro {
+    position: relative;
+    inset: auto;
+    margin-bottom: 1rem;
+    opacity: 1;
+    transform: none;
+    will-change: auto;
+  }
+
+  .cover-carousel-scene .cover-home-intro,
+  .cover-carousel-scene.is-enhanced .cover-home-intro {
+    position: relative;
+    inset: auto;
+    width: min(100%, 44rem);
+    padding: clamp(1.5rem, 4vw, 3.5rem) 0 clamp(2.75rem, 6vw, 5rem);
+    opacity: 1;
+    transform: none;
+    will-change: auto;
+  }
+
+  .cover-carousel-scene .cover-carousel-visual-clip,
+  .cover-carousel-scene.is-enhanced .cover-carousel-visual-clip {
+    position: relative;
+    inset: auto;
+    overflow: visible;
+  }
+
+  .cover-carousel-scene .cover-carousel-deck,
+  .cover-carousel-scene.is-enhanced .cover-carousel-deck {
+    position: relative;
+    inset: auto;
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 1rem;
+    overflow: visible;
+    padding: 0;
+    perspective: none;
+  }
+
+  .cover-carousel-scene .cover-carousel-card,
+  .cover-carousel-scene.is-enhanced .cover-carousel-card,
+  .cover-carousel-scene.is-enhanced .cover-carousel-card[data-state="active"],
+  .cover-carousel-scene.is-enhanced .cover-carousel-card[data-state="previous"],
+  .cover-carousel-scene.is-enhanced .cover-carousel-card[data-state="next"] {
+    position: relative;
+    left: auto;
+    top: auto;
+    z-index: auto;
+    width: 100%;
+    height: clamp(28rem, 58vw, 35rem);
+    opacity: 1;
+    filter: none;
+    transform: none;
+    transition: none;
+  }
+
+  .cover-carousel-scene .cover-explore-prompt,
+  .cover-carousel-scene.is-enhanced .cover-explore-prompt {
+    display: none;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) and (max-width: 980px) {
+  .cover-carousel-scene .cover-carousel-deck,
+  .cover-carousel-scene.is-enhanced .cover-carousel-deck {
+    grid-template-columns: minmax(0, 1fr);
+    max-width: 30rem;
+    margin-inline: auto;
+  }
+}

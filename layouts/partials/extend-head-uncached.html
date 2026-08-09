@@ -1,0 +1,5 @@
+{{/* 首页封面轮播按页面条件加载；此 hook 接收当前 Page，不能 partialCached。 */}}
+{{ if .IsHome }}
+  {{ $carousel := resources.Get "js/cover-carousel.js" | resources.Minify | resources.Fingerprint "sha512" }}
+  <script src="{{ $carousel.RelPermalink }}" integrity="{{ $carousel.Data.Integrity }}" defer></script>
+{{ end }}

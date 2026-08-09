@@ -4,6 +4,68 @@
 
 ---
 
+## 2026-08-09 · 首页数据驱动首帧 + Vertical 三卡顺序显现重构
+
+### 改动
+
+| 文件 | 改动 |
+|---|---|
+| `data/cover.yaml` | 新增 `headline / description / explore_label`，首页核心文案与滚动提示统一改为数据驱动；收尾移除未消费的旧 `title` |
+| `data/home_highlights.yaml` | 建立固定三入口 `visual` 契约；收尾将只被当作标签读取的旧 `items` 简化为显式 `meta` |
+| `layouts/partials/home/cover-carousel.html` | 新增可见语义 H1、站点说明、三栏目文字索引和双尖头提示；路由只解析一次，并对三组数量、唯一 id、目标路由、视觉类型和图片数量做构建期校验 |
+| `layouts/partials/home/carousel-image.html` | 新增 600/1200px 上限 WebP、24px LQIP、尺寸与 srcset；缺图保留视觉 fallback，但同时令构建失败，阻止错误数据发布 |
+| `assets/css/_16_cover-carousel.css` | 新增桌面首帧左右分栏、首帧与栏目提示的滚动交接、错峰循环双尖头、Vertical 三卡顺序显现、移动端 native rail，以及无 JS / reduced-motion 静态降级；收尾删除无 DOM 消费者的 controls 规则 |
+| `assets/js/cover-carousel.js` | 新增首帧文字淡出、栏目提示淡入、document scroll → 三卡连续显现进度、resize/pageshow 与 mobile rail 同步；无 wheel/touch 拦截和永久 rAF |
+| `layouts/partials/home/custom.html` / `_08_cover.css` | 移除全部花边节点、旧 highlights/Aurora CSS 和未使用局部变量；修复嵌套 `<main>`；封面铺满视口并直接衔接页脚，保留完整音乐底片 |
+| `content/_index.md` / `layouts/home.json` / `data/start_here.yaml` | 移除旧 background 首页参数、重复主题 JSON 模板和零引用 Start Here 数据；首页 JSON 回归主题 fallback |
+| `assets/css/_02_chrome.css` | 修复 music 页标题装饰图从不存在的 `/life/music/image/cover-music.webp` 指向实际 `/image/cover-music.webp` |
+| `layouts/partials/head.html` | 移除首页已停用花纹素材的高优先级预加载，避免占用首屏带宽 |
+| `layouts/partials/extend-head-uncached.html` | 只在首页加载指纹化 carousel controller |
+| `assets/js/giscus-loader.js` | 按用户选择仅从 Giscus 白名单移除首页 `/`；其余评论页面保持不变 |
+
+### 设计与交互决策
+
+- 正式站采用原型 `Vertical · sequential horizontal reveal`：个人信息与统计随整个封面固定，滚动只让 DOCS → WORKS → DAILY 从右侧依次显现。
+- 视觉继续复用全站 `--bg-* / --fg-* / --line / --accent` 与 Fraunces / Newsreader / Inter；真实笔记、项目和音乐封面承担信息表达。
+- 桌面使用普通文档滚动 + 整体 CSS sticky，最后三卡横排并自然释放；移动端完全交给原生横向滚动与 scroll-snap。
+- 三卡舞台垂直中心由偏下的 55% 上移到 48%，同时略减卡高，为底部滚动提示保留稳定留白。
+- 删除上下全部花边；封面用与固定导航占位等高的负外边距向上延伸到视口顶端，消除透明导航背后的空白，同时用统一的 header-height 变量保护正文安全区。
+- 桌面增强态压缩卡片文字区并隐藏次要 meta，把更多高度还给图片；DOCS 档案堆叠、WORKS 作品画面与 DAILY 唱片扇面分别放大，保持三卡主视觉比例一致。
+- 顶部信息带收窄后，桌面三卡宽高进一步放大，并同步增加最终横排中心间距，避免卡面增大后相互拥挤；平板与移动端尺寸规则保持不变。
+- 背景唱片内加入 ImageGen 生成的小提琴蚀刻线稿 PNG；素材完成绿幕去背与 768px 压缩，并针对明暗主题分别使用 multiply / screen 低对比度混合，保持为唱片纹理而非贴纸。
+- 整组音乐底片累计向右移动 6 个视口百分点：桌面 `left: 64% → 70%`，移动端 `58% → 64%`；小提琴保持唱片内原始构图，不再单独位移。
+- 首页单独取消页脚默认的 4rem 上外边距；浅色首页的 body 延续封面渐变终点 `--bg-deep`，页脚顶部 padding 从 2.5rem 收紧到 1.25rem；深色主题与其他页面保持不变。
+- 首帧在左侧加入可见主标题、站点定位说明和 `DOCS / WORKS / DAILY` 快速索引；右侧继续保留唱片底片，访客无需滚动即可知道本站内容与入口。
+- 首屏底部提示文案读取 `data/cover.yaml` 的 `explore_label`，改为两个错峰循环的线性下尖头；开始滚动后在场景前 16% 内向下淡出，移动端与 reduced-motion 模式不显示。
+- 封面壳层由有限 bleed 改为真正的 `100vw` 直角全宽展台，内部解除 100rem 上限；桌面三卡宽度同步放宽到最大 24rem。
+- 封面顶部最终收束为单条信息带：`PRO TEMPLUM + 访客数`、`Remembering the deceased`、站点统计三组横排；可见 `lyrumu` 大标题、罗马时间戳和空 subtitle 面板均移除。
+- 首页改为由 `cover.yaml` 驱动的可见语义 H1；721–980px 将统计换到第二行，移动端三组自然纵向排列，花边安全间距与全部统计逻辑不变。
+- 头像改为全站导航品牌的一部分：从 `data/cover.yaml` 读取并放在 `lyrumu's page` 左侧，桌面 32px、移动端 28px；首页封面内的重复头像和对应 CSS 已移除，导航高度保持不变。
+- 首页品牌链接被主题当前页脚本标记时，仅取消 `.site-brand-title` 的下划线；其他导航项的 active 状态保持不变。
+- 三张封面入口由底部 CTA 单点链接改为整张卡片语义链接；底部文字继续作为方向提示，并保留键盘焦点反馈与未显现卡片的 `inert` 防误触。
+- 封面卡片图片层禁用指针命中、原生拖拽与移动端长按预览；点击图片位置统一交给整卡链接，不再打开图片文件。
+- 尚未充分显现的卡片正文暂用 `inert`；显现完成、移动端、reduced-motion 和无 JS 模式均直接暴露三条 CTA。
+
+### 收尾审计与整理
+
+- `cover.yaml → custom.html / header / head / menu`、`home_highlights.yaml → cover-carousel.html → carousel-image.html`、`views_home → Firebase config` 和 `site-stats → data/site/projects/music` 的数据链均已逐项核对。
+- 删除零引用且仍会进入发布目录的 `static/image/上下填充黑色花.webp` 与 `static/image/黑色花.webp`；小提琴、导航头像和 music 页装饰图均有真实消费者，继续保留。
+- `assets/image/melody.webp` 与 `static/image/melody.webp` 内容相同但职责不同：前者供 Hugo Resources/主题图片管线，后者供 `/image/melody.webp` 稳定 URL，因此不合并。
+- 清除 `data-default-index`、`--cover-card-count`、动态 card id class/data attribute、未渲染 controls CSS 等无消费者钩子；保留三卡控制器的显式数量保护。
+- 首页生成结构从嵌套两个 `<main>` 修正为全页唯一一个 `<main>`；carousel 容器补充明确 `region` role。
+
+### 验证
+
+- `hugo --themesDir themes --theme blowfish --config hugo.toml --destination /tmp/lyrumu-cover-header-rail-final --cleanDestinationDir --gc --minify` 构建通过：55 pages、69 processed images。
+- 生成首页顺序为 DOCS / WORKS / DAILY，CTA 分别为 `/notes/`、`/works/`、`/life/`；轮播脚本仅出现在首页。
+- 七张 curated 图片都有 LQIP、srcset 与固有尺寸；仅 DOCS 主图为 `eager + high`，其余 `lazy + low`，500/784px 小图未放大。
+- `node --check assets/js/cover-carousel.js`、`node --check assets/js/giscus-loader.js` 与 `git diff --check` 通过。
+- 补充首帧后再次以隔离临时目录执行 Hugo 生产构建：55 pages、69 processed images；生成首页仅 1 个 H1、2 个下滑尖头，栏目索引依次链接 `/notes/`、`/works/`、`/life/`。
+- 收束装饰层后再次构建通过：生成首页不再包含花纹节点、样式或高优先级预加载；整组音乐底片右移、封面背景覆盖固定导航背后及全屏视口规则均已进入最终 CSS。
+- 底部衔接与音乐底片坐标修正后生产构建通过：55 pages、69 processed images；生成 CSS 中浅色首页延续 `--bg-deep` 且页脚顶部为 1.25rem，音乐底片桌面/移动端分别为 `left: 70% / 64%`，小提琴自身只保留原始旋转。
+- 收尾生产构建通过：55 pages、149 static files、69 processed images；首页为 1 个 main / 1 个 H1 / 3 张 slide / 1 个 carousel region，7 张图片均有 LQIP 且仅首图 eager/high；`index.json` 合法，carousel 脚本只在首页加载，旧钩子、旧样式和花图均未进入生成物。
+- 未启动 Hugo 服务；视觉与 Safari sticky 行为由用户本机 `hugo server` 手动确认。
+
 ## 2026-08-05 · DOCS 卡片图加载优化（blur-up 模糊占位 + 图片管线）
 
 ### 背景
@@ -1230,7 +1292,7 @@ Obsidian 自动生成的 `file-2026xxxxxxxxx.png` 命名无意义，重命名后
 | [_05_cards.css](file:///F:/Notes/assets/css/_05_cards.css) | 1041 | module / vault / article-link / life / music-list / works-sub / file-tree / section-rule |
 | [_06_works-cards.css](file:///F:/Notes/assets/css/_06_works-cards.css) | 553 | projects (3D 倾斜) + resources (瀑布流) |
 | [_07_music-player.css](file:///F:/Notes/assets/css/_07_music-player.css) | 323 | 全局音乐播放器 + `.copy-toast` |
-| [_08_cover.css](file:///F:/Notes/assets/css/_08_cover.css) | 503 | 封面页（全屏 + 花边 + 字符入场）|
+| [_08_cover.css](file:///F:/Notes/assets/css/_08_cover.css) | 503 | 封面页（全屏 + 音乐底片 + 字符入场）|
 | [_09_about.css](file:///F:/Notes/assets/css/_09_about.css) | 356 | About 页（profile + 标签 + 液态玻璃）|
 
 数字前缀 `_01_` → `_09_` 保证 `resources.Match` 按字典序加载时就是正确顺序（tokens 必须最先、覆盖样式最后）。Hugo Pipes `resources.Match "css/_*.css"` 自动发现，新加 `_NN_xxx.css` 不用改 head.html。

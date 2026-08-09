@@ -1,3 +1,6 @@
+{{ $coverConfig := index hugo.Data "cover" "cover" | default (dict) }}
+{{ $brandAvatar := $coverConfig.avatar | default .Site.Params.Author.image }}
+
 <div class="main-menu flex items-center w-full gap-2 p-1 pl-0">
   {{ if .Site.Params.Logo }}
     {{ $logo := resources.Get .Site.Params.Logo }}
@@ -23,7 +26,16 @@
   {{ end }}
   {{ if not .Site.Params.disableTextInHeader | default true }}
     <a href="{{ "" | relLangURL }}" class="site-brand-badge">
-      {{ .Site.Title | markdownify }}
+      {{ with $brandAvatar }}
+        <img
+          class="site-brand-avatar nozoom"
+          src="{{ . | relURL }}"
+          alt=""
+          width="32"
+          height="32"
+          decoding="async">
+      {{ end }}
+      <span class="site-brand-title">{{ .Site.Title | markdownify }}</span>
     </a>
   {{ end }}
   <div class="flex items-center ms-auto">

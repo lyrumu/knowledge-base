@@ -1,0 +1,44 @@
+{{/*
+  Homepage carousel image pipeline.
+  Expects: Path, Alt, Class, Eager.
+  Produces capped WebP variants, intrinsic dimensions and a 24px LQIP.
+*/}}
+{{- $path := .Path | default "" -}}
+{{- $alt := .Alt | default "" -}}
+{{- $class := .Class | default "" -}}
+{{- $eager := .Eager | default false -}}
+{{- $image := resources.Get $path -}}
+
+{{- if $image -}}
+  {{- $oneWidth := 600 -}}
+  {{- if lt $image.Width $oneWidth }}{{ $oneWidth = $image.Width }}{{ end -}}
+  {{- $twoWidth := 1200 -}}
+  {{- if lt $image.Width $twoWidth }}{{ $twoWidth = $image.Width }}{{ end -}}
+  {{- $one := $image.Resize (printf "%dx webp" $oneWidth) -}}
+  {{- $two := $image.Resize (printf "%dx webp" $twoWidth) -}}
+  {{- $tinyWidth := 24 -}}
+  {{- if lt $image.Width $tinyWidth }}{{ $tinyWidth = $image.Width }}{{ end -}}
+  {{- $tiny := $image.Resize (printf "%dx webp" $tinyWidth) -}}
+  {{- $lqip := printf "data:image/webp;base64,%s" (base64Encode $tiny.Content) | safeURL -}}
+  <span class="cover-carousel-image blur-img-wrapper {{ $class }}" style="--blur-img: url('{{ $lqip }}')">
+    <img
+      class="blur-img"
+      src="{{ $lqip }}"
+      data-full-src="{{ $one.RelPermalink }}"
+      data-lqip="1"
+      srcset="{{ $one.RelPermalink }} {{ $one.Width }}w{{ if ne $two.RelPermalink $one.RelPermalink }}, {{ $two.RelPermalink }} {{ $two.Width }}w{{ end }}"
+      sizes="(max-width: 720px) 78vw, (max-width: 980px) 54vw, 30rem"
+      width="{{ $one.Width }}"
+      height="{{ $one.Height }}"
+      alt="{{ $alt }}"
+      draggable="false"
+      loading="{{ if $eager }}eager{{ else }}lazy{{ end }}"
+      decoding="async"
+      fetchpriority="{{ if $eager }}high{{ else }}low{{ end }}">
+  </span>
+{{- else -}}
+  {{- errorf "Homepage cover image not found: %s" $path -}}
+  <span class="cover-carousel-image cover-carousel-image--fallback {{ $class }}" aria-hidden="true">
+    <span>✦</span>
+  </span>
+{{- end -}}

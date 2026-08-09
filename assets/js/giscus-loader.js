@@ -9,7 +9,8 @@
   const path = window.location.pathname.replace(/\/+$/, "") || "/";
   const pathParts = path.split("/").filter(Boolean);
 
-  const allowedPaths = ["/", "/about", "/works/projects", "/life/music"];
+  // 首页是聚焦式入口，不在轮播结束后追加第二个评论目的地。
+  const allowedPaths = ["/about", "/works/projects", "/life/music"];
   const articleSections = ["notes"];
 
   const isAllowedPath = allowedPaths.includes(path);

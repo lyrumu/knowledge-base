@@ -1,53 +1,49 @@
-# 首页三组手动精选。
-# 只维护 sections 即可；模板不会再读取旧的 section_kicker / section_title / section_text。
+# 首页固定三入口数据契约，顺序即首帧索引和卡片显现顺序。
+# - sections 必须正好为 3 组；id 必须唯一。
+# - meta 只承载卡片上的简短标签，不再伪装成可点击的精选条目。
+# - visual.kind 与图片数量：docs-stack=3、project-stage=1、music-fan=3。
 sections:
-
   - id: "docs"
     kicker: "Reading & Notes"
-    title: "Highlights of DOCS"
     desc: "Some of my study records"
     cta_label: "Open Docs"
     cta_path: "/notes/"
-    items:
-      - label: "Chatgpt"
-        title: "Codex Plus订阅指南(ios)"
-        desc: "ios上如何订阅官方gpt plus"
-        path: "notes/Codex-Plus"
-        link_text: "Read guide"
-      - label: "Agent Config"
-        title: "For Agents"
-        desc: "My agents config."
-        path: "/notes/for-agents/"
-        link_text: "Read config"
-      - label: "Git Basics"
-        title: "Personal Project Git Management"
-        desc: "My experience in managing personal project Git repositories."
-        path: "/notes/git-guide/"
-        link_text: "Read guide"
-      
+    meta:
+      - "ChatGPT"
+      - "Agent Config"
+      - "Git Basics"
+    visual:
+      kind: "docs-stack"
+      alt: "Selected covers from the documentation archive"
+      assets:
+        - "image/notes/Codex-Plus.png"
+        - "image/notes/for-agent.png"
+        - "image/notes/git.png"
 
   - id: "works"
     kicker: "Built & Shared"
-    title: "Highlights of WORKS"
     desc: "Projects and things made to be opened, tested, or downloaded rather than only read about."
     cta_label: "Open Works"
     cta_path: "/works/"
-    items:
-      - label: "Projects"
-        title: My only demo now
-        desc: "A small projects shelf for demos, experiments, and ongoing builds."
-        path: "/works/projects/"
-        link_text: "View projects"
-      
+    meta:
+      - "Projects"
+    visual:
+      kind: "project-stage"
+      alt: "Geometric artwork from the linear algebra project"
+      assets:
+        - "image/projects/linear-algebra-cover.webp"
+
   - id: "daily"
     kicker: "Slow & Small"
-    title: "Highlights of DAILY"
     desc: "Collect some high-quality items"
     cta_label: "Open Daily"
     cta_path: "/life/"
-    items:
-      - label: "Listening"
-        title: "Current Playlist"
-        desc: "A small playlist page with local tracks and an in-page player."
-        path: "/life/music/"
-        link_text: "Listen now"
+    meta:
+      - "Listening"
+    visual:
+      kind: "music-fan"
+      alt: "A selection of album covers from the current playlist"
+      assets:
+        - "image/music/cover-Departures.webp"
+        - "image/music/cover-my-dearest.webp"
+        - "image/music/cover-unravel.webp"

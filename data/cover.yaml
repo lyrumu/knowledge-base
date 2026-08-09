@@ -1,18 +1,25 @@
 # =============================================================================
 # 首页 masthead 配置
 # 当前只保留首页真实在用的字段：
-# - title / kicker / subtitle / epigraph
+# - kicker / epigraph
+# - headline / description / explore_label（首帧主文案与滚动提示）
 # - avatar / show_stats
 # - repo_url（顶栏 GitHub 按钮）
 # 颜色统一走 assets/css/_01_tokens.css，全站一起改。
 # =============================================================================
 cover:
-  title: "lyrumu"
   kicker: "PRO TEMPLUM"
-  subtitle: ""
   epigraph: "Remembering the deceased"
+  headline: |-
+    I keep what I learn,
+    build, and listen to.
+  description: >-
+    A personal archive by lyrumu — a student and developer in Hangzhou,
+    collecting practical notes, small projects, and the quiet details of everyday life.
+  explore_label: "Scroll to open the archive"
 
   # 这里只控制首页是否显示站点统计；实际统计逻辑在 layouts/partials/site-stats.html
   show_stats: true
+  # 全站顶部导航品牌头像；首页封面不再重复显示
   avatar: "image/melody.webp"
   repo_url: "https://github.com/lyrumu/knowledge-base"

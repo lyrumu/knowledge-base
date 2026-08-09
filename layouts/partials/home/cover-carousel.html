@@ -1,0 +1,168 @@
+{{/*
+  Semantic homepage destination carousel.
+  Baseline: three ordinary linked cards. JS progressively enhances desktop only.
+*/}}
+{{- $page := .Page -}}
+{{- $sections := .Sections | default (slice) -}}
+{{- $cover := .Cover | default (dict) -}}
+{{- $count := len $sections -}}
+{{- $supportedKinds := slice "docs-stack" "project-stage" "music-fan" -}}
+{{- $expectedAssetCounts := dict "docs-stack" 3 "project-stage" 1 "music-fan" 3 -}}
+{{- $headline := $cover.headline | default $page.Site.Title -}}
+{{- $description := $cover.description | default "" -}}
+{{- $exploreLabel := $cover.explore_label | default "Scroll to explore" -}}
+{{- $linkTargets := slice -}}
+{{- $seenIds := newScratch -}}
+
+{{- if ne $count 3 -}}
+  {{- errorf "Homepage cover requires exactly 3 sections; got %d" $count -}}
+{{- end -}}
+
+{{- range $index, $section := $sections -}}
+  {{- $id := $section.id | default (printf "section-%d" $index) -}}
+  {{- if $seenIds.Get $id -}}
+    {{- errorf "Duplicate homepage cover section id %q" $id -}}
+  {{- end -}}
+  {{- $seenIds.Set $id true -}}
+
+  {{- $visual := $section.visual | default (dict) -}}
+  {{- $kind := $visual.kind | default "" -}}
+  {{- if not (in $supportedKinds $kind) -}}
+    {{- errorf "Unsupported homepage cover visual kind %q for %q" $kind $id -}}
+  {{- else -}}
+    {{- $assetCount := len ($visual.assets | default (slice)) -}}
+    {{- $expectedCount := index $expectedAssetCounts $kind -}}
+    {{- if ne $assetCount $expectedCount -}}
+      {{- errorf "Homepage cover visual %q for %q requires %d assets; got %d" $kind $id $expectedCount $assetCount -}}
+    {{- end -}}
+  {{- end -}}
+
+  {{- $href := $section.cta_path | default "" -}}
+  {{- $external := or (strings.HasPrefix $href "http://") (strings.HasPrefix $href "https://") -}}
+  {{- $targetPage := false -}}
+  {{- if and $href (not $external) -}}
+    {{- with site.GetPage $href }}{{ $targetPage = . }}{{ end -}}
+  {{- end -}}
+  {{- $linked := or $external $targetPage -}}
+  {{- if not $linked -}}
+    {{- errorf "Homepage cover route %q for %q does not resolve" $href $id -}}
+  {{- end -}}
+  {{- $resolvedHref := $href -}}
+  {{- with $targetPage }}{{ $resolvedHref = .RelPermalink }}{{ end -}}
+  {{- $linkTargets = $linkTargets | append (dict
+    "external" $external
+    "href" $resolvedHref
+    "linked" $linked
+  ) -}}
+{{- end -}}
+
+{{- if gt $count 0 -}}
+<section
+  class="cover-carousel-scene"
+  aria-label="Explore the site"
+  data-cover-carousel>
+  <div class="cover-carousel-stage">
+    {{/* 首帧卷首语：文案来自 cover.yaml，栏目索引直接复用 sections，避免重复维护。 */}}
+    <section class="cover-home-intro" data-cover-intro aria-labelledby="cover-home-title">
+      <h1 id="cover-home-title">{{ $headline }}</h1>
+      {{- with $description }}
+      <p class="cover-home-intro__description">{{ . }}</p>
+      {{- end }}
+
+      <nav class="cover-home-intro__index" aria-label="Homepage sections">
+        <ul>
+          {{- range $index, $section := $sections -}}
+            {{- $id := $section.id | default "section" -}}
+            {{- $link := index $linkTargets $index -}}
+            <li>
+              {{- if $link.linked -}}
+              <a
+                href="{{ $link.href | safeURL }}"
+                {{ if $link.external }}target="_blank" rel="noopener noreferrer"{{ end }}>{{ upper $id }}</a>
+              {{- else -}}
+              <span>{{ upper $id }}</span>
+              {{- end -}}
+            </li>
+          {{- end -}}
+        </ul>
+      </nav>
+    </section>
+
+    <div class="cover-carousel-intro">
+      <p>Selected fields</p>
+      <span aria-hidden="true">Scroll to reveal each field</span>
+    </div>
+
+    <div class="cover-carousel-visual-clip">
+      <div id="home-sections" class="cover-carousel-deck" role="region" aria-label="Site sections" aria-roledescription="carousel">
+        {{- range $index, $section := $sections -}}
+          {{- $id := $section.id | default (printf "section-%d" $index) -}}
+          {{- $link := index $linkTargets $index -}}
+          {{- $visual := $section.visual | default (dict) -}}
+          {{- $kind := $visual.kind | default "" -}}
+          {{- if not (in $supportedKinds $kind) -}}
+            {{- $kind = "fallback" -}}
+          {{- end -}}
+          {{- $meta := $section.meta | default (slice) -}}
+          <article
+            class="cover-carousel-card"
+            data-cover-carousel-slide
+            data-state="pending"
+            role="group"
+            aria-roledescription="slide"
+            aria-label="{{ upper $id }}, slide {{ add $index 1 }} of {{ $count }}">
+
+            {{- if $link.linked -}}
+            <a
+              class="cover-carousel-card-surface"
+              href="{{ $link.href | safeURL }}"
+              {{ if $link.external }}target="_blank" rel="noopener noreferrer"{{ end }}>
+            {{- else -}}
+            <div class="cover-carousel-card-surface">
+            {{- end -}}
+              <div
+                class="cover-carousel-art cover-carousel-art--{{ $kind }}"
+                role="img"
+                aria-label="{{ $visual.alt | default (printf "%s cover artwork" (upper $id)) }}">
+                {{- range $assetIndex, $assetPath := ($visual.assets | default (slice)) -}}
+                  {{- $layerClass := printf "cover-carousel-art-layer cover-carousel-art-layer--%d" (add $assetIndex 1) -}}
+                  {{- $eager := and (eq $index 0) (eq $assetIndex 0) -}}
+                  {{- partial "home/carousel-image.html" (dict
+                    "Path" $assetPath
+                    "Alt" ""
+                    "Class" $layerClass
+                    "Eager" $eager
+                  ) -}}
+                {{- end -}}
+              </div>
+
+              <div class="cover-carousel-copy">
+                <p class="cover-carousel-kicker"><span>{{ printf "%02d" (add $index 1) }}</span> {{ $section.kicker }}</p>
+                <h2>{{ upper $id }}</h2>
+                {{- with $section.desc }}<p class="cover-carousel-description">{{ . }}</p>{{ end -}}
+                {{- with $meta }}<p class="cover-carousel-meta">{{ delimit . " · " }}</p>{{ end -}}
+                {{- if $link.linked -}}
+                  <span class="cover-carousel-cta">
+                    {{ $section.cta_label | default (printf "Open %s" (upper $id)) }}
+                    <span aria-hidden="true">↗</span>
+                  </span>
+                {{- end -}}
+              </div>
+            {{- if $link.linked -}}</a>{{- else -}}</div>{{- end -}}
+          </article>
+        {{- end -}}
+      </div>
+    </div>
+
+  </div>
+
+  {{/* 首屏滚动引导：点击后直接跳到三张卡片完整显现的进度。 */}}
+  <a class="cover-explore-prompt" href="#home-sections" data-cover-explore>
+    <span class="cover-explore-prompt__label">{{ $exploreLabel }}</span>
+    <span class="cover-explore-prompt__arrows" aria-hidden="true">
+      <span class="cover-explore-prompt__arrow"></span>
+      <span class="cover-explore-prompt__arrow"></span>
+    </span>
+  </a>
+</section>
+{{- end -}}
