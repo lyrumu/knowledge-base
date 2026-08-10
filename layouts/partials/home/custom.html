@@ -103,14 +103,6 @@
       <span class="cover-divider-rule"></span>
     </div>
 
-    {{/*
-      在轮播 HTML 插入前标记具备 JavaScript 的页面。
-      外部轮播脚本为 defer；此标记让桌面端先隐藏卡片区，避免脚本接管前
-      低清占位图短暂出现在首屏。关闭 JavaScript 时不会写入该标记，仍保留
-      普通可访问的卡片列表。
-    */}}
-    <script>document.documentElement.classList.add("has-cover-carousel-js");</script>
-
     {{/* 三个现有入口的语义化封面轮播；无 JS 时仍是普通可访问卡片列表。 */}}
     {{ partial "home/cover-carousel.html" (dict
       "Page" .

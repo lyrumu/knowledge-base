@@ -9,14 +9,14 @@
 # =============================================================================
 cover:
   kicker: "PRO TEMPLUM"
-  epigraph: "Hello, welcome to my blog"
+  epigraph: ""
   headline: |-
     I keep what I learn,
     build, and listen to.
   description: >-
-    A personal archive by lyrumu — a student and developer in Hangzhou,
+    A blog by lyrumu — a student and developer in Hangzhou CN,
     collecting practical notes, small projects, and the quiet details of everyday life.
-  explore_label: "Scroll to open the archive"
+  explore_label: "Scroll to open the content"
 
   # 这里只控制首页是否显示站点统计；实际统计逻辑在 layouts/partials/site-stats.html
   show_stats: true

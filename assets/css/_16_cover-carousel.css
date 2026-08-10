@@ -457,24 +457,26 @@ a.cover-carousel-card-surface:focus-visible .cover-carousel-cta span {
     visibility: hidden;
   }
 
-  .cover-page.is-carousel-enhanced {
+  .cover-page.is-carousel-enhanced,
+  html.has-cover-carousel-js .cover-page {
     height: 320svh;
     padding-block: 0;
   }
 
-  .cover-page.is-carousel-enhanced .cover-content {
+  .cover-page.is-carousel-enhanced .cover-content,
+  html.has-cover-carousel-js .cover-page .cover-content {
     position: sticky;
     top: var(--cover-header-height, 5.1rem);
     height: calc(100svh - var(--cover-header-height, 5.1rem));
     min-height: 0;
     margin-top: 0;
-    padding-top: clamp(0.85rem, 2.2vh, 1.5rem);
+    padding-top: 0;
     padding-bottom: clamp(0.7rem, 1.2vh, 1rem);
     overflow: visible;
   }
 
   .cover-page.is-carousel-enhanced .cover-header-rail {
-    gap: clamp(0.9rem, 2vw, 2.2rem);
+    gap: 0.3rem clamp(0.6rem, 1vw, 0.85rem);
   }
 
   .cover-page.is-carousel-enhanced .cover-masthead-meta .cover-views-meta {
@@ -507,13 +509,15 @@ a.cover-carousel-card-surface:focus-visible .cover-carousel-cta span {
     margin: clamp(0.35rem, 0.65vh, 0.55rem) 0 clamp(0.2rem, 0.5vh, 0.4rem);
   }
 
-  .cover-carousel-scene.is-enhanced {
+  .cover-carousel-scene.is-enhanced,
+  html.has-cover-carousel-js .cover-carousel-scene {
     flex: 1 1 auto;
     min-height: 0;
     margin-top: 0;
   }
 
-  .cover-carousel-scene.is-enhanced .cover-home-intro {
+  .cover-carousel-scene.is-enhanced .cover-home-intro,
+  html.has-cover-carousel-js .cover-carousel-scene .cover-home-intro {
     position: absolute;
     left: clamp(0.5rem, 4vw, 4.75rem);
     top: 47%;
@@ -590,7 +594,8 @@ a.cover-carousel-card-surface:focus-visible .cover-carousel-cta span {
     animation-delay: 0.16s;
   }
 
-  .cover-carousel-scene.is-enhanced .cover-carousel-stage {
+  .cover-carousel-scene.is-enhanced .cover-carousel-stage,
+  html.has-cover-carousel-js .cover-carousel-scene .cover-carousel-stage {
     position: relative;
     height: 100%;
     min-height: 0;
@@ -681,12 +686,13 @@ a.cover-carousel-card-surface:focus-visible .cover-carousel-cta span {
 /* Tablet：继续横排，但进一步收紧文字和卡片高度。 */
 @media (min-width: 721px) and (max-width: 980px) {
   .cover-header-rail {
-    grid-template-columns: max-content minmax(0, 1fr);
-    row-gap: 0.35rem;
+    width: 100%;
   }
 
   .cover-stats {
-    grid-column: 1 / -1;
+    flex-basis: 100%;
+    padding-left: 0;
+    border-left: 0;
   }
 
   .cover-stats .site-stats {
