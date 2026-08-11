@@ -195,6 +195,22 @@ html.dark .cover-card__icon-fallback {
   z-index: 2;
 }
 
+/* 置顶图钉：右上角，白色 + 投影，与卡片 meta 白字同画风 */
+.cover-card__pin {
+  position: absolute;
+  top: 0.75rem;
+  right: 0.75rem;
+  z-index: 2;
+  display: inline-flex;
+  color: #fff;
+  filter: drop-shadow(0 1px 4px rgba(0, 0, 0, 0.6));
+  pointer-events: none;
+}
+.cover-card__pin svg {
+  width: 1.1rem;
+  height: 1.1rem;
+}
+
 /* 顶部文字托板：贴合顶部内容高度的局部阴影 */
 .cover-card__top {
   margin: -1.1rem -1.25rem 0;

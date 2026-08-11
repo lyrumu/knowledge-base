@@ -70,6 +70,11 @@ items:
     icon: hammer
     fallback_tag: tools
 
+  - slug: 使用chezmoi管理dot-files
+    image: "image/notes/chezmoi.webp"
+    icon: folder-sync
+    fallback_tag: tools
+
   - slug: linux-getting-started
     image: "image/notes/linux.webp"
     icon: wrench

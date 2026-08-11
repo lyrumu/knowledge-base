@@ -4,7 +4,7 @@ date: 2026-07-26
 draft: false
 description: "日常使用的软件、插件和网站推荐"
 slug: ""
-weight: 0
+weight: -1
 tags: [tools, website, os]
 categories: [tools]
 topics: []
@@ -36,6 +36,7 @@ showLikes: true
 
 - [Localsend](https://localsend.org) — 跨win，mac设备文件传输工具
 - [sdkman](https://sdkman.io/) - 可以用来管理java等各种版本的工具
+- [chezmoi](https://www.chezmoi.io/) - 管理你家目录下的dot-files
 - [Watt Toolkit](https://steampp.net) — github，steam社区加速工具
 - [UU游戏加速器](https://uu.163.com/download/)  — steam加速器
 

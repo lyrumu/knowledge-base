@@ -5,7 +5,7 @@ draft: false
 description: "国内订阅 ChatGPT Plus 官方套餐（20 美元）流程：美区 Apple ID、美区礼品卡兑换、iOS 内购升级、Codex 登录"
 slug: ""
 aliases: []
-weight: 0
+weight: -1
 tags: [chatgpt, agent, subscription]
 categories: [tools, ai]
 topics: []
