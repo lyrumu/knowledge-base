@@ -459,7 +459,7 @@ a.cover-carousel-card-surface:focus-visible .cover-carousel-cta span {
 
   .cover-page.is-carousel-enhanced,
   html.has-cover-carousel-js .cover-page {
-    height: 320svh;
+    height: 190svh;
     padding-block: 0;
   }
 
@@ -601,6 +601,9 @@ a.cover-carousel-card-surface:focus-visible .cover-carousel-cta span {
     min-height: 0;
     overflow: visible;
     isolation: isolate;
+    transform: translate3d(0, var(--cover-pull-y, 0), 0);
+    transition: transform 180ms var(--cover-carousel-ease);
+    will-change: transform;
   }
 
   .cover-carousel-scene.is-enhanced .cover-carousel-intro {

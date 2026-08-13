@@ -7,9 +7,11 @@ layout: "page"
 showHero: true
 showBreadcrumbs: true
 showTableOfContents: true
+build:
+  render: never
+  list: never
 ---
 > Some resources that I use daily
 
 {{< resources-list >}}
-
 

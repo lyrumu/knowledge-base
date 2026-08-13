@@ -12,8 +12,6 @@
 ## Works
 
 - [Projects](/works/projects/): Personal projects — vibe coding, demos, experimental works
-- [Resources](/works/resources/): Downloadable resources — Minecraft resource packs, fonts, scripts
-- [Tools](/works/tools/): Tools and scripts
 
 ## Daily
 

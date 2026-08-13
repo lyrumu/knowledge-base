@@ -24,24 +24,6 @@ submodules:
     href: "/works/projects/"
     tags: [demos, agents, experiments]
 
-  - id: resources
-    name: "RESOURCES"
-    title: "Resources · Downloadables"
-    icon: "package"
-    desc: "Maybe something useful that you can donwload"
-    href: "/works/resources/"
-    tags: [downloads, free-use]
-    draft: true #里面其实预留了一个minecraft 但是应该先标注为"准备中"
-
-  - id: tools
-    name: "TOOLS"
-    title: "Tools · Skills & Scripts"
-    icon: "wrench"
-    desc: ""
-    href: "/works/tools/"
-    tags: [scripts, skills]
-    draft: true
-
   # 未来扩展示例（先注释）
   # - id: designs
   #   name: "设计"

@@ -21,7 +21,10 @@
     frame: 0,
     railFrame: 0,
     resizeFrame: 0,
+    settleTimer: 0,
+    snapTarget: null,
     railIndex: 0,
+    expanded: false,
     measurements: null,
   };
 
@@ -30,6 +33,8 @@
   const easeInOutSine = (value) => -(Math.cos(Math.PI * value) - 1) / 2;
   const cardRevealDuration = 0.4;
   const cardRevealStagger = 0.22;
+  const pullThreshold = 0.18;
+  const pullSettleDelay = 120;
   const cardsReadyProgress = clamp(
     (slides.length - 1) * cardRevealStagger + cardRevealDuration,
     0,
@@ -103,15 +108,64 @@
     });
   }
 
+  function applyPullProgress(progress) {
+    const isPulling = !state.expanded && progress < pullThreshold;
+    const pull = isPulling ? easeInOutSine(progress / pullThreshold) : 0;
+
+    // 阈值前只让整个封面受阻上浮，三张卡维持初始隐藏状态。
+    root.style.setProperty("--cover-pull-y", `${-pull * 0.85}rem`);
+    applyVerticalProgress(isPulling ? 0 : progress);
+  }
+
   function updateFromScroll() {
     state.frame = 0;
     if (compact()) return;
-    applyVerticalProgress(sceneProgress());
+    const progress = sceneProgress();
+
+    if (state.snapTarget !== null) {
+      applyPullProgress(progress);
+      if (Math.abs(progress - state.snapTarget) < 0.01) state.snapTarget = null;
+      return;
+    }
+
+    if (!state.expanded && progress >= pullThreshold) {
+      settlePull();
+      return;
+    }
+    applyPullProgress(progress);
+    schedulePullSettle();
   }
 
   function scheduleScrollUpdate() {
     if (state.frame) return;
     state.frame = window.requestAnimationFrame(updateFromScroll);
+  }
+
+  function settlePull() {
+    window.clearTimeout(state.settleTimer);
+    state.settleTimer = 0;
+    const progress = sceneProgress();
+
+    // 展开后继续下滑即离开封面，不再把页面吸回三卡状态。
+    if (state.expanded && progress >= cardsReadyProgress) return;
+
+    const shouldExpand = state.expanded
+      ? progress > cardsReadyProgress - pullThreshold
+      : progress >= pullThreshold;
+    const targetProgress = shouldExpand ? cardsReadyProgress : 0;
+
+    state.expanded = shouldExpand;
+    applyPullProgress(progress);
+    state.snapTarget = targetProgress;
+    window.scrollTo({
+      top: state.measurements.start + state.measurements.distance * targetProgress,
+      behavior: "smooth",
+    });
+  }
+
+  function schedulePullSettle() {
+    window.clearTimeout(state.settleTimer);
+    state.settleTimer = window.setTimeout(settlePull, pullSettleDelay);
   }
 
   function closestRailIndex() {
@@ -159,7 +213,9 @@
       introLinks.forEach((link) => setInert(link, false));
       setRailIndex(closestRailIndex());
     } else {
-      applyVerticalProgress(sceneProgress());
+      const progress = sceneProgress();
+      state.expanded = progress >= cardsReadyProgress / 2;
+      applyPullProgress(progress);
     }
   }
 
@@ -177,11 +233,11 @@
     }
 
     measure();
-    const targetScroll = state.measurements.start + state.measurements.distance * cardsReadyProgress;
-
-    // 平滑滚动本身驱动 updateFromScroll → applyVerticalProgress。
-    // 不在点击瞬间把三卡设为最终状态，避免成品画面先闪出、页面才开始滑动。
-    window.scrollTo({ top: targetScroll, behavior: "smooth" });
+    state.expanded = true;
+    window.scrollTo({
+      top: state.measurements.start + state.measurements.distance * cardsReadyProgress,
+      behavior: "smooth",
+    });
   }
 
   window.addEventListener("scroll", scheduleScrollUpdate, { passive: true });

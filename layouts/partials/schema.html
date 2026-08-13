@@ -1,6 +1,6 @@
 {{/*
-  schema.html — 覆写 blowfish 主题版本，仅在首页 WebSite JSON-LD 增加 alternateName。
-  其余逻辑与主题保持一致，避免重复创建第二个 WebSite 节点。
+  schema.html — 覆写 Blowfish 主题版本：首页 WebSite 增加 alternateName，
+  Article 仅输出给普通内容页，避免把栏目页错误标记为文章。
 */}}
 {{ if .IsHome -}}
   <script type="application/ld+json">
@@ -22,8 +22,12 @@
   </script>
 {{ else }}
   {{- $iso8601 := "2006-01-02T15:04:05-07:00" -}}
+  {{- $showStructuredBreadcrumbs := site.Params.enableStructuredBreadcrumbs | default false -}}
+  {{ if or .IsPage $showStructuredBreadcrumbs }}
   <script type="application/ld+json">
-  [{
+  [
+    {{ if .IsPage }}
+    {
     "@context": "https://schema.org",
     "@type": "Article",
     "articleSection": "{{ (site.GetPage .Section).Title | safeJS }}",
@@ -48,7 +52,9 @@
     {{ end }}
     "mainEntityOfPage": "true",
     "wordCount": "{{ .WordCount }}"
-  }{{ if site.Params.enableStructuredBreadcrumbs | default false }},
+    }{{ if $showStructuredBreadcrumbs }},{{ end }}
+    {{ end }}
+  {{ if $showStructuredBreadcrumbs }}
   {
     "@context": "https://schema.org",
     "@type": "BreadcrumbList",
@@ -75,4 +81,5 @@
     ]
   }{{ end }}]
   </script>
+  {{ end }}
 {{ end }}

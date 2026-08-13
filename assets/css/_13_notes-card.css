@@ -34,16 +34,24 @@
    cover-card 基础布局
    -------------------------------------------------------------------------- */
 .article-link--cover-card {
+  --cover-card-meta-accent: #D97757;
+  --cover-card-meta-ink: #7A3F2D;
   position: relative;
   height: 16rem;
   border-radius: 0.75rem;
   overflow: hidden;
   isolation: isolate;
   color: #fff;
-  /* 仿 blog-card(1)：实心深色投影，hover 时加深下沉 */
-  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.45);
+  border: 1px solid color-mix(in srgb, var(--line) 78%, transparent);
+  /* 外轮廓由细边线承担，阴影只保留轻微的离纸感。 */
+  box-shadow: 0 10px 24px -16px rgba(31, 30, 29, 0.18);
   transition: box-shadow 0.4s cubic-bezier(0.22, 0.61, 0.36, 1),
               transform 0.4s cubic-bezier(0.22, 0.61, 0.36, 1);
+}
+
+html.dark .article-link--cover-card {
+  border-color: color-mix(in srgb, var(--fg-base) 14%, var(--line));
+  box-shadow: 0 8px 18px -14px rgba(0, 0, 0, 0.5);
 }
 
 /* -----------------------------------------------------------------------------
@@ -195,14 +203,14 @@ html.dark .cover-card__icon-fallback {
   z-index: 2;
 }
 
-/* 置顶图钉：右上角，白色 + 投影，与卡片 meta 白字同画风 */
+/* 置顶图钉：右上角固定 Claude 暖红，与卡片 meta 一致。 */
 .cover-card__pin {
   position: absolute;
   top: 0.75rem;
   right: 0.75rem;
   z-index: 2;
   display: inline-flex;
-  color: #fff;
+  color: var(--cover-card-meta-accent);
   filter: drop-shadow(0 1px 4px rgba(0, 0, 0, 0.6));
   pointer-events: none;
 }
@@ -211,16 +219,10 @@ html.dark .cover-card__icon-fallback {
   height: 1.1rem;
 }
 
-/* 顶部文字托板：贴合顶部内容高度的局部阴影 */
+/* 顶部保持透明；仅给文字本身提供局部托板，不遮整片封面。 */
 .cover-card__top {
   margin: -1.1rem -1.25rem 0;
   padding: 0.85rem 1.25rem 0.7rem;
-  background: linear-gradient(
-    to bottom,
-    rgba(0, 0, 0, 0.55) 0%,
-    rgba(0, 0, 0, 0.2) 70%,
-    transparent 100%
-  );
   border-radius: 0.75rem 0.75rem 0 0;
 }
 
@@ -229,13 +231,24 @@ html.dark .cover-card__icon-fallback {
   display: flex;
   flex-wrap: wrap;
   align-items: center;
+  width: fit-content;
+  max-width: 100%;
   gap: 0.5rem;
-  font-family: var(--font-serif-display);
-  font-size: 0.7rem;
-  letter-spacing: 0.12em;
+  box-sizing: border-box;
+  padding: 0.32rem 0.6rem;
+  border: 1px solid rgba(217, 119, 87, 0.24);
+  border-radius: 0.5rem;
+  background: rgba(250, 249, 245, 0.8);
+  box-shadow: 0 1px 3px rgba(31, 30, 29, 0.12);
+  backdrop-filter: blur(6px) saturate(0.8);
+  -webkit-backdrop-filter: blur(6px) saturate(0.8);
+  font-family: var(--font-sans);
+  font-size: 0.68rem;
+  letter-spacing: 0.08em;
   text-transform: uppercase;
-  color: rgba(255, 255, 255, 0.95);
-  text-shadow: 0 1px 4px rgba(0, 0, 0, 0.5);
+  color: var(--cover-card-meta-ink);
+  font-weight: 650;
+  line-height: 1.35;
 }
 
 /* meta 里各 partial 的分隔点/图标颜色统一为透明白 */
@@ -243,7 +256,7 @@ html.dark .cover-card__icon-fallback {
   color: inherit;
 }
 .cover-card__meta .text-primary-500 {
-  color: rgba(255, 255, 255, 0.95) !important;
+  color: var(--cover-card-meta-accent) !important;
 }
 .cover-card__meta svg {
   width: 0.85rem;
@@ -257,13 +270,14 @@ html.dark .cover-card__icon-fallback {
   align-items: center;
 }
 .cover-card__meta-sep {
-  opacity: 0.6;
+  color: var(--cover-card-meta-accent);
+  opacity: 0.72;
   margin: 0 0.1rem;
 }
-/* views/likes 的 loading 占位条在卡片白字下不可见，统一底色为半透白 */
+/* views/likes 占位条固定为暖白，避免随站点主题反转。 */
 .cover-card__meta-item .bg-neutral-300,
 .cover-card__meta-item .dark\:bg-neutral-400 {
-  background: rgba(255, 255, 255, 0.6) !important;
+  background: rgba(250, 249, 245, 0.76) !important;
 }
 
 /* tags 行（顶部 meta 下方） — 重新启用点击 */
@@ -279,32 +293,33 @@ html.dark .cover-card__icon-fallback {
 
 .cover-card__tag {
   font-family: var(--font-mono);
-  font-size: 0.6rem;
-  padding: 0.1rem 0.5rem;
+  font-size: 0.62rem;
+  font-weight: 650;
+  padding: 0.12rem 0.5rem;
   border-radius: 9999px;
-  border: 1px solid rgba(255, 255, 255, 0.4);
-  color: rgba(255, 255, 255, 0.92);
-  background: rgba(0, 0, 0, 0.25);
+  border: 1px solid color-mix(in srgb, var(--cover-card-meta-accent) 68%, #FAF9F5);
+  color: var(--cover-card-meta-ink);
+  background: rgba(250, 249, 245, 0.78);
   letter-spacing: 0.04em;
   text-transform: lowercase;
   text-decoration: none;
-  backdrop-filter: blur(2px);
-  -webkit-backdrop-filter: blur(2px);
+  backdrop-filter: blur(5px) saturate(0.8);
+  -webkit-backdrop-filter: blur(5px) saturate(0.8);
   position: relative;
   z-index: 4;
   transition: background 0.25s, border-color 0.25s, color 0.25s;
 }
 
 .cover-card__tag:hover {
-  background: rgba(0, 0, 0, 0.45);
-  border-color: rgba(255, 255, 255, 0.7);
-  color: #fff;
+  background: rgba(250, 249, 245, 0.9);
+  border-color: var(--cover-card-meta-accent);
+  color: var(--cover-card-meta-accent);
   text-decoration: none;
 }
 
 /* -----------------------------------------------------------------------------
    底部：白色半透明遮罩面板（与 blog-card(1) 的 text-overlay 一致）
-   - 白底 + 黑字 + 向上投影，hover 时面板变亮
+   - 白底 + 黑字，hover 时面板变亮
    - 标题限制 2 行，超出省略，防止小卡片溢出
    -------------------------------------------------------------------------- */
 .cover-card__bottom {
@@ -313,7 +328,6 @@ html.dark .cover-card__icon-fallback {
   margin: 0 -1.25rem -1.1rem;
   padding: 1.1rem 1.25rem 1rem;
   background: rgba(255, 255, 255, 0.6);
-  box-shadow: 0 -2px 12px rgba(0, 0, 0, 0.3);
   border-radius: 0 0 0.75rem 0.75rem;
   transition: background 0.45s ease;
   backdrop-filter: blur(2px);
@@ -378,11 +392,15 @@ html.dark .cover-card__icon-fallback {
 }
 
 /* -----------------------------------------------------------------------------
-   Hover 状态（仿 blog-card(1)：上抬 + 实心阴影加深）
+   Hover 状态：轻微上抬 + 克制加深，避免阴影与图片抢层级
    -------------------------------------------------------------------------- */
 .article-link--cover-card:hover {
-  transform: translateY(-4px);
-  box-shadow: 0 12px 32px rgba(0, 0, 0, 0.55);
+  transform: translateY(-2px);
+  box-shadow: 0 14px 28px -16px rgba(31, 30, 29, 0.24);
+}
+
+html.dark .article-link--cover-card:hover {
+  box-shadow: 0 10px 22px -14px rgba(0, 0, 0, 0.6);
 }
 
 .article-link--cover-card:hover .cover-card__bg-img,

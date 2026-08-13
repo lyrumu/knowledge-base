@@ -33,7 +33,7 @@
 | 改 /life/music/ 的外链平台 / 精确 URL | [`data/music.yaml`](file:///f:/Notes/data/music.yaml) 的 `links[].url`；白名单是 `apple` + `spotify`（写在 [`music-list.html`](file:///f:/Notes/layouts/shortcodes/music-list.html)）；**Apple 推荐用 iTunes Search API 返回的精确 trackViewUrl** |
 | 改 /life/music/ 的合规声明 | [`content/life/music/_index.md`](file:///f:/Notes/content/life/music/_index.md) 末尾的 blockquote |
 | 换 /life/music/ 的封面/SVG 动画 | [`assets/css/_05_cards.css`](file:///F:/Notes/assets/css/_05_cards.css) 的 `.life-sub-cover-*` 规则 |
-| 换 /works/ 的子模块卡 | [`data/works.yaml`](file:///f:/Notes/data/works.yaml)（projects / resources / tools…） |
+| 换 /works/ 的子模块卡 | [`data/works.yaml`](file:///f:/Notes/data/works.yaml)（当前仅 projects；resources / tools 源文件暂不发布） |
 | 换 /works/projects/ 的项目卡 | [`data/projects.yaml`](file:///f:/Notes/data/projects.yaml)（加一条填 `- name/title/desc/cover/href/repo/tags/date/featured`） |
 | 换 /works/resources/ 的资源卡 | [`data/resources.yaml`](file:///f:/Notes/data/resources.yaml)（加一条填 `- name/title/desc/cover/file/format/size/tags/date/source`） |
 | 改 /works/projects/ 的 3D 倾斜角度 | [`assets/css/_06_works-cards.css`](file:///F:/Notes/assets/css/_06_works-cards.css) 的 `.project-card` 或 shortcode 里的 `data-tilt-*` |
@@ -109,11 +109,11 @@ f:\Notes\
 │   ├（待整理）
 │   ├── notes/                      # /notes/ 文章入口（layout:list + list.html 卡片列表）
 │   │   └── _index.md               # notes 入口页（正文 + 自动文章列表 + cascade 控制后代文章的 taxonomy/edit/pagination）
-│   ├── works/                      # /works/ 相关（作品 / 资源 / 工具）
+│   ├── works/                      # /works/ 相关（当前发布 Projects）
 │   │   ├── _index.md               # 入口（works-grid 短代码）
 │   │   ├── projects/_index.md      # 项目子页（projects-list 短代码 + 3D 倾斜）
-│   │   ├── resources/_index.md     # 资源子页（resources-list 短代码 + 瀑布流）
-│   │   └── tools/_index.md         # 工具子页（占位 + 计划收录）
+│   │   ├── resources/_index.md     # 资源子页源文件（build.render: never，待有内容再发布）
+│   │   └── tools/_index.md         # 工具子页源文件（build.render: never，待有内容再发布）
 │   ├── life/                       # /life/ 生活（可扩展子模块网格）
 │   │   ├── _index.md               # 子模块入口（life-grid 短代码）
 │   │   └── music/_index.md         # /life/music/ 子页
@@ -381,7 +381,7 @@ f:\Notes\
 
 | 元素 | 数据源 | 模板 |
 |------|--------|------|
-| 子模块卡列表（projects / resources / tools…） | [`data/works.yaml`](file:///f:/Notes/data/works.yaml) | [`layouts/shortcodes/works-grid.html`](file:///f:/Notes/layouts/shortcodes/works-grid.html) |
+| 子模块卡列表（当前仅 projects） | [`data/works.yaml`](file:///f:/Notes/data/works.yaml) | [`layouts/shortcodes/works-grid.html`](file:///f:/Notes/layouts/shortcodes/works-grid.html) |
 | 视觉 | **与 about/ 主入口的 module-card 同源**（完全复用 `_05_cards.css` 的 `.module-card` 样式） | — |
 | 独有元素 | `works-sub-tags`（标签列表）/ `works-sub-draft-badge`（准备中徽章） | [`assets/css/_05_cards.css`](file:///F:/Notes/assets/css/_05_cards.css) |
 | icon | `works.yaml` → `icon` | 走 `cover/icon.html` 解释为 Lucide SVG |
@@ -398,7 +398,7 @@ f:\Notes\
 | 入场淡入 | v2026-07-10 已移除 AOS（与 VanillaTilt transform 冲突）— 改为自然出现，无外部库 | — |
 | 资源存放约定 | `static/image/works/projects/<slug>.png` | — |
 
-### /works/resources/ 资源列表
+### /works/resources/ 资源列表（暂不发布）
 
 | 元素 | 数据源 | 模板 |
 |------|--------|------|

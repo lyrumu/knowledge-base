@@ -41,6 +41,17 @@
   color: var(--fg-base);
 }
 
+/* 作者社交链接沿用站点前景色，避免主题默认灰阶在暗色页过暗。 */
+.author .text-2xl > div { color: var(--fg-mute); }
+.author .text-2xl a { color: inherit; }
+.author .text-2xl a svg { fill: currentColor; }
+.author .text-2xl a:hover { color: var(--accent); }
+.author .text-2xl a:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 3px;
+  border-radius: 0.2rem;
+}
+
 /* ----- 标题 ----- */
 .prose h1, .prose h2, .prose h3, .prose h4, .prose h5 {
   font-family: var(--font-serif-display);
