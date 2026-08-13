@@ -49,19 +49,6 @@
   </div>
 
   <div class="cover-content">
-    {{/* 原型完整音乐底片：唱片、五线谱、双轨道与四个漂浮音符。 */}}
-    <div class="cover-music-field" aria-hidden="true">
-      <span class="cover-music-field__disc"></span>
-      <span class="cover-music-field__staff cover-music-field__staff--one"></span>
-      <span class="cover-music-field__staff cover-music-field__staff--two"></span>
-      <span class="cover-music-field__orbit cover-music-field__orbit--one"></span>
-      <span class="cover-music-field__orbit cover-music-field__orbit--two"></span>
-      <span class="cover-floating-note cover-floating-note--one">♪</span>
-      <span class="cover-floating-note cover-floating-note--two">♩</span>
-      <span class="cover-floating-note cover-floating-note--three">♫</span>
-      <span class="cover-floating-note cover-floating-note--four">♬</span>
-    </div>
-
     <section class="cover-masthead">
       <div class="cover-header-rail">
         <div class="cover-masthead-meta">
@@ -101,6 +88,21 @@
       <span class="cover-divider-rule"></span>
       <span class="cover-divider-mark">✦</span>
       <span class="cover-divider-rule"></span>
+    </div>
+
+    {{/* 镜头只承载音乐背景；卡片是独立前景层，位置不受镜头倍率影响。 */}}
+    <div class="cover-music-camera" aria-hidden="true">
+      <div class="cover-music-field" aria-hidden="true">
+        <span class="cover-music-field__disc"></span>
+        <span class="cover-music-field__staff cover-music-field__staff--one"></span>
+        <span class="cover-music-field__staff cover-music-field__staff--two"></span>
+        <span class="cover-music-field__orbit cover-music-field__orbit--one"></span>
+        <span class="cover-music-field__orbit cover-music-field__orbit--two"></span>
+        <span class="cover-floating-note cover-floating-note--one">♪</span>
+        <span class="cover-floating-note cover-floating-note--two">♩</span>
+        <span class="cover-floating-note cover-floating-note--three">♫</span>
+        <span class="cover-floating-note cover-floating-note--four">♬</span>
+      </div>
     </div>
 
     {{/* 三个现有入口的语义化封面轮播；无 JS 时仍是普通可访问卡片列表。 */}}

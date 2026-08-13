@@ -129,6 +129,13 @@ html.dark .cover-page {
 /* =============================================================================
    4.1 原型音乐底片：唱片 + 五线谱 + 双轨道 + 四个音符
    ============================================================================= */
+.cover-music-camera {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+}
+
 .cover-music-field {
   position: absolute;
   left: 70%;
@@ -150,7 +157,7 @@ html:not(.dark) .cover-music-field {
   opacity: 0.76;
 }
 
-.cover-content > :not(.cover-music-field) {
+.cover-content > :not(.cover-music-camera) {
   z-index: 2;
 }
 
@@ -173,6 +180,27 @@ html:not(.dark) .cover-music-field {
     0 1.5rem 5rem -2.2rem color-mix(in srgb, var(--fg-base) 22%, transparent),
     0 0 5rem color-mix(in srgb, var(--cover-music-blue) 28%, transparent);
   opacity: 0.78;
+  transform: translate(-50%, -50%);
+}
+
+/* 偏心沟槽绕唱片圆心缓慢摆动，让露出的上半圆始终能读出旋转。 */
+.cover-music-field__disc::before {
+  position: absolute;
+  left: 47%;
+  top: 48.5%;
+  width: 88%;
+  aspect-ratio: 1;
+  border: 1px solid color-mix(in srgb, var(--pal-accent, var(--accent)) 48%, transparent);
+  border-radius: 50%;
+  background: repeating-radial-gradient(
+    circle,
+    transparent 0 7.5%,
+    color-mix(in srgb, var(--cover-music-blue) 34%, transparent) 7.8% 8.35%,
+    transparent 8.7% 14%
+  );
+  content: "";
+  filter: drop-shadow(0 0 0.42rem color-mix(in srgb, var(--pal-accent, var(--accent)) 30%, transparent));
+  opacity: 0.12;
   transform: translate(-50%, -50%);
 }
 
@@ -226,11 +254,28 @@ html.dark .cover-music-field__disc::after {
   left: 50%;
   top: 50%;
   border: 1px solid color-mix(in srgb, var(--cover-music-blue) 45%, transparent);
-  border-left-color: transparent;
   border-bottom-color: color-mix(in srgb, var(--pal-accent, var(--accent)) 32%, transparent);
   border-radius: 50%;
   opacity: 0.46;
   transform: translate(-50%, -50%) rotate(-16deg);
+}
+
+/* 音符节点固定在闭合轨道上，轨道慢转时提供清晰但克制的方向参照。 */
+.cover-music-field__orbit::before,
+.cover-music-field__orbit::after {
+  position: absolute;
+  display: grid;
+  width: 0.72rem;
+  aspect-ratio: 1;
+  place-items: center;
+  border: 1px solid color-mix(in srgb, var(--pal-accent, var(--accent)) 62%, transparent);
+  border-radius: 50%;
+  background: color-mix(in srgb, var(--pal-bg-from, var(--bg-base)) 88%, transparent);
+  color: color-mix(in srgb, var(--pal-title, var(--fg-base)) 74%, var(--pal-accent, var(--accent)));
+  font-family: var(--font-serif-display);
+  font-size: 0.42rem;
+  line-height: 1;
+  box-shadow: 0 0 0.55rem color-mix(in srgb, var(--pal-accent, var(--accent)) 24%, transparent);
 }
 
 .cover-music-field__orbit--one {
@@ -238,10 +283,38 @@ html.dark .cover-music-field__disc::after {
   height: 39%;
 }
 
+.cover-music-field__orbit--one::before {
+  left: 12%;
+  top: 18%;
+  content: "♪";
+  transform: translate(-50%, -50%);
+}
+
+.cover-music-field__orbit--one::after {
+  right: 12%;
+  bottom: 18%;
+  content: "♫";
+  transform: translate(50%, 50%);
+}
+
 .cover-music-field__orbit--two {
   width: 90%;
   height: 48%;
   opacity: 0.28;
+}
+
+.cover-music-field__orbit--two::before {
+  left: 36%;
+  top: 2%;
+  content: "♩";
+  transform: translate(-50%, -50%);
+}
+
+.cover-music-field__orbit--two::after {
+  right: 8%;
+  bottom: 25%;
+  content: "♬";
+  transform: translate(50%, 50%);
 }
 
 .cover-floating-note {

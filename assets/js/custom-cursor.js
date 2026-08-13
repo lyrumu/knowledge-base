@@ -38,7 +38,7 @@
 
   const positionStorageKey = 'lyrumu.customCursorPosition.v1';
   const restoreMaxAge = 15000;
-  const followTime = 34;
+  const followTime = 18;
 
   let mouseX = 0;
   let mouseY = 0;
@@ -183,7 +183,10 @@
   }, { passive: true });
 
   document.addEventListener('pointerover', (event) => syncHoverState(event.target));
-  document.addEventListener('pointerout', (event) => syncHoverState(event.relatedTarget));
+  document.addEventListener('pointerout', (event) => {
+    syncHoverState(event.relatedTarget);
+    if (!event.relatedTarget) hide();
+  });
 
   document.addEventListener('pointerdown', (event) => {
     if (event.pointerType && event.pointerType !== 'mouse') return;

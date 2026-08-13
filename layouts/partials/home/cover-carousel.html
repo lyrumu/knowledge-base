@@ -90,7 +90,6 @@
 
     <div class="cover-carousel-intro">
       <p>Selected fields</p>
-      <span aria-hidden="true">Scroll to reveal each field</span>
     </div>
 
     <div class="cover-carousel-visual-clip">
@@ -105,7 +104,7 @@
           {{- end -}}
           {{- $meta := $section.meta | default (slice) -}}
           <article
-            class="cover-carousel-card"
+            class="cover-carousel-card cover-carousel-card--{{ $kind }}"
             data-cover-carousel-slide
             data-state="pending"
             role="group"

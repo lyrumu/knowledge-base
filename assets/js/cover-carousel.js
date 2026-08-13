@@ -1,4 +1,4 @@
-/* Homepage cover — finite Vertical sequential reveal controller. */
+/* Homepage cover — threshold-triggered music-orbit controller. */
 (function () {
   "use strict";
 
@@ -10,36 +10,36 @@
   const deck = root.querySelector(".cover-carousel-deck");
   const intro = root.querySelector("[data-cover-intro]");
   const explorePrompt = root.querySelector("[data-cover-explore]");
+  const musicCamera = scrollScene?.querySelector(".cover-music-camera");
+  const musicField = scrollScene?.querySelector(".cover-music-field");
+  const ambientSpinners = musicField
+    ? Array.from(musicField.querySelectorAll(".cover-music-field__disc, .cover-music-field__orbit"))
+    : [];
   const introLinks = intro ? Array.from(intro.querySelectorAll("a")) : [];
   const slides = Array.from(root.querySelectorAll("[data-cover-carousel-slide]"));
   const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)");
   const compactLayout = window.matchMedia("(max-width: 720px)");
 
-  if (!scrollScene || !stickyContent || !deck || slides.length !== 3) return;
+  if (!scrollScene || !stickyContent || !deck || !musicCamera || !musicField || slides.length !== 3) return;
 
   const state = {
-    frame: 0,
+    activeIndex: 0,
+    cardExitTimer: 0,
+    gestureDelta: 0,
+    open: false,
     railFrame: 0,
+    railIndex: 0,
+    resetFrame: 0,
     resizeFrame: 0,
     settleTimer: 0,
-    snapTarget: null,
-    railIndex: 0,
-    expanded: false,
-    measurements: null,
+    touchStartY: null,
+    visible: true,
   };
 
+  const GESTURE_THRESHOLD = 72;
+  const SETTLE_FALLBACK = 1400;
   const clamp = (value, min, max) => Math.min(Math.max(value, min), max);
   const compact = () => compactLayout.matches || reduceMotion.matches;
-  const easeInOutSine = (value) => -(Math.cos(Math.PI * value) - 1) / 2;
-  const cardRevealDuration = 0.4;
-  const cardRevealStagger = 0.22;
-  const pullThreshold = 0.18;
-  const pullSettleDelay = 120;
-  const cardsReadyProgress = clamp(
-    (slides.length - 1) * cardRevealStagger + cardRevealDuration,
-    0,
-    1
-  );
 
   function setInert(element, inert) {
     if (!element) return;
@@ -50,122 +50,136 @@
     }
   }
 
-  function measure() {
-    const rect = scrollScene.getBoundingClientRect();
-    const sceneTop = window.scrollY + rect.top;
-    const headerOffset = parseFloat(getComputedStyle(root).getPropertyValue("--cover-header-offset")) || 0;
-    const start = sceneTop - headerOffset;
-    const distance = Math.max(scrollScene.offsetHeight - stickyContent.offsetHeight, 1);
-    state.measurements = { start, distance };
+  function cardName(slide) {
+    return slide.querySelector("h2")?.textContent.trim() || "section";
   }
 
-  function sceneProgress() {
-    if (!state.measurements) measure();
-    const { start, distance } = state.measurements;
-    return clamp((window.scrollY - start) / distance, 0, 1);
-  }
+  function setActiveIndex(index, force = false) {
+    const next = (index + slides.length) % slides.length;
+    if (!force && next === state.activeIndex) return;
 
-  function revealProgress(progress, start) {
-    return easeInOutSine(clamp((progress - start) / cardRevealDuration, 0, 1));
-  }
+    state.activeIndex = next;
+    root.dataset.activeIndex = String(next);
 
-  function horizontalSpacing() {
-    return clamp(deck.clientWidth * 0.3, 180, 470);
-  }
-
-  function applyVerticalProgress(progress) {
-    const spacing = horizontalSpacing();
-    const centre = (slides.length - 1) / 2;
-    const entryX = Math.max(deck.clientWidth * 0.72, spacing * 1.8);
-    const promptFade = clamp(progress / 0.16, 0, 1);
-    const introFade = easeInOutSine(clamp(progress / 0.2, 0, 1));
-    const fieldsReveal = easeInOutSine(clamp((progress - 0.08) / 0.16, 0, 1));
-
-    root.style.setProperty("--cover-scene-progress", String(progress));
-    root.style.setProperty("--cover-explore-opacity", String(1 - promptFade));
-    root.style.setProperty("--cover-explore-y", `${promptFade * 0.65}rem`);
-    root.style.setProperty("--cover-intro-opacity", String(1 - introFade));
-    root.style.setProperty("--cover-intro-y", `${introFade * -0.7}rem`);
-    root.style.setProperty("--cover-fields-opacity", String(fieldsReveal));
-    root.style.setProperty("--cover-fields-y", `${(1 - fieldsReveal) * 0.5}rem`);
-    introLinks.forEach((link) => setInert(link, introFade >= 0.94));
-    setInert(explorePrompt, promptFade >= 0.94);
-
-    slides.forEach((slide, index) => {
-      const entry = revealProgress(progress, index * cardRevealStagger);
-      const finalX = (index - centre) * spacing;
-      const x = entryX + (finalX - entryX) * entry;
+    slides.forEach((slide, slideIndex) => {
+      const offset = (slideIndex - next + slides.length) % slides.length;
+      const active = offset === 0;
       const surface = slide.querySelector(".cover-carousel-card-surface");
 
-      slide.style.setProperty("--cover-reveal-x", `${x}px`);
-      slide.style.setProperty("--cover-reveal-opacity", String(entry));
-      slide.style.setProperty("--cover-reveal-scale", String(0.965 + entry * 0.035));
-      slide.style.setProperty("--cover-reveal-saturation", String(0.7 + entry * 0.3));
-      slide.style.setProperty("--cover-reveal-layer", String(10 + index));
-      slide.dataset.state = entry >= 0.995 ? "revealed" : entry > 0 ? "revealing" : "pending";
-      // 只在卡片完全不可见时禁用链接；一旦进入画面，整张卡片都应可点击。
-      setInert(surface, entry <= 0);
+      slide.dataset.state = active ? "active" : offset === 1 ? "next" : "previous";
+      if (active) {
+        slide.setAttribute("aria-current", "true");
+      } else {
+        slide.removeAttribute("aria-current");
+      }
+
+      setInert(surface, false);
+      if (surface) {
+        surface.setAttribute("aria-label", `${active ? "Open" : "Select"} ${cardName(slide)}`);
+      }
     });
   }
 
-  function applyPullProgress(progress) {
-    const isPulling = !state.expanded && progress < pullThreshold;
-    const pull = isPulling ? easeInOutSine(progress / pullThreshold) : 0;
-
-    // 阈值前只让整个封面受阻上浮，三张卡维持初始隐藏状态。
-    root.style.setProperty("--cover-pull-y", `${-pull * 0.85}rem`);
-    applyVerticalProgress(isPulling ? 0 : progress);
+  function resetDesktopCards() {
+    state.activeIndex = 0;
+    root.dataset.activeIndex = "0";
+    slides.forEach((slide) => {
+      slide.dataset.state = "pending";
+      slide.removeAttribute("aria-current");
+      const surface = slide.querySelector(".cover-carousel-card-surface");
+      setInert(surface, true);
+      surface?.removeAttribute("aria-label");
+    });
   }
 
-  function updateFromScroll() {
-    state.frame = 0;
-    if (compact()) return;
-    const progress = sceneProgress();
-
-    if (state.snapTarget !== null) {
-      applyPullProgress(progress);
-      if (Math.abs(progress - state.snapTarget) < 0.01) state.snapTarget = null;
-      return;
-    }
-
-    if (!state.expanded && progress >= pullThreshold) {
-      settlePull();
-      return;
-    }
-    applyPullProgress(progress);
-    schedulePullSettle();
-  }
-
-  function scheduleScrollUpdate() {
-    if (state.frame) return;
-    state.frame = window.requestAnimationFrame(updateFromScroll);
-  }
-
-  function settlePull() {
+  function markSettled() {
     window.clearTimeout(state.settleTimer);
     state.settleTimer = 0;
-    const progress = sceneProgress();
+    if (!state.open || compact()) return;
+    root.classList.add("is-orbit-settled");
+    scrollScene.classList.add("is-orbit-settled");
+    syncAmbientLoop();
+  }
 
-    // 展开后继续下滑即离开封面，不再把页面吸回三卡状态。
-    if (state.expanded && progress >= cardsReadyProgress) return;
+  function syncAmbientLoop() {
+    scrollScene.classList.toggle(
+      "is-orbit-looping",
+      state.open && state.visible
+    );
+  }
 
-    const shouldExpand = state.expanded
-      ? progress > cardsReadyProgress - pullThreshold
-      : progress >= pullThreshold;
-    const targetProgress = shouldExpand ? cardsReadyProgress : 0;
+  function finishCardExit() {
+    window.clearTimeout(state.cardExitTimer);
+    state.cardExitTimer = 0;
+    if (state.open || compact()) return;
+    root.classList.remove("is-orbit-open");
+    resetDesktopCards();
+    void deck.offsetWidth;
+    root.classList.remove("is-orbit-closing");
+  }
 
-    state.expanded = shouldExpand;
-    applyPullProgress(progress);
-    state.snapTarget = targetProgress;
-    window.scrollTo({
-      top: state.measurements.start + state.measurements.distance * targetProgress,
-      behavior: "smooth",
+  function resetAmbientMotion() {
+    if (state.resetFrame) {
+      window.cancelAnimationFrame(state.resetFrame);
+      state.resetFrame = 0;
+    }
+
+    if (!scrollScene.classList.contains("is-orbit-looping")) {
+      scrollScene.classList.remove("is-orbit-looping");
+      ambientSpinners.forEach((element) => element.style.removeProperty("transform"));
+      return;
+    }
+
+    const transforms = ambientSpinners.map((element) => getComputedStyle(element).transform);
+    scrollScene.classList.remove("is-orbit-looping");
+    ambientSpinners.forEach((element, index) => {
+      element.style.transform = transforms[index];
+    });
+    void musicField.offsetWidth;
+
+    state.resetFrame = window.requestAnimationFrame(() => {
+      ambientSpinners.forEach((element) => element.style.removeProperty("transform"));
+      state.resetFrame = 0;
     });
   }
 
-  function schedulePullSettle() {
+  function setOrbitOpen(open) {
+    if (compact() || open === state.open) return;
+
+    state.open = open;
+    state.gestureDelta = 0;
+    window.clearTimeout(state.cardExitTimer);
+    state.cardExitTimer = 0;
     window.clearTimeout(state.settleTimer);
-    state.settleTimer = window.setTimeout(settlePull, pullSettleDelay);
+    state.settleTimer = 0;
+    root.classList.remove("is-orbit-settled");
+    if (open) {
+      if (state.resetFrame) {
+        window.cancelAnimationFrame(state.resetFrame);
+        state.resetFrame = 0;
+      }
+      ambientSpinners.forEach((element) => element.style.removeProperty("transform"));
+      scrollScene.classList.remove("is-orbit-looping");
+    } else {
+      resetAmbientMotion();
+    }
+    scrollScene.classList.remove("is-orbit-settled");
+    scrollScene.classList.toggle("is-orbit-open", open);
+
+    introLinks.forEach((link) => setInert(link, open));
+    setInert(explorePrompt, open);
+
+    if (open) {
+      root.classList.remove("is-orbit-closing");
+      root.classList.add("is-orbit-open");
+      setActiveIndex(0, true);
+      syncAmbientLoop();
+      state.settleTimer = window.setTimeout(markSettled, SETTLE_FALLBACK);
+    } else {
+      root.classList.add("is-orbit-closing");
+      slides.forEach((slide) => setInert(slide.querySelector(".cover-carousel-card-surface"), true));
+      state.cardExitTimer = window.setTimeout(finishCardExit, 240);
+    }
   }
 
   function closestRailIndex() {
@@ -190,8 +204,11 @@
     state.railIndex = clamp(index, 0, slides.length - 1);
     slides.forEach((slide, slideIndex) => {
       const active = slideIndex === state.railIndex;
+      const surface = slide.querySelector(".cover-carousel-card-surface");
       slide.dataset.state = active ? "active" : slideIndex < state.railIndex ? "previous" : "next";
-      setInert(slide.querySelector(".cover-carousel-card-surface"), false);
+      slide.removeAttribute("aria-current");
+      setInert(surface, false);
+      surface?.removeAttribute("aria-label");
     });
   }
 
@@ -206,16 +223,48 @@
     state.railFrame = window.requestAnimationFrame(updateFromRail);
   }
 
+  function updateOrbitGeometry() {
+    const width = window.innerWidth;
+    const height = window.innerHeight;
+    const rootFontSize = parseFloat(getComputedStyle(document.documentElement).fontSize) || 16;
+    const headerHeight =
+      parseFloat(getComputedStyle(scrollScene).getPropertyValue("--cover-header-height")) || rootFontSize * 5.1;
+    const baseDiameter = Math.min(width * 0.29, rootFontSize * 21);
+    const radius = (2 * width * width) / (9 * height) + height / 8;
+    const scale = (2 * radius) / baseDiameter;
+    const baseCentreY = headerHeight + (height - headerHeight) * 0.53;
+    const targetCentreY = height * 0.75 + radius;
+
+    scrollScene.style.setProperty("--cover-orbit-scale", scale.toFixed(4));
+    scrollScene.style.setProperty("--cover-orbit-y", `${(targetCentreY - baseCentreY).toFixed(2)}px`);
+  }
+
   function refreshLayout() {
     state.resizeFrame = 0;
-    measure();
+    document.body.classList.toggle("is-cover-gesture-mode", !compact());
+
     if (compact()) {
+      state.open = false;
+      window.clearTimeout(state.cardExitTimer);
+      state.cardExitTimer = 0;
+      window.clearTimeout(state.settleTimer);
+      resetAmbientMotion();
+      root.classList.remove("is-orbit-open", "is-orbit-closing", "is-orbit-settled");
+      scrollScene.classList.remove("is-orbit-open", "is-orbit-settled");
       introLinks.forEach((link) => setInert(link, false));
+      setInert(explorePrompt, false);
       setRailIndex(closestRailIndex());
+      return;
+    }
+
+    updateOrbitGeometry();
+
+    if (state.open) {
+      setActiveIndex(state.activeIndex, true);
     } else {
-      const progress = sceneProgress();
-      state.expanded = progress >= cardsReadyProgress / 2;
-      applyPullProgress(progress);
+      resetDesktopCards();
+      introLinks.forEach((link) => setInert(link, false));
+      setInert(explorePrompt, false);
     }
   }
 
@@ -224,7 +273,7 @@
     state.resizeFrame = window.requestAnimationFrame(refreshLayout);
   }
 
-  function showAllCards(event) {
+  function showOrbit(event) {
     event.preventDefault();
 
     if (compact()) {
@@ -232,23 +281,75 @@
       return;
     }
 
-    measure();
-    state.expanded = true;
-    window.scrollTo({
-      top: state.measurements.start + state.measurements.distance * cardsReadyProgress,
-      behavior: "smooth",
-    });
+    setOrbitOpen(true);
   }
 
-  window.addEventListener("scroll", scheduleScrollUpdate, { passive: true });
+  function onWheel(event) {
+    if (compact()) return;
+    event.preventDefault();
+
+    const direction = Math.sign(event.deltaY);
+    if (!direction || (direction > 0) === state.open) {
+      state.gestureDelta = 0;
+      return;
+    }
+
+    if (Math.sign(state.gestureDelta) !== direction) state.gestureDelta = 0;
+    state.gestureDelta += event.deltaY;
+    if (Math.abs(state.gestureDelta) >= GESTURE_THRESHOLD) setOrbitOpen(direction > 0);
+  }
+
+  function onTouchStart(event) {
+    if (!compact() && event.touches.length === 1) state.touchStartY = event.touches[0].clientY;
+  }
+
+  function onTouchEnd(event) {
+    if (compact() || state.touchStartY === null || !event.changedTouches.length) return;
+    const distance = state.touchStartY - event.changedTouches[0].clientY;
+    state.touchStartY = null;
+    if (Math.abs(distance) >= 48 && (distance > 0) !== state.open) setOrbitOpen(distance > 0);
+  }
+
+  function onCardClick(event) {
+    if (compact() || !state.open) return;
+    const index = slides.findIndex((slide) => slide.contains(event.currentTarget));
+    if (index < 0 || index === state.activeIndex) return;
+    event.preventDefault();
+    setActiveIndex(index);
+  }
+
+  function onKeydown(event) {
+    if (compact() || !state.open || event.defaultPrevented) return;
+    if (event.metaKey || event.ctrlKey || event.altKey) return;
+    if (!root.contains(document.activeElement)) return;
+
+    if (event.key === "ArrowLeft" || event.key === "ArrowRight") {
+      event.preventDefault();
+      setActiveIndex(state.activeIndex + (event.key === "ArrowRight" ? 1 : -1));
+      slides[state.activeIndex].querySelector(".cover-carousel-card-surface")?.focus();
+    }
+  }
+
+  function onMusicCameraTransitionEnd(event) {
+    if (event.target === musicCamera && event.propertyName === "transform") markSettled();
+  }
+
+  window.addEventListener("wheel", onWheel, { passive: false });
+  window.addEventListener("touchstart", onTouchStart, { passive: true });
+  window.addEventListener("touchend", onTouchEnd, { passive: true });
   window.addEventListener("resize", scheduleRefresh, { passive: true });
   window.addEventListener("orientationchange", scheduleRefresh);
   window.addEventListener("load", scheduleRefresh, { once: true });
   window.addEventListener("pageshow", scheduleRefresh);
-  if (explorePrompt) explorePrompt.addEventListener("click", showAllCards);
+  root.addEventListener("keydown", onKeydown);
+  musicCamera.addEventListener("transitionend", onMusicCameraTransitionEnd);
+  if (explorePrompt) explorePrompt.addEventListener("click", showOrbit);
   deck.addEventListener("scroll", scheduleRailUpdate, { passive: true });
   compactLayout.addEventListener("change", scheduleRefresh);
   reduceMotion.addEventListener("change", scheduleRefresh);
+  slides.forEach((slide) => {
+    slide.querySelector(".cover-carousel-card-surface")?.addEventListener("click", onCardClick);
+  });
 
   if ("ResizeObserver" in window) {
     const observer = new ResizeObserver(scheduleRefresh);
@@ -256,15 +357,27 @@
     observer.observe(deck);
   }
 
-  root.classList.add("is-enhanced", "is-vertical");
-  scrollScene.classList.add("is-carousel-enhanced");
-  measure();
+  if ("IntersectionObserver" in window) {
+    const observer = new IntersectionObserver(([entry]) => {
+      state.visible = entry.isIntersecting;
+      syncAmbientLoop();
+    });
+    observer.observe(scrollScene);
+  }
 
-  const navigation = performance.getEntriesByType("navigation")[0];
-  if (!compact() && navigation && navigation.type === "reload") {
-    window.scrollTo({ top: state.measurements.start, behavior: "auto" });
-    applyVerticalProgress(0);
+  root.classList.add("is-enhanced", "is-orbit");
+  scrollScene.classList.add("is-carousel-enhanced");
+
+  if (!compact()) {
+    updateOrbitGeometry();
+    document.body.classList.add("is-cover-gesture-mode");
+    resetDesktopCards();
   } else {
     refreshLayout();
   }
+
+  /* 先让隐藏槽位稳定一帧，再开放正常动效，避免刷新时播放收起动画。 */
+  window.requestAnimationFrame(() => {
+    window.requestAnimationFrame(() => root.classList.add("is-ready"));
+  });
 })();

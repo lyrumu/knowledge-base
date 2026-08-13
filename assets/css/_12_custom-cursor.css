@@ -13,6 +13,14 @@ html.custom-cursor-active *::after {
   cursor: none !important;
 }
 
+/* iframe 与原生滚动区域不会持续向父页面派发指针事件，进入时交还系统光标。 */
+html.custom-cursor-active:has(iframe:hover, .prose pre:hover),
+html.custom-cursor-active:has(iframe:hover, .prose pre:hover) *,
+html.custom-cursor-active:has(iframe:hover, .prose pre:hover) *::before,
+html.custom-cursor-active:has(iframe:hover, .prose pre:hover) *::after {
+  cursor: revert !important;
+}
+
 .custom-cursor {
   position: fixed;
   top: 0;
@@ -71,5 +79,9 @@ html.custom-cursor-click .cursor-ring {
 
 /* 鼠标离开视口时淡出 —— 由 JS 控制 opacity，此处不再用 html:hover 探测 */
 html.custom-cursor-active .custom-cursor.is-hidden {
+  opacity: 0;
+}
+
+html.custom-cursor-active:has(iframe:hover, .prose pre:hover) .custom-cursor {
   opacity: 0;
 }
