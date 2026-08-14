@@ -134,6 +134,7 @@ f:\Notes\
 │
 ├── layouts/                        # ★ 自定义模板（覆写主题）
 │   ├── _default/list.html          # section 主页 → page-hero + 正文 + 子页面列表（notes/about 当前走这里）
+│   ├── _default/_markup/render-image.html # 正文 Markdown 图片：响应式 WebP + 24px LQIP blur-up
 │   ├── page.html                   # kind=page 的项目级模板；当前 notes 普通文章也命中这里，taxonomy/edit/pagination 需在此补回
 │   ├── partials/
 │   │   ├── head.html               # ⚠️ [lyrumu 改造] 覆盖 Blowfish 主题版本

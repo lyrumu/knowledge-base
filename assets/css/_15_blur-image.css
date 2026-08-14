@@ -68,3 +68,9 @@ html.js-blurup .blur-img[data-lqip].is-loaded {
 .blur-img.is-broken {
   display: none;
 }
+
+/* 正文图片保持主题原有的固有比例排版，不继承卡片图片的固定高度裁切。 */
+.article-blur-img {
+  height: auto;
+  object-fit: contain;
+}
