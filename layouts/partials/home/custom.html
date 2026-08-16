@@ -18,6 +18,7 @@
 {{ $highlights = default (dict
   "sections" (slice)
 ) $highlights }}
+{{ $violinEngraving := resources.Get "image/cover/cover-violin-engraving.svg" | resources.Minify | resources.Fingerprint "sha512" }}
 
 {{/*
   调色板：用 <style> 块写而不是 inline `style=""`
@@ -93,7 +94,18 @@
     {{/* 镜头只承载音乐背景；卡片是独立前景层，位置不受镜头倍率影响。 */}}
     <div class="cover-music-camera" aria-hidden="true">
       <div class="cover-music-field" aria-hidden="true">
-        <span class="cover-music-field__disc"></span>
+        <span class="cover-music-field__disc">
+          {{/* SVG 作为图片完整解码后再绘制，避免复杂矢量逐路径出现在页面上。 */}}
+          <img
+            class="cover-music-field__engraving"
+            src="{{ $violinEngraving.RelPermalink }}"
+            alt=""
+            width="768"
+            height="768"
+            decoding="async"
+            fetchpriority="high"
+            draggable="false">
+        </span>
         <span class="cover-music-field__staff cover-music-field__staff--one"></span>
         <span class="cover-music-field__staff cover-music-field__staff--two"></span>
         <span class="cover-music-field__orbit cover-music-field__orbit--one"></span>

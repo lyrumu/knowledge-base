@@ -5,7 +5,7 @@
      - 非触摸主输入设备 (pointer: fine)
      - 未开启 prefers-reduced-motion
      - 视口宽度 > 720px
-   满足条件时复用 body 末尾的光标 DOM，并在首次获得可靠坐标后接管系统光标。
+   满足条件时复用 body 末尾的光标 DOM，并在真实指针事件后接管系统光标。
    ============================================================================= */
 
 (function () {
@@ -36,8 +36,6 @@
   const ringWrapper = container.querySelector('.cursor-ring-wrapper');
   if (!ringWrapper) return;
 
-  const positionStorageKey = 'lyrumu.customCursorPosition.v1';
-  const restoreMaxAge = 15000;
   const followTime = 18;
 
   let mouseX = 0;
@@ -65,7 +63,7 @@
   const hide = () => {
     cancelLoop();
     container.classList.add('is-hidden');
-    root.classList.remove('custom-cursor-click', 'custom-cursor-hover');
+    root.classList.remove('custom-cursor-active', 'custom-cursor-click', 'custom-cursor-hover');
   };
 
   const activate = () => {
@@ -107,6 +105,14 @@
 
   const setPosition = (x, y, snap) => {
     if (!Number.isFinite(x) || !Number.isFinite(y)) return;
+    const scroller = document.scrollingElement || root;
+    const isScrollbarEdge =
+      (scroller.scrollHeight > scroller.clientHeight && x >= scroller.clientWidth - 16) ||
+      (scroller.scrollWidth > scroller.clientWidth && y >= scroller.clientHeight - 16);
+    if (isScrollbarEdge) {
+      hide();
+      return;
+    }
     mouseX = x;
     mouseY = y;
 
@@ -119,32 +125,6 @@
 
     activate();
     scheduleTick();
-  };
-
-  const savePosition = () => {
-    if (!hasPosition) return;
-    try {
-      sessionStorage.setItem(positionStorageKey, JSON.stringify({
-        x: mouseX,
-        y: mouseY,
-        savedAt: Date.now(),
-      }));
-    } catch (_) {
-      // 隐私模式或存储被禁用时，保留当前页内的无闪现降级行为。
-    }
-  };
-
-  const restorePosition = () => {
-    try {
-      const saved = JSON.parse(sessionStorage.getItem(positionStorageKey) || 'null');
-      if (!saved || Date.now() - saved.savedAt > restoreMaxAge) return false;
-      if (!Number.isFinite(saved.x) || !Number.isFinite(saved.y)) return false;
-      if (saved.x < 0 || saved.x > window.innerWidth || saved.y < 0 || saved.y > window.innerHeight) return false;
-      setPosition(saved.x, saved.y, true);
-      return true;
-    } catch (_) {
-      return false;
-    }
   };
 
   // hover 检测：给常见交互元素及项目卡片加 class
@@ -191,14 +171,12 @@
   document.addEventListener('pointerdown', (event) => {
     if (event.pointerType && event.pointerType !== 'mouse') return;
     setPosition(event.clientX, event.clientY, false);
-    savePosition();
     root.classList.add('custom-cursor-click');
   }, { passive: true });
 
   document.addEventListener('pointerup', () => root.classList.remove('custom-cursor-click'));
   document.addEventListener('pointercancel', () => root.classList.remove('custom-cursor-click'));
   document.addEventListener('mouseleave', () => {
-    savePosition();
     hide();
   });
   document.addEventListener('mouseenter', (event) => {
@@ -210,27 +188,13 @@
   document.addEventListener('visibilitychange', () => {
     isPageVisible = !document.hidden;
     if (document.hidden) {
-      savePosition();
       hide();
-    } else {
-      activate();
     }
   });
 
-  window.addEventListener('pagehide', () => {
-    savePosition();
-    hide();
-  });
+  window.addEventListener('pagehide', hide);
   window.addEventListener('pageshow', () => {
     isPageVisible = true;
-    if (!hasPosition) restorePosition();
-    activate();
-    if (hasPosition) syncHoverState(document.elementFromPoint(mouseX, mouseY));
   });
-  window.addEventListener('blur', () => root.classList.remove('custom-cursor-click'));
-
-  // 同一标签页内导航时恢复上一页最后坐标；直接访问则等首次移动后原地出现。
-  if (restorePosition()) {
-    syncHoverState(document.elementFromPoint(mouseX, mouseY));
-  }
+  window.addEventListener('blur', hide);
 })();

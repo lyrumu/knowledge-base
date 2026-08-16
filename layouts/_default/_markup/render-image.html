@@ -35,20 +35,24 @@
   {{- $tiny := $imgObj.Resize (printf "%dx webp" $tinyWidth) -}}
   {{- $lqip := printf "data:image/webp;base64,%s" (base64Encode $tiny.Content) | safeURL -}}
 
-  <img
-    class="my-0 rounded-md blur-img article-blur-img"
-    loading="lazy"
-    decoding="async"
-    fetchpriority="auto"
-    alt="{{ $alt }}"
-    width="{{ $imgObj.Width }}"
-    height="{{ $imgObj.Height }}"
-    src="{{ $lqip }}"
-    data-full-src="{{ $img800.RelPermalink }}"
-    data-lqip="1"
-    srcset="{{ $srcset }}"
-    sizes="(min-width: 768px) 50vw, 65vw"
-    data-zoom-src="{{ $imgObj.RelPermalink }}">
+  <div
+    class="blur-img-wrapper article-blur-img-frame"
+    style="--blur-img: url('{{ $lqip }}'); aspect-ratio: {{ $imgObj.Width }} / {{ $imgObj.Height }}">
+    <img
+      class="my-0 rounded-md blur-img article-blur-img"
+      loading="lazy"
+      decoding="async"
+      fetchpriority="auto"
+      alt="{{ $alt }}"
+      width="{{ $imgObj.Width }}"
+      height="{{ $imgObj.Height }}"
+      src="{{ $img800.RelPermalink }}"
+      data-full-src="{{ $img800.RelPermalink }}"
+      data-lqip="1"
+      srcset="{{ $srcset }}"
+      sizes="(min-width: 768px) 50vw, 65vw"
+      data-zoom-src="{{ $imgObj.RelPermalink }}">
+  </div>
 {{- end -}}
 
 {{- define "RenderImageCaption" -}}

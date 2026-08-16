@@ -2,7 +2,7 @@
    _15_blur-image.css — 通用 LQIP blur-up 组件
    ----------------------------------------------------------------------------
    与 assets/js/blur-image.js 配套：
-   - img 初始 src 为 24px WebP base64 LQIP
+   - 24px WebP LQIP 由 img 或等比例容器先行展示
    - 高清图加载完成后加 .is-loaded，模糊层淡出
    - 加载失败加 .is-broken，露出兜底背景
    ============================================================================ */
@@ -69,8 +69,28 @@ html.js-blurup .blur-img[data-lqip].is-loaded {
   display: none;
 }
 
-/* 正文图片保持主题原有的固有比例排版，不继承卡片图片的固定高度裁切。 */
-.article-blur-img {
-  height: auto;
+/* 正文先完整保留固有比例；LQIP 铺满容器，高清图加载完成后整体淡入。 */
+.article-blur-img-frame {
+  display: block;
+  width: 100%;
+  border-radius: 0.5rem;
+  background-color: transparent;
+  background-image: none;
+}
+
+.article-blur-img-frame .article-blur-img {
+  position: absolute;
+  inset: 0;
+  margin: 0;
+  height: 100%;
   object-fit: contain;
+}
+
+html.js-blurup .article-blur-img-frame .article-blur-img[data-lqip] {
+  filter: none;
+  opacity: 0;
+}
+
+html.js-blurup .article-blur-img-frame .article-blur-img[data-lqip].is-loaded {
+  opacity: 1;
 }

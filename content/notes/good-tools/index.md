@@ -45,8 +45,10 @@ showLikes: true
 ## macOS
 
 - [Homebrew](https://brew.sh) — macOS包管理器 除了统一下载管理开发工具 还可一行命令下载管理GUI App
+- [Vorssaint](https://vorssaint.com/zh-hans/) - macOS顶部实用工具栏集合(包括实时显示RAM,CPU占用,以及提供各种mac优化)
 - [iTerm2](https://iterm2.com) — macOS更好的终端
 - [AppCleaner](https://freemacsoft.net/appcleaner/) - macOS轻便的软件卸载工具
+- [duti](https://github.com/moretension/duti) - 批量管理macOS上文件的默认打开方式
 
 ***
 

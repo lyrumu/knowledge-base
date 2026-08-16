@@ -218,7 +218,7 @@ f:\Notes\
 | 三入口 Vertical 顺序显现 / mobile rail | [`data/home_highlights.yaml`](data/home_highlights.yaml) 的 `sections[].visual` | [`home/cover-carousel.html`](layouts/partials/home/cover-carousel.html) + [`home/carousel-image.html`](layouts/partials/home/carousel-image.html) + [`_16_cover-carousel.css`](assets/css/_16_cover-carousel.css) + [`cover-carousel.js`](assets/js/cover-carousel.js) |
 | 封面主题切换 | — | 直接复用主题原生顶栏按钮；首页不再保留封面专属切换器 |
 | 首页首屏关键图 / 字体预加载 | — | [`layouts/partials/head.html`](file:///f:/Notes/layouts/partials/head.html) |
-| 封面装饰元素（唱片小提琴蚀刻纹） | — | 直接使用 `static/image/cover-violin-engraving.webp`；旧上下花纹和黑花素材已删除 |
+| 封面装饰元素（唱片小提琴蚀刻纹） | — | 使用 `assets/image/cover/cover-violin-engraving.svg`，由 `custom.html` 经 Hugo 压缩、指纹化后输出；旧 WebP、上下花纹和黑花素材已删除 |
 | 封面调色（明 / 暗） | [`assets/css/_01_tokens.css`](file:///f:/Notes/assets/css/_01_tokens.css) 的全局变量 | [`custom.html`](file:///f:/Notes/layouts/partials/home/custom.html) 的 `<style>` 块只负责把全局变量派生到封面局部变量 |
 | 首页 `DOCS / WORKS / DAILY` 入口 | [`data/home_highlights.yaml`](file:///f:/Notes/data/home_highlights.yaml) | 由 [`layouts/partials/home/cover-carousel.html`](layouts/partials/home/cover-carousel.html) 按数据顺序同时渲染首帧索引与三张入口卡；桌面依次显现后保持三卡横排 |
 

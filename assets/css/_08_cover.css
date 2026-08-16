@@ -204,19 +204,23 @@ html:not(.dark) .cover-music-field {
   transform: translate(-50%, -50%);
 }
 
-/* 小提琴蚀刻纹：裁在唱片内部，保持低对比度，不成为独立贴纸。 */
-.cover-music-field__disc::after {
+/* 小提琴蚀刻纹：SVG 图片完整解码后一次绘制，保持为唱片内的低对比度纹理。 */
+.cover-music-field__engraving {
   position: absolute;
   inset: 10%;
-  background: url("/image/cover-violin-engraving.webp") center / contain no-repeat;
-  content: "";
+  display: block;
+  width: 80%;
+  height: 80%;
   filter: grayscale(1) sepia(0.28) contrast(1.08);
   mix-blend-mode: multiply;
+  object-fit: contain;
   opacity: 0.3;
+  pointer-events: none;
   transform: rotate(-7deg);
+  user-select: none;
 }
 
-html.dark .cover-music-field__disc::after {
+html.dark .cover-music-field__engraving {
   filter: grayscale(1) brightness(1.28) contrast(0.9);
   mix-blend-mode: screen;
   opacity: 0.22;
