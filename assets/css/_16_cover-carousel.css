@@ -57,6 +57,48 @@
   line-height: 1.58;
 }
 
+.cover-home-intro__description-link {
+  color: var(--pal-title, var(--fg-base));
+  font-family: var(--font-sans);
+  font-size: 0.68rem;
+  font-weight: 720;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  white-space: nowrap;
+  text-decoration: none;
+  transition: color 220ms var(--cover-carousel-ease);
+}
+
+.cover-home-intro__description-link-label {
+  text-decoration-color: transparent;
+  text-decoration-line: underline;
+  text-decoration-thickness: 1px;
+  text-underline-offset: 0.32rem;
+  transition: text-decoration-color 220ms var(--cover-carousel-ease);
+}
+
+.cover-home-intro__description-link-icon {
+  display: inline-flex;
+  align-items: center;
+  margin-inline-start: 0.2em;
+  vertical-align: -0.08em;
+}
+
+.cover-home-intro__description-link:hover,
+.cover-home-intro__description-link:focus-visible {
+  color: var(--pal-accent, var(--accent));
+}
+
+.cover-home-intro__description-link:hover .cover-home-intro__description-link-label,
+.cover-home-intro__description-link:focus-visible .cover-home-intro__description-link-label {
+  text-decoration-color: currentColor;
+}
+
+.cover-home-intro__description-link:focus-visible {
+  outline: 2px solid var(--pal-accent, var(--accent));
+  outline-offset: 0.25rem;
+}
+
 .cover-home-intro__index ul {
   display: flex;
   flex-wrap: wrap;
@@ -697,7 +739,7 @@ a.cover-carousel-card-surface:focus-visible .cover-carousel-cta span {
     width: min(42rem, 49vw);
     padding: 0;
     opacity: 1;
-    /* 透明后的介绍层不能遮住卡片；仅下方仍可见的索引链接恢复交互。 */
+    /* 透明后的介绍层不能遮住卡片；仍可见的介绍层链接恢复交互。 */
     pointer-events: none;
     transform: translate3d(0, -50%, 0);
     transition:
@@ -713,7 +755,7 @@ a.cover-carousel-card-surface:focus-visible .cover-carousel-cta span {
     transition-delay: 0ms;
   }
 
-  .cover-carousel-scene.is-enhanced .cover-home-intro__index a:not([inert]) {
+  .cover-carousel-scene.is-enhanced .cover-home-intro a:not([inert]) {
     pointer-events: auto;
   }
 

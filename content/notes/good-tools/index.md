@@ -1,5 +1,5 @@
 ---
-title: "Good Tools"
+title: "Good Tools(资源&工具分享)"
 date: 2026-07-26
 draft: false
 description: "日常使用的软件、插件和网站推荐"
@@ -74,6 +74,8 @@ showLikes: true
 
 - [HelloGithub](https://hellogithub.com/) - 每月提供丰富的优质项目推荐
 - [Vibehub](https://vibe-hub.org/) - 提供Vibecoding学习资源
+- [Hugging Face Agents Course](https://huggingface.co/learn/agents-course/zh-CN/unit0/introduction) - 学习agent
+- [Hello Agents](https://datawhalechina.github.io/hello-agents/) - 学习agent(国内社区)
 
 ### Resources
 

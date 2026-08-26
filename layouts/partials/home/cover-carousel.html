@@ -66,7 +66,25 @@
     <section class="cover-home-intro" data-cover-intro aria-labelledby="cover-home-title">
       <h1 id="cover-home-title">{{ $headline }}</h1>
       {{- with $description }}
-      <p class="cover-home-intro__description">{{ . }}</p>
+      <p class="cover-home-intro__description">
+        {{/* 根据全站作者配置切分文案，避免在数据和模板中重复维护作者名。 */}}
+        {{- $authorName := $page.Site.Params.Author.name | default "" -}}
+        {{- if $authorName -}}
+          {{- range $index, $part := split . $authorName -}}
+            {{- if gt $index 0 -}}
+              <a class="cover-home-intro__description-link" href="{{ "about/" | relLangURL }}">
+                <span class="cover-home-intro__description-link-label">{{- $authorName -}}</span>
+                <span class="cover-home-intro__description-link-icon" aria-hidden="true">
+                  {{ partial "cover/icon.html" (dict "name" "arrow-up-right" "size" 14) }}
+                </span>
+              </a>
+            {{- end -}}
+            {{- $part -}}
+          {{- end -}}
+        {{- else -}}
+          {{- . -}}
+        {{- end -}}
+      </p>
       {{- end }}
 
       <nav class="cover-home-intro__index" aria-label="Homepage sections">

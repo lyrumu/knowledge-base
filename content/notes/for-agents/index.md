@@ -1,5 +1,5 @@
 ---
-title: "For Agents"
+title: "更好地使用Agents"
 date: 2026-07-29
 draft: false
 description: "我常用的 AI Agent 工具配置分享 —— OpenCode、AGENTS.md、MCP、Skill 等"
@@ -25,17 +25,19 @@ showComments: false
 sharingLinks: []
 ---
 
-> 记录自用的agent配置(keep updated)
+> 记录自用的agent配置以及使用方法(keep updated)
 
 ***
 
 ## Skills && Plugins
 
 ### Skills管理工具
-- [Vercel官网提供的skill管理工具](https://www.skills.sh/)
+- [Vercel官网提供的skill管理工具npx skills](https://www.skills.sh/)
 - [SkillHub](https://www.skillhub.cn/)
 
 ### Great Skills && Plugins
+- [Anthropic-official-plugins](https://github.com/anthropics/claude-plugins-official) - Claude code官方插件市场
+- [mattpocock-skills](https://github.com/mattpocock/skills) - 适合工程性仓库的skills
 - [Ponytail(Plugin)](https://github.com/DietrichGebert/ponytail) - 节省你的tokens
 
 
@@ -224,6 +226,15 @@ mkdir -p ~/.config/opencode && cp opencode.jsonc ~/.config/opencode/
 
 ## AGENTS.md && Claude.md
 
-### 第一性原理
+- 第一性原理
+- 对抗性审查
 
-### 对抗性审查
+***
+
+## 其他建议 
+
+- 在项目具体子模块中建立agent工作区
+- 不要被你的agent激怒
+- 注意会话上下文
+
+
