@@ -4,6 +4,18 @@
 
 ---
 
+## 2026-08-29 · 修复 hugo.toml 中 theme 键失效导致裸构建失败
+
+### 改动
+
+- `hugo.toml`：`theme = 'blowfish'` 原写在 `[languages.en.params.author]` 表头之后，按 TOML 作用域规则被归入 author 表，根级 theme 实际为空。自 6b58807 起所有不带 `--theme blowfish` 参数的裸 `hugo` 构建（以及任何依赖配置文件解析主题的环境）都会因主题模块未挂载、`resources.Get "js/appearance.js"` 取到 nil 而失败（报错位置 `layouts/partials/head.html:181`）。本地与 Cloudflare 一直靠命令行 `--theme` 参数兜底才未暴露。现将该键移至文件顶部根级（title 之后），原位置留注释说明。
+
+### 验证
+
+- `hugo config` 根级解析出 `theme = ['blowfish']`；`hugo`（无参数）与完整带参命令两种方式构建均通过。
+- 冒烟测试：`hugo server` 启动后输出 "Web Server is available"，首次构建无 ERROR，测试完即停止进程。
+- 排查过程中清理了 Hugo 全局缓存与 `resources/_gen`（均已自动重建），临时文件与 git worktree 已全部清理。
+
 ## 2026-08-13 · 首页音符盘环形卡片动效
 
 ### 改动
@@ -2445,3 +2457,24 @@ HTML 不允许 `<a>` 嵌套 `<a>`，所以必须重构。
 
 - [README.md](file:///f:/Notes/README.md) — 追加 Website 章节，描述网站部署信息
 - [PROJECT_MAP.md](file:///f:/Notes/PROJECT_MAP.md) — 更新部署方式和文件结构
+
+---
+
+## 2026-08-29 · About 页：技术栈图例 + GitHub 年度贡献图
+
+### 技术栈图例
+
+- `content/about/_index.md`：`.about-tags` 下方新增 `.about-tags-legend` 三色图例（蓝 = Dev tools / 紫 = Languages & frameworks / 绿 = AI & frontier）
+- 样式追加在 `_09_about.css`：圆点用标签同款 token 底色 + 同色描边，light/dark 自动跟随
+
+### GitHub 年度贡献图（可切换年份 + 当年贡献数）
+
+- 替换原 `ghchart.rshah.org` 直出 img（只有最近一年、无法切年份）
+- 新增 `layouts/shortcodes/github-contrib.html`：容器 + ghchart 兜底图 + Hugo Pipes 加载 JS（Minify + Fingerprint，同 theme-transition.js 套路）
+- 新增 `assets/js/github-contrib.js`：
+  - 数据源 `github-contributions-api.jogruber.de/v4/{user}?y=all`（CORS 全开，前端直连；注意返回数组非时间序，需按 date 排序）
+  - 年份 tab（新年在前，默认当年）+ 贡献数行（当年显示 "this year"，衬线斜体）
+  - GitHub 官方绿格子图（53 周 × 7 天，周日对齐；当年含未来日期 0 值格，与 GitHub 一致），light/dark 两套配色
+  - 窄屏（≤720px）横向滚动、隐藏周几标签；prefers-reduced-motion 关闭淡入
+  - 降级：接口失败 / 无 JS 保留 ghchart 兜底图；配色按用户要求保持 GitHub 默认绿不改
+- 验证：`node --check` 通过；`hugo` 编译通过（52 pages / 133ms）；public/about 产物含图例 ×3、gh-contrib 容器、指纹 JS

@@ -146,6 +146,10 @@ html.dark .cover-page {
   pointer-events: none;
   opacity: 0.62;
   transform: translate(-50%, -50%);
+  /* 右缘渐隐：field 超出视口的部分淡出，避免装饰线被视口硬切。
+     唱片右缘最远到 field 的 ~66%，从 72% 起衰减不伤唱片。 */
+  -webkit-mask-image: linear-gradient(90deg, #000 72%, transparent 99%);
+  mask-image: linear-gradient(90deg, #000 72%, transparent 99%);
 }
 
 html.dark .cover-music-field {
@@ -515,6 +519,9 @@ html.dark .cover-music-field__engraving {
     top: 38%;
     width: 135vw;
     opacity: 0.5;
+    /* 小屏唱片占 field 比例更大（右缘 ~77%），衰减起点后移避免削到唱片。 */
+    -webkit-mask-image: linear-gradient(90deg, #000 82%, transparent 100%);
+    mask-image: linear-gradient(90deg, #000 82%, transparent 100%);
   }
   html.dark .cover-music-field {
     opacity: 0.5;

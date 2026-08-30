@@ -50,7 +50,7 @@
 }
 
 .cover-home-intro__description {
-  max-width: 52ch;
+  max-width: 36ch;
   color: color-mix(in srgb, var(--pal-sub, var(--fg-mute)) 74%, var(--pal-title, var(--fg-base)) 26%);
   font-family: var(--font-serif-body);
   font-size: clamp(1rem, 1.25vw, 1.12rem);

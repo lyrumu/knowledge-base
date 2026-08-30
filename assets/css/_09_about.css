@@ -646,3 +646,168 @@ html.dark .about-contact-btn:hover {
 .site-stats-sep {
   opacity: 0.4;
 }
+
+/* 技术栈图例（2026-08-29 新增）
+   ----------------------------------------------------------------------------
+   说明 .about-tags 三色分类（蓝 = 开发工具 / 紫 = 语言与框架 / 绿 = AI & 前沿）。
+   圆点用标签同款底色 + 同色描边，light/dark 自动跟随 token 变量。
+   ============================================================================= */
+.about-tags-legend {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.3rem 1.25rem;
+  margin: 0.1rem 0 0.5rem;
+  font-family: var(--font-serif-body);
+  font-style: italic;
+  font-size: 0.8125rem;
+  color: var(--fg-soft);
+}
+.about-tags-legend-item {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+}
+.about-tags-legend-dot {
+  width: 0.625rem;
+  height: 0.625rem;
+  border-radius: 9999px;
+  border: 1px solid;
+  flex-shrink: 0;
+}
+.about-tags-legend-dot--blue   { background: var(--tag-blue-bg);   border-color: var(--tag-blue-fg); }
+.about-tags-legend-dot--purple { background: var(--tag-purple-bg); border-color: var(--tag-purple-fg); }
+.about-tags-legend-dot--green  { background: var(--tag-green-bg);  border-color: var(--tag-green-fg); }
+
+/* GitHub 年度贡献图（2026-08-29 新增）
+   ----------------------------------------------------------------------------
+   用于 layouts/shortcodes/github-contrib.html + assets/js/github-contrib.js
+   - 年份 tab（新年在前，默认当年）+ 贡献数行（衬线斜体，当年显示 this year）
+   - 格子保持 GitHub 官方绿（light/dark 两套），不与站点陶土色混色
+   - 53 周约 690px：窄屏容器横向滚动（max-width: 720px 隐藏周几标签）
+   - JS/接口失败时保留 shortcode 里的 ghchart 兜底图
+   ============================================================================= */
+.gh-contrib {
+  --gh-cell: 10px;
+  --gh-gap: 3px;
+  margin: 0.5rem 0 1rem;
+}
+.gh-contrib-fallback {
+  width: 100%;
+  height: auto;
+  border-radius: 8px;
+  border: 1px solid var(--line);
+}
+
+/* 年份 tab：药丸按钮，选中态反色 */
+.gh-contrib-tabs {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.4rem;
+  margin-bottom: 0.6rem;
+}
+.gh-contrib-tab {
+  padding: 0.15rem 0.75rem;
+  border-radius: 9999px;
+  border: 1px solid var(--line);
+  background: transparent;
+  color: var(--fg-mute);
+  font-family: var(--font-serif-body);
+  font-size: 0.8125rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: color 0.2s, background 0.2s, border-color 0.2s;
+}
+.gh-contrib-tab:hover {
+  color: var(--fg-base);
+  border-color: var(--fg-soft);
+}
+.gh-contrib-tab.is-active {
+  background: var(--fg-base);
+  border-color: var(--fg-base);
+  color: var(--bg-base);
+}
+
+/* 贡献数行：衬线斜体题词风 */
+.gh-contrib-count {
+  margin: 0 0 0.75rem;
+  font-family: var(--font-serif-display);
+  font-style: italic;
+  font-size: 0.95rem;
+  color: var(--fg-soft);
+}
+.gh-contrib-count strong {
+  font-weight: 600;
+  color: var(--fg-base);
+}
+
+/* 格子图容器：53 周较宽，窄屏横向滚动 */
+.gh-contrib-scroll {
+  overflow-x: auto;
+  padding-bottom: 0.35rem;
+}
+.gh-contrib-chart {
+  display: inline-grid;
+  grid-template-rows: auto repeat(7, var(--gh-cell));
+  grid-auto-columns: var(--gh-cell);
+  gap: var(--gh-gap);
+  animation: gh-contrib-fade 0.8s ease both;
+}
+.gh-contrib-month {
+  align-self: end;
+  padding-bottom: 2px;
+  font-size: 0.625rem;
+  line-height: 1;
+  color: var(--fg-soft);
+}
+.gh-contrib-wday {
+  padding-right: 4px;
+  font-size: 0.625rem;
+  line-height: var(--gh-cell);
+  color: var(--fg-soft);
+  text-align: right;
+}
+
+/* 格子：GitHub 官方绿（light） */
+.gh-day {
+  width: var(--gh-cell);
+  height: var(--gh-cell);
+  border-radius: 2px;
+  background: #ebedf0;
+}
+.gh-day[data-level="1"] { background: #9be9a8; }
+.gh-day[data-level="2"] { background: #40c463; }
+.gh-day[data-level="3"] { background: #30a14e; }
+.gh-day[data-level="4"] { background: #216e39; }
+
+/* 暗色（html.dark）：GitHub 官方暗色绿 */
+html.dark .gh-day { background: rgba(255, 255, 255, 0.07); }
+html.dark .gh-day[data-level="1"] { background: #0e4429; }
+html.dark .gh-day[data-level="2"] { background: #006d32; }
+html.dark .gh-day[data-level="3"] { background: #26a641; }
+html.dark .gh-day[data-level="4"] { background: #39d353; }
+
+/* Less / More 图例 */
+.gh-contrib-legend {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: var(--gh-gap);
+  margin-top: 0.5rem;
+  font-size: 0.6875rem;
+  color: var(--fg-soft);
+}
+.gh-contrib-legend-label {
+  margin: 0 0.25rem;
+}
+
+@keyframes gh-contrib-fade {
+  from { opacity: 0; transform: translateY(6px); }
+  to { opacity: 1; transform: none; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .gh-contrib-chart { animation: none; }
+}
+
+@media (max-width: 720px) {
+  .gh-contrib-wday { display: none; }
+}

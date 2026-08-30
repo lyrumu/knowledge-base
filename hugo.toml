@@ -11,6 +11,11 @@ baseURL = 'https://lyrumu.top/'
 defaultContentLanguage = 'en'
 title = "lyrumu's page"
 
+# theme 必须声明在任何 [table] 头之前（TOML 规则：表头之后的键都属于该表）。
+# 2026-08-29 修复：原先写在中部，被归入 [languages.en.params.author] 表，
+# 根级 theme 实际为空，裸 `hugo` 构建时主题不加载，全靠命令行 --theme 兜底。
+theme = 'blowfish'
+
 # =============================================================================
 # 多语言
 # 默认语言从 zh-cn 改为 en（2026-06-24）
@@ -53,8 +58,8 @@ title = "lyrumu's page"
 
 # =============================================================================
 # 主题与构建
+# （theme = 'blowfish' 已移至文件顶部根级，见文件开头注释）
 # =============================================================================
-theme = 'blowfish'
 
 relativeURLs = false
 disablePathToLower = true
@@ -73,8 +78,8 @@ enableEmoji = true
 # =============================================================================
 [params]
   colorScheme = 'blowfish' 
-  defaultAppearance = 'dark'
-  autoSwitchAppearance = true
+  defaultAppearance = 'light'
+  autoSwitchAppearance = false
   enableSearch = true
   enableCodeCopy = true
   enableImageLazyLoad = true

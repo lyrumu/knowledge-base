@@ -1,0 +1,22 @@
+{{/*
+  Shortcode: github-contrib
+  ----------------------------------------------------------------
+  GitHub 年度贡献图（可切换年份 + 当年贡献数）
+  数据源: https://github-contributions-api.jogruber.de/v4/{user}?y=all
+          （CORS 全开，前端直连；字段见 assets/js/github-contrib.js 头注释）
+  渲染:   assets/js/github-contrib.js（Minify + Fingerprint，同 theme-transition.js 套路）
+  降级:   fetch 失败 / 无 JS 时不渲染，保留下面的 ghchart 兜底图（最近一年）
+  用法:   {{< github-contrib user="lyrumu" >}}
+  ----------------------------------------------------------------
+*/}}
+{{ $user := .Get "user" | default "lyrumu" }}
+<div class="gh-contrib not-prose" data-user="{{ $user }}">
+  {{/* 兜底图：JS 渲染成功后会被移除 */}}
+  <img class="gh-contrib-fallback"
+       src="https://ghchart.rshah.org/{{ $user }}"
+       alt="{{ $user }}'s GitHub contribution chart"
+       loading="lazy"
+       decoding="async" />
+</div>
+{{ $ghContrib := resources.Get "js/github-contrib.js" | resources.Minify | resources.Fingerprint "sha512" }}
+<script src="{{ $ghContrib.RelPermalink }}" integrity="{{ $ghContrib.Data.Integrity }}" defer></script>

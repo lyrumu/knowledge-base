@@ -48,6 +48,13 @@ showTableOfContents: true
   <span class="about-tag about-tag--green">{{< icon "flutter" >}} Flutter</span>
 </div>
 
+<!-- 三色分类图例：蓝 = 开发工具 / 紫 = 语言与框架 / 绿 = AI & 前沿 -->
+<div class="about-tags-legend" aria-label="Tag color legend">
+  <span class="about-tags-legend-item"><i class="about-tags-legend-dot about-tags-legend-dot--blue" aria-hidden="true"></i>Dev tools</span>
+  <span class="about-tags-legend-item"><i class="about-tags-legend-dot about-tags-legend-dot--purple" aria-hidden="true"></i>Languages &amp; frameworks</span>
+  <span class="about-tags-legend-item"><i class="about-tags-legend-dot about-tags-legend-dot--green" aria-hidden="true"></i>AI &amp; frontier</span>
+</div>
+
 {{< section-rule >}}
 
 ## Current focus
@@ -84,10 +91,7 @@ showTableOfContents: true
 {{< section-rule >}}
 ## GitHub Contribution
 
-<img
-  src="https://ghchart.rshah.org/lyrumu"
-  alt="lyrumu's GitHub contribution chart"
-  class="w-full my-4 rounded-lg"
-/>
+<!-- 可切换年份的贡献图（assets/js/github-contrib.js）；接口失败时自动退回 ghchart 兜底图 -->
+{{< github-contrib user="lyrumu" >}}
 
 
