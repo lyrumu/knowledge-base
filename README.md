@@ -16,6 +16,13 @@
   <a href="https://deepwiki.com/lyrumu/knowledge-base"><img src="https://deepwiki.com/badge.svg" alt="Ask DeepWiki"></a>
 </p>
 
+<p align="center">
+  <picture>
+    <source srcset="static/video/readme-animation.webp" type="image/webp" />
+    <img src="static/video/readme-animation.gif" alt="Animated preview of lyrumu's personal blog" />
+  </picture>
+</p>
+
 ---
 
 This repository powers my personal website built with **[Hugo](https://gohugo.io/)** + the **[Blowfish](https://blowfish.page/)** theme, deployed on **Cloudflare Pages**.
