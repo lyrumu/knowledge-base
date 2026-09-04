@@ -91,7 +91,6 @@ showTableOfContents: true
 {{< section-rule >}}
 ## GitHub Contribution
 
-<!-- 可切换年份的贡献图（assets/js/github-contrib.js）；接口失败时自动退回 ghchart 兜底图 -->
+<!-- 可切换年份的贡献图（assets/js/github-contrib.js）；加载时显示骨架并优先复用上次成功数据 -->
 {{< github-contrib user="lyrumu" >}}
-
 

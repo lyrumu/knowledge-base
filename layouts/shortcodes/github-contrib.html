@@ -5,18 +5,18 @@
   数据源: https://github-contributions-api.jogruber.de/v4/{user}?y=all
           （CORS 全开，前端直连；字段见 assets/js/github-contrib.js 头注释）
   渲染:   assets/js/github-contrib.js（Minify + Fingerprint，同 theme-transition.js 套路）
-  降级:   fetch 失败 / 无 JS 时不渲染，保留下面的 ghchart 兜底图（最近一年）
+  加载:   首次请求显示骨架；后续刷新先用本地成功数据，再后台更新
   用法:   {{< github-contrib user="lyrumu" >}}
   ----------------------------------------------------------------
 */}}
 {{ $user := .Get "user" | default "lyrumu" }}
-<div class="gh-contrib not-prose" data-user="{{ $user }}">
-  {{/* 兜底图：JS 渲染成功后会被移除 */}}
-  <img class="gh-contrib-fallback"
-       src="https://ghchart.rshah.org/{{ $user }}"
-       alt="{{ $user }}'s GitHub contribution chart"
-       loading="lazy"
-       decoding="async" />
+<div class="gh-contrib not-prose" data-user="{{ $user }}" aria-live="polite" aria-busy="true">
+  <div class="gh-contrib-skeleton" aria-hidden="true">
+    <div class="gh-contrib-skeleton-tabs"><span></span><span></span><span></span></div>
+    <span class="gh-contrib-skeleton-count"></span>
+    <div class="gh-contrib-skeleton-chart"></div>
+  </div>
+  <span class="sr-only">Loading GitHub contributions…</span>
 </div>
 {{ $ghContrib := resources.Get "js/github-contrib.js" | resources.Minify | resources.Fingerprint "sha512" }}
 <script src="{{ $ghContrib.RelPermalink }}" integrity="{{ $ghContrib.Data.Integrity }}" defer></script>

@@ -2478,3 +2478,12 @@ HTML 不允许 `<a>` 嵌套 `<a>`，所以必须重构。
   - 窄屏（≤720px）横向滚动、隐藏周几标签；prefers-reduced-motion 关闭淡入
   - 降级：接口失败 / 无 JS 保留 ghchart 兜底图；配色按用户要求保持 GitHub 默认绿不改
 - 验证：`node --check` 通过；`hugo` 编译通过（52 pages / 133ms）；public/about 产物含图例 ×3、gh-contrib 容器、指纹 JS
+
+---
+
+## 2026-09-03 · About 页 GitHub Contribution 刷新稳定性
+
+- 移除加载期间的旧版 `ghchart` 图片，改为与年份视图同尺寸的骨架占位
+- 缓存上一次成功的公开贡献数据；刷新时先渲染缓存，再后台获取最新数据
+- 无缓存且接口失败时显示明确错误状态，不再误显示为旧版贡献图
+- 验证：`node --check`、Hugo 生产构建（52 pages）、产物结构断言与 `git diff --check` 均通过

@@ -7,8 +7,8 @@
    - 注意：返回数组按年份分块、非全局时间序（2026 全年在前），必须按 date 排序
    - 渲染：年份 tab（新年在前，默认当年）+ 贡献数行（当年显示 "this year"）+
      GitHub 官方绿格子图（53 周 × 7 天，周日开头；当年含未来日期的 0 值格，与 GitHub 一致）
-   - 降级：fetch 失败 / JSON 异常时不做任何渲染，保留 shortcode 里的
-     ghchart.rshah.org 兜底图（最近一年）
+   - 加载：首次请求显示骨架；成功数据缓存到 localStorage，刷新时
+     先渲染缓存再后台更新，避免回退到旧版静态图
    --------------------------------------------------------------- */
 (function () {
   "use strict";
@@ -18,20 +18,40 @@
 
   var user = root.getAttribute("data-user") || "lyrumu";
   var API = "https://github-contributions-api.jogruber.de/v4/" + user + "?y=all";
+  var CACHE_KEY = "github-contributions:" + user;
   var MONTHS = ["Jan", "Feb", "Mar", "Apr", "May", "Jun",
                 "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
   var WEEKDAYS = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
 
+  try {
+    var cached = JSON.parse(localStorage.getItem(CACHE_KEY));
+    if (cached) render(cached);
+  } catch (err) {
+    // localStorage 被禁用或缓存损坏时继续走网络请求
+  }
+
+  root.setAttribute("aria-busy", "true");
   fetch(API)
     .then(function (res) {
       if (!res.ok) throw new Error("HTTP " + res.status);
       return res.json();
     })
-    .then(render)
+    .then(function (data) {
+      if (!render(data)) throw new Error("Invalid contribution data");
+      try {
+        localStorage.setItem(CACHE_KEY, JSON.stringify(data));
+      } catch (err) {
+        // 缓存不可用不影响当前页面
+      }
+    })
     .catch(function (err) {
-      // 静默降级：保留 shortcode 里的 ghchart 兜底图
+      root.setAttribute("aria-busy", "false");
+      if (!root.classList.contains("is-ready")) {
+        root.textContent = "GitHub contribution data is temporarily unavailable.";
+        root.classList.add("is-error");
+      }
       if (window.console) {
-        console.warn("[github-contrib] API failed, keep ghchart fallback:", err);
+        console.warn("[github-contrib] API failed:", err);
       }
     });
 
@@ -43,14 +63,16 @@
     var years = Object.keys(totals)
       .map(Number)
       .sort(function (a, b) { return b - a; }); // 新年份在前
-    if (!years.length || !days.length) return;
+    if (!years.length || !days.length) return false;
 
     var currentYear = new Date().getFullYear();
     var selected = years.indexOf(currentYear) !== -1 ? currentYear : years[0];
 
-    // 渲染成功才清掉兜底图
+    // 只在数据有效时替换骨架或旧缓存视图
     root.textContent = "";
     root.classList.add("is-ready");
+    root.classList.remove("is-error");
+    root.setAttribute("aria-busy", "false");
 
     var tabs = buildTabs(years, selected);
     var count = buildCount(selected, totals, currentYear);
@@ -83,6 +105,8 @@
       root.replaceChild(nextChart, chart);
       chart = nextChart;
     });
+
+    return true;
   }
 
   /* 年份 tab（新年份在前） */

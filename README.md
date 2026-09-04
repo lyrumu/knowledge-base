@@ -17,10 +17,9 @@
 </p>
 
 <p align="center">
-  <picture>
-    <source srcset="static/video/readme-animation.webp" type="image/webp" />
-    <img src="static/video/readme-animation.gif" alt="Animated preview of lyrumu's personal blog" />
-  </picture>
+  <a href="https://lyrumu.top">
+    <img src="static/image/readme-cover-minimal-serif.png" alt="Preview of lyrumu's personal blog" />
+  </a>
 </p>
 
 ---

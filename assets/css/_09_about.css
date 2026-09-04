@@ -684,18 +684,47 @@ html.dark .about-contact-btn:hover {
    - 年份 tab（新年在前，默认当年）+ 贡献数行（衬线斜体，当年显示 this year）
    - 格子保持 GitHub 官方绿（light/dark 两套），不与站点陶土色混色
    - 53 周约 690px：窄屏容器横向滚动（max-width: 720px 隐藏周几标签）
-   - JS/接口失败时保留 shortcode 里的 ghchart 兜底图
+   - 首次请求时显示与新版布局同尺寸的骨架，不再闪回旧版图片
    ============================================================================= */
 .gh-contrib {
   --gh-cell: 10px;
   --gh-gap: 3px;
   margin: 0.5rem 0 1rem;
 }
-.gh-contrib-fallback {
-  width: 100%;
-  height: auto;
-  border-radius: 8px;
-  border: 1px solid var(--line);
+.gh-contrib-skeleton {
+  animation: gh-contrib-pulse 1.5s ease-in-out infinite;
+}
+.gh-contrib-skeleton-tabs {
+  display: flex;
+  gap: 0.4rem;
+  margin-bottom: 0.75rem;
+}
+.gh-contrib-skeleton-tabs span,
+.gh-contrib-skeleton-count {
+  display: block;
+  width: 3.6rem;
+  height: 1.45rem;
+  border-radius: 9999px;
+  background: var(--line);
+}
+.gh-contrib-skeleton-count {
+  width: 10rem;
+  height: 0.9rem;
+  margin-bottom: 0.85rem;
+}
+.gh-contrib-skeleton-chart {
+  width: min(100%, 689px);
+  height: 88px;
+  background-image:
+    linear-gradient(90deg, var(--line) 10px, transparent 10px),
+    linear-gradient(var(--line) 10px, transparent 10px);
+  background-size: 13px 13px;
+}
+.gh-contrib.is-error {
+  color: var(--fg-soft);
+  font-family: var(--font-serif-body);
+  font-style: italic;
+  font-size: 0.95rem;
 }
 
 /* 年份 tab：药丸按钮，选中态反色 */
@@ -804,8 +833,13 @@ html.dark .gh-day[data-level="4"] { background: #39d353; }
   from { opacity: 0; transform: translateY(6px); }
   to { opacity: 1; transform: none; }
 }
+@keyframes gh-contrib-pulse {
+  0%, 100% { opacity: 0.42; }
+  50% { opacity: 0.75; }
+}
 @media (prefers-reduced-motion: reduce) {
-  .gh-contrib-chart { animation: none; }
+  .gh-contrib-chart,
+  .gh-contrib-skeleton { animation: none; }
 }
 
 @media (max-width: 720px) {
