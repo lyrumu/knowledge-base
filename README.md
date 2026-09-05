@@ -1,25 +1,18 @@
 <p align="center">
-  <a href="https://lyrumu.top"><img src="https://img.shields.io/badge/Website-lyrumu.top-ff69b4?style=flat-square" alt="Website" /></a>
-  <a href="https://github.com/lyrumu/knowledge-base"><img src="https://img.shields.io/github/last-commit/lyrumu/knowledge-base?label=last%20commit&color=ff69b4&style=flat-square&display_timestamp=committer" alt="Last Commit" /></a>
-</p>
-
-<p align="center">
-  <a href="https://knowledge-base-85b.pages.dev"><img src="https://img.shields.io/badge/Mirror-knowledge--base--85b.pages.dev-blue?style=flat-square" alt="Mirror" /></a>
-  <img src="https://visitor-badge.laobi.icu/badge?page_id=lyrumu.knowledge-base" alt="Visitors" />
-</p>
-
-<p align="center">
-  <img src="https://github-readme-stats.vercel.app/api?username=lyrumu&show_icons=true&hide_title=true&count_private=true&theme=default&hide_rank=true" alt="GitHub Stats" />
-</p>
-
-<p align="center">
-  <a href="https://deepwiki.com/lyrumu/knowledge-base"><img src="https://deepwiki.com/badge.svg" alt="Ask DeepWiki"></a>
-</p>
-
-<p align="center">
   <a href="https://lyrumu.top">
-    <img src="static/image/readme-cover-minimal-serif.png" alt="Preview of lyrumu's personal blog" />
+    <img src="static/image/readme-cover-rounded.png" alt="Preview of lyrumu's personal blog" />
   </a>
+</p>
+
+<p align="center">
+  <a href="https://lyrumu.top"><img src="https://img.shields.io/badge/Website-lyrumu.top-ff69b4?style=flat-square" alt="Website" /></a>
+  <a href="https://knowledge-base-85b.pages.dev"><img src="https://img.shields.io/badge/Mirror-knowledge--base--85b.pages.dev-blue?style=flat-square" alt="Mirror" /></a>
+</p>
+
+<p align="center">
+  <a href="https://github.com/lyrumu/knowledge-base"><img src="https://img.shields.io/github/last-commit/lyrumu/knowledge-base?label=last%20commit&color=ff69b4&style=flat-square&display_timestamp=committer" alt="Last Commit" /></a>
+  <img src="https://visitor-badge.laobi.icu/badge?page_id=lyrumu.knowledge-base" alt="Visitors" />
+  <a href="https://deepwiki.com/lyrumu/knowledge-base"><img src="https://deepwiki.com/badge.svg" alt="Ask DeepWiki"></a>
 </p>
 
 ---

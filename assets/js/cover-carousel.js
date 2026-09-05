@@ -17,6 +17,8 @@
     : [];
   const introLinks = intro ? Array.from(intro.querySelectorAll("a")) : [];
   const slides = Array.from(root.querySelectorAll("[data-cover-carousel-slide]"));
+  const cardImages = Array.from(root.querySelectorAll("[data-cover-src]"));
+  const decodedImages = [];
   const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)");
   const compactLayout = window.matchMedia("(max-width: 720px)");
 
@@ -26,6 +28,8 @@
     activeIndex: 0,
     cardExitTimer: 0,
     gestureDelta: 0,
+    imagesStarted: false,
+    imageRevealTimer: 0,
     open: false,
     railFrame: 0,
     railIndex: 0,
@@ -40,6 +44,46 @@
   const SETTLE_FALLBACK = 1400;
   const clamp = (value, min, max) => Math.min(Math.max(value, min), max);
   const compact = () => compactLayout.matches || reduceMotion.matches;
+
+  function revealDecodedImages() {
+    if (state.imageRevealTimer && !compact()) return;
+    decodedImages.splice(0).forEach((img) => {
+      img.closest(".blur-img-wrapper")?.classList.add("is-loaded");
+    });
+  }
+
+  function deferImageReveal() {
+    // 覆盖整个镜头/三卡过渡；反向操作或切换侧卡都会重新计时。
+    window.clearTimeout(state.imageRevealTimer);
+    state.imageRevealTimer = window.setTimeout(() => {
+      state.imageRevealTimer = 0;
+      revealDecodedImages();
+    }, SETTLE_FALLBACK);
+  }
+
+  function warmCardImages() {
+    if (state.imagesStarted) return;
+    state.imagesStarted = true;
+    scrollScene.classList.add("is-images-warming");
+    cardImages.forEach((img) => {
+      img.srcset = img.dataset.coverCandidates;
+      img.src = img.dataset.coverSrc;
+      img.decode().then(() => {
+        decodedImages.push(img);
+        revealDecodedImages();
+      }).catch(() => {
+        // 加载或解码失败保留 LQIP，不能阻塞其他图片或卡片交互。
+      });
+    });
+  }
+
+  function warmAfterCoverPaint() {
+    const engraving = musicField.querySelector("img");
+    Promise.allSettled([engraving?.decode(), document.fonts.ready]).then(() => {
+      // 留出首屏绘制机会后立即预热，不等全站 load 或不确定的空闲回调。
+      window.requestAnimationFrame(() => window.requestAnimationFrame(warmCardImages));
+    });
+  }
 
   function setInert(element, inert) {
     if (!element) return;
@@ -58,6 +102,7 @@
     const next = (index + slides.length) % slides.length;
     if (!force && next === state.activeIndex) return;
 
+    if (next !== state.activeIndex) deferImageReveal();
     state.activeIndex = next;
     root.dataset.activeIndex = String(next);
 
@@ -148,6 +193,8 @@
 
     state.open = open;
     state.gestureDelta = 0;
+    deferImageReveal();
+    if (open) warmCardImages();
     window.clearTimeout(state.cardExitTimer);
     state.cardExitTimer = 0;
     window.clearTimeout(state.settleTimer);
@@ -245,6 +292,8 @@
 
     if (compact()) {
       state.open = false;
+      warmCardImages();
+      revealDecodedImages();
       window.clearTimeout(state.cardExitTimer);
       state.cardExitTimer = 0;
       window.clearTimeout(state.settleTimer);
@@ -372,6 +421,7 @@
     updateOrbitGeometry();
     document.body.classList.add("is-cover-gesture-mode");
     resetDesktopCards();
+    warmAfterCoverPaint();
   } else {
     refreshLayout();
   }

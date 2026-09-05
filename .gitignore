@@ -72,6 +72,7 @@ DeepWiki_Hugo_主题切换动画提示词.txt
 user-tmp/
 docs/
 prototypes/
+tests/
 COVER_CAROUSEL_PLAN.md
 # -----------------------------------------------------------------------------
 # 项目文档（本地保留，不上传）
@@ -85,4 +86,3 @@ COVER_CAROUSEL_PLAN.md
 
 # codegraph
 .codegraph/
-

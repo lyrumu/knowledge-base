@@ -143,12 +143,10 @@
                 aria-label="{{ $visual.alt | default (printf "%s cover artwork" (upper $id)) }}">
                 {{- range $assetIndex, $assetPath := ($visual.assets | default (slice)) -}}
                   {{- $layerClass := printf "cover-carousel-art-layer cover-carousel-art-layer--%d" (add $assetIndex 1) -}}
-                  {{- $eager := and (eq $index 0) (eq $assetIndex 0) -}}
                   {{- partial "home/carousel-image.html" (dict
                     "Path" $assetPath
                     "Alt" ""
                     "Class" $layerClass
-                    "Eager" $eager
                   ) -}}
                 {{- end -}}
               </div>

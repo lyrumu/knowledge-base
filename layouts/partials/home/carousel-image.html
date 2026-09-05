@@ -1,12 +1,11 @@
 {{/*
   Homepage carousel image pipeline.
-  Expects: Path, Alt, Class, Eager.
+  Expects: Path, Alt, Class.
   Produces capped WebP variants, intrinsic dimensions and a 24px LQIP.
 */}}
 {{- $path := .Path | default "" -}}
 {{- $alt := .Alt | default "" -}}
 {{- $class := .Class | default "" -}}
-{{- $eager := .Eager | default false -}}
 {{- $image := resources.Get $path -}}
 
 {{- if $image -}}
@@ -20,21 +19,31 @@
   {{- if lt $image.Width $tinyWidth }}{{ $tinyWidth = $image.Width }}{{ end -}}
   {{- $tiny := $image.Resize (printf "%dx webp" $tinyWidth) -}}
   {{- $lqip := printf "data:image/webp;base64,%s" (base64Encode $tiny.Content) | safeURL -}}
+  {{- $srcset := printf "%s %dw" $one.RelPermalink $one.Width -}}
+  {{- if ne $two.RelPermalink $one.RelPermalink -}}
+    {{- $srcset = printf "%s, %s %dw" $srcset $two.RelPermalink $two.Width -}}
+  {{- end -}}
+  {{- $sizes := "(max-width: 720px) 78vw, (max-width: 980px) 12rem, 18rem" -}}
   <span class="cover-carousel-image blur-img-wrapper {{ $class }}" style="--blur-img: url('{{ $lqip }}')">
+    {{/* 高清地址暂不交给预加载扫描器；首屏绘制后由轮播脚本下载并解码。 */}}
     <img
       class="blur-img"
       src="{{ $lqip }}"
-      data-full-src="{{ $one.RelPermalink }}"
-      data-lqip="1"
-      srcset="{{ $one.RelPermalink }} {{ $one.Width }}w{{ if ne $two.RelPermalink $one.RelPermalink }}, {{ $two.RelPermalink }} {{ $two.Width }}w{{ end }}"
-      sizes="(max-width: 720px) 78vw, (max-width: 980px) 54vw, 30rem"
+      data-cover-src="{{ $one.RelPermalink }}"
+      data-cover-candidates="{{ $srcset }}"
+      sizes="{{ $sizes }}"
       width="{{ $one.Width }}"
       height="{{ $one.Height }}"
       alt="{{ $alt }}"
       draggable="false"
-      loading="{{ if $eager }}eager{{ else }}lazy{{ end }}"
+      loading="eager"
       decoding="async"
-      fetchpriority="{{ if $eager }}high{{ else }}low{{ end }}">
+      fetchpriority="low">
+    <noscript>
+      <img class="blur-img" src="{{ $one.RelPermalink }}" srcset="{{ $srcset | safeHTMLAttr }}"
+        sizes="{{ $sizes }}" width="{{ $one.Width }}" height="{{ $one.Height }}"
+        alt="{{ $alt }}" draggable="false" loading="lazy" decoding="async">
+    </noscript>
   </span>
 {{- else -}}
   {{- errorf "Homepage cover image not found: %s" $path -}}

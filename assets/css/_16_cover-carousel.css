@@ -303,6 +303,20 @@ a.cover-carousel-card-surface:focus-visible {
   display: block;
 }
 
+/* 高清图解码完成且舞台停稳后只淡入，不在卡片运动中执行 blur 滤镜插值。 */
+.cover-carousel-image > .blur-img {
+  opacity: 0;
+  transition: opacity 220ms ease-out;
+}
+
+.cover-carousel-image.is-loaded > .blur-img {
+  opacity: 1;
+}
+
+html:not(.has-cover-carousel-js) .cover-carousel-image > .blur-img {
+  display: none;
+}
+
 .cover-carousel-image--fallback {
   display: grid;
   place-items: center;
@@ -558,6 +572,14 @@ a.cover-carousel-card-surface:focus-visible .cover-carousel-cta span {
 @keyframes cover-orbit-turn-counter {
   from { transform: translate(-50%, -50%) rotate(-16deg); }
   to { transform: translate(-50%, -50%) rotate(-376deg); }
+}
+
+/* 首屏显示后再准备三个旋转层；静态模式不占用。 */
+@media (min-width: 721px) and (prefers-reduced-motion: no-preference) {
+  .cover-page.is-carousel-enhanced.is-images-warming .cover-music-field__disc,
+  .cover-page.is-carousel-enhanced.is-images-warming .cover-music-field__orbit {
+    will-change: transform;
+  }
 }
 
 /* Desktop progressive enhancement：一次镜头推进后停在可交互的音符盘舞台。 */

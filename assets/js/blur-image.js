@@ -34,7 +34,8 @@
   }
 
   function init() {
-    document.querySelectorAll(".blur-img, .cover-card__bg-img").forEach(function (img) {
+    // 封面延后图片由轮播脚本负责解码和揭示，失败时继续保留 LQIP。
+    document.querySelectorAll(".blur-img:not([data-cover-src]), .cover-card__bg-img").forEach(function (img) {
       img.addEventListener("error", function () {
         markBroken(img);
         // DOCS 卡片兼容：显示图标降级
